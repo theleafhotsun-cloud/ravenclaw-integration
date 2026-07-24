@@ -1,90 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Ravenclaw Integration System</title>
-  <style>
-    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
-    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; text-align: center; }
-    input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-    button { width: 100%; padding: 10px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-    button:hover { background: #004494; }
-    #message { margin-top: 15px; color: red; font-size: 14px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ravenclaw Management Integration System</title>
+    <style>
+        :root {
+            --sapphire: #3C507D;
+            --royal-blue: #112250;
+            --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9;
+            --shellstone: #D9CBC2;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--royal-blue);
+            background-image: linear-gradient(135deg, var(--royal-blue) 0%, var(--sapphire) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--royal-blue);
+        }
+
+        .login-container {
+            background-color: var(--swan-wing);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            border: 2px solid var(--quicksand);
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: var(--royal-blue);
+            line-height: 1.4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--sapphire);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--shellstone);
+            border-radius: 6px;
+            background-color: #ffffff;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: var(--royal-blue);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--sapphire);
+            box-shadow: 0 0 0 3px rgba(60, 80, 125, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--quicksand);
+            color: var(--royal-blue);
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #d4b579;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            font-size: 12px;
+            color: var(--sapphire);
+        }
+        
+        #statusMessage {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="login-box">
-    <h2>Ravenclaw Integration System</h2>
-    <input type="text" id="username" placeholder="Enter your username">
-    <!-- Login Button -->
-    <button id="btn-login" onclick="processLogin()">Login</button>
-    <div id="message"></div>
-  </div>
+    <div class="login-container">
+        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="System Logo" class="logo">
+        
+        <h1>Ravenclaw Management<br>Integration System</h1>
+        
+        <form id="integrationForm" onsubmit="event.preventDefault(); submitData(this);">
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="Username" required placeholder="Enter your username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="Password" required placeholder="Enter your password">
+            </div>
+            
+            <button type="submit" id="submitBtn">Sign In</button>
+            <div id="statusMessage"></div>
+        </form>
 
-  <script>
-    // INSERT YOUR APPS SCRIPT URL HERE
-    const API_URL = "https://script.google.com/macros/s/AKfycbzaVAkUg-1choWXhQ93tu3HawpBk1iD7dWh6TdGMRJ6Okt4kxOsHSyqAd7lUcspm40g/exec";
+        <div class="footer-text">
+            &copy; 2026 Ravenclaw System Integration
+        </div>
+    </div>
 
-    function processLogin() {
-      const usernameInput = document.getElementById('username').value;
-      const messageDiv = document.getElementById('message');
-      const btnLogin = document.getElementById('btn-login');
+    <script>
+        // MASUKKAN URL APPS SCRIPT ANDA DI SINI
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
 
-      if(!usernameInput) {
-        messageDiv.innerHTML = "Username cannot be empty!";
-        messageDiv.style.color = "red";
-        return;
-      }
+        function submitData(formObject) {
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusMessage');
+            
+            btn.innerHTML = 'Authenticating...';
+            btn.disabled = true;
+            status.style.display = 'none';
 
-      // Change button state during loading
-      btnLogin.innerHTML = "Authenticating...";
-      btnLogin.disabled = true;
-      messageDiv.innerHTML = "";
+            // Ambil nilai dari input
+            const inputUsername = formObject.Username.value;
+            const inputPassword = formObject.Password.value;
 
-      // Send data to Apps Script
-      fetch(API_URL, {
-        method: "POST",
-        // Text/plain is required for Apps Script to avoid CORS preflight issues
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ username: usernameInput })
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.status === "success") {
-          messageDiv.innerHTML = "Login Successful! Redirecting...";
-          messageDiv.style.color = "green";
-          
-          // SAVE SESSION DATA IN BROWSER
-          localStorage.setItem("session_username", result.data.username);
-          localStorage.setItem("session_role", result.data.role);
+            // Gunakan Fetch API untuk Vercel
+            fetch(API_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    username: inputUsername,
+                    password: inputPassword
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === "success") {
+                    status.style.color = '#2e7d32';
+                    status.innerHTML = 'Login successful! Redirecting...';
+                    status.style.display = 'block';
+                    
+                    // Simpan sesi login
+                    localStorage.setItem("session_username", result.data.username);
+                    localStorage.setItem("session_role", result.data.role);
 
-          // REDIRECT TO DASHBOARD BASED ON ROLE
-          setTimeout(() => {
-            if (result.data.role === "Headhouse") {
-              window.location.href = "headhouse-dashboard.html";
-            } else if (result.data.role === "Prefect") {
-              window.location.href = "prefect-dashboard.html";
-            } else {
-              window.location.href = "general-dashboard.html"; // Default fallback
-            }
-          }, 1000);
+                    // Bersihkan spasi dari role (contoh: "Vice Prefect" jadi "viceprefect")
+                    const rawPosition = result.data.role.toString().toLowerCase();
+                    const pageParam = rawPosition.replace(/\s+/g, ''); 
+                    
+                    // Arahkan ke halaman HTML yang sesuai (misal: headhouse-dashboard.html)
+                    setTimeout(() => {
+                        window.location.href = pageParam + "-dashboard.html";
+                    }, 1000);
 
-        } else {
-          messageDiv.innerHTML = result.message;
-          messageDiv.style.color = "red";
-          btnLogin.innerHTML = "Login";
-          btnLogin.disabled = false;
+                } else {
+                    status.style.color = '#c62828';
+                    status.innerHTML = result.message || 'Login failed.';
+                    status.style.display = 'block';
+                    btn.innerHTML = 'Sign In';
+                    btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                status.innerHTML = 'System Error: Failed to connect to server.';
+                status.style.color = '#c62828';
+                status.style.display = 'block';
+                btn.innerHTML = 'Sign In';
+                btn.disabled = false;
+            });
         }
-      })
-      .catch(error => {
-        messageDiv.innerHTML = "Failed to connect to the server.";
-        messageDiv.style.color = "red";
-        btnLogin.innerHTML = "Login";
-        btnLogin.disabled = false;
-      });
-    }
-  </script>
+    </script>
 </body>
 </html>
