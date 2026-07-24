@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ravenclaw Dashboard</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2; --danger: #c62828;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar Styles */
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+
+        /* Main Content Styles */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; }
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Content Area */
+        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; }
+        .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; }
+
+        /* Performance Section */
+        .performance-card { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
+        .performance-info { flex-grow: 1; }
+        .progress-container { background-color: var(--shellstone); height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .progress-bar { height: 100%; background-color: var(--sapphire); width: 0%; transition: width 0.5s ease; }
+        .performance-text { font-weight: bold; color: var(--royal-blue); }
+        .btn-reset { background-color: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
+        .btn-reset:hover { background-color: #b71c1c; }
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px; }
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+        .checkbox-container { text-align: center; } 
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sapphire); margin: 0; vertical-align: middle; }
+        .completed-text td { color: gray; }
+        .completed-text .task-name { text-decoration: line-through; }
+
+        /* Week Badges */
+        .week-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block; }
+        .week-1 { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+        .week-2 { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .week-3 { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+        .week-4 { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
+        .week-0 { background-color: #f5f5f5; color: #616161; border: 1px solid #e0e0e0; }
+
+        #loadingMsg { text-align: center; color: var(--sapphire); font-weight: bold; margin: 20px 0; }
+        .error-message { background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border-left: 5px solid #c62828; margin: 20px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" class="active" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="display-username">Loading...</span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <h1 class="page-title">Task Master Overview</h1>
+            
+            <div class="performance-card">
+                <div class="performance-info">
+                    <div class="performance-text" id="performanceText">Performance: 0% (0 / 0 Tasks)</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+                <button class="btn-reset" onclick="resetAllCheckboxes()">Reset All Tasks</button>
+            </div>
+
+            <div id="loadingMsg">Fetching tasks from database...</div>
+
+            <!-- Tabel Tugas -->
+            <table id="taskTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">✓</th>
+                        <th style="width: 70px;">Period</th>
+                        <th style="width: 40px; text-align: center;">KPI</th>
+                        <th>Category</th>
+                        <th>Task Name</th>
+                        <th style="width: 30%;">Description</th>
+                        <th style="width: 25%;">Time & Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Script Area -->
+    <script>
+        // --- 1. SETTING URL API ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        
+        // --- 2. AMBIL DATA DARI SESI BROWSER ---
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
+        // Proteksi: Jika belum login, tendang ke halaman awal
+        if (!loggedInUser) {
+            window.location.href = "index.html";
+        }
+
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        window.onload = function() {
+            // Tampilkan nama di Topbar
+            document.getElementById("display-username").innerText = loggedInUser;
+            
+            setupDynamicSidebar();
+            
+            let loadMsg = document.getElementById('loadingMsg');
+            loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + userRole + "</b>... <br><br><small style='color:gray;'>(If stuck, please press <b>F12</b> -> <b>Console</b> tab to view the process)</small>";
+
+            // --- 3. FETCH API UNTUK MENGAMBIL DATA TUGAS ---
+            fetch(API_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "fetchMyTasks", // Memberi tahu Apps Script apa yang harus dilakukan
+                    role: userRole 
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === "success") {
+                    console.log("DATA SUCCESSFULLY FETCHED: ", result.data);
+                    renderTable(result.data);
+                } else {
+                    throw new Error(result.message);
+                }
+            })
+            .catch(err => {
+                console.error("FAILED: ", err);
+                loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`; 
+            });
+        };
+
+        function setupDynamicSidebar() {
+            try {
+                var role = userRole || 'unknown';
+                var isHH = role.includes('headhouse') || role === 'system admin';
+                var isPrefect = role.includes('prefect') || role.includes('vp') || role.includes('vice');
+                var isLeadroom = role.includes('leadroom') || role.includes('lead room');
+                var isEditor = role.includes('editor');
+
+                var sidebarTitle = document.getElementById('sidebarTitle');
+                if (sidebarTitle) {
+                    var positionName = (role === 'system admin') ? 'Headhouse' : role;
+                    sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+                }
+
+                function unhideMenu(className) {
+                    var el = document.querySelector('.' + className);
+                    if (el) el.style.display = 'block';
+                }
+
+                unhideMenu('menu-sop');
+                unhideMenu('menu-taskmaster');
+
+                if (isHH) {
+                    var allMenus = document.querySelectorAll('#sidebarMenu li');
+                    if(allMenus) allMenus.forEach(el => el.style.display = 'block');
+                }
+                else if (isPrefect) {
+                    ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(unhideMenu);
+                }
+                else if (isLeadroom) {
+                    ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(unhideMenu);
+                }
+                else if (isEditor) {
+                    ['menu-birthdays'].forEach(unhideMenu);
+                }
+            } catch (error) {
+                console.error("Sidebar error: " + error.message);
+            }
+        }
+
+        // --- 4. NAVIGASI BARU (VERCEL STYLE) ---
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; 
+            if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage, element) {
+            element.innerText = "Wait..."; 
+            // Vercel tidak butuh getScriptUrl, langsung panggil nama file HTML-nya
+            window.location.href = targetPage + ".html"; 
+        }
+
+        function logout(btnElement) {
+            btnElement.innerText = "Wait...";
+            localStorage.clear(); // Hapus sesi login
+            window.location.href = "index.html"; // Kembali ke halaman login
+        }
+
+        // --- FUNGSI TRACKER (TIDAK ADA YANG BERUBAH) ---
+        function getStorageKey(taskName, weekNum) {
+            return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`;
+        }
+
+        function checkStorage(key) {
+            try { return localStorage.getItem(key) === 'true'; } 
+            catch (e) { return false; } 
+        }
+
+        function setStorage(key, value) {
+            try { localStorage.setItem(key, value); } 
+            catch (e) { console.warn("Browser cache blocked."); }
+        }
+
+        function clearStoragePrefix(prefix) {
+            try {
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith(prefix)) localStorage.removeItem(key);
+                });
+            } catch (e) { console.warn("Failed to reset browser cache."); }
+        }
+
+        function renderTable(rawTasks) {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('taskTable').style.display = 'table';
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            completedTasks = 0; 
+            let tasks = [];
+
+            if(rawTasks && rawTasks.length > 0) {
+                rawTasks.forEach(task => {
+                    let sec = String(task.section || '').toUpperCase();
+                    if (sec.includes('ALL WEEK') || sec.includes('ALLWEEK')) {
+                        for (let w = 1; w <= 4; w++) tasks.push({ ...task, targetWeek: w });
+                    } else {
+                        let wMatch = sec.match(/\d+/);
+                        let wNum = wMatch ? parseInt(wMatch[0]) : 0;
+                        tasks.push({ ...task, targetWeek: wNum });
+                    }
+                });
+            }
+
+            tasks.sort((a, b) => a.targetWeek - b.targetWeek);
+            totalTasks = tasks.length;
+
+            if (tasks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">No tasks found. Please check your role/database.</td></tr>';
+                updatePerformance();
+                return;
+            }
+
+            tasks.forEach((t) => {
+                const tr = document.createElement('tr');
+                
+                let safeCategory = t.category || t.kategori || "-";
+                let safeTaskName = t.taskName || "Untitled Task";
+                let safeDescription = t.description || "-";
+                
+                let escapedName = safeTaskName.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
+                const storageKey = getStorageKey(escapedName, t.targetWeek);
+                const checked = checkStorage(storageKey); 
+                
+                if (checked) { completedTasks++; tr.classList.add('completed-text'); }
+                
+                if (t.section === "ERROR" || t.section === "DEBUG" || t.category === "INFO") {
+                    tbody.innerHTML = `<tr><td colspan="7"><div class="error-message"><b>${safeTaskName}</b><br>${safeDescription}<br>Time/Remarks: ${t.time} | ${t.remarks}</div></td></tr>`;
+                    return; 
+                }
+                
+                let badgeClass = t.targetWeek >= 1 && t.targetWeek <= 4 ? `week-${t.targetWeek}` : 'week-0';
+                let weekLabel = t.targetWeek > 0 ? `Week ${t.targetWeek}` : (t.section || '-');
+
+                tr.innerHTML = `
+                    <td class="checkbox-container">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
+                    </td>
+                    <td><span class="week-badge ${badgeClass}">${weekLabel}</span></td>
+                    <td style="text-align:center; font-weight:bold;">${t.kpi || '-'}</td>
+                    <td>${safeCategory}</td>
+                    <td class="task-name"><b>${safeTaskName}</b></td>
+                    <td style="font-size:12px; line-height:1.4;">${safeDescription}</td>
+                    <td style="font-size:11px; line-height:1.4;">
+                        <b>Time:</b> ${t.time || '-'}<br>
+                        <i style="color:gray;"><b>Notes:</b> ${t.remarks || '-'}</i>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updatePerformance();
+        }
+
+        function toggleTask(cb, taskName, weekNum) {
+            setStorage(getStorageKey(taskName, weekNum), cb.checked); 
+            cb.closest('tr').classList.toggle('completed-text', cb.checked);
+            completedTasks += cb.checked ? 1 : -1;
+            updatePerformance();
+        }
+
+        function resetAllCheckboxes() {
+            const confirmReset = confirm("Are you sure you want to reset all task progress? This action cannot be undone.");
+            if (!confirmReset) return;
+
+            const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                cb.closest('tr').classList.remove('completed-text');
+            });
+
+            clearStoragePrefix(`ravenclaw_tracker_${loggedInUser}_`);
+
+            completedTasks = 0;
+            updatePerformance();
+        }
+
+        function updatePerformance() {
+            const percentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+            document.getElementById('performanceText').innerText = `Performance: ${percentage}% (${completedTasks} / ${totalTasks} Tasks)`;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressBar').style.backgroundColor = percentage === 100 ? 'var(--quicksand)' : 'var(--sapphire)';
+        }
+    </script>
+</body>
+</html>
