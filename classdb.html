@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Database - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --warning: #f57f17; --info: #0277bd;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize;}
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+        
+        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        
+        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        .filter-group { display: flex; gap: 10px; align-items: center; }
+        .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
+        .btn-reset { background-color: var(--danger); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: background 0.3s;}
+        .btn-reset:hover { background-color: #b71c1c; }
+
+        .room-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
+        .tab-btn { background-color: #f0f0f0; border: none; padding: 10px 18px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
+        .tab-btn.active { background-color: var(--info); color: white; border-bottom: 2px solid #01579b;}
+        .tab-btn:hover:not(.active) { background-color: #b3e5fc; color: var(--info); }
+        .tab-content { display: none; flex-direction: column; flex-grow: 1; }
+        .tab-content.active { display: flex; }
+
+        .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        
+        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); max-height: 500px;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 13px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+
+        .subject-name { font-weight: bold; color: var(--royal-blue); font-size: 14px;}
+        
+        .stat-badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid transparent; }
+        .stat-normal { background-color: #e8f5e9; color: var(--success); border-color: #c8e6c9; }
+        .stat-replacement { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
+        .stat-assignment { background-color: #e3f2fd; color: #1565c0; border-color: #bbdefb; }
+        .stat-canceled { background-color: #ffebee; color: var(--danger); border-color: #ffcdd2; text-decoration: line-through;}
+        
+        .pic-badge { background-color: var(--quicksand); color: var(--royal-blue); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .deadline-text { font-family: monospace; font-weight: bold; color: #d84315; background: #fbe9e7; padding: 2px 6px; border-radius: 4px; font-size: 11px;}
+        .task-link { background-color: #e8eaf6; color: var(--sapphire); padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold; display: inline-block; border: 1px solid #c5cae9; transition: 0.2s;}
+        .task-link:hover { background-color: var(--sapphire); color: white; }
+
+        .btn-edit { background-color: var(--sapphire); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
+        .btn-edit:hover { background-color: var(--royal-blue); }
+        .btn-drive { background-color: #1a73e8; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;}
+        .btn-drive:hover { background-color: #0d47a1; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px;}
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 13px;}
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 12px;}
+        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 12px;}
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)" class="active">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span><?= username ?></span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">Class Schedule & Assignment Database</h1>
+                <!-- ATTENDANCE BOARD BUTTON -->
+                <a href="https://drive.google.com/drive/folders/1nZK2fF4QKDc4bZyrX68VngoV3Eb0ncyI?usp=drive_link" target="_blank" class="btn-drive">
+                    📋 Attendance Board
+                </a>
+            </div>
+
+            <div class="period-controller">
+                <div class="filter-group">
+                    <span style="font-size: 14px; font-weight:bold; color:var(--quicksand);">📆 Select Period:</span>
+                    <select id="monthSelector" class="selector-box" onchange="fetchClassData()"></select>
+                    <select id="weekSelector" class="selector-box" onchange="fetchClassData()">
+                        <option value="Week 1">Week 1</option>
+                        <option value="Week 2">Week 2</option>
+                        <option value="Week 3">Week 3</option>
+                        <option value="Week 4">Week 4</option>
+                    </select>
+                </div>
+                <div>
+                    <button class="btn-reset" onclick="resetWeekData()">⚠️ Reset This Week Data</button>
+                </div>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Loading classes data...</div>
+            
+            <div class="room-tabs" id="categoryTabs" style="display: none;">
+                <button class="tab-btn active" onclick="openTab('Beginner Ministry')">Beginner Ministry</button>
+                <button class="tab-btn" onclick="openTab('Beginner Auror')">Beginner Auror</button>
+                <button class="tab-btn" onclick="openTab('Advanced Ministry')">Advanced Ministry</button>
+                <button class="tab-btn" onclick="openTab('Advanced Auror')">Advanced Auror</button>
+                <button class="tab-btn" onclick="openTab('Quidditch')">Quidditch / Extra</button>
+            </div>
+
+            <div id="tabContainer"></div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <h3>✏️ Edit Class Status</h3>
+            <div style="background: #e8eaf6; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                <div style="font-size: 11px; color: gray; text-transform: uppercase;">Subject</div>
+                <div id="modalSubjectName" style="font-size: 16px; font-weight: bold; color: var(--royal-blue);"></div>
+            </div>
+            
+            <input type="hidden" id="modalCategory">
+
+            <div class="form-group">
+                <label>Class Status</label>
+                <select id="modalStatus" onchange="toggleAssignmentFields()">
+                    <option value="Scheduled (Normal)">✅ Scheduled (Normal)</option>
+                    <option value="Replacement Class">🔄 Replacement Class</option>
+                    <option value="Replacement Assignment">📝 Replacement Assignment</option>
+                    <option value="Canceled">❌ Canceled (Free Class)</option>
+                </select>
+            </div>
+
+            <div id="timeGroup" style="display: none; background-color: #f5f5f5; padding: 10px; border-radius: 6px; border: 1px dashed #ccc; margin-bottom: 15px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label id="labelDeadline">Schedule / Dateline</label>
+                    <input type="datetime-local" id="modalDeadline">
+                </div>
+            </div>
+
+            <div id="detailGroup" style="display: none; background-color: #f5f5f5; padding: 10px; border-radius: 6px; border: 1px dashed #ccc; margin-bottom: 15px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Task Detail / Link (Tweet / GDocs)</label>
+                    <textarea id="modalDetail" placeholder="Paste task link, Google Docs link, or task instructions here..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveClassStatus()" id="btnSave">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <script>
+        // ==========================================
+        // 1. GLOBAL VARIABLES
+        // ==========================================
+        let loggedInUser = "<?= username ?>";
+        let windowUserRole = "unknown";
+
+        var activeTab = "Beginner Ministry";
+        var currentData = {};
+        var dynamicPicMap = {};
+
+        const subjectRoomMap = {
+            "Astronomy": "Eternclaw",
+            "Charm": "Eternclaw",
+            "Herbology": "Eternclaw", 
+            "Defence Against The Dark Arts": "Eternclaw",
+            "Potion": "Ravelynx",
+            "Divination": "Ravelynx",
+            "Ancient Runes": "Ravenion",
+            "Care Of Magical Creatures": "Ravenion",
+            "Muggle Studies": "Ravenrow",
+            "Arithmancy": "Ravenrow",
+            "Transfiguration": "Velaclaw",
+            "History Of Magic": "Velaclaw",
+            "Quidditch Practice": "PVP",
+            "Quidditch Match": "PVP"
+        };
+
+        const classCategories = {
+            "Beginner Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
+            "Beginner Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
+            "Advanced Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
+            "Advanced Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
+            "Quidditch": ["Quidditch Practice", "Quidditch Match"]
+        };
+
+        // ==========================================
+        // 2. ONLOAD INITIALIZATION
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', function() {
+            setupDynamicSidebar();
+            populateMonths();
+        });
+
+        // ==========================================
+        // 3. LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
+        function setupDynamicSidebar() {
+            google.script.run.withSuccessHandler(function(role) {
+                windowUserRole = String(role).toLowerCase();
+                
+                var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
+                var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
+                var isLeadroom = windowUserRole.includes('leadroom');
+                var isEditor = windowUserRole.includes('editor');
+
+                var sidebarTitle = document.getElementById('sidebarTitle');
+                if (sidebarTitle) {
+                    var positionName = (windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole;
+                    sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+                }
+
+                var sopMenu = document.querySelector('.menu-sop');
+                var tmMenu = document.querySelector('.menu-taskmaster');
+                if (sopMenu) sopMenu.style.display = 'block';
+                if (tmMenu) tmMenu.style.display = 'block';
+
+                if (isHH) {
+                    document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+                } 
+                else if (isPrefect) {
+                    ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                }
+                else if (isLeadroom) {
+                    ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                }
+                else if (isEditor) {
+                    ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                }
+            }).getUserRole(loggedInUser);
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse';
+
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) {
+                targetPage = 'viceprefect';
+            } else if (windowUserRole.includes('prefect')) {
+                targetPage = 'prefect';
+            } else if (windowUserRole.includes('editor')) {
+                targetPage = 'editor';
+            } else if (windowUserRole.includes('leadroom')) {
+                targetPage = 'leadroom';
+            }
+
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl();
+        }
+
+        function navigate(targetPage, element) {
+            element.innerText = "Wait..."; 
+            google.script.run.withSuccessHandler(function(url) {
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser);
+            }).getScriptUrl();
+        }
+
+        function logout(btnElement) {
+            btnElement.innerText = "Wait...";
+            google.script.run.withSuccessHandler(function(url) { window.top.location.href = url; }).getScriptUrl();
+        }
+
+        // ==========================================
+        // 4. LOGIKA CLASS DATABASE & RENDER
+        // ==========================================
+        function populateMonths() {
+            google.script.run.withSuccessHandler(function(res) {
+                var mSel = document.getElementById('monthSelector');
+                if(res.activeMonth) {
+                    var opt = document.createElement('option');
+                    opt.value = res.activeMonth.monthLabel;
+                    opt.innerText = res.activeMonth.monthLabel + " (Active)";
+                    opt.selected = true;
+                    mSel.appendChild(opt);
+                }
+                if(res.archivedMonths) {
+                    res.archivedMonths.forEach(function(m) {
+                        var opt = document.createElement('option');
+                        opt.value = m.monthLabel;
+                        opt.innerText = m.monthLabel;
+                        mSel.appendChild(opt);
+                    });
+                }
+                fetchClassData(); 
+            }).getPeriodConfig(loggedInUser);
+        }
+
+        function fetchClassData() {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('categoryTabs').style.display = 'none';
+            document.getElementById('tabContainer').innerHTML = '';
+
+            google.script.run.withSuccessHandler(function(res) {
+                document.getElementById('loadingMsg').style.display = 'none';
+                if(res.success) {
+                    currentData = res.data || {};
+                    dynamicPicMap = res.picData || {}; 
+                    renderTables();
+                } else {
+                    alert("Error loading data: " + res.message);
+                }
+            }).getClassData(month, week);
+        }
+
+        function safeLink(linkStr) {
+            var str = linkStr.trim();
+            if(str.startsWith('http://') || str.startsWith('https://')) return str;
+            return 'https://' + str;
+        }
+
+        function renderTables() {
+            document.getElementById('categoryTabs').style.display = 'flex';
+            var container = document.getElementById('tabContainer');
+            container.innerHTML = '';
+
+            for (var category in classCategories) {
+                var subjects = classCategories[category];
+                var tbodyHtml = '';
+
+                subjects.forEach(function(subj, index) {
+                    var savedData = (currentData[category] && currentData[category][subj]) ? currentData[category][subj] : {status: 'Scheduled (Normal)', deadline: '', detail: ''};
+                    var stat = savedData.status || 'Scheduled (Normal)';
+                    var dl = savedData.deadline || '-';
+                    var detail = savedData.detail || '-';
+                    
+                    var roomCat = subjectRoomMap[subj] || "Headhouse";
+                    var pic = dynamicPicMap[roomCat] || roomCat; 
+
+                    var statBadge = '<span class="stat-badge stat-normal">✅ Scheduled (Normal)</span>';
+                    if (stat.includes('Canceled')) statBadge = '<span class="stat-badge stat-canceled">❌ Canceled (Free Class)</span>';
+                    else if (stat.includes('Assignment')) statBadge = '<span class="stat-badge stat-assignment">📝 Replacement Assignment</span>';
+                    else if (stat.includes('Replacement Class')) statBadge = '<span class="stat-badge stat-replacement">🔄 Replacement Class</span>';
+
+                    var dlHtml = '-';
+                    var detailHtml = '-';
+                    
+                    if (stat.includes('Assignment') || stat.includes('Replacement Class')) {
+                        if (dl !== '-') {
+                            var dObj = new Date(dl);
+                            var icon = stat.includes('Assignment') ? '⏰ ' : '📅 ';
+                            if (!isNaN(dObj.getTime())) {
+                                dlHtml = '<span class="deadline-text">' + icon + dObj.toLocaleString('en-GB', {weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) + '</span>';
+                            } else {
+                                dlHtml = '<span class="deadline-text">' + icon + dl + '</span>';
+                            }
+                        }
+                    }
+
+                    if (stat.includes('Assignment')) {
+                        if (detail !== '-' && detail !== '') {
+                            var checkStr = detail.toLowerCase();
+                            if (checkStr.startsWith('http') || checkStr.startsWith('www') || checkStr.includes('.com') || checkStr.includes('x.com') || checkStr.includes('twitter.com') || checkStr.includes('docs.google')) {
+                                detailHtml = `<a href="${safeLink(detail)}" target="_blank" class="task-link">🔗 Open Task</a>`;
+                            } else {
+                                var shortText = detail.length > 25 ? detail.substring(0, 25) + '...' : detail;
+                                detailHtml = `<span style="font-size:10px; color:gray;" title="${detail}">${shortText}</span>`;
+                            }
+                        }
+                    }
+
+                    if (stat.includes('Assignment') && (dl === '-' || detail === '-')) {
+                        statBadge += '<br><span style="font-size:9px; color:red; font-weight:bold;">⚠️ Missing Details</span>';
+                    } else if (stat.includes('Replacement Class') && dl === '-') {
+                        statBadge += '<br><span style="font-size:9px; color:red; font-weight:bold;">⚠️ Missing Schedule</span>';
+                    }
+
+                    tbodyHtml += `
+                        <tr>
+                            <td><span style="color:gray; font-weight:bold;">${index+1}</span></td>
+                            <td class="subject-name">${subj}</td>
+                            <td>${statBadge}</td>
+                            <td>${dlHtml}</td>
+                            <td>${detailHtml}</td>
+                            <td><span class="pic-badge">${pic}</span></td>
+                            <td style="text-align:center;">
+                                <button class="btn-edit" onclick="openModal('${category}', '${subj}', '${stat}', '${dl}', \`${detail.replace(/'/g, "\\'")}\`)">Edit</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                var boxHtml = `
+                    <div class="box-section">
+                        <h4>📚 ${category} Schedule</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px;">No.</th>
+                                        <th>Subject Name</th>
+                                        <th>Class Status</th>
+                                        <th>Schedule / Dateline</th>
+                                        <th>Task Detail / Link</th>
+                                        <th>PIC (Person In Charge)</th>
+                                        <th style="text-align:center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tbodyHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                var div = document.createElement('div');
+                div.className = 'tab-content ' + (category === activeTab ? 'active' : '');
+                div.id = 'tab-' + category.replace(/\s+/g, '');
+                div.innerHTML = boxHtml;
+                container.appendChild(div);
+            }
+        }
+
+        function openTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            var btn = Array.from(document.querySelectorAll('.tab-btn')).find(el => el.innerText.includes(tabName.split(' ')[0]));
+            if(btn) btn.classList.add('active');
+            
+            var targetId = 'tab-' + tabName.replace(/\s+/g, '');
+            var targetContent = document.getElementById(targetId);
+            if(targetContent) targetContent.classList.add('active');
+        }
+
+        function openModal(category, subject, status, deadline, detail) {
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('modalCategory').value = category;
+            document.getElementById('modalSubjectName').innerText = subject;
+            
+            var sel = document.getElementById('modalStatus');
+            for(var i=0; i<sel.options.length; i++) {
+                if(sel.options[i].value.includes(status.split(' ')[0])) {
+                    sel.selectedIndex = i; break;
+                } else { sel.selectedIndex = 0; }
+            }
+
+            var dlInput = document.getElementById('modalDeadline');
+            dlInput.value = "";
+            if (deadline && deadline !== '-') {
+                var d = new Date(deadline);
+                if (!isNaN(d.getTime())) {
+                    var yr = d.getFullYear(), mo = String(d.getMonth()+1).padStart(2,'0'), da = String(d.getDate()).padStart(2,'0');
+                    var hr = String(d.getHours()).padStart(2,'0'), mi = String(d.getMinutes()).padStart(2,'0');
+                    dlInput.value = `${yr}-${mo}-${da}T${hr}:${mi}`;
+                }
+            }
+            
+            var dtInput = document.getElementById('modalDetail');
+            dtInput.value = (detail && detail !== '-') ? detail : "";
+            
+            toggleAssignmentFields();
+        }
+
+        function toggleAssignmentFields() {
+            var status = document.getElementById('modalStatus').value;
+            var timeGroup = document.getElementById('timeGroup');
+            var detailGroup = document.getElementById('detailGroup');
+            var labelDl = document.getElementById('labelDeadline');
+
+            if (status.includes('Assignment')) {
+                timeGroup.style.display = 'block';
+                detailGroup.style.display = 'block'; 
+                labelDl.innerText = "Assignment Dateline";
+            } else if (status.includes('Replacement Class')) {
+                timeGroup.style.display = 'block';
+                detailGroup.style.display = 'none'; 
+                labelDl.innerText = "Replacement Schedule (Date & Time)";
+                document.getElementById('modalDetail').value = ""; 
+            } else {
+                timeGroup.style.display = 'none';
+                detailGroup.style.display = 'none';
+                document.getElementById('modalDeadline').value = "";
+                document.getElementById('modalDetail').value = ""; 
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveClassStatus() {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            var category = document.getElementById('modalCategory').value;
+            var subject = document.getElementById('modalSubjectName').innerText;
+            var status = document.getElementById('modalStatus').value;
+            var deadline = document.getElementById('modalDeadline').value;
+            var detail = document.getElementById('modalDetail').value;
+
+            if (status.includes('Assignment') && (!deadline || !detail)) {
+                alert("Please fill in the Dateline AND Task Detail/Link for Replacement Assignment!");
+                return;
+            }
+            if (status.includes('Replacement Class') && !deadline) {
+                alert("Please fill in the Date & Time for Replacement Class!");
+                return;
+            }
+
+            var btn = document.getElementById('btnSave');
+            btn.innerText = "Saving..."; btn.disabled = true;
+
+            google.script.run.withSuccessHandler(function(res) {
+                if(res.success) {
+                    closeModal();
+                    fetchClassData(); 
+                } else {
+                    alert("Failed to save: " + res.message);
+                }
+                btn.innerText = "Save Changes"; btn.disabled = false;
+            }).saveClassData(month, week, category, subject, status, deadline, detail);
+        }
+
+        function resetWeekData() {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            if(confirm("⚠️ WARNING!\n\nAre you sure you want to RESET (delete) all class schedule changes for " + week + " (" + month + ")?\n\nAll statuses will be reverted to Normal/Scheduled.")) {
+                document.getElementById('loadingMsg').style.display = 'block';
+                document.getElementById('loadingMsg').innerText = "Resetting data...";
+                document.getElementById('categoryTabs').style.display = 'none';
+                document.getElementById('tabContainer').innerHTML = '';
+
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) {
+                        alert("✅ Reset successful. This week's data has been reverted to default.");
+                        
+                        // MENGOSONGKAN CACHE FRONTEND AGAR DATA LAMA TIDAK TAMPIL KEMBALI
+                        currentData = {}; 
+                        
+                        fetchClassData();
+                    } else {
+                        alert("❌ Reset failed: " + res.message);
+                        fetchClassData();
+                    }
+                }).resetClassData(month, week);
+            }
+        }
+    </script>
+</body>
+</html>
