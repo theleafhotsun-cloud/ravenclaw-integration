@@ -12,21 +12,26 @@
             --success: #2e7d32; --danger: #c62828; --warning: #f57f17;
         }
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
         .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        
         .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
         .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; }
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
-        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        /* FIX: Ubah ke block & overflow-y untuk mencegah terpotong di HP */
+        .content-area { padding: 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -35,18 +40,18 @@
         .filter-group { display: flex; gap: 10px; align-items: center; }
         .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
         
-        .dashboard-cards { display: flex; gap: 15px; margin-bottom: 20px; }
-        .card { background-color: white; border: 1px solid var(--shellstone); padding: 15px; border-radius: 8px; flex: 1; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .dashboard-cards { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;}
+        .card { background-color: white; border: 1px solid var(--shellstone); padding: 15px; border-radius: 8px; flex: 1; min-width: 150px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
         .card h5 { margin: 0 0 5px 0; font-size: 12px; color: var(--sapphire); text-transform: uppercase; }
         .card .amount { font-size: 22px; font-weight: bold; color: var(--royal-blue); }
 
-        .btn-group { display: flex; gap: 10px; margin-bottom: 15px;}
-        .btn-export { flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
+        .btn-export { flex: 1; min-width: 150px; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
         .btn-kas { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;} .btn-kas:hover { background-color: #c8e6c9; }
         .btn-fines { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;} .btn-fines:hover { background-color: #ffcdd2; }
         .btn-rewards { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;} .btn-rewards:hover { background-color: #e1bee7; }
 
-        .table-container { overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); flex-grow: 1;}
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 30px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead { position: sticky; top: 0; z-index: 1;}
         th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
@@ -58,9 +63,9 @@
         .plus { color: var(--success); }
         .minus { color: var(--danger); }
         
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 800px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        /* FIX: Ukuran Modal disusutkan dan diberi overflow */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 600px; max-width: 95%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 15px;}
         
         .preview-table-container { overflow-y: auto; border: 1px solid var(--shellstone); border-radius: 4px; flex-grow: 1; margin-bottom: 15px;}
@@ -83,8 +88,8 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary')">Salary Master</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
             <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
@@ -113,7 +118,7 @@
 
             <!-- ARSIP CONTROLLER -->
             <div class="period-controller">
-                <div style="display:flex; align-items:center; gap:15px;">
+                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
                     <label>Select Financial Period:</label>
                     <div class="filter-group">
                         <select id="monthSelector" class="selector-box" onchange="onMonthChange()"></select>
@@ -133,7 +138,6 @@
                 </div>
 
                 <div class="btn-group">
-                    <!-- TOMBOL ALL DIHAPUS (Hanya satu jenis per PDF) -->
                     <button class="btn-export btn-kas" onclick="openPreview('DUES')">💰 Preview Petty Cash</button>
                     <button class="btn-export btn-fines" onclick="openPreview('FINES')">⚠️ Preview Fines</button>
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Rewards</button>
@@ -187,9 +191,9 @@
         // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT WEB APP KAMU!
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
         
-        // Mengambil data sesi dari localStorage (biasanya di-set saat login di Vercel)
-        let loggedInUser = localStorage.getItem('username') || "Guest";
-        let userRole = (localStorage.getItem('userRole') || "unknown").toLowerCase();
+        // Mengambil data sesi dari localStorage
+        let loggedInUser = localStorage.getItem('session_username') || "Guest";
+        let userRole = (localStorage.getItem('session_role') || "unknown").toLowerCase();
         
         var periodConfigStore = {}; 
         var masterFinanceList = []; 
@@ -216,9 +220,9 @@
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            var sopMenu = document.querySelector('.menu-sop');
+            var dirMenu = document.querySelector('.menu-taskdirectory');
             var tmMenu = document.querySelector('.menu-taskmaster');
-            if (sopMenu) sopMenu.style.display = 'block';
+            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
             if (tmMenu) tmMenu.style.display = 'block';
 
             if (isHH) {
@@ -235,27 +239,27 @@
             }
         }
 
-        // Navigasi Standar Vercel (Routing Client-Side)
+        // Navigasi Standar Vercel
         function navigateHome() {
             var targetPage = 'headhouse';
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
             else if (userRole.includes('editor')) targetPage = 'editor';
             else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = '/' + targetPage;
+            window.location.href = targetPage + '-dashboard.html';
         }
 
         function navigate(targetPage) {
-            window.location.href = '/' + targetPage;
+            window.location.href = targetPage + '.html';
         }
 
         function logout() {
             localStorage.clear();
-            window.location.href = '/login';
+            window.location.href = 'index.html';
         }
 
         // ==========================================
-        // 3. API FETCH (GANTI google.script.run JADI fetch POST)
+        // 3. API FETCH (VERCEL SYNC)
         // ==========================================
         async function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block';
@@ -360,7 +364,7 @@
             var sumKas = 0, sumFines = 0, sumRewards = 0;
 
             if (masterFinanceList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:gray;">No financial records found for this period.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:gray; padding: 20px;">No financial records found for this period.</td></tr>';
             } else {
                 masterFinanceList.forEach(function(s) {
                     sumKas += s.kas; sumFines += s.denda; sumRewards += s.reward;
@@ -379,7 +383,7 @@
 
             document.getElementById('sumDues').innerText = 'ʛ' + formatMoney(sumKas);
             document.getElementById('sumFines').innerText = '-ʛ' + formatMoney(sumFines);
-            document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); // REWARD MENJADI PENGURANGAN
+            document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
         }
 
         function openPreview(type) {
@@ -395,17 +399,17 @@
             var weekLabel = document.getElementById('weekSelector').value;
             var periodString = monthLabel + " - " + weekLabel;
 
-            var headersHtml = "<tr><th>Period</th><th>Vault Code</th><th>Username</th><th>Room</th>";
+            var headersHtml = "<tr><th>Period</th><th>Vault</th><th>Username</th><th>Room</th>";
             
             if(type === 'DUES') {
                 title.innerText = "Preview: Petty Cash Data Download";
-                headersHtml += "<th>Petty Cash Amount</th></tr>";
+                headersHtml += "<th>Amount</th></tr>";
             } else if (type === 'FINES') {
                 title.innerText = "Preview: Fines Data Download";
-                headersHtml += "<th>Fines Amount</th></tr>";
+                headersHtml += "<th>Amount</th></tr>";
             } else if (type === 'REWARDS') {
                 title.innerText = "Preview: Rewards Data Download";
-                headersHtml += "<th>Reward Deduction</th></tr>";
+                headersHtml += "<th>Deduction</th></tr>";
             }
             thead.innerHTML = headersHtml;
 
@@ -433,11 +437,11 @@
         }
 
         // ==========================================
-        // EXPORT TO PDF LOGIC (MASING-MASING JENIS)
+        // EXPORT TO PDF LOGIC
         // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
-            btn.innerText = "⏳ Generating PDF...";
+            btn.innerText = "⏳ Generating...";
             btn.disabled = true;
 
             var month = document.getElementById('monthSelector').value.replace(/\s+/g, '_');
@@ -504,7 +508,7 @@
 
             tableHtml += `</tr></tbody></table>`;
 
-            // HIGHLIGHT TOTAL DI BAWAH (REWARDS MINUS)
+            // HIGHLIGHT TOTAL DI BAWAH
             var footerHtml = `<table style="width: 80%; margin: 20px auto 0; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
             
             if (currentDownloadType === 'DUES') {
