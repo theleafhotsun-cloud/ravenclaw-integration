@@ -65,13 +65,22 @@
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
         tr:hover { background-color: var(--swan-wing); }
         
-        .edit-input { width: 80px; padding: 5px; border: 1px solid var(--shellstone); border-radius: 4px; font-family: inherit; font-size: 12px; background-color: #fcfcfc;}
+        .edit-input { padding: 5px; border: 1px solid var(--shellstone); border-radius: 4px; font-family: inherit; font-size: 12px; background-color: #fcfcfc;}
         .edit-input:focus { border-color: var(--sapphire); outline: none; background-color: #fff;}
         .edit-input.code { width: 60px; font-weight: bold;}
         .edit-input.text { width: 90px;}
+        .edit-input.name-col { width: 100px; font-weight: bold; background: transparent; border-color: transparent;}
+        .edit-input.name-col:focus { background: white; border-color: var(--sapphire); }
+        .edit-input.notes { width: 110px; font-style: italic; }
 
         .total-display { font-weight: bold; color: var(--royal-blue); font-size: 13px; }
         .kpi-info { font-size: 10px; color: gray; display: block; margin-top: 2px;}
+
+        .btn-del-row { background: transparent; border: none; cursor: pointer; font-size: 14px; transition: transform 0.2s; }
+        .btn-del-row:hover { transform: scale(1.3); }
+
+        .btn-add-row { margin-top: 15px; background: var(--sapphire); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.3s;}
+        .btn-add-row:hover { background: var(--royal-blue); }
 
         /* Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
@@ -169,7 +178,7 @@
                 <button class="btn-master-pdf" onclick="openPrintSettings()">🖨️ Master Salary PDF Settings</button>
             </div>
 
-            <!-- FOLDER DATA SNAPSHOT (Menyimpan Tabel) -->
+            <!-- FOLDER DATA SNAPSHOT -->
             <div class="preset-box" style="border-color: var(--sapphire); background-color: #f8f9fa;">
                 <strong>🗂️ Data Table Folders (Saved Snapshots)</strong>
                 <div class="preset-controls">
@@ -180,7 +189,7 @@
                     <button class="btn-preset save" onclick="saveSnapshot()">Save Current Table to Folder</button>
                     <button class="btn-preset delete" onclick="deleteSnapshot()">Delete Folder</button>
                 </div>
-                <div style="font-size:10px; color:gray; margin-top:5px;">💡 Fill in the Vault Codes and Adjustments below, then click "Save to Folder". Your edited data will be saved here safely, even if new data enters the Live Database next month!</div>
+                <div style="font-size:10px; color:gray; margin-top:5px;">💡 Tweak the numbers, add/delete rows, or write notes. Then click "Save to Folder". Your data will be saved safely!</div>
             </div>
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Calculating salaries from Work Reports...</div>
@@ -196,7 +205,9 @@
                             <th>Dur</th>
                             <th>Pos. Bonus</th>
                             <th>Perf. Bonus</th>
+                            <th>Notes</th>
                             <th>Total Salary</th>
+                            <th style="text-align: center;">Act</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -204,12 +215,17 @@
                     </tbody>
                     <tfoot id="tableFooter" style="display: none;">
                         <tr style="background-color: var(--swan-wing); border-top: 2px solid var(--royal-blue);">
-                            <td colspan="7" style="text-align: right; font-weight: bold; font-size: 13px; text-transform: uppercase;">Grand Total:</td>
+                            <td colspan="8" style="text-align: right; font-weight: bold; font-size: 13px; text-transform: uppercase;">Grand Total:</td>
                             <td id="webGrandTotal" class="total-display" style="font-size: 14px;">ʛ0</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
+
+            <!-- Tombol Tambah Baris Manual -->
+            <button class="btn-add-row" id="btnAddRow" style="display:none;" onclick="addManualRow()">➕ Tambah Baris Manual</button>
+
         </div>
     </div>
 
@@ -218,7 +234,6 @@
         <div class="modal-box">
             <h3>Document Settings & Presets</h3>
             
-            <!-- Preset Management Section -->
             <div class="preset-box">
                 <strong>📄 Save/Load Document PDF Settings</strong>
                 <div class="preset-controls">
@@ -314,6 +329,7 @@
                 </tr>
             </thead>
             <tbody id="masterTableBody">
+                <!-- Data injected by JS upon printing -->
             </tbody>
         </table>
         
@@ -363,6 +379,8 @@
 
         let salaryDataStore = [];
         let currentGrandTotal = 0; 
+        let manualRowCounter = 9000; // Mulai angka index tinggi agar tidak bentrok dengan data database
+        
         const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
         const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
 
@@ -402,22 +420,27 @@
             if (!snapName) return;
 
             let snapData = [];
-            const rowsCount = document.querySelectorAll('#tableBody tr').length;
+            const rows = document.querySelectorAll('#tableBody tr');
             
-            for (let i = 0; i < rowsCount; i++) {
-                const tr = document.querySelectorAll('#tableBody tr')[i];
+            for (let i = 0; i < rows.length; i++) {
+                const tr = rows[i];
                 if(!tr) continue;
                 
+                const baseInput = tr.querySelector('input[id^="base_"]');
+                if(!baseInput) continue;
+                const idx = baseInput.id.split('_')[1];
+
                 snapData.push({
-                    username: tr.getAttribute('data-username'),
+                    username: document.getElementById(`name_${idx}`).value,
                     kpi: tr.getAttribute('data-kpi'),
                     targetTugas: tr.getAttribute('data-target'),
-                    vault: document.getElementById(`vault_${i}`).value,
-                    position: document.getElementById(`pos_${i}`).value,
-                    baseSalary: Number(document.getElementById(`base_${i}`).value),
-                    durasi: Number(document.getElementById(`dur_${i}`).value),
-                    positionBonus: Number(document.getElementById(`posBonus_${i}`).value),
-                    performanceBonus: Number(document.getElementById(`perfBonus_${i}`).value)
+                    vault: document.getElementById(`vault_${idx}`).value,
+                    position: document.getElementById(`pos_${idx}`).value,
+                    baseSalary: Number(document.getElementById(`base_${idx}`).value),
+                    durasi: Number(document.getElementById(`dur_${idx}`).value),
+                    positionBonus: Number(document.getElementById(`posBonus_${idx}`).value),
+                    performanceBonus: Number(document.getElementById(`perfBonus_${idx}`).value),
+                    notes: document.getElementById(`notes_${idx}`).value
                 });
             }
 
@@ -431,7 +454,7 @@
         function loadSnapshot() {
             const key = document.getElementById('snapshotSelect').value;
             if (key === "LIVE") {
-                filterByMonth(); // Kembali panggil data Live dari GAS
+                filterByMonth(); 
             } else {
                 const data = getSnapshots()[key];
                 if (data) renderTable(data, true);
@@ -451,6 +474,41 @@
             filterByMonth();
         }
 
+        // --- SISTEM BARIS MANUAL & HAPUS BARIS ---
+        function deleteRow(btnElement) {
+            if (confirm("Hapus baris ini dari tampilan?")) {
+                btnElement.closest('tr').remove();
+                recalculate();
+            }
+        }
+
+        function addManualRow() {
+            const tbody = document.getElementById('tableBody');
+            const index = manualRowCounter++;
+            
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-kpi', 0);
+            tr.setAttribute('data-target', 0);
+
+            tr.innerHTML = `
+                <td>
+                    <input type="text" class="edit-input name-col" id="name_${index}" value="" placeholder="Type Name...">
+                    <span class="kpi-info">KPI: 0% | Target: 0</span>
+                </td>
+                <td><input type="text" class="edit-input code" id="vault_${index}" value="" placeholder="Code"></td>
+                <td><input type="text" class="edit-input text" id="pos_${index}" value=""></td>
+                <td><input type="number" class="edit-input" id="base_${index}" value="0" oninput="recalculate()"></td>
+                <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="1" oninput="recalculate()"></td>
+                <td><input type="number" class="edit-input" id="posBonus_${index}" value="0" oninput="recalculate()"></td>
+                <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="0" oninput="recalculate()"></td>
+                <td><input type="text" class="edit-input notes" id="notes_${index}" value="" placeholder="Notes..."></td>
+                <td class="total-display" id="totalDisplay_${index}">ʛ0</td>
+                <td style="text-align:center;"><button class="btn-del-row" onclick="deleteRow(this)" title="Hapus Baris">🗑️</button></td>
+            `;
+            tbody.appendChild(tr);
+            recalculate();
+        }
+
         // --- SISTEM RENDER TABEL UTAMA ---
         function formatMoney(num) { return Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }); }
 
@@ -466,7 +524,6 @@
         }
 
         function filterByMonth() {
-            // Pastikan dropdown folder snapshot pindah ke LIVE
             document.getElementById('snapshotSelect').value = "LIVE";
             const selectedMonth = document.getElementById('monthFilter').value;
             if (selectedMonth === 'ALL') renderTable(salaryDataStore);
@@ -477,17 +534,18 @@
             document.getElementById('loadingMsg').style.display = 'none';
             document.getElementById('salaryTable').style.display = 'table';
             document.getElementById('tableFooter').style.display = 'table-footer-group';
+            document.getElementById('btnAddRow').style.display = 'inline-block'; // Tampilkan tombol tambah
+            
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
             if (!data || data.length === 0 || data.error) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.error || 'No reports found.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">${data.error || 'No reports found.'}</td></tr>`;
                 document.getElementById('tableFooter').style.display = 'none';
                 return;
             }
 
             data.forEach((row, index) => {
-                // Kalkulasi bonus gabungan jika ini data Live dari GAS
                 let perfBonusToDisplay = 0;
                 if(isSnapshot) {
                     perfBonusToDisplay = row.performanceBonus || 0;
@@ -496,20 +554,23 @@
                 }
 
                 const tr = document.createElement('tr');
-                // Menyimpan data murni ke elemen agar bisa diambil saat disave jadi Snapshot
-                tr.setAttribute('data-username', row.username || '');
                 tr.setAttribute('data-kpi', row.kpi || 0);
                 tr.setAttribute('data-target', row.targetTugas || 0);
 
                 tr.innerHTML = `
-                    <td><strong>${row.username}</strong><span class="kpi-info">KPI: ${row.kpi || 0}% | Target: ${row.targetTugas || 0}</span></td>
+                    <td>
+                        <input type="text" class="edit-input name-col" id="name_${index}" value="${row.username || ''}" placeholder="Name">
+                        <span class="kpi-info">KPI: ${row.kpi || 0}% | Target: ${row.targetTugas || 0}</span>
+                    </td>
                     <td><input type="text" class="edit-input code" id="vault_${index}" value="${row.vault || ''}" placeholder="Code"></td>
                     <td><input type="text" class="edit-input text" id="pos_${index}" value="${row.position || ''}"></td>
                     <td><input type="number" class="edit-input" id="base_${index}" value="${row.baseSalary || 0}" oninput="recalculate()"></td>
                     <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="${row.durasi || 0}" oninput="recalculate()"></td>
                     <td><input type="number" class="edit-input" id="posBonus_${index}" value="${row.positionBonus || 0}" oninput="recalculate()"></td>
                     <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="${perfBonusToDisplay}" oninput="recalculate()"></td>
+                    <td><input type="text" class="edit-input notes" id="notes_${index}" value="${row.notes || ''}" placeholder="Notes..."></td>
                     <td class="total-display" id="totalDisplay_${index}">ʛ0</td>
+                    <td style="text-align:center;"><button class="btn-del-row" onclick="deleteRow(this)" title="Hapus Baris">🗑️</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -518,20 +579,25 @@
 
         function recalculate() {
             let tempGrandTotal = 0;
-            const rowsCount = document.querySelectorAll('#tableBody tr').length;
+            const rows = document.querySelectorAll('#tableBody tr');
 
-            for(let index = 0; index < rowsCount; index++) {
-                const base = Number(document.getElementById(`base_${index}`).value) || 0;
-                const dur = Number(document.getElementById(`dur_${index}`).value) || 0;
-                const posBonus = Number(document.getElementById(`posBonus_${index}`).value) || 0;
-                const perfBonus = Number(document.getElementById(`perfBonus_${index}`).value) || 0;
+            rows.forEach((tr) => {
+                const baseInput = tr.querySelector('input[id^="base_"]');
+                if(!baseInput) return;
+                
+                const idx = baseInput.id.split('_')[1];
+
+                const base = Number(document.getElementById(`base_${idx}`).value) || 0;
+                const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
+                const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
+                const perfBonus = Number(document.getElementById(`perfBonus_${idx}`).value) || 0;
                 
                 const calculatedSalary = base * dur;
                 const grandTotal = calculatedSalary + posBonus + perfBonus;
                 
-                document.getElementById(`totalDisplay_${index}`).innerText = "ʛ" + formatMoney(grandTotal);
+                document.getElementById(`totalDisplay_${idx}`).innerText = "ʛ" + formatMoney(grandTotal);
                 tempGrandTotal += grandTotal;
-            }
+            });
 
             currentGrandTotal = tempGrandTotal;
             document.getElementById('webGrandTotal').innerText = "ʛ" + formatMoney(currentGrandTotal);
@@ -700,15 +766,20 @@
             tbody.innerHTML = '';
             
             let currentData = [];
-            const rowsCount = document.querySelectorAll('#tableBody tr').length;
+            const rows = document.querySelectorAll('#tableBody tr');
 
-            for (let i = 0; i < rowsCount; i++) {
-                const vaultVal = document.getElementById(`vault_${i}`).value || "-";
-                const pos = document.getElementById(`pos_${i}`).value;
-                const base = Number(document.getElementById(`base_${i}`).value) || 0;
-                const dur = Number(document.getElementById(`dur_${i}`).value) || 0;
-                const posBonus = Number(document.getElementById(`posBonus_${i}`).value) || 0;
-                const perfBonus = Number(document.getElementById(`perfBonus_${i}`).value) || 0;
+            rows.forEach((tr) => {
+                const baseInput = tr.querySelector('input[id^="base_"]');
+                if(!baseInput) return;
+                
+                const idx = baseInput.id.split('_')[1];
+
+                const vaultVal = document.getElementById(`vault_${idx}`).value || "-";
+                const pos = document.getElementById(`pos_${idx}`).value;
+                const base = Number(document.getElementById(`base_${idx}`).value) || 0;
+                const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
+                const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
+                const perfBonus = Number(document.getElementById(`perfBonus_${idx}`).value) || 0;
                 
                 const calcSalary = base * dur;
                 const grandTotal = calcSalary + posBonus + perfBonus;
@@ -719,7 +790,7 @@
                     vault: vaultVal, vaultNum: vaultNum, pos: pos, base: base, dur: dur,
                     calcSalary: calcSalary, posBonus: posBonus, perfBonus: perfBonus, grandTotal: grandTotal
                 });
-            }
+            });
 
             currentData.sort((a, b) => a.vaultNum - b.vaultNum);
 
