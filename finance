@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Finance - Ravenclaw</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --warning: #f57f17;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        
+        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;}
+        .filter-group { display: flex; gap: 10px; align-items: center; }
+        .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
+        
+        .dashboard-cards { display: flex; gap: 15px; margin-bottom: 20px; }
+        .card { background-color: white; border: 1px solid var(--shellstone); padding: 15px; border-radius: 8px; flex: 1; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .card h5 { margin: 0 0 5px 0; font-size: 12px; color: var(--sapphire); text-transform: uppercase; }
+        .card .amount { font-size: 22px; font-weight: bold; color: var(--royal-blue); }
+
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px;}
+        .btn-export { flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
+        .btn-kas { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;} .btn-kas:hover { background-color: #c8e6c9; }
+        .btn-fines { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;} .btn-fines:hover { background-color: #ffcdd2; }
+        .btn-rewards { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;} .btn-rewards:hover { background-color: #e1bee7; }
+
+        .table-container { overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); flex-grow: 1;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 14px;}
+        .money { font-family: monospace; font-weight: bold; font-size: 13px;}
+        .plus { color: var(--success); }
+        .minus { color: var(--danger); }
+        
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 800px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 15px;}
+        
+        .preview-table-container { overflow-y: auto; border: 1px solid var(--shellstone); border-radius: 4px; flex-grow: 1; margin-bottom: 15px;}
+        .preview-table-container table { width: 100%; }
+        .preview-table-container th { background-color: var(--sapphire); font-size: 10px; padding: 8px; text-transform: uppercase;}
+        .preview-table-container td { font-size: 11px; padding: 8px;}
+
+        .modal-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); text-transform: uppercase;}
+        .btn-download { background-color: var(--success); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-transform: uppercase; display: flex; gap: 8px; align-items: center;}
+        .btn-download:disabled { background-color: gray; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')" class="active">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="displayUsername">Guest</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">House Finance Master</h1>
+            </div>
+
+            <!-- ARSIP CONTROLLER -->
+            <div class="period-controller">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <label>Select Financial Period:</label>
+                    <div class="filter-group">
+                        <select id="monthSelector" class="selector-box" onchange="onMonthChange()"></select>
+                        <select id="weekSelector" class="selector-box" onchange="fetchFinanceData()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Compiling financial records across all rooms...</div>
+            
+            <div id="financeContent" style="display:none; display:flex; flex-direction:column; flex-grow:1;">
+                <div class="dashboard-cards">
+                    <div class="card"><h5>Total Petty Cash (Dues)</h5><div class="amount" id="sumDues">ʛ0</div></div>
+                    <div class="card"><h5>Total Fines</h5><div class="amount minus" id="sumFines">ʛ0</div></div>
+                    <!-- REWARD SEKARANG MOTONG (MINUS) -->
+                    <div class="card"><h5>Total Rewards (Deduction)</h5><div class="amount minus" id="sumRewards">ʛ0</div></div>
+                </div>
+
+                <div class="btn-group">
+                    <!-- TOMBOL ALL DIHAPUS (Hanya satu jenis per PDF) -->
+                    <button class="btn-export btn-kas" onclick="openPreview('DUES')">💰 Preview Petty Cash</button>
+                    <button class="btn-export btn-fines" onclick="openPreview('FINES')">⚠️ Preview Fines</button>
+                    <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Rewards</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Vault Code</th>
+                                <th>Username</th>
+                                <th>Room</th>
+                                <th>Petty Cash</th>
+                                <th>Fines</th>
+                                <th>Summaries Reward</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREVIEW MODAL -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-box">
+            <h3 id="previewTitle">Preview Data</h3>
+            
+            <div class="preview-table-container">
+                <table id="previewTable">
+                    <thead id="previewThead"></thead>
+                    <tbody id="previewTbody"></tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePreview()">Cancel</button>
+                <button class="btn-download" onclick="downloadPDF()" id="btnDownload">⬇️ Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. GLOBAL VARIABLES & VERCEL ADAPTATION
+        // ==========================================
+        
+        // GANTI URL INI DENGAN URL GOOGLE APPS SCRIPT WEB APP KAMU!
+        const API_URL = "https://script.google.com/macros/s/AKfycb.../exec"; 
+        
+        // Mengambil data sesi dari localStorage (biasanya di-set saat login di Vercel)
+        let loggedInUser = localStorage.getItem('username') || "Guest";
+        let userRole = (localStorage.getItem('userRole') || "unknown").toLowerCase();
+        
+        var periodConfigStore = {}; 
+        var masterFinanceList = []; 
+        var currentDownloadType = "";
+
+        window.onload = function() {
+            document.getElementById("displayUsername").innerText = loggedInUser;
+            setupDynamicSidebar();
+            initPeriodConfig();
+        };
+
+        // ==========================================
+        // 2. LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
+
+            var sopMenu = document.querySelector('.menu-sop');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (sopMenu) sopMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) {
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isLeadroom) {
+                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isEditor) {
+                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+        }
+
+        // Navigasi Standar Vercel (Routing Client-Side)
+        function navigateHome() {
+            var targetPage = 'headhouse';
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = '/' + targetPage;
+        }
+
+        function navigate(targetPage) {
+            window.location.href = '/' + targetPage;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+
+        // ==========================================
+        // 3. API FETCH (GANTI google.script.run JADI fetch POST)
+        // ==========================================
+        async function initPeriodConfig() {
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('financeContent').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
+                });
+                const res = await response.json();
+                
+                if (res.status === "success") {
+                    periodConfigStore = res.data; 
+                    populateMonthDropdown();
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (error) {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + error.message + "</span>";
+            }
+        }
+
+        function populateMonthDropdown() {
+            var monthSel = document.getElementById('monthSelector'); monthSel.innerHTML = '';
+            
+            if(periodConfigStore.activeMonth) {
+                var m = periodConfigStore.activeMonth;
+                var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Active)"; opt.selected = true;
+                monthSel.appendChild(opt);
+            }
+            var archs = periodConfigStore.archivedMonths || [];
+            archs.forEach(function(m) {
+                var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Archive)";
+                monthSel.appendChild(opt);
+            });
+
+            onMonthChange();
+        }
+
+        function onMonthChange() {
+            var selectedMonth = document.getElementById('monthSelector').value;
+            if(!selectedMonth) { document.getElementById('weekSelector').innerHTML=''; return; }
+            var weekSel = document.getElementById('weekSelector'); weekSel.innerHTML = '';
+            for (var i = 1; i <= 4; i++) {
+                var opt = document.createElement('option'); opt.value = "Week " + i; opt.innerText = "Period: Week " + i;
+                weekSel.appendChild(opt);
+            }
+            fetchFinanceData();
+        }
+
+        async function fetchFinanceData() {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            if(!month) return; 
+            
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('financeContent').style.display = 'none';
+            masterFinanceList = [];
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "getActiveRoomData", month: month, week: week })
+                });
+                const res = await response.json();
+                
+                if (res.status === "success" && res.data) {
+                    var data = res.data;
+                    var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
+                    rooms.forEach(function(rName) {
+                        var students = data.rooms[rName] || [];
+                        students.forEach(function(s) {
+                            if (s.kas > 0 || s.denda > 0 || s.reward > 0) {
+                                masterFinanceList.push({
+                                    vault: s.vault, username: s.username, room: rName,
+                                    kas: s.kas || 0, denda: s.denda || 0, reward: s.reward || 0
+                                });
+                            }
+                        });
+                    });
+
+                    masterFinanceList.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
+                    renderMasterTable();
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (error) {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + error.message + "</span>";
+            }
+        }
+
+        function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
+
+        function renderMasterTable() {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('financeContent').style.display = 'flex';
+
+            var tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            var sumKas = 0, sumFines = 0, sumRewards = 0;
+
+            if (masterFinanceList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:gray;">No financial records found for this period.</td></tr>';
+            } else {
+                masterFinanceList.forEach(function(s) {
+                    sumKas += s.kas; sumFines += s.denda; sumRewards += s.reward;
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="vault-tag">${s.vault}</td>
+                        <td><b>${s.username}</b></td>
+                        <td style="color:var(--sapphire); font-weight:bold;">${s.room}</td>
+                        <td class="money">ʛ${formatMoney(s.kas)}</td>
+                        <td class="money ${s.denda > 0 ? 'minus':''}">${s.denda > 0 ? '-ʛ'+formatMoney(s.denda) : 'ʛ0'}</td>
+                        <td class="money ${s.reward > 0 ? 'minus':''}">${s.reward > 0 ? '-ʛ'+formatMoney(s.reward) : 'ʛ0'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            document.getElementById('sumDues').innerText = 'ʛ' + formatMoney(sumKas);
+            document.getElementById('sumFines').innerText = '-ʛ' + formatMoney(sumFines);
+            document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); // REWARD MENJADI PENGURANGAN
+        }
+
+        function openPreview(type) {
+            if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
+            currentDownloadType = type;
+            
+            var title = document.getElementById('previewTitle');
+            var thead = document.getElementById('previewThead');
+            var tbody = document.getElementById('previewTbody');
+            thead.innerHTML = ''; tbody.innerHTML = '';
+            
+            var monthLabel = document.getElementById('monthSelector').value;
+            var weekLabel = document.getElementById('weekSelector').value;
+            var periodString = monthLabel + " - " + weekLabel;
+
+            var headersHtml = "<tr><th>Period</th><th>Vault Code</th><th>Username</th><th>Room</th>";
+            
+            if(type === 'DUES') {
+                title.innerText = "Preview: Petty Cash Data Download";
+                headersHtml += "<th>Petty Cash Amount</th></tr>";
+            } else if (type === 'FINES') {
+                title.innerText = "Preview: Fines Data Download";
+                headersHtml += "<th>Fines Amount</th></tr>";
+            } else if (type === 'REWARDS') {
+                title.innerText = "Preview: Rewards Data Download";
+                headersHtml += "<th>Reward Deduction</th></tr>";
+            }
+            thead.innerHTML = headersHtml;
+
+            masterFinanceList.forEach(function(s) {
+                if(type === 'DUES' && s.kas <= 0) return;
+                if(type === 'FINES' && s.denda <= 0) return;
+                if(type === 'REWARDS' && s.reward <= 0) return;
+
+                var tr = document.createElement('tr');
+                var rowHtml = `<td>${periodString}</td><td style="font-family:monospace; font-weight:bold;">${s.vault}</td><td>${s.username}</td><td>${s.room}</td>`;
+
+                if(type === 'DUES') { rowHtml += `<td>ʛ${formatMoney(s.kas)}</td>`; } 
+                else if (type === 'FINES') { rowHtml += `<td style="color:red;">-ʛ${formatMoney(s.denda)}</td>`; } 
+                else if (type === 'REWARDS') { rowHtml += `<td style="color:red;">-ʛ${formatMoney(s.reward)}</td>`; } 
+
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // ==========================================
+        // EXPORT TO PDF LOGIC (MASING-MASING JENIS)
+        // ==========================================
+        function downloadPDF() {
+            var btn = document.getElementById('btnDownload');
+            btn.innerText = "⏳ Generating PDF...";
+            btn.disabled = true;
+
+            var month = document.getElementById('monthSelector').value.replace(/\s+/g, '_');
+            var week = document.getElementById('weekSelector').value.replace(/\s+/g, '');
+            var monthLabel = document.getElementById('monthSelector').value;
+            var weekLabel = document.getElementById('weekSelector').value;
+            
+            var filename = "Ravenclaw_Finance_" + currentDownloadType + "_" + month + "_" + week + ".pdf";
+            
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yy = String(today.getFullYear()).slice(-2);
+            var dateStr = dd + "/" + mm + "/" + yy;
+
+            var subjectStr = "";
+            if(currentDownloadType === 'DUES') subjectStr = "Petty Cash - " + monthLabel + " " + weekLabel;
+            else if (currentDownloadType === 'FINES') subjectStr = "Fines - " + monthLabel + " " + weekLabel;
+            else if (currentDownloadType === 'REWARDS') subjectStr = "Summaries Reward (Deduction) - " + monthLabel + " " + weekLabel;
+
+            var tKas = 0, tFines = 0, tRewards = 0;
+            var tableHtml = `
+                <table style="width: 80%; margin: 15px auto; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 40px;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Username</th>
+            `;
+            
+            if (currentDownloadType === 'DUES') tableHtml += `<th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Petty Cash Amount</th>`;
+            else if (currentDownloadType === 'FINES') tableHtml += `<th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Fines Amount</th>`;
+            else if (currentDownloadType === 'REWARDS') tableHtml += `<th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Reward Deduction</th>`;
+            
+            tableHtml += `</tr></thead><tbody>`;
+
+            var counter = 1;
+            masterFinanceList.forEach(s => {
+                if(currentDownloadType === 'DUES' && s.kas <= 0) return;
+                if(currentDownloadType === 'FINES' && s.denda <= 0) return;
+                if(currentDownloadType === 'REWARDS' && s.reward <= 0) return;
+
+                tKas += s.kas; tFines += s.denda; tRewards += s.reward;
+
+                tableHtml += `<tr>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold;">${s.vault}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${s.username}</td>`;
+                    
+                if(currentDownloadType === 'DUES') tableHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">ʛ${formatMoney(s.kas)}</td>`;
+                else if (currentDownloadType === 'FINES') tableHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(s.denda)}</td>`;
+                else if (currentDownloadType === 'REWARDS') tableHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(s.reward)}</td>`;
+                
+                tableHtml += `</tr>`;
+            });
+
+            // BARIS TOTAL
+            tableHtml += `<tr style="background-color: #f0f0f0; font-weight: bold;">
+                <td colspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: right;">GRAND TOTAL</td>`;
+                
+            if(currentDownloadType === 'DUES') tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center;">ʛ${formatMoney(tKas)}</td>`;
+            else if (currentDownloadType === 'FINES') tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(tFines)}</td>`;
+            else if (currentDownloadType === 'REWARDS') tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(tRewards)}</td>`;
+
+            tableHtml += `</tr></tbody></table>`;
+
+            // HIGHLIGHT TOTAL DI BAWAH (REWARDS MINUS)
+            var footerHtml = `<table style="width: 80%; margin: 20px auto 0; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
+            
+            if (currentDownloadType === 'DUES') {
+                footerHtml += `<tr><td style="padding: 12px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tKas)} to Ravenclaw Petty Cash</td></tr>`;
+            } else if (currentDownloadType === 'FINES') {
+                footerHtml += `<tr><td style="padding: 12px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tFines)} from Ravenclaw Total Kas</td></tr>`;
+            } else if (currentDownloadType === 'REWARDS') {
+                footerHtml += `<tr><td style="padding: 12px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tRewards)} deducted from Petty Cash</td></tr>`;
+            }
+            footerHtml += `</table>`;
+
+            var pdfContainer = document.createElement('div');
+            pdfContainer.innerHTML = `
+                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #112250;">
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 90px; height: auto;">
+                    </div>
+                    <hr style="border: 0; border-top: 3px solid #112250; margin-bottom: 20px;">
+                    
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; padding: 0 10%;">
+                        <div><b>Subject:</b> ${subjectStr}</div>
+                        <div>${dateStr}</div>
+                    </div>
+                    
+                    ${tableHtml}
+                    ${footerHtml}
+                    
+                    <div style="margin-top: 50px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 15px; width: 80%; margin-left: auto; margin-right: auto;">
+                        <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
+                        Hogwarts School of Witchcraft and Wizardry<br>
+                        Highlands, Scotland, Great Britain
+                    </div>
+                </div>
+            `;
+
+            var opt = {
+                margin:       [0, 0, 0, 0], 
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(pdfContainer).save().then(function() {
+                btn.innerText = "⬇️ Download PDF";
+                btn.disabled = false;
+                closePreview();
+            }).catch(function(err) {
+                alert("Failed to generate PDF. Please try again.");
+                btn.innerText = "⬇️ Download PDF";
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
