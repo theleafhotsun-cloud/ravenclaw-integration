@@ -36,8 +36,7 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN BUG LANDSCAPE: Menghapus flex-direction pada content area agar scroll natural */
-        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
+        .content-area { padding: 30px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap;}
         .page-title { color: var(--royal-blue); margin: 0; }
@@ -50,8 +49,7 @@
         .btn-restore { background-color: var(--swan-wing); color: var(--sapphire); border: 1px solid var(--sapphire); padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: all 0.3s; }
         .btn-restore:hover { background-color: var(--sapphire); color: white; }
         
-        /* PERBAIKAN BUG LANDSCAPE: Menghapus flex-grow pada tabel */
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; }
         
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 13px; vertical-align: middle;}
@@ -78,16 +76,9 @@
         .btn-archive { background-color: var(--shellstone); color: var(--royal-blue); border: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
         .btn-archive:hover { background-color: var(--danger); color: white; }
 
-        /* PERBAIKAN BUG LANDSCAPE: Memberikan flex-shrink 0 agar kotak ini tidak pernah terpotong */
-        .monitoring-panel { background-color: var(--swan-wing); border: 2px dashed var(--sapphire); border-radius: 8px; padding: 20px; margin-bottom: 40px; flex-shrink: 0; }
-        .monitoring-panel h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; font-size: 15px; }
-        .tracker-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
-        .btn-tracker { background-color: var(--sapphire); color: var(--swan-wing); border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: all 0.3s; flex-grow: 1; text-align: center; }
-        .btn-tracker:hover { background-color: var(--royal-blue); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);}
-
         /* Evaluation Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 500px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 500px; max-width: 95%; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; }
         
         .eval-summary { background-color: white; padding: 10px; border-radius: 4px; border: 1px dashed var(--shellstone); margin-bottom: 15px; font-size: 12px; }
@@ -167,14 +158,6 @@
                         <!-- Data injected via JS -->
                     </tbody>
                 </table>
-            </div>
-
-            <!-- This panel is hidden by default, exclusive for Headhouse -->
-            <div class="monitoring-panel" id="monitoringPanel" style="display: none;">
-                <h3>Live Tracker Monitoring (Open in New Tab)</h3>
-                <div class="tracker-buttons" id="dynamicTrackerButtons">
-                    <div style="font-size: 12px; color: gray;">Loading registered caretakers...</div>
-                </div>
             </div>
 
         </div>
@@ -282,13 +265,6 @@
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
 
-            // Exclusive Headhouse Monitoring Panel
-            var monitorPanel = document.getElementById('monitoringPanel');
-            if (isHH && monitorPanel) {
-                monitorPanel.style.display = 'block';
-                loadTrackerButtons(); 
-            }
-
             var sopMenu = document.querySelector('.menu-sop');
             var tmMenu = document.querySelector('.menu-taskmaster');
             if (sopMenu) sopMenu.style.display = 'block';
@@ -313,39 +289,9 @@
         function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
         function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
 
-        function openTrackerTab(targetRoute, targetUsername) {
-            const tabUrl = targetRoute + "-dashboard.html"; // Open corresponding HTML
-            window.open(tabUrl, '_blank');
-        }
-
         // ==========================================
         // 4. LOGIKA WORK REPORT & EVALUASI
         // ==========================================
-        function loadTrackerButtons() {
-            fetch(API_URL, {
-                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getRegisteredCaretakers" })
-            })
-            .then(r => r.json())
-            .then(res => {
-                const container = document.getElementById('dynamicTrackerButtons');
-                container.innerHTML = '';
-                
-                if(!res.data || res.data.length === 0) {
-                    container.innerHTML = '<div style="font-size:12px; color:gray;">No registered caretakers found in database.</div>';
-                    return;
-                }
-                
-                res.data.forEach(c => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-tracker';
-                    btn.innerHTML = `👁️ View ${c.username} <br><span style="font-size:10px; font-weight:normal;">(${c.position})</span>`;
-                    btn.onclick = function() { openTrackerTab(c.route, c.username); };
-                    container.appendChild(btn);
-                });
-            });
-        }
-
         function fetchReports() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Fetching submitted reports...";
