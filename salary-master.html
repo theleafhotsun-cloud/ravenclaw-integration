@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Master - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D;
+            --royal-blue: #112250;
+            --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9;
+            --shellstone: #D9CBC2;
+            --success: #2e7d32;
+            --danger: #c62828;
+            --warning: #f57f17;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar Styles */
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        .content-area { padding: 30px; }
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;}
+        .page-title { color: var(--royal-blue); margin: 0; }
+        
+        .filter-container { display: flex; align-items: center; gap: 10px; }
+        .filter-container label { font-size: 13px; font-weight: bold; color: var(--royal-blue); }
+        .filter-container select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; background-color: white; color: var(--royal-blue); font-weight: bold;}
+
+        .btn-master-pdf { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-transform: uppercase; transition: background 0.3s; }
+        .btn-master-pdf:hover { background-color: var(--sapphire); }
+
+        /* Editable Table Styles */
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .edit-input { width: 80px; padding: 5px; border: 1px solid var(--shellstone); border-radius: 4px; font-family: inherit; font-size: 12px; background-color: #fcfcfc;}
+        .edit-input:focus { border-color: var(--sapphire); outline: none; background-color: #fff;}
+        .edit-input.code { width: 60px; font-weight: bold;}
+        .edit-input.text { width: 90px;}
+
+        .total-display { font-weight: bold; color: var(--royal-blue); font-size: 13px; }
+        .kpi-info { font-size: 10px; color: gray; display: block; margin-top: 2px;}
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 600px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 20px;}
+        
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); }
+        
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
+        .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
+
+        /* --- PDF PRINT STYLING --- */
+        #masterPayslipArea { display: none; } 
+
+        @media print {
+            @page { size: A4 portrait; margin: 15mm 15mm 15mm 15mm; }
+            body * { visibility: hidden; }
+            
+            body.print-master #masterPayslipArea, body.print-master #masterPayslipArea * { visibility: visible; }
+            body.print-master #masterPayslipArea { 
+                display: block; position: absolute; left: 0; top: 0; width: 100%; 
+                background-color: white; color: black; 
+                font-family: 'Times New Roman', Times, serif; 
+                page-break-inside: avoid;
+            }
+            
+            .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+            .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
+            .header-text p { font-size: 13px; margin: 0; color: #333; }
+            .header-logo img { width: 75px; height: auto; }
+            
+            .pdf-divider { border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px; }
+            
+            .master-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; page-break-inside: auto; }
+            .master-table tr { page-break-inside: avoid; page-break-after: auto; }
+            .master-table th, .master-table td { border: 1px solid #000; padding: 6px 8px; text-align: center; color: black;}
+            .master-table th { font-weight: bold; font-size: 11px; background-color: #f2f2f2 !important; color: black !important; text-transform: uppercase;}
+            
+            .summary-container { page-break-inside: avoid; }
+            .table-no-border { width: 100%; border-collapse: collapse; }
+            .table-no-border td { border: none !important; padding: 2px 0; text-align: left; font-size: 12px;}
+            
+            .master-summary { width: 50%; font-size: 12px; margin-bottom: 30px; }
+            .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+            
+            .master-signatures { display: flex; justify-content: space-between; font-size: 13px; margin-top: 30px; page-break-inside: avoid; }
+            .sig-block { text-align: center; width: 40%; position: relative;}
+            .sig-block-right { text-align: center; width: 40%; position: relative;}
+            .sig-img { height: 50px; width: auto; display: block; margin: 5px auto; }
+            .sig-line { border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-top: 10px; font-weight: bold; text-align: center; padding-bottom: 3px;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)" class="active">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="display-username">Loading...</span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">Salary Master</h1>
+                
+                <div class="filter-container">
+                    <label for="monthFilter">📁 Period Folder:</label>
+                    <select id="monthFilter" onchange="filterByMonth()">
+                        <option value="ALL">All Active Periods</option>
+                    </select>
+                </div>
+
+                <button class="btn-master-pdf" onclick="openPrintSettings()">🖨️ Download Master Salary PDF</button>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Calculating salaries from Work Reports...</div>
+            
+            <div class="table-container">
+                <table id="salaryTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Vault Code</th>
+                            <th>Position</th>
+                            <th>Base Salary</th>
+                            <th>Dur</th>
+                            <th>Pos. Bonus</th>
+                            <th>Perf. Bonus</th>
+                            <th>Total Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data injected by JS -->
+                    </tbody>
+                    <tfoot id="tableFooter" style="display: none;">
+                        <tr style="background-color: var(--swan-wing); border-top: 2px solid var(--royal-blue);">
+                            <td colspan="7" style="text-align: right; font-weight: bold; font-size: 13px; text-transform: uppercase;">Grand Total:</td>
+                            <td id="webGrandTotal" class="total-display" style="font-size: 14px;">ʛ0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT SETTINGS MODAL -->
+    <div class="modal-overlay" id="printSettingsModal">
+        <div class="modal-box">
+            <h3>Customize Master Salary Document</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Report Month & Year</label>
+                    <input type="text" id="setMonthYear" placeholder="e.g. July 2026">
+                </div>
+                <div class="form-group">
+                    <label>Date of Signature</label>
+                    <input type="text" id="setSignatureDate" placeholder="e.g. July 31st 2026">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Signatory 1 (Left)</label>
+                    <input type="text" id="setSig1" value="Jeremius Alderton">
+                    <input type="text" id="setSigImg1" placeholder="Signature Image URL (Optional)" style="margin-top: 5px; font-size: 11px;">
+                </div>
+                <div class="form-group">
+                    <label>Signatory 2 (Right)</label>
+                    <input type="text" id="setSig2" value="Gresham Adams">
+                    <input type="text" id="setSigImg2" placeholder="Signature Image URL (Optional)" style="margin-top: 5px; font-size: 11px;">
+                </div>
+            </div>
+
+            <h4 style="color: var(--sapphire); border-bottom: 1px solid var(--shellstone); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                Funding Sources Detail
+                <span id="allocStatus" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; font-weight: bold;">Loading...</span>
+            </h4>
+            
+            <div class="form-row">
+                <div class="form-group"><input type="text" id="setSrcName1" value="School's petty cash"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt1" value="4000" oninput="checkAllocation()"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><input type="text" id="setSrcName2" value="Ravenclaw's petty cash"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt2" value="4000" oninput="checkAllocation()"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><input type="text" id="setSrcName3" value="8067"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt3" value="11750" oninput="checkAllocation()"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><input type="text" id="setSrcName4" value="8223"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt4" value="11750" oninput="checkAllocation()"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePrintSettings()">Cancel</button>
+                <button class="btn-submit" onclick="confirmAndPrint()">Generate PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MASTER SALARY REPORT TEMPLATE (OFFICIAL PDF FORMAT) -->
+    <div id="masterPayslipArea">
+        <div class="print-header-container">
+            <div class="header-text">
+                <h1>RAVENCLAW CARETAKERS SALARY</h1>
+                <p id="masterMonthYear"></p>
+            </div>
+            <div class="header-logo">
+                <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
+            </div>
+        </div>
+        
+        <div class="pdf-divider"></div>
+        
+        <table class="master-table">
+            <thead>
+                <tr>
+                    <th>Vault Code</th>
+                    <th>Position</th>
+                    <th>Base Salary</th>
+                    <th>Duration</th>
+                    <th>Salary</th>
+                    <th>Position<br>Bonus</th>
+                    <th>Performance<br>Bonus</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="masterTableBody">
+                <!-- Data injected by JS upon printing -->
+            </tbody>
+        </table>
+        
+        <div class="summary-container">
+            <div class="master-summary">
+                <div class="summary-row" style="font-weight:bold; margin-bottom: 8px; font-size: 13px;">
+                    <span>TOTAL SALARY</span> 
+                    <span id="masterTotalSalary"></span>
+                </div>
+                <div class="summary-row" style="font-weight:bold; margin-bottom: 20px; font-size: 13px;">
+                    <span>TOTAL BONUS</span> 
+                    <span id="masterTotalBonus"></span>
+                </div>
+                
+                <div class="summary-row" style="font-weight:bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px;">
+                    <span>SOURCE</span><span></span>
+                </div>
+                
+                <table class="table-no-border">
+                    <tr><td id="outSrcName1"></td><td style="text-align: right;" id="outSrcAmt1"></td></tr>
+                    <tr><td id="outSrcName2"></td><td style="text-align: right;" id="outSrcAmt2"></td></tr>
+                    <tr><td id="outSrcName3"></td><td style="text-align: right;" id="outSrcAmt3"></td></tr>
+                    <tr><td id="outSrcName4"></td><td style="text-align: right;" id="outSrcAmt4"></td></tr>
+                </table>
+                
+                <div style="font-size:10px; font-style:italic; margin-top:6px;">exclude tax</div>
+            </div>
+            
+            <div class="master-signatures">
+                <div class="sig-block">
+                    <p style="margin: 0; font-size: 12px; visibility: hidden;">Spacer</p>
+                    <div id="sigImgContainer1"></div>
+                    <div class="sig-line" id="outSig1"></div>
+                </div>
+                <div class="sig-block-right">
+                    <p style="margin: 0 0 5px 0; font-size: 12px;">Ravenclaw Tower, <span id="outSigDate"></span></p>
+                    <div id="sigImgContainer2"></div>
+                    <div class="sig-line" id="outSig2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT AREA -->
+    <script>
+        // --- 1. SETTING URL API ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+
+        // --- 2. AMBIL DATA DARI SESI BROWSER ---
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
+        if (!loggedInUser) {
+            window.location.href = "index.html";
+        }
+
+        let salaryDataStore = [];
+        let currentGrandTotal = 0; 
+
+        window.onload = function() {
+            document.getElementById("display-username").innerText = loggedInUser;
+            setupDynamicSidebar();
+
+            // --- 3. FETCH API MENGAMBIL DATA GAJI ---
+            fetch(API_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getSalaryCalculations" })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === "success") {
+                    initSalaryData(result.data);
+                } else {
+                    throw new Error(result.message);
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerText = "Error: " + err.message;
+            });
+        };
+
+        // ==========================================
+        // LOGIKA SIDEBAR
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
+
+            var sopMenu = document.querySelector('.menu-sop');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (sopMenu) sopMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) {
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isLeadroom) {
+                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isEditor) {
+                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+        }
+
+        // ==========================================
+        // LOGIKA NAVIGASI (VERCEL)
+        // ==========================================
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; 
+
+            if (userRole.includes('vp') || userRole.includes('vice')) {
+                targetPage = 'viceprefect';
+            } else if (userRole.includes('prefect')) {
+                targetPage = 'prefect';
+            } else if (userRole.includes('editor')) {
+                targetPage = 'editor';
+            } else if (userRole.includes('leadroom')) {
+                targetPage = 'leadroom';
+            }
+
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage, element) {
+            element.innerText = "Wait..."; 
+            window.location.href = targetPage + ".html";
+        }
+
+        function logout(btnElement) {
+            btnElement.innerText = "Wait...";
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        // ==========================================
+        // LOGIKA SALARY MASTER & PDF
+        // ==========================================
+        function formatMoney(num) {
+            return Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }); 
+        }
+
+        function initSalaryData(data) {
+            salaryDataStore = data;
+            
+            const monthSelect = document.getElementById('monthFilter');
+            const months = [...new Set(data.map(item => item.monthFolder))];
+            
+            months.forEach(m => {
+                if(m) {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.innerText = m;
+                    monthSelect.appendChild(opt);
+                }
+            });
+
+            renderTable(data);
+        }
+
+        function filterByMonth() {
+            const selectedMonth = document.getElementById('monthFilter').value;
+            if (selectedMonth === 'ALL') {
+                renderTable(salaryDataStore);
+            } else {
+                const filtered = salaryDataStore.filter(item => item.monthFolder === selectedMonth);
+                renderTable(filtered);
+            }
+        }
+
+        function renderTable(data) {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('salaryTable').style.display = 'table';
+            document.getElementById('tableFooter').style.display = 'table-footer-group';
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0 || data.error) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.error || 'No approved reports for this period.'}</td></tr>`;
+                document.getElementById('tableFooter').style.display = 'none';
+                return;
+            }
+
+            data.forEach((row, index) => {
+                const totalCombinedBonus = row.performanceBonus + row.backupBonus;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <strong>${row.username}</strong>
+                        <span class="kpi-info">KPI: ${row.kpi}% | Target: ${row.targetTugas}</span>
+                    </td>
+                    <td><input type="text" class="edit-input code" id="vault_${index}" placeholder="Code"></td>
+                    <td><input type="text" class="edit-input text" id="pos_${index}" value="${row.position}"></td>
+                    <td><input type="number" class="edit-input" id="base_${index}" value="${row.baseSalary}" oninput="recalculate()"></td>
+                    <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="${row.durasi}" oninput="recalculate()"></td>
+                    <td><input type="number" class="edit-input" id="posBonus_${index}" value="${row.positionBonus}" oninput="recalculate()"></td>
+                    <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="${totalCombinedBonus}" oninput="recalculate()"></td>
+                    <td class="total-display" id="totalDisplay_${index}">ʛ${formatMoney(row.totalSalary)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            recalculate(); 
+        }
+
+        function recalculate() {
+            let tempGrandTotal = 0;
+            const rowsCount = document.querySelectorAll('#tableBody tr').length;
+
+            for(let index = 0; index < rowsCount; index++) {
+                const base = Number(document.getElementById(`base_${index}`).value) || 0;
+                const dur = Number(document.getElementById(`dur_${index}`).value) || 0;
+                const posBonus = Number(document.getElementById(`posBonus_${index}`).value) || 0;
+                const perfBonus = Number(document.getElementById(`perfBonus_${index}`).value) || 0;
+                
+                const calculatedSalary = base * dur;
+                const grandTotal = calculatedSalary + posBonus + perfBonus;
+                
+                document.getElementById(`totalDisplay_${index}`).innerText = "ʛ" + formatMoney(grandTotal);
+                tempGrandTotal += grandTotal;
+            }
+
+            currentGrandTotal = tempGrandTotal;
+            document.getElementById('webGrandTotal').innerText = "ʛ" + formatMoney(currentGrandTotal);
+            checkAllocation(); 
+        }
+
+        function checkAllocation() {
+            const s1 = Number(document.getElementById('setSrcAmt1').value) || 0;
+            const s2 = Number(document.getElementById('setSrcAmt2').value) || 0;
+            const s3 = Number(document.getElementById('setSrcAmt3').value) || 0;
+            const s4 = Number(document.getElementById('setSrcAmt4').value) || 0;
+            
+            const totalAllocated = s1 + s2 + s3 + s4;
+            const remaining = currentGrandTotal - totalAllocated;
+            const statusEl = document.getElementById('allocStatus');
+
+            if (remaining === 0) {
+                statusEl.innerText = "Perfect Allocation (Remaining: ʛ0)";
+                statusEl.style.backgroundColor = "var(--success)";
+                statusEl.style.color = "white";
+            } else if (remaining > 0) {
+                statusEl.innerText = "Under-funded! Remaining to allocate: ʛ" + formatMoney(remaining);
+                statusEl.style.backgroundColor = "var(--danger)";
+                statusEl.style.color = "white";
+            } else {
+                statusEl.innerText = "Over-allocated by: ʛ" + formatMoney(Math.abs(remaining));
+                statusEl.style.backgroundColor = "var(--warning)";
+                statusEl.style.color = "white";
+            }
+        }
+
+        function openPrintSettings() {
+            const now = new Date();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let d = now.getDate();
+            let suffix = "th";
+            if (d % 10 == 1 && d != 11) suffix = "st";
+            if (d % 10 == 2 && d != 12) suffix = "nd";
+            if (d % 10 == 3 && d != 13) suffix = "rd";
+
+            document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+            document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`;
+            
+            checkAllocation(); 
+            document.getElementById('printSettingsModal').style.display = 'flex';
+        }
+
+        function closePrintSettings() {
+            document.getElementById('printSettingsModal').style.display = 'none';
+        }
+
+        function confirmAndPrint() {
+            const tbody = document.getElementById('masterTableBody');
+            tbody.innerHTML = '';
+            
+            let currentData = [];
+            const rowsCount = document.querySelectorAll('#tableBody tr').length;
+
+            for (let i = 0; i < rowsCount; i++) {
+                const vaultVal = document.getElementById(`vault_${i}`).value || "-";
+                const pos = document.getElementById(`pos_${i}`).value;
+                const base = Number(document.getElementById(`base_${i}`).value) || 0;
+                const dur = Number(document.getElementById(`dur_${i}`).value) || 0;
+                const posBonus = Number(document.getElementById(`posBonus_${i}`).value) || 0;
+                const perfBonus = Number(document.getElementById(`perfBonus_${i}`).value) || 0;
+                
+                const calcSalary = base * dur;
+                const grandTotal = calcSalary + posBonus + perfBonus;
+                
+                let vaultNum = parseInt(vaultVal.replace(/\D/g, '')) || 999999;
+
+                currentData.push({
+                    vault: vaultVal, vaultNum: vaultNum, pos: pos, base: base, dur: dur,
+                    calcSalary: calcSalary, posBonus: posBonus, perfBonus: perfBonus, grandTotal: grandTotal
+                });
+            }
+
+            currentData.sort((a, b) => a.vaultNum - b.vaultNum);
+
+            let sumTotalSalary = 0;
+            let sumTotalBonus = 0;
+
+            currentData.forEach(row => {
+                sumTotalSalary += row.calcSalary; 
+                sumTotalBonus += (row.posBonus + row.perfBonus); 
+                
+                let formattedDuration = row.dur.toString().replace('.', ',');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.vault}</td>
+                    <td>${row.pos}</td>
+                    <td>${formatMoney(row.base)}</td>
+                    <td>${formattedDuration}</td>
+                    <td>${formatMoney(row.calcSalary)}</td>
+                    <td>${row.posBonus > 0 ? formatMoney(row.posBonus) : '-'}</td>
+                    <td>${row.perfBonus > 0 ? '+' + formatMoney(row.perfBonus) : '-'}</td>
+                    <td style="font-weight:bold;">+${formatMoney(row.grandTotal)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('masterMonthYear').innerText = document.getElementById('setMonthYear').value;
+            document.getElementById('outSigDate').innerText = document.getElementById('setSignatureDate').value;
+            
+            document.getElementById('masterTotalSalary').innerText = "ʛ" + formatMoney(sumTotalSalary);
+            document.getElementById('masterTotalBonus').innerText = "ʛ" + formatMoney(sumTotalBonus);
+            
+            document.getElementById('outSig1').innerText = document.getElementById('setSig1').value;
+            document.getElementById('outSig2').innerText = document.getElementById('setSig2').value;
+
+            const imgUrl1 = document.getElementById('setSigImg1').value;
+            const imgUrl2 = document.getElementById('setSigImg2').value;
+            document.getElementById('sigImgContainer1').innerHTML = imgUrl1 ? `<img src="${imgUrl1}" class="sig-img">` : '';
+            document.getElementById('sigImgContainer2').innerHTML = imgUrl2 ? `<img src="${imgUrl2}" class="sig-img">` : '';
+
+            document.getElementById('outSrcName1').innerText = document.getElementById('setSrcName1').value;
+            document.getElementById('outSrcAmt1').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt1').value);
+            document.getElementById('outSrcName2').innerText = document.getElementById('setSrcName2').value;
+            document.getElementById('outSrcAmt2').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt2').value);
+            document.getElementById('outSrcName3').innerText = document.getElementById('setSrcName3').value;
+            document.getElementById('outSrcAmt3').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt3').value);
+            document.getElementById('outSrcName4').innerText = document.getElementById('setSrcName4').value;
+            document.getElementById('outSrcAmt4').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt4').value);
+
+            closePrintSettings();
+            document.body.className = 'print-master';
+            window.print();
+            setTimeout(() => { document.body.className = ''; }, 1000);
+        }
+    </script>
+</body>
+</html>
