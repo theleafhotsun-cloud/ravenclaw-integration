@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Main Database - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --warning: #f57f17;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar & Topbar */
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        
+        .action-group { display: flex; gap: 10px; align-items: center;}
+        .search-box { padding: 9px 12px; border: 1px solid var(--shellstone); border-radius: 6px; width: 280px; font-size: 13px; color: var(--royal-blue); outline: none; }
+        .search-box:focus { border-color: var(--sapphire); }
+        
+        .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
+        .btn-primary:hover { background-color: var(--sapphire); }
+
+        /* Database Table */
+        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex-grow: 1; border: 1px solid var(--shellstone);}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .row-dimmed { background-color: #f5f5f5 !important; }
+        .row-dimmed td { opacity: 0.55; }
+        .row-dimmed:hover { background-color: #eeeeee !important; }
+        .delete-warning { color: var(--danger); font-size: 10px; font-weight: bold; margin-top: 5px; display: block; opacity: 1 !important;}
+
+        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 13px;}
+        .class-badge { background-color: var(--quicksand); color: var(--royal-blue); padding: 3px 7px; border-radius: 10px; font-weight: bold; font-size: 11px; }
+        
+        .wl-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background-color: #ffebee; color: var(--danger); font-weight: bold; border: 1px solid #ffcdd2; margin-right: 2px;}
+        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold;}
+        .status-deactive { background-color: #fff3e0; color: #e65100; }
+        .status-resigned { background-color: #ffebee; color: var(--danger); }
+        .status-dropout { background-color: #424242; color: #ffffff; }
+        
+        .link-icon { text-decoration: none; font-weight: bold; font-size: 11px; padding: 2px 6px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; margin-right: 3px;}
+        .link-icon:hover { background-color: var(--sapphire); color: white; }
+
+        .select-room { padding: 4px 8px; border-radius: 4px; border: 1px solid var(--shellstone); font-size: 11px; font-weight: bold; color: var(--royal-blue); background-color: #fbfbfb; cursor: pointer; transition: background-color 0.3s;}
+
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
+        .btn-icon:hover { transform: scale(1.2); }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 700px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px; font-size: 16px;}
+        
+        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 15px 0 10px 0; }
+
+        .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 4px; text-transform: uppercase; }
+        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 8px 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 12px;}
+        .form-group select:disabled { background-color: #e0e0e0; cursor: not-allowed; font-weight: bold; color: var(--royal-blue); }
+        
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px solid var(--shellstone); min-height: 38px; align-items: center;}
+        .checkbox-item { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: bold; color: var(--royal-blue); cursor: pointer; }
+        .checkbox-item input { margin: 0; cursor: pointer; }
+        
+        .empty-electives-msg { font-size: 11px; color: gray; font-style: italic; }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 12px;}
+        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 12px;}
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)" class="active">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="display-username">Loading...</span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">Master Data: Students <span id="studentCount" style="font-size:14px; color:var(--sapphire); background:var(--shellstone); padding:2px 8px; border-radius:12px; margin-left:10px;">(0)</span></h1>
+                <div class="action-group">
+                    <input type="text" id="searchInput" class="search-box" placeholder="Search Vault, Username, or Name..." onkeyup="filterTable()">
+                    <button class="btn-primary" onclick="openStudentModal()">+ Add New Student</button>
+                </div>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Loading Database...</div>
+            
+            <div class="table-container">
+                <table id="studentTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px; text-align: center;">No.</th>
+                            <th>Vault</th>
+                            <th>Username</th>
+                            <th>Name & Nickname</th>
+                            <th>Profile (DOB & FC)</th>
+                            <th>Grade</th>
+                            <th>Major & Electives</th>
+                            <th>Total Classes</th>
+                            <th>WL / Status</th>
+                            <th>Notes / Links</th>
+                            <th>Room Alloc.</th>
+                            <th style="text-align:center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT MODAL -->
+    <div class="modal-overlay" id="studentModal">
+        <div class="modal-box">
+            <h3 id="modalTitle">Add New Student</h3>
+            <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+            
+            <input type="hidden" id="studRowIdx">
+            <input type="hidden" id="studRoomHidden">
+
+            <div class="form-row">
+                <div class="form-group" style="flex: 0.5;">
+                    <label>Vault Code</label>
+                    <input type="text" id="studVault" placeholder="e.g. 2001">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Username</label>
+                    <input type="text" id="studUsername" placeholder="e.g. @profsadams">
+                </div>
+                <div class="form-group" style="flex: 0.5;">
+                    <label>Grade</label>
+                    <select id="studGrade">
+                        <option value="Newizzy">Newizzy</option>
+                        <option value="G1">G1</option><option value="G2">G2</option>
+                        <option value="G3">G3</option><option value="G4">G4</option>
+                        <option value="G5">G5</option><option value="G6">G6</option>
+                        <option value="G7">G7</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-header">Academic Information</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Major (Base 6 Classes)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="radio" name="studMajor" value="Auror" onchange="handleMajorChange(this.value)"> Auror</label>
+                        <label class="checkbox-item"><input type="radio" name="studMajor" value="Ministry" onchange="handleMajorChange(this.value)"> Ministry</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Electives (Max 3 Selection)</label>
+                    <div class="checkbox-group" id="electivesContainer">
+                        <span class="empty-electives-msg">Please select a Major first to view available electives.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="font-size: 11px; color: var(--sapphire); font-weight: bold; margin-bottom: 10px;" id="classCounterDisplay">
+                📊 Calculated Total Classes: 0 (Major: 0 + Electives: 0)
+            </div>
+
+            <div class="section-header">Personal Profile</div>
+            <div class="form-row">
+                <div class="form-group"><label>Full Name</label><input type="text" id="studFullName" placeholder="Full Name"></div>
+                <div class="form-group"><label>Nickname</label><input type="text" id="studNickname" placeholder="Nickname"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Date of Birth</label><input type="date" id="studDOB"></div>
+                <div class="form-group"><label>Face Claim</label><input type="text" id="studFaceClaim" placeholder="Face Claim"></div>
+            </div>
+
+            <!-- BAGIAN WARNING LETTERS: BOX KHUSUS WL1 DAN WL2 -->
+            <div class="section-header">Warning Letters Records</div>
+            <div class="form-row">
+                <!-- BOX WL 1 -->
+                <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 12px; border-radius: 6px;">
+                    <label style="color: #c62828;">Warning Letter 1</label>
+                    <select id="wl1Reason" style="margin-bottom: 8px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
+                        <option value="">- Select Issue / Reason -</option>
+                        <option value="Class">CLASS</option>
+                        <option value="Inactive">INACTIVE</option>
+                        <option value="Hiatus">HIATUS</option>
+                        <option value="Conflict">CONFLICT</option>
+                        <option value="N.E.W.T">N.E.W.T</option>
+                    </select>
+                    <input type="text" id="studWl1Link" placeholder="Link WL 1 (URL)" style="border-color:#ffcdd2;">
+                </div>
+                
+                <!-- BOX WL 2 -->
+                <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 12px; border-radius: 6px;">
+                    <label style="color: #c62828;">Warning Letter 2</label>
+                    <select id="wl2Reason" style="margin-bottom: 8px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
+                        <option value="">- Select Issue / Reason -</option>
+                        <option value="Class">CLASS</option>
+                        <option value="Inactive">INACTIVE</option>
+                        <option value="Hiatus">HIATUS</option>
+                        <option value="Conflict">CONFLICT</option>
+                        <option value="N.E.W.T">N.E.W.T</option>
+                    </select>
+                    <input type="text" id="studWl2Link" placeholder="Link WL 2 (URL)" style="border-color:#ffcdd2;">
+                </div>
+            </div>
+
+            <div class="section-header">Status Flags & Notes</div>
+            <div class="form-row">
+                <div class="form-group" style="flex: 1.2;">
+                    <label>Status Flags</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox" id="chkDeactive"> DEACTIVE</label>
+                        <label class="checkbox-item"><input type="checkbox" id="chkResigned"> RESIGNED</label>
+                        <label class="checkbox-item"><input type="checkbox" id="chkDropOut"> DROP OUT</label>
+                    </div>
+                </div>
+                <div class="form-group" style="flex: 1.5;">
+                    <label>Additional Notes / Etc</label>
+                    <input type="text" id="studNotesEtc" placeholder="Additional remarks...">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeStudentModal()" id="btnCancel">Cancel</button>
+                <button class="btn-submit" onclick="saveStudent()" id="btnSubmit">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT AREA -->
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
+        if (!loggedInUser) {
+            window.location.href = "index.html";
+        }
+
+        let studentDataStore = [];
+
+        const electivesMinistry = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
+        const electivesAuror = ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"];
+
+        window.onload = function() {
+            document.getElementById("display-username").innerText = loggedInUser;
+            setupDynamicSidebar();
+            fetchStudents();
+        };
+
+        // ==========================================
+        // LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
+
+            ['menu-sop', 'menu-taskmaster'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+
+            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; 
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
+        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
+
+        // ==========================================
+        // LOGIKA STUDENT DATABASE & FETCH API
+        // ==========================================
+        function fetchStudents() {
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('studentTable').style.display = 'none';
+            document.getElementById('tableBody').innerHTML = '';
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getStudentDatabase" })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.status === 'success') {
+                    let data = result.data;
+                    data.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
+                    studentDataStore = data;
+                    renderTable(data);
+                } else { throw new Error(result.message); }
+            })
+            .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
+        }
+
+        function renderTable(data) {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('studentTable').style.display = 'table';
+            document.getElementById('studentCount').innerText = `(${data.length} Students)`; 
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;">No students found in Master_Data. Add a new one!</td></tr>';
+                return;
+            }
+
+            data.forEach((student, index) => {
+                let wlBadges = '';
+                if(student.wlClass) wlBadges += `<span class="wl-badge">CLASS</span>`;
+                if(student.wlInactive) wlBadges += `<span class="wl-badge">INACTIVE</span>`;
+                if(student.wlHiatus) wlBadges += `<span class="wl-badge">HIATUS</span>`;
+                if(student.wlConflict) wlBadges += `<span class="wl-badge">CONFLICT</span>`;
+                if(student.wlNewt) wlBadges += `<span class="wl-badge">N.E.W.T</span>`;
+
+                let statusBadges = '';
+                if(student.isDeactive) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
+                if(student.isResigned) statusBadges += `<span class="status-badge status-resigned">RESIGNED</span> `;
+                if(student.isDropOut) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
+
+                let linkHtml = '';
+                if(student.wl1Link) linkHtml += `<a href="${student.wl1Link}" target="_blank" class="link-icon">🔗 WL1</a>`;
+                if(student.wl2Link) linkHtml += `<a href="${student.wl2Link}" target="_blank" class="link-icon">🔗 WL2</a>`;
+
+                const isInactiveStatus = student.isDeactive || student.isResigned || student.isDropOut;
+                const rowClass = isInactiveStatus ? 'row-dimmed' : '';
+                const deleteWarning = isInactiveStatus ? `<span class="delete-warning">⚠️ Please Delete</span>` : '';
+
+                const tr = document.createElement('tr');
+                tr.className = rowClass;
+                tr.innerHTML = `
+                    <td style="text-align: center; color: gray; font-weight: bold;">${index + 1}</td>
+                    <td class="vault-tag">${student.vault}</td>
+                    <td><div style="font-weight:bold;">${student.username}</div></td>
+                    <td>
+                        <div style="color:var(--sapphire); font-weight:bold;">${student.fullName || '-'}</div>
+                        <div style="font-size:10px; color:gray; font-style:italic;">"${student.nickname || '-'}"</div>
+                    </td>
+                    <td>
+                        <div style="font-size:11px;"><b>DOB:</b> ${student.dob || '-'}</div>
+                        <div style="font-size:11px;"><b>FC:</b> ${student.faceClaim || '-'}</div>
+                    </td>
+                    <td>${student.grade}</td>
+                    <td>
+                        <div><b>Major:</b> ${student.major || '-'}</div>
+                        <div style="font-size:10px; color:gray;"><b>Electives:</b> ${student.electives || '-'}</div>
+                    </td>
+                    <td><span class="class-badge">${student.totalClasses} Classes</span></td>
+                    <td>${wlBadges || '<span style="color:gray;">-</span>'}</td>
+                    <td>
+                        <div>${statusBadges} ${linkHtml}</div>
+                        <div style="font-size:10px; color:gray;">${student.notesEtc || ''}</div>
+                    </td>
+                    <td>
+                        <select class="select-room" onchange="quickChangeRoom(${student.rowIdx}, this)">
+                            <option value="" ${!student.room ? 'selected':''}>- None -</option>
+                            <option value="Eternclaw" ${student.room==='Eternclaw' ? 'selected':''}>Eternclaw</option>
+                            <option value="Ravelynx" ${student.room==='Ravelynx' ? 'selected':''}>Ravelynx</option>
+                            <option value="Ravenion" ${student.room==='Ravenion' ? 'selected':''}>Ravenion</option>
+                            <option value="Ravenrow" ${student.room==='Ravenrow' ? 'selected':''}>Ravenrow</option>
+                            <option value="Velaclaw" ${student.room==='Velaclaw' ? 'selected':''}>Velaclaw</option>
+                        </select>
+                    </td>
+                    <td style="text-align:center;">
+                        <button class="btn-icon" title="Edit Record" onclick="openStudentModal(${student.rowIdx})">✏️</button>
+                        <button class="btn-icon" title="Delete Record" onclick="deleteRecord(${student.rowIdx}, '${student.username}')">🗑️</button>
+                        ${deleteWarning}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function quickChangeRoom(rowIdx, selectEl) {
+            selectEl.style.backgroundColor = '#e8f5e9'; 
+            selectEl.disabled = true;
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "updateStudentRoom", rowIdx: rowIdx, roomName: selectEl.value })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.status === 'success') {
+                    selectEl.style.backgroundColor = '#c8e6c9'; 
+                    selectEl.disabled = false;
+                    setTimeout(() => { selectEl.style.backgroundColor = '#fbfbfb'; }, 1000); 
+                    let s = studentDataStore.find(x => x.rowIdx === rowIdx);
+                    if(s) s.room = selectEl.value;
+                } else { throw new Error(result.message); }
+            })
+            .catch(err => {
+                alert("Failed to save room: " + err.message);
+                selectEl.disabled = false;
+                selectEl.style.backgroundColor = '#ffebee';
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filteredData = studentDataStore.filter(student => {
+                return (student.username && student.username.toLowerCase().includes(query)) ||
+                       (student.fullName && student.fullName.toLowerCase().includes(query)) ||
+                       (student.nickname && student.nickname.toLowerCase().includes(query)) ||
+                       (student.vault && student.vault.toString().toLowerCase().includes(query)) ||
+                       (student.major && student.major.toLowerCase().includes(query)) ||
+                       (student.room && student.room.toLowerCase().includes(query));
+            });
+            renderTable(filteredData);
+        }
+
+        function handleMajorChange(majorVal) {
+            const container = document.getElementById('electivesContainer');
+            container.innerHTML = ''; 
+            
+            let options = [];
+            // Buat case-insensitive match
+            if (majorVal && majorVal.toLowerCase() === 'ministry') options = electivesMinistry;
+            else if (majorVal && majorVal.toLowerCase() === 'auror') options = electivesAuror;
+
+            if (options.length === 0) {
+                container.innerHTML = '<span class="empty-electives-msg">Please select a Major first to view available electives.</span>';
+            } else {
+                options.forEach(subj => {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-item';
+                    label.innerHTML = `<input type="checkbox" name="studElective" value="${subj}"> ${subj}`;
+                    container.appendChild(label);
+                });
+
+                document.querySelectorAll('input[name="studElective"]').forEach(box => {
+                    box.addEventListener('change', function() {
+                        let checkedCount = document.querySelectorAll('input[name="studElective"]:checked').length;
+                        if (checkedCount > 3) {
+                            this.checked = false;
+                            alert("Maximum 3 electives allowed!");
+                        }
+                        updateClassCounter();
+                    });
+                });
+            }
+            updateClassCounter();
+        }
+
+        function updateClassCounter() {
+            let selectedMajor = document.querySelector('input[name="studMajor"]:checked');
+            let majorVal = selectedMajor ? selectedMajor.value : "";
+            let countElectives = document.querySelectorAll('input[name="studElective"]:checked').length;
+            let base = majorVal !== "" ? 6 : 0;
+            const total = base + countElectives;
+            document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${total} (Major: ${base} + Electives: ${countElectives})`;
+        }
+
+        function formatDOBForPicker(dateString) {
+            if (!dateString) return "";
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString; 
+            let d = new Date(dateString);
+            if (!isNaN(d.getTime())) {
+                let month = '' + (d.getMonth() + 1);
+                let day = '' + d.getDate();
+                let year = d.getFullYear();
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+                return [year, month, day].join('-');
+            }
+            return ""; 
+        }
+
+        function openStudentModal(rowIdx = null) {
+            const modal = document.getElementById('studentModal');
+            const title = document.getElementById('modalTitle');
+            const statusBox = document.getElementById('modalStatus');
+            const gradeSelect = document.getElementById('studGrade');
+            
+            modal.style.display = 'flex';
+            statusBox.style.display = 'none';
+            
+            document.querySelectorAll('input[name="studMajor"]').forEach(r => r.checked = false);
+            handleMajorChange("");
+
+            if (rowIdx !== null) {
+                const s = studentDataStore.find(x => x.rowIdx === rowIdx);
+                if(!s) return;
+
+                title.innerText = "Edit Student Record";
+                document.getElementById('studRowIdx').value = s.rowIdx;
+                document.getElementById('studRoomHidden').value = s.room || ''; 
+                document.getElementById('studVault').value = s.vault;
+                document.getElementById('studUsername').value = s.username;
+                
+                gradeSelect.value = s.grade || 'Newizzy';
+                gradeSelect.disabled = false;
+                
+                // SOLUSI BUG CASE-SENSITIVE MAJOR:
+                if(s.major) {
+                    let dbMajor = s.major.trim().toLowerCase();
+                    let radios = document.querySelectorAll('input[name="studMajor"]');
+                    for(let r of radios) {
+                        if(r.value.toLowerCase() === dbMajor) {
+                            r.checked = true;
+                            handleMajorChange(r.value);
+                            break;
+                        }
+                    }
+                }
+                
+                // SOLUSI BUG CASE-SENSITIVE ELECTIVES:
+                if(s.electives) {
+                    let elArr = s.electives.split(',').map(e => e.trim().toLowerCase());
+                    let checkboxes = document.querySelectorAll('input[name="studElective"]');
+                    checkboxes.forEach(c => {
+                        if(elArr.includes(c.value.toLowerCase())) {
+                            c.checked = true;
+                        }
+                    });
+                }
+
+                document.getElementById('studFullName').value = s.fullName;
+                document.getElementById('studNickname').value = s.nickname;
+                document.getElementById('studDOB').value = formatDOBForPicker(s.dob);
+                document.getElementById('studFaceClaim').value = s.faceClaim;
+
+                let reasons = [];
+                if(s.wlClass) reasons.push("Class");
+                if(s.wlInactive) reasons.push("Inactive");
+                if(s.wlHiatus) reasons.push("Hiatus");
+                if(s.wlConflict) reasons.push("Conflict");
+                if(s.wlNewt) reasons.push("N.E.W.T");
+
+                document.getElementById('wl1Reason').value = reasons[0] || "";
+                document.getElementById('wl2Reason').value = reasons[1] || "";
+                document.getElementById('studWl1Link').value = s.wl1Link;
+                document.getElementById('studWl2Link').value = s.wl2Link;
+                
+                document.getElementById('chkDeactive').checked = s.isDeactive;
+                document.getElementById('chkResigned').checked = s.isResigned;
+                document.getElementById('chkDropOut').checked = s.isDropOut;
+                document.getElementById('studNotesEtc').value = s.notesEtc;
+            } else {
+                title.innerText = "Add New Student";
+                document.getElementById('studRowIdx').value = "";
+                document.getElementById('studRoomHidden').value = "";
+                document.getElementById('studVault').value = "";
+                document.getElementById('studUsername').value = "";
+                
+                gradeSelect.value = "Newizzy";
+                gradeSelect.disabled = true; 
+                
+                document.getElementById('studFullName').value = "";
+                document.getElementById('studNickname').value = "";
+                document.getElementById('studDOB').value = "";
+                document.getElementById('studFaceClaim').value = "";
+
+                document.getElementById('wl1Reason').value = "";
+                document.getElementById('wl2Reason').value = "";
+                document.getElementById('studWl1Link').value = "";
+                document.getElementById('studWl2Link').value = "";
+                
+                document.getElementById('chkDeactive').checked = false;
+                document.getElementById('chkResigned').checked = false;
+                document.getElementById('chkDropOut').checked = false;
+                document.getElementById('studNotesEtc').value = "";
+            }
+            updateClassCounter();
+        }
+
+        function closeStudentModal() { document.getElementById('studentModal').style.display = 'none'; }
+
+        function saveStudent() {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnCancel = document.getElementById('btnCancel');
+            const statusBox = document.getElementById('modalStatus');
+
+            let selectedMajor = document.querySelector('input[name="studMajor"]:checked');
+            let majorValue = selectedMajor ? selectedMajor.value : "";
+            let electivesValue = Array.from(document.querySelectorAll('input[name="studElective"]:checked')).map(el => el.value).join(', ');
+
+            let rawDob = document.getElementById('studDOB').value;
+            let formattedDob = rawDob;
+            if(rawDob) {
+                let d = new Date(rawDob);
+                if(!isNaN(d.getTime())) {
+                    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    formattedDob = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+                }
+            }
+
+            let r1 = document.getElementById('wl1Reason').value;
+            let r2 = document.getElementById('wl2Reason').value;
+
+            const payload = {
+                rowIdx: document.getElementById('studRowIdx').value,
+                vault: document.getElementById('studVault').value,
+                username: document.getElementById('studUsername').value,
+                grade: document.getElementById('studGrade').value,
+                major: majorValue,
+                electives: electivesValue,
+                fullName: document.getElementById('studFullName').value,
+                nickname: document.getElementById('studNickname').value,
+                dob: formattedDob,
+                faceClaim: document.getElementById('studFaceClaim').value,
+                room: document.getElementById('studRoomHidden').value, 
+                
+                wlClass: (r1 === 'Class' || r2 === 'Class'),
+                wlInactive: (r1 === 'Inactive' || r2 === 'Inactive'),
+                wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus'),
+                wlConflict: (r1 === 'Conflict' || r2 === 'Conflict'),
+                wlNewt: (r1 === 'N.E.W.T' || r2 === 'N.E.W.T'),
+                
+                wl1Link: document.getElementById('studWl1Link').value,
+                wl2Link: document.getElementById('studWl2Link').value,
+                isDeactive: document.getElementById('chkDeactive').checked,
+                isResigned: document.getElementById('chkResigned').checked,
+                isDropOut: document.getElementById('chkDropOut').checked,
+                notesEtc: document.getElementById('studNotesEtc').value
+            };
+
+            if(!payload.vault || !payload.username) {
+                statusBox.innerText = "Vault Code and Username are required!";
+                statusBox.style.color = "red"; statusBox.style.display = "block";
+                return;
+            }
+
+            btnSubmit.innerText = "Saving..."; btnSubmit.disabled = true; btnCancel.disabled = true;
+            statusBox.style.display = "none";
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveStudent", data: payload })
+            })
+            .then(res => res.json())
+            .then(response => {
+                if(response.status === 'success' || response.success) {
+                    closeStudentModal();
+                    fetchStudents(); 
+                } else {
+                    statusBox.innerText = response.message;
+                    statusBox.style.color = "red"; statusBox.style.display = "block";
+                    btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
+                }
+            })
+            .catch(err => {
+                statusBox.innerText = "System Error: Failed to save.";
+                statusBox.style.color = "red"; statusBox.style.display = "block";
+                btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
+            });
+        }
+
+        function deleteRecord(rowIdx, username) {
+            if(confirm(`Are you sure you want to completely delete ${username} from the Master Database?`)) {
+                document.getElementById('loadingMsg').style.display = 'block';
+                document.getElementById('loadingMsg').innerText = "Deleting record...";
+                document.getElementById('studentTable').style.display = 'none';
+                
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "deleteStudent", rowIdx: rowIdx })
+                })
+                .then(res => res.json())
+                .then(() => fetchStudents())
+                .catch(() => fetchStudents());
+            }
+        }
+    </script>
+</body>
+</html>
