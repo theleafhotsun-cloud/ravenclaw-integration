@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff & Birthdays - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --warning: #f57f17; --danger: #c62828;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        .content-area { padding: 30px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--shellstone); }
+        .tab-btn { background-color: transparent; border: none; padding: 10px 20px; font-size: 14px; font-weight: bold; color: gray; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s;}
+        .tab-btn.active { color: var(--royal-blue); border-bottom: 3px solid var(--quicksand); }
+        .tab-btn:hover:not(.active) { color: var(--sapphire); }
+
+        .tab-content { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; }
+        .tab-content.active { display: flex; }
+
+        .table-container { overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); flex-grow: 1;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 13px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 14px;}
+        .role-badge { background-color: var(--sapphire); color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;}
+        .bday-highlight { background-color: #fff9c4 !important; }
+        .days-left { font-weight: bold; color: var(--success); font-size: 12px;}
+        .days-left.soon { color: var(--danger); font-size: 14px; }
+        .invalid-date { color: gray; font-size: 11px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)" class="active">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span><?= username ?></span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <h1 class="page-title">Staff & Birthdays Database</h1>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab('Caretakers')">👔 Caretakers</button>
+                <button class="tab-btn" onclick="openTab('Birthdays')">🎂 Upcoming Birthdays</button>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Synchronizing data from servers...</div>
+            
+            <!-- TAB CARETAKERS -->
+            <div id="tab-Caretakers" class="tab-content active">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Vault</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Position</th>
+                                <th>Room</th>
+                                <th>DOB</th>
+                                <th>Face Claim</th>
+                            </tr>
+                        </thead>
+                        <tbody id="caretakersBody">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB BIRTHDAYS (Hanya Murid) -->
+            <div id="tab-Birthdays" class="tab-content">
+                <div style="margin-bottom: 15px; font-size: 13px; color: var(--sapphire); font-weight: bold;">
+                    🎉 Displaying the birthday schedule of all active students (sorted by the closest upcoming date).
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Countdown</th>
+                                <th>Vault</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Nickname</th>
+                                <th>Date of Birth</th>
+                                <th>Face Claim</th>
+                            </tr>
+                        </thead>
+                        <tbody id="birthdaysBody">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <script>
+        // ==========================================
+        // 1. GLOBAL VARIABLES
+        // ==========================================
+        let loggedInUser = "<?= username ?>";
+        let userRole = "<?= typeof userRole !== 'undefined' ? userRole : 'unknown' ?>".toLowerCase();
+
+        // ==========================================
+        // 2. ONLOAD INITIALIZATION
+        // ==========================================
+        window.onload = function() {
+            setupDynamicSidebar();
+            fetchDatabase();
+        };
+
+        // ==========================================
+        // 3. LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
+
+            var sopMenu = document.querySelector('.menu-sop');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (sopMenu) sopMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) {
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isLeadroom) {
+                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isEditor) {
+                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; // Default fallback
+
+            if (userRole.includes('vp') || userRole.includes('vice')) {
+                targetPage = 'viceprefect';
+            } else if (userRole.includes('prefect')) {
+                targetPage = 'prefect';
+            } else if (userRole.includes('editor')) {
+                targetPage = 'editor';
+            } else if (userRole.includes('leadroom')) {
+                targetPage = 'leadroom';
+            }
+
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl();
+        }
+
+        function navigate(targetPage, element) { 
+            element.innerText = "Wait..."; 
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl(); 
+        }
+
+        function logout(btnElement) {
+            btnElement.innerText = "Wait...";
+            google.script.run.withSuccessHandler(function(url) { window.top.location.href = url; }).getScriptUrl();
+        }
+
+        // ==========================================
+        // 4. LOGIKA DATA BIRTHDAY (UTUH 100%)
+        // ==========================================
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            document.querySelector(`.tab-btn[onclick="openTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function fetchDatabase() {
+            google.script.run
+                .withSuccessHandler(renderData)
+                .withFailureHandler(err => { 
+                    document.getElementById('loadingMsg').innerText = "Error: " + err.message; 
+                    document.getElementById('loadingMsg').style.color = "red";
+                })
+                .getStaffAndBirthdayData();
+        }
+
+        function parseUpcomingBirthday(dobString) {
+            if(!dobString) return null;
+            
+            let d = new Date(dobString);
+            
+            // Jika tanggal gagal dibaca, coba paksa terjemahkan dari bahasa Indonesia ke Inggris
+            if(isNaN(d.getTime())) {
+                let str = String(dobString).toLowerCase()
+                    .replace('januari', 'january').replace('februari', 'february')
+                    .replace('maret', 'march').replace('mei', 'may')
+                    .replace('juni', 'june').replace('juli', 'july')
+                    .replace('agustus', 'august').replace('oktober', 'october')
+                    .replace('nopember', 'november').replace('desember', 'december');
+                d = new Date(str);
+            }
+            
+            // Jika masih gagal dibaca (misal format aneh DD-MM-YYYY)
+            if(isNaN(d.getTime())) {
+                let parts = String(dobString).split(/[-/]/);
+                if(parts.length >= 2) {
+                    let day = parseInt(parts[0]);
+                    let month = parseInt(parts[1]) - 1; 
+                    d = new Date(2000, month, day); 
+                }
+            }
+            
+            // Jika benar-benar hancur formatnya, return flag Error 999
+            if(isNaN(d.getTime())) {
+                return { dateObj: new Date(), daysLeft: 999, displayDate: dobString };
+            }
+            
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            
+            let nextBday = new Date(today.getFullYear(), d.getMonth(), d.getDate());
+            
+            if(nextBday < today) {
+                nextBday.setFullYear(today.getFullYear() + 1);
+            }
+            
+            let diffTime = Math.abs(nextBday - today);
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            return { dateObj: nextBday, daysLeft: diffDays, displayDate: nextBday.toLocaleDateString('en-GB', {day:'numeric', month:'long'}) };
+        }
+
+        function renderData(data) {
+            if (data.error) {
+                document.getElementById('loadingMsg').innerText = data.error;
+                document.getElementById('loadingMsg').style.color = "red";
+                return;
+            }
+
+            document.getElementById('loadingMsg').style.display = 'none';
+            
+            // 1. Render Caretakers
+            const ctBody = document.getElementById('caretakersBody');
+            ctBody.innerHTML = '';
+            
+            if(data.caretakers.length === 0) {
+                ctBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No data found in Caretakers sheet.</td></tr>';
+            } else {
+                data.caretakers.forEach(c => {
+                    ctBody.innerHTML += `
+                        <tr>
+                            <td class="vault-tag">${c.vault || '-'}</td>
+                            <td><b>${c.username || '-'}</b></td>
+                            <td>${c.nama || '-'}</td>
+                            <td><span class="role-badge">${c.position || '-'}</span></td>
+                            <td>${c.room || '-'}</td>
+                            <td>${c.dob ? new Date(c.dob).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '-'}</td>
+                            <td>${c.faceClaim || '-'}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // 2. Render Birthdays (Khusus Murid)
+            const bdBody = document.getElementById('birthdaysBody');
+            bdBody.innerHTML = '';
+            
+            let processedBdays = [];
+            data.birthdays.forEach(b => {
+                let parsed = parseUpcomingBirthday(b.dob);
+                if(parsed) {
+                    b.daysLeft = parsed.daysLeft;
+                    b.displayDate = parsed.displayDate;
+                    processedBdays.push(b);
+                }
+            });
+
+            // Urutkan dari yang terdekat (Paling kiri tabel). Yang error (999) dilempar ke paling bawah.
+            processedBdays.sort((a, b) => a.daysLeft - b.daysLeft);
+
+            if(processedBdays.length === 0) {
+                bdBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No student data found in Master_Data.</td></tr>';
+            } else {
+                processedBdays.forEach(b => {
+                    let highlightClass = (b.daysLeft <= 7 && b.daysLeft !== 999) ? 'bday-highlight' : '';
+                    let daysText = '';
+                    
+                    if (b.daysLeft === 999) {
+                        daysText = '<span class="invalid-date">Format Invalid</span>';
+                    } else if (b.daysLeft === 0) {
+                        daysText = '<span class="days-left soon">🎉 TODAY!</span>';
+                    } else if (b.daysLeft === 1) {
+                        daysText = '<span class="days-left soon">Tomorrow!</span>';
+                    } else {
+                        daysText = `<span class="days-left">${b.daysLeft} days</span>`;
+                    }
+
+                    bdBody.innerHTML += `
+                        <tr class="${highlightClass}">
+                            <td>${daysText}</td>
+                            <td class="vault-tag">${b.vault || '-'}</td>
+                            <td><b>${b.username || '-'}</b></td>
+                            <td>${b.fullName || '-'}</td>
+                            <td>${b.nickName || '-'}</td>
+                            <td>${b.displayDate}</td>
+                            <td>${b.faceClaim || '-'}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
