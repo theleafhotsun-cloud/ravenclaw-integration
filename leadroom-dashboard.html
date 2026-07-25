@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lead Room Dashboard - Ravenclaw</title>
     <style>
+        /* [KEEP ALL YOUR CSS STYLES EXACTLY THE SAME AS BEFORE] */
         :root {
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
             --swan-wing: #F5F0E9; --shellstone: #D9CBC2; --danger: #c62828;
         }
-
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
-
-        /* Sidebar Styles */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -21,52 +19,38 @@
         .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
-
-        /* Main Content */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
         .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
-        
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
-
         .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; }
         .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; }
-
-        /* Performance & KPI Section */
         .performance-card { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 20px; display: flex; align-items: center; gap: 20px; }
         .performance-info { flex-grow: 1; }
         .progress-container { background-color: var(--shellstone); height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
         .progress-bar { height: 100%; background-color: var(--sapphire); width: 0%; transition: width 0.5s ease; }
         .performance-text { font-weight: bold; color: var(--royal-blue); }
-        
         .action-buttons { display: flex; flex-direction: column; gap: 10px; }
         .btn-kpi { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
         .btn-kpi:hover { background-color: var(--sapphire); }
         .btn-reset { background-color: var(--danger); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
         .btn-reset:hover { background-color: #b71c1c; }
-
-        /* Table Design */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px;}
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; }
         tr:hover { background-color: var(--swan-wing); }
-        
         .checkbox-container { text-align: center; } 
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sapphire); margin: 0; vertical-align: middle;}
         .completed-text td { color: gray; }
         .completed-text .task-name { text-decoration: line-through; }
-
-        /* Week Badges */
         .week-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block;}
         .week-1 { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
         .week-2 { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
         .week-3 { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
         .week-4 { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
         .week-0 { background-color: #f5f5f5; color: #616161; border: 1px solid #e0e0e0; }
-
-        /* Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 450px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; }
@@ -79,14 +63,12 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--sapphire); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
-        
         #loadingMsg { text-align: center; color: var(--sapphire); font-weight: bold; margin: 20px 0; }
         .error-message { background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border-left: 5px solid #c62828; margin: 20px 0; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <!-- Dynamic Sidebar -->
+    <!-- [YOUR HTML BODY STRUCTURE REMAINS EXACTLY THE SAME] -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -96,9 +78,7 @@
             <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
             <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            
             <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" class="active" onclick="navigateHome(this)">Task Master</a></li>
-            
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
             <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
@@ -109,7 +89,6 @@
         </ul>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -120,13 +99,10 @@
 
         <div class="content-area">
             <h1 class="page-title">Task Tracker</h1>
-            
             <div class="performance-card">
                 <div class="performance-info">
                     <div class="performance-text" id="performanceText">Performance: 0% (0 / 0 Tasks)</div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
+                    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
                 </div>
                 <div class="action-buttons">
                     <button class="btn-kpi" onclick="openKpiModal()">Report Monthly KPI</button>
@@ -136,17 +112,10 @@
 
             <div id="loadingMsg">Fetching tasks...</div>
             
-            <!-- Dynamic Table -->
             <table id="taskTable" style="display: none;">
                 <thead>
                     <tr>
-                        <th style="width: 40px; text-align: center;">✓</th>
-                        <th style="width: 70px;">Period</th>
-                        <th style="width: 40px; text-align: center;">KPI</th>
-                        <th>Category</th>
-                        <th>Task Name</th>
-                        <th style="width: 30%;">Description</th>
-                        <th style="width: 25%;">Time & Remarks</th>
+                        <th style="width: 40px; text-align: center;">✓</th><th style="width: 70px;">Period</th><th style="width: 40px; text-align: center;">KPI</th><th>Category</th><th>Task Name</th><th style="width: 30%;">Description</th><th style="width: 25%;">Time & Remarks</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -154,33 +123,16 @@
         </div>
     </div>
 
-    <!-- Monthly Report / KPI Modal -->
     <div class="modal-overlay" id="kpiModal">
         <div class="modal-box">
             <h3>Monthly Report & KPI</h3>
             <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:14px;"></div>
-            
             <div class="form-row">
-                <div class="form-group">
-                    <label>Main Tasks</label>
-                    <input type="text" id="modalCompleted" readonly style="background-color: var(--swan-wing); font-weight:bold;">
-                </div>
-                <div class="form-group">
-                    <label>KPI %</label>
-                    <input type="text" id="modalPercentage" readonly style="background-color: var(--swan-wing); font-weight:bold;">
-                </div>
+                <div class="form-group"><label>Main Tasks</label><input type="text" id="modalCompleted" readonly style="background-color: var(--swan-wing); font-weight:bold;"></div>
+                <div class="form-group"><label>KPI %</label><input type="text" id="modalPercentage" readonly style="background-color: var(--swan-wing); font-weight:bold;"></div>
             </div>
-
-            <div class="form-group">
-                <label>Backup / Overtime</label>
-                <input type="number" id="modalBackup" min="0" value="0" placeholder="0">
-            </div>
-
-            <div class="form-group">
-                <label>Monthly Notes</label>
-                <textarea id="modalNotes" placeholder="Enter notes regarding your work or backup tasks this month..."></textarea>
-            </div>
-            
+            <div class="form-group"><label>Backup / Overtime</label><input type="number" id="modalBackup" min="0" value="0" placeholder="0"></div>
+            <div class="form-group"><label>Monthly Notes</label><textarea id="modalNotes" placeholder="Enter notes regarding your work or backup tasks this month..."></textarea></div>
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeKpiModal()" id="btnCancel">Cancel</button>
                 <button class="btn-submit" onclick="submitKpiReport()" id="btnSubmit">Submit Report</button>
@@ -188,41 +140,52 @@
         </div>
     </div>
 
-    <!-- SCRIPT AREA -->
     <script>
-        // Use standard JS variables instead of GAS templating
-        // For a real app, you would fetch these from a database, local storage, or API route.
-        let loggedInUser = "John Doe"; 
-        let userRole = "leadroom"; 
+        // ==========================================
+        // 1. SETTING KONEKSI API GOOGLE APPS SCRIPT
+        // ==========================================
+        // MASUKKAN LINK DEPLOYMENT WEB APP GAS KAMU DI SINI:
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
+
+        // Karena ini pindah ke Vercel, kita ambil data User & Role dari localStorage (saat login)
+        // atau kita set default untuk testing.
+        let loggedInUser = localStorage.getItem("username") || "Guest User"; 
+        let userRole = localStorage.getItem("userRole") || "leadroom"; 
         
         let totalTasks = 0;
         let completedTasks = 0;
         let currentPercentage = 0;
 
         window.onload = function() {
-            // Update UI with the user name
             document.getElementById("displayUsername").innerText = loggedInUser;
-
             setupDynamicSidebar(); 
             
             let loadMsg = document.getElementById('loadingMsg');
             var fetchRole = userRole === 'unknown' ? 'leadroom' : userRole;
-            loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + fetchRole + "</b>... <br><br><small style='color:gray;'>(If it hangs, please press <b>F12</b> -> <b>Console</b> tab to view the process)</small>";
+            loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + fetchRole + "</b>... <br><br><small style='color:gray;'>(Connecting to Google Database...)</small>";
 
-            // Mocking the database fetch that google.script.run used to do
-            setTimeout(() => {
-                try {
-                    // Example dummy data (Replace this with a real fetch() to your backend later)
-                    const mockData = [
-                        { section: 'Week 1', targetWeek: 1, kpi: '10', category: 'General', taskName: 'Check Inventory', description: 'Count all supplies in the room.', time: '08:00 AM', remarks: 'Submit report after' },
-                        { section: 'Week 2', targetWeek: 2, kpi: '20', category: 'Cleaning', taskName: 'Deep Clean', description: 'Perform deep cleaning of the main hall.', time: '10:00 AM', remarks: 'Use safety gear' },
-                        { section: 'ALL WEEK', targetWeek: null, kpi: '5', category: 'Admin', taskName: 'Log Attendance', description: 'Ensure all attendees are logged in the system.', time: 'Daily', remarks: 'Critical' }
-                    ];
-                    renderTable(mockData);
-                } catch (err) {
-                    loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`; 
+            // =======================================================
+            // 2. FETCH KE ROUTE A (action: fetchMyTasks)
+            // =======================================================
+            fetch(GAS_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "fetchMyTasks",
+                    role: fetchRole
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    renderTable(data.data);
+                } else {
+                    loadMsg.innerHTML = `<div class="error-message"><b>Error:</b> ${data.message}</div>`;
                 }
-            }, 1000);
+            })
+            .catch(err => {
+                loadMsg.innerHTML = `<div class="error-message"><b>Connection Failed:</b> Make sure the GAS URL is correct. Error: ${err.message}</div>`; 
+            });
         };
 
         function setupDynamicSidebar() {
@@ -242,78 +205,44 @@
             if (sopMenu) sopMenu.style.display = 'block';
             if (tmMenu) tmMenu.style.display = 'block';
 
-            if (isHH) {
-                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            } 
-            else if (isPrefect) {
-                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
-            else if (isLeadroom) {
-                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
-            else if (isEditor) {
-                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
+            if (isHH) { document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block'); } 
+            else if (isPrefect) { ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; }); }
+            else if (isLeadroom) { ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; }); }
+            else if (isEditor) { ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; }); }
         }
 
         // ========================================================
-        // NAVIGATION LOGIC
+        // ROUTING SYSTEM (Vercel Style)
         // ========================================================
         function navigateHome(element) {
             element.innerText = "Loading...";
-            var targetPage = 'headhouse'; // Default fallback
+            var targetPage = 'headhouse'; 
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
 
-            if (userRole.includes('vp') || userRole.includes('vice')) {
-                targetPage = 'viceprefect';
-            } 
-            else if (userRole.includes('prefect')) {
-                targetPage = 'prefect';
-            } 
-            else if (userRole.includes('editor')) {
-                targetPage = 'editor';
-            } 
-            else if (userRole.includes('leadroom')) {
-                targetPage = 'leadroom';
-            }
-
-            // Simulating navigation (Change this to your actual Vercel routing paths later)
-            window.location.href = `?page=${targetPage}&user=${encodeURIComponent(loggedInUser)}`;
+            window.location.href = `${targetPage}.html`; 
         }
 
         function navigate(targetPage, element) { 
             element.innerText = "Wait..."; 
-            window.location.href = `?page=${targetPage}&user=${encodeURIComponent(loggedInUser)}`;
+            window.location.href = `${targetPage}.html`;
         }
 
         function logout(btnElement) {
             btnElement.innerText = "Wait...";
-            window.location.href = "/login.html"; // Adjust to your actual login route
+            localStorage.clear(); // Hapus cache login
+            window.location.href = "index.html"; // Balik ke halaman login
         }
 
         // ========================================================
-        // LOCAL STORAGE AND TABLE RENDERING
+        // LOGIKA PENYIMPANAN AMAN & RENDER TABEL (ANTI CRASH)
         // ========================================================
-        function getStorageKey(taskName, weekNum) {
-            return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`;
-        }
-
-        function checkStorage(key) {
-            try { return localStorage.getItem(key) === 'true'; } 
-            catch (e) { return false; } 
-        }
-
-        function setStorage(key, value) {
-            try { localStorage.setItem(key, value); } 
-            catch (e) { console.warn("Cache blocked by browser."); }
-        }
-
-        function clearStoragePrefix(prefix) {
-            try {
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith(prefix)) localStorage.removeItem(key);
-                });
-            } catch (e) { console.warn("Failed to reset browser cache."); }
-        }
+        function getStorageKey(taskName, weekNum) { return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`; }
+        function checkStorage(key) { try { return localStorage.getItem(key) === 'true'; } catch (e) { return false; } }
+        function setStorage(key, value) { try { localStorage.setItem(key, value); } catch (e) { console.warn("Cache blocked."); } }
+        function clearStoragePrefix(prefix) { try { Object.keys(localStorage).forEach(key => { if (key.startsWith(prefix)) localStorage.removeItem(key); }); } catch (e) {} }
 
         function renderTable(rawTasks) {
             document.getElementById('loadingMsg').style.display = 'none';
@@ -348,7 +277,6 @@
 
             tasks.forEach((t) => {
                 const tr = document.createElement('tr');
-                
                 let safeCategory = t.category || t.kategori || "-";
                 let safeTaskName = t.taskName || "Untitled Task";
                 let safeDescription = t.description || "-";
@@ -368,18 +296,13 @@
                 let weekLabel = t.targetWeek > 0 ? `Week ${t.targetWeek}` : (t.section || '-');
 
                 tr.innerHTML = `
-                    <td class="checkbox-container">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
-                    </td>
+                    <td class="checkbox-container"><input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})"></td>
                     <td><span class="week-badge ${badgeClass}">${weekLabel}</span></td>
                     <td style="text-align:center; font-weight:bold;">${t.kpi || '-'}</td>
                     <td>${safeCategory}</td>
                     <td class="task-name"><b>${safeTaskName}</b></td>
                     <td style="font-size:12px; line-height:1.4;">${safeDescription}</td>
-                    <td style="font-size:11px; line-height:1.4;">
-                        <b>Time:</b> ${t.time || '-'}<br>
-                        <i style="color:gray;"><b>Notes:</b> ${t.remarks || '-'}</i>
-                    </td>
+                    <td style="font-size:11px; line-height:1.4;"><b>Time:</b> ${t.time || '-'}<br><i style="color:gray;"><b>Notes:</b> ${t.remarks || '-'}</i></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -394,19 +317,13 @@
         }
 
         function resetAllCheckboxes() {
-            const confirmReset = confirm("Are you sure you want to reset all task progress? This action cannot be undone.");
-            if (!confirmReset) return;
-
-            const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
-            checkboxes.forEach(cb => {
+            if (!confirm("Are you sure you want to reset all task progress? This action cannot be undone.")) return;
+            document.querySelectorAll('#tableBody input[type="checkbox"]').forEach(cb => {
                 cb.checked = false;
                 cb.closest('tr').classList.remove('completed-text');
             });
-
             clearStoragePrefix(`ravenclaw_tracker_${loggedInUser}_`);
-
-            completedTasks = 0;
-            updatePerformance();
+            completedTasks = 0; updatePerformance();
         }
 
         function updatePerformance() {
@@ -416,9 +333,6 @@
             document.getElementById('progressBar').style.backgroundColor = currentPercentage === 100 ? 'var(--quicksand)' : 'var(--sapphire)';
         }
 
-        // ==========================================
-        // MONTHLY REPORTING / KPI MODAL
-        // ==========================================
         function openKpiModal() {
             if(totalTasks === 0) { alert("No tasks available to report!"); return; }
             document.getElementById('kpiModal').style.display = 'flex';
@@ -431,6 +345,9 @@
 
         function closeKpiModal() { document.getElementById('kpiModal').style.display = 'none'; }
 
+        // =======================================================
+        // 3. FETCH KE ROUTE C (action: submitMonthlyKPI)
+        // =======================================================
         function submitKpiReport() {
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
@@ -450,19 +367,31 @@
             btnSubmit.disabled = true; btnCancel.disabled = true;
             status.style.display = 'none';
 
-            // Simulating API call to submit data 
-            // In a real Vercel app, use fetch('/api/submit-kpi', { method: 'POST', body: JSON.stringify(kpiData) })
-            setTimeout(() => {
+            fetch(GAS_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "submitMonthlyKPI",
+                    data: kpiData
+                })
+            })
+            .then(response => response.json())
+            .then(res => {
                 status.style.display = 'block';
-                status.style.color = '#2e7d32'; 
-                status.innerText = "Report submitted successfully!"; 
-                
-                setTimeout(closeKpiModal, 2000); 
-                
-                btnSubmit.innerText = 'Submit Report'; 
-                btnSubmit.disabled = false; 
-                btnCancel.disabled = false;
-            }, 1500);
+                if(res.status === "success") { 
+                    status.style.color = '#2e7d32'; 
+                    status.innerText = res.message; 
+                    setTimeout(closeKpiModal, 2000); 
+                } else { 
+                    status.style.color = '#c62828'; 
+                    status.innerText = res.message; 
+                }
+                btnSubmit.innerText = 'Submit Report'; btnSubmit.disabled = false; btnCancel.disabled = false;
+            })
+            .catch(err => {
+                status.style.color = '#c62828'; status.innerText = 'System Error: ' + err.message; status.style.display = 'block';
+                btnSubmit.innerText = 'Submit Report'; btnSubmit.disabled = false; btnCancel.disabled = false;
+            });
         }
     </script>
 </body>
