@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Database - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --info: #0277bd; --warning: #f57c00;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        
+        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        .filter-group { display: flex; gap: 10px; align-items: center; }
+        .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
+        
+        .btn-manage { background-color: var(--quicksand); color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: background 0.3s;}
+        .btn-manage:hover { background-color: #d1b67e; }
+        .btn-primary { background-color: var(--success); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: background 0.3s;}
+        .btn-primary:hover { background-color: #1b5e20; }
+
+        .room-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
+        .tab-btn { background-color: #f0f0f0; border: none; padding: 10px 18px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
+        .tab-btn.active { background-color: var(--sapphire); color: white; border-bottom: 2px solid var(--royal-blue);}
+        .tab-btn:hover:not(.active) { background-color: #dce3f0; color: var(--sapphire); }
+        .tab-warning { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; border-bottom: none; }
+        .tab-warning.active { background-color: #e65100; color: white; border-bottom: 2px solid #bf360c; }
+        
+        .tab-content { display: none; flex-direction: column; flex-grow: 1; }
+        .tab-content.active { display: flex; }
+
+        .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        
+        .sop-banner { background-color: #e8eaf6; border-left: 4px solid var(--sapphire); padding: 12px 15px; margin-bottom: 15px; font-size: 11px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
+
+        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); max-height: 450px;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+
+        .link-icon { text-decoration: none; font-weight: bold; font-size: 11px; padding: 6px 12px; background-color: #e3f2fd; color: #1565c0; border-radius: 4px; border: 1px solid #bbdefb; display: inline-block; transition: 0.2s;}
+        .link-icon:hover { background-color: #1565c0; color: white; }
+        
+        .btn-map { background-color: var(--info); color: white; border: none; padding: 6px 15px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
+        .btn-map:hover { background-color: #01579b; }
+
+        .badge-date { background-color: var(--quicksand); color: var(--royal-blue); font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; display: inline-block;}
+
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px; font-size: 16px;}
+        
+        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 15px 0 10px 0; }
+
+        .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 13px;}
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 12px;}
+        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 12px;}
+        
+        #toastMsg { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); color: white; font-weight: bold; font-size: 13px; display: none; z-index: 9999; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="toastMsg">Action Successful!</div>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)" class="active">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="usernameDisplay"><?= username ?></span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">Library Database</h1>
+            </div>
+
+            <div class="sop-banner">
+                <b>📌 HOW IT WORKS:</b><br>
+                1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
+                2. Click <b>"Assign Subject"</b> to map the link to a specific subject via the Pop-Up.<br>
+                3. Once saved, you can edit/adjust the mapping by clicking the <b>"✏️ Edit"</b> button.
+            </div>
+
+            <div class="period-controller">
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <div style="background:var(--sapphire); padding:5px 10px; border-radius:6px; display:flex; gap:10px;">
+                        <label style="margin:0; cursor:pointer;"><input type="radio" name="modeArchive" value="active" checked onchange="toggleArchiveMode()"> Active Month</label>
+                        <label style="margin:0; cursor:pointer;"><input type="radio" name="modeArchive" value="archive" onchange="toggleArchiveMode()"> Archive</label>
+                    </div>
+                    <div class="filter-group">
+                        <select id="monthSelector" class="selector-box" onchange="onMonthChange()"></select>
+                        <select id="weekSelector" class="selector-box" onchange="fetchLibraryData()">
+                            <option value="Week 1">Week 1</option>
+                            <option value="Week 2">Week 2</option>
+                            <option value="Week 3">Week 3</option>
+                            <option value="Week 4">Week 4</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-primary" onclick="openManualModal()">+ Add Manual Entry</button>
+                    <button id="btnManagePeriod" class="btn-manage" style="display:none;" onclick="openPeriodModal()">⚙️ Set Month Config</button>
+                </div>
+            </div>
+            
+            <div class="room-tabs" id="categoryTabs" style="display: none;">
+                <button class="tab-btn tab-warning active" data-target="Pending Mapping" onclick="openTab('Pending Mapping')">⚠️ Pending Mapping (<span id="unassignedCount">0</span>)</button>
+                <button class="tab-btn" data-target="Beginner Ministry" onclick="openTab('Beginner Ministry')">Beginner Ministry</button>
+                <button class="tab-btn" data-target="Beginner Auror" onclick="openTab('Beginner Auror')">Beginner Auror</button>
+                <button class="tab-btn" data-target="Advanced Ministry" onclick="openTab('Advanced Ministry')">Advanced Ministry</button>
+                <button class="tab-btn" data-target="Advanced Auror" onclick="openTab('Advanced Auror')">Advanced Auror</button>
+                <button class="tab-btn" data-target="Quidditch" onclick="openTab('Quidditch')">Quidditch</button>
+                <button class="tab-btn" data-target="Grand Summary" onclick="openTab('Grand Summary')" style="background-color:#d4af37; color:#fff;">🏆 Grand Summary</button>
+            </div>
+
+            <div id="tabContainer">
+                <div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Scanning Data from Spreadsheet...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: ASSIGN / EDIT SUBJECT -->
+    <div class="modal-overlay" id="mappingModal">
+        <div class="modal-box">
+            <h3>🔗 Assign / Edit Subject</h3>
+            <input type="hidden" id="editRowIdx" value="">
+            <input type="hidden" id="editOldCat" value="">
+            <div class="form-group">
+                <label>Summary Document Link</label>
+                <input type="text" id="mapLinkDisplay" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Date of Class</label>
+                <input type="date" id="mapClassDate">
+            </div>
+            <div class="form-group">
+                <label>Level / Division</label>
+                <select id="mapCategory" onchange="updateModalSubjects()">
+                    <option value="">-- Select Level & Division --</option>
+                    <option value="Beginner Ministry">Beginner Ministry</option>
+                    <option value="Beginner Auror">Beginner Auror</option>
+                    <option value="Advanced Ministry">Advanced Ministry</option>
+                    <option value="Advanced Auror">Advanced Auror</option>
+                    <option value="Quidditch">Quidditch</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="mapSubjectItem">
+                    <option value="">-- Select Level First --</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeMappingModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveMappingFromModal()" id="btnSaveMapping">Save Mapping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD MANUAL ENTRY -->
+    <div class="modal-overlay" id="manualModal">
+        <div class="modal-box">
+            <h3>📝 Add Manual Entry</h3>
+            <div class="form-group">
+                <label>Date of Class / Event</label>
+                <input type="date" id="manClassDate">
+            </div>
+            <div class="form-group">
+                <label>Level / Division</label>
+                <select id="manCategory" onchange="updateManualModalSubjects()">
+                    <option value="">-- Select Level & Division --</option>
+                    <option value="Beginner Ministry">Beginner Ministry</option>
+                    <option value="Beginner Auror">Beginner Auror</option>
+                    <option value="Advanced Ministry">Advanced Ministry</option>
+                    <option value="Advanced Auror">Advanced Auror</option>
+                    <option value="Quidditch">Quidditch</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="manSubjectItem">
+                    <option value="">-- Select Level First --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Title / Description</label>
+                <input type="text" id="manTitle" placeholder="e.g. Ravenclaw vs Hufflepuff Match">
+            </div>
+            <div class="form-group">
+                <label>Summary Document Link</label>
+                <input type="text" id="manLink" placeholder="https://...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeManualModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveManualEntry()" id="btnSaveMan">Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PERIOD CONFIG -->
+    <div class="modal-overlay" id="periodModal">
+        <div class="modal-box">
+            <h3>⚙️ Configure Month Config</h3>
+            <div id="periodStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+            <div class="form-group"><label>Month & Year Label</label><input type="text" id="cfgMonthLabel" placeholder="e.g. August 2026"></div>
+            <div class="form-group">
+                <label>Total Weeks for Activity Form</label>
+                <select id="cfgTotalWeeks"><option value="3">3 Weeks</option><option value="4" selected>4 Weeks</option></select>
+            </div>
+            <div class="form-group">
+                <label>Saturday Duty (Rotates Herbology & DADA)</label>
+                <select id="cfgSatDuty"><option value="Eternclaw">Eternclaw</option><option value="Ravelynx">Ravelynx</option><option value="Ravenion">Ravenion</option><option value="Ravenrow">Ravenrow</option><option value="Velaclaw">Velaclaw</option></select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePeriodModal()">Cancel</button>
+                <button class="btn-submit" onclick="savePeriodConfig()">Save Config</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <script>
+        // ==========================================
+        // 1. GLOBAL VARIABLES
+        // ==========================================
+        let loggedInUser = "<?= username ?>";
+        let userRole = "<?= typeof userRole !== 'undefined' ? userRole : 'unknown' ?>".toLowerCase();
+
+        var activeTab = "Pending Mapping"; 
+        var libraryDataStore = null;
+        var periodConfigStore = null;
+        var windowUserRole = "";
+        var canApproveGrandSummary = false;
+
+        const catMap = {
+            "Beginner Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
+            "Beginner Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
+            "Advanced Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
+            "Advanced Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
+            "Quidditch": ["Quidditch"]
+        };
+
+        // ==========================================
+        // 2. ONLOAD INITIALIZATION
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', function() {
+            setupDynamicSidebar();
+            initPeriodConfig();
+        });
+
+        function showToast(msg, type = "info") {
+            var toast = document.getElementById('toastMsg');
+            toast.innerHTML = msg;
+            if(type === "error") toast.style.backgroundColor = "#c62828";
+            else if(type === "success") toast.style.backgroundColor = "#2e7d32";
+            else toast.style.backgroundColor = "#3C507D";
+            
+            toast.style.display = 'block';
+            setTimeout(function() { toast.style.display = 'none'; }, 3000);
+        }
+
+        // ==========================================
+        // 3. LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
+        function setupDynamicSidebar() {
+            windowUserRole = userRole; 
+            canApproveGrandSummary = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
+
+            var sopMenu = document.querySelector('.menu-sop');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (sopMenu) sopMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) {
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+                document.getElementById('btnManagePeriod').style.display = 'inline-block';
+            } 
+            else if (isPrefect) {
+                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                if (userRole.includes('vp') || userRole.includes('vice')) {
+                    document.getElementById('btnManagePeriod').style.display = 'inline-block';
+                }
+            }
+            else if (isLeadroom) {
+                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isEditor) {
+                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; // Default fallback
+
+            if (userRole.includes('vp') || userRole.includes('vice')) {
+                targetPage = 'viceprefect';
+            } else if (userRole.includes('prefect')) {
+                targetPage = 'prefect';
+            } else if (userRole.includes('editor')) {
+                targetPage = 'editor';
+            } else if (userRole.includes('leadroom')) {
+                targetPage = 'leadroom';
+            }
+
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl();
+        }
+
+        function navigate(targetPage, element) { 
+            element.innerText = "Wait..."; 
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl(); 
+        }
+
+        function logout(btnElement) {
+            btnElement.innerText = "Wait...";
+            google.script.run.withSuccessHandler(function(url) { window.top.location.href = url; }).getScriptUrl();
+        }
+
+        // ==========================================
+        // 4. LOGIKA LIBRARY DB (UTUH 100%)
+        // ==========================================
+        function initPeriodConfig() {
+            google.script.run.withSuccessHandler(function(res) {
+                if(res && !res.error) {
+                    periodConfigStore = res;
+                    toggleArchiveMode(); 
+                }
+            }).getPeriodConfig(loggedInUser);
+        }
+
+        function toggleArchiveMode() {
+            var mode = document.querySelector('input[name="modeArchive"]:checked').value;
+            var monthSel = document.getElementById('monthSelector'); 
+            monthSel.innerHTML = '';
+            
+            if(mode === 'active' && periodConfigStore.activeMonth) {
+                var opt = document.createElement('option'); opt.value = periodConfigStore.activeMonth.monthLabel; opt.innerText = periodConfigStore.activeMonth.monthLabel + " (Active)"; opt.selected = true;
+                monthSel.appendChild(opt);
+            } else if (periodConfigStore.archivedMonths) {
+                if(periodConfigStore.archivedMonths.length === 0) {
+                    var opt = document.createElement('option'); opt.value = ""; opt.innerText = "-- No Archives --"; monthSel.appendChild(opt);
+                } else {
+                    periodConfigStore.archivedMonths.forEach(function(m) {
+                        var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel;
+                        monthSel.appendChild(opt);
+                    });
+                }
+            }
+            onMonthChange();
+        }
+
+        function onMonthChange() {
+            var selectedMonth = document.getElementById('monthSelector').value;
+            if(!selectedMonth) { document.getElementById('weekSelector').innerHTML = ''; return; }
+            fetchLibraryData();
+        }
+
+        function handleSystemError(err) { showToast("Connection Error: " + err, "error"); }
+
+        function fetchLibraryData() {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            if(!month || !week) return;
+
+            document.getElementById('categoryTabs').style.display = 'none';
+            document.getElementById('tabContainer').innerHTML = '<div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Scanning Data from Spreadsheet...</div>';
+            
+            google.script.run
+            .withSuccessHandler(function(res) {
+                if(res.success) {
+                    libraryDataStore = res;
+                    renderTabs();
+                } else {
+                    showToast("Error loading data", "error");
+                }
+            })
+            .withFailureHandler(function(err){ showToast("Connection error: " + err, "error"); })
+            .getLibraryData(month, week);
+        }
+
+        function safeLink(link) { return link.indexOf('http') === 0 ? link : 'https://' + link; }
+        
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return "";
+            var d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            var yyyy = d.getFullYear();
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function formatDateDisplay(dateStr) {
+            if(!dateStr) return "-";
+            var d = new Date(dateStr);
+            return !isNaN(d.getTime()) ? d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : dateStr;
+        }
+
+        function renderTabs() {
+            document.getElementById('categoryTabs').style.display = 'flex';
+            var container = document.getElementById('tabContainer');
+            container.innerHTML = '';
+
+            // 1. PENDING MAPPING TAB
+            var unList = libraryDataStore.unassigned || [];
+            document.getElementById('unassignedCount').innerText = unList.length;
+            var unHtml = '';
+            
+            if(unList.length === 0) {
+                unHtml = '<tr><td colspan="4" style="text-align:center; color:gray; padding: 25px;">All Approved Summaries have been successfully mapped! 🎉</td></tr>';
+            } else {
+                unList.forEach(function(item, idx) {
+                    var safeL = safeLink(item.link);
+                    var encL = encodeURIComponent(item.link); 
+                    var roomName = item.room || "Unknown Room"; 
+                    
+                    unHtml += `
+                        <tr>
+                            <td><span style="font-weight:bold; color:gray;">${idx + 1}</span></td>
+                            <td><span style="font-weight:bold; color:var(--royal-blue); background:#e8eaf6; padding:3px 8px; border-radius:4px; font-size:11px;">🏠 ${roomName}</span></td>
+                            <td><a href="${safeL}" target="_blank" class="link-icon">📄 Open File Link</a></td>
+                            <td style="text-align:center;">
+                                <button class="btn-primary" data-link="${encL}" onclick="openMappingModal(this)">🔗 Assign Subject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            var divUn = document.createElement('div');
+            divUn.className = 'tab-content';
+            divUn.id = 'tab-PendingMapping';
+            divUn.innerHTML = `<div class="box-section"><h4>⚠️ Needs Subject Mapping</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th style="width:150px;">Origin Room</th><th>Summary Link</th><th style="text-align:center; width:150px;">Action</th></tr></thead><tbody>${unHtml}</tbody></table></div></div>`;
+            container.appendChild(divUn);
+
+            // 2. CATEGORY TABS
+            var mapped = libraryDataStore.categorized || {};
+
+            for (let cat in catMap) {
+                let tbodyHtml = '';
+                let count = 0;
+                
+                catMap[cat].forEach(function(subjName) {
+                    count++;
+                    let fullSubjName = cat + ' - ' + subjName;
+                    let savedEntries = mapped[fullSubjName] || [];
+
+                    if(savedEntries.length > 0) {
+                        savedEntries.forEach(function(item) {
+                            var safeL = safeLink(item.link);
+                            var encL = encodeURIComponent(item.link); 
+                            
+                            let actionBtns = (item.rowIdx === -1) 
+                                ? `<span style="color:gray; font-size:11px;">🔄 Syncing...</span>`
+                                : `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${cat}', '${subjName}', '${fullSubjName}')">✏️ Edit</button>`;
+
+                            tbodyHtml += `
+                                <tr>
+                                    <td><span style="font-weight:bold; color:gray;">${count}</span></td>
+                                    <td><span class="badge-date">📅 ${formatDateDisplay(item.classDate)}</span></td>
+                                    <td><span style="font-weight:bold; color:var(--sapphire);">${subjName}</span></td>
+                                    <td><a href="${safeL}" target="_blank" class="link-icon">🔗 Read File</a></td>
+                                    <td style="text-align:center;">${actionBtns}</td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        tbodyHtml += `
+                            <tr style="background-color: #fafafa;">
+                                <td><span style="font-weight:bold; color:gray;">${count}</span></td>
+                                <td><span style="color:#aaa;">-</span></td>
+                                <td><span style="font-weight:bold; color:gray;">${subjName}</span></td>
+                                <td><span style="color:#e65100; font-size:11px; font-style:italic;">Not Mapped Yet</span></td>
+                                <td style="text-align:center;">-</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                var divCat = document.createElement('div');
+                divCat.className = 'tab-content';
+                divCat.id = 'tab-' + cat.replace(/\s+/g, '');
+                divCat.innerHTML = `<div class="box-section"><h4>📚 ${cat} Subjects</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th>Class Date</th><th>Subject Name</th><th>Document Link</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${tbodyHtml}</tbody></table></div></div>`;
+                container.appendChild(divCat);
+            }
+
+            // 3. GRAND SUMMARY & FINAL SUMMARY TAB
+            var divGrand = document.createElement('div');
+            divGrand.className = 'tab-content';
+            divGrand.id = 'tab-GrandSummary';
+            
+            var grandSubjects = ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic", "Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology", "Quidditch"];
+
+            var grandHtml = `<div class="box-section">
+                <h4>🏆 Grand Summary (Per Subject)</h4>
+                <p style="font-size:12px; color:gray;"><b>(Monthly Report)</b> Grand Summary is submitted <b>once a month</b>. Submit link to be approved by Headhouse/PVP.</p>
+                <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th>Subject</th><th>Grand Summary Link</th><th style="width:150px;">Status / Notes</th><th style="text-align:center; width:150px;">Action / Approval</th></tr></thead><tbody>`;
+
+            grandSubjects.forEach((subj, idx) => {
+                let gsData = (libraryDataStore.grandSummaries && libraryDataStore.grandSummaries[subj]) ? libraryDataStore.grandSummaries[subj] : null;
+                let linkVal = gsData ? gsData.link : '';
+                let status = gsData ? gsData.status : '';
+                let notesVal = gsData ? gsData.notes : '';
+
+                let linkInput = `<input type="text" id="gs_link_${idx}" value="${linkVal}" placeholder="Paste link file..." style="width: 100%; padding: 6px; border-radius:4px; border:1px solid #ccc; font-family:inherit;">`;
+                let actionHtml = '';
+                let statusHtml = '';
+
+                if (status === 'Pending') {
+                    linkInput = `<a href="${safeLink(linkVal)}" target="_blank" class="link-icon" style="background:#fff3e0; color:#e65100; border-color:#ffe0b2;">📄 View Submitted Link</a>`;
+                    statusHtml = `<span style="color: #f57c00; font-weight: bold; font-size:12px;">⏳ Pending Approval</span>`;
+                    
+                    if (canApproveGrandSummary) {
+                        actionHtml = `<button class="btn-primary" style="background-color: var(--success); margin-right:5px; padding: 4px 8px;" onclick="accGrandSummary('${subj}')">✔ Approve</button>
+                                      <button class="btn-del" style="padding: 4px 8px;" onclick="decGrandSummary('${subj}')">✖ Decline</button>`;
+                    } else {
+                        actionHtml = `<span style="color: gray; font-size:11px;">Locked</span>`;
+                    }
+                } else if (status === 'Approved') {
+                    linkInput = `<a href="${safeLink(linkVal)}" target="_blank" class="link-icon" style="background:#e8f5e9; color:#2e7d32; border-color:#c8e6c9;">📄 View Approved Link</a>`;
+                    statusHtml = `<span style="color: green; font-weight: bold; font-size:12px;">✅ Approved</span>`;
+                    actionHtml = `<span style="color: gray; font-size:11px;">Locked</span>`;
+                } else if (status === 'Declined') {
+                    statusHtml = `<span style="color: red; font-weight: bold; font-size:12px;">❌ Declined</span><br><span style="font-size:11px; color:#c62828;">Note: ${notesVal}</span>`;
+                    actionHtml = `<button class="btn-map" onclick="saveGrandSummary('${subj}', 'gs_link_${idx}')">💾 Resubmit</button>`;
+                } else { 
+                    statusHtml = `<span style="color: gray; font-size:12px;">-</span>`;
+                    actionHtml = `<button class="btn-map" onclick="saveGrandSummary('${subj}', 'gs_link_${idx}')">💾 Save</button>`;
+                }
+
+                grandHtml += `
+                    <tr>
+                        <td><span style="font-weight:bold; color:gray;">${idx + 1}</span></td>
+                        <td><b style="color:var(--royal-blue);">${subj}</b></td>
+                        <td>${linkInput}</td>
+                        <td>${statusHtml}</td>
+                        <td style="text-align:center;">${actionHtml}</td>
+                    </tr>
+                `;
+            });
+            grandHtml += `</tbody></table></div></div>`;
+
+            grandHtml += `<div class="box-section" style="background-color: #f1f8e9; border-color: #c5e1a5;">
+                <h4 style="color: #33691e;">🎯 Final Monthly Summary</h4>
+                <p style="font-size:12px; color:gray;"><b>(Monthly Report)</b> Filled by Headhouse or PVP at the end of the active period.</p>
+                <div class="table-container"><table><thead><tr><th>Final Category</th><th>Final Summary Link</th><th style="text-align:center;">Action</th></tr></thead><tbody>`;
+
+            var finalCategories = ["Ministry Final Summary", "Auror Final Summary"];
+            finalCategories.forEach((cat, idx) => {
+                let fsData = (libraryDataStore.finalSummaries && libraryDataStore.finalSummaries[cat]) ? libraryDataStore.finalSummaries[cat] : null;
+                let flinkVal = fsData ? fsData.link : '';
+
+                let fsLinkInput = '';
+                let fsActionBtn = '';
+
+                if (flinkVal) {
+                    fsLinkInput = `<a href="${safeLink(flinkVal)}" target="_blank" class="link-icon" style="background:#e8f5e9; color:#2e7d32; border-color:#c8e6c9;">📄 View Final Summary</a>
+                                   <input type="hidden" id="fs_link_${idx}" value="${flinkVal}">`;
+                    fsActionBtn = `<button class="btn-map" style="background-color: var(--warning); padding: 4px 8px;" onclick="editFinalSummary('${idx}', '${cat}')">✏️ Edit</button>`;
+                } else {
+                    fsLinkInput = `<input type="text" id="fs_link_${idx}" value="" placeholder="Paste final summary link..." style="width: 100%; padding: 6px; border-radius:4px; border:1px solid #ccc; font-family:inherit;">`;
+                    fsActionBtn = `<button class="btn-map" onclick="saveFinalSummary('${cat}', 'fs_link_${idx}')" style="background-color: #33691e; padding: 4px 8px;">💾 Save Final</button>`;
+                }
+
+                grandHtml += `
+                    <tr>
+                        <td><b>${cat}</b></td>
+                        <td id="td_fs_input_${idx}">${fsLinkInput}</td>
+                        <td style="text-align:center;" id="td_fs_action_${idx}">${fsActionBtn}</td>
+                    </tr>
+                `;
+            });
+            grandHtml += `</tbody></table></div></div>`;
+            divGrand.innerHTML = grandHtml;
+            container.appendChild(divGrand);
+
+            openTab(activeTab); 
+        }
+
+        function openTab(tabName) {
+            activeTab = tabName; 
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            var btn = document.querySelector(`.tab-btn[data-target="${tabName}"]`);
+            if(btn) btn.classList.add('active');
+            
+            var targetId = 'tab-' + tabName.replace(/\s+/g, '');
+            var targetContent = document.getElementById(targetId);
+            if(targetContent) targetContent.classList.add('active');
+        }
+
+        // ===============================================
+        // 5. MODALS & SUBMISSIONS
+        // ===============================================
+        function openMappingModal(btnElement) {
+            var link = decodeURIComponent(btnElement.getAttribute('data-link'));
+            document.getElementById('mapLinkDisplay').value = link; 
+            document.getElementById('editRowIdx').value = ""; 
+            document.getElementById('editOldCat').value = ""; 
+            document.getElementById('mapClassDate').value = '';
+            document.getElementById('mapCategory').selectedIndex = 0;
+            document.getElementById('mapSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>'; 
+            
+            document.getElementById('mappingModal').style.display = 'flex';
+        }
+
+        function openEditModal(rowIdx, encLink, cDate, catName, subjName, oldFullSubj) {
+            var link = decodeURIComponent(encLink);
+            document.getElementById('editRowIdx').value = rowIdx; 
+            document.getElementById('editOldCat').value = oldFullSubj; 
+            document.getElementById('mapLinkDisplay').value = link; 
+            document.getElementById('mapClassDate').value = formatDateForInput(cDate);
+            
+            document.getElementById('mapCategory').value = catName;
+            updateModalSubjects(); 
+            document.getElementById('mapSubjectItem').value = subjName;
+            
+            document.getElementById('mappingModal').style.display = 'flex';
+        }
+
+        function closeMappingModal() { document.getElementById('mappingModal').style.display = 'none'; }
+
+        function updateModalSubjects() {
+            var cat = document.getElementById('mapCategory').value;
+            var subjSelect = document.getElementById('mapSubjectItem');
+            subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
+        }
+
+        function saveMappingFromModal() {
+            var link = document.getElementById('mapLinkDisplay').value; 
+            var cDate = document.getElementById('mapClassDate').value;
+            var cat = document.getElementById('mapCategory').value;
+            var subjItem = document.getElementById('mapSubjectItem').value;
+            
+            var rowIdx = document.getElementById('editRowIdx').value; 
+            var oldCat = document.getElementById('editOldCat').value;
+            
+            if(!cDate || !cat || !subjItem || !link) return showToast("Please fill all fields!", "error");
+
+            var fullSubject = cat + ' - ' + subjItem;
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            closeMappingModal();
+
+            if (rowIdx) {
+                rowIdx = parseInt(rowIdx, 10);
+                if (oldCat && libraryDataStore.categorized[oldCat]) {
+                    let idx = libraryDataStore.categorized[oldCat].findIndex(x => x.rowIdx === rowIdx);
+                    if (idx > -1) libraryDataStore.categorized[oldCat].splice(idx, 1);
+                }
+                if (!libraryDataStore.categorized[fullSubject]) libraryDataStore.categorized[fullSubject] = [];
+                libraryDataStore.categorized[fullSubject].push({ classDate: cDate, title: "", link: link, rowIdx: rowIdx });
+                
+                activeTab = cat; renderTabs();
+                showToast("Updating changes...");
+
+                google.script.run
+                .withSuccessHandler(function(res) {
+                    if(res.success) { showToast("Mapping Updated!", "success"); } 
+                    else { showToast("Failed to update: " + res.message, "error"); }
+                })
+                .withFailureHandler(function(err){ showToast("Connection error", "error"); })
+                .updateLibraryMapping(rowIdx, month, week, cDate, link, fullSubject);
+            } 
+            else {
+                var unIndex = libraryDataStore.unassigned.findIndex(item => item.link === link);
+                if (unIndex > -1) libraryDataStore.unassigned.splice(unIndex, 1);
+                
+                if (!libraryDataStore.categorized[fullSubject]) libraryDataStore.categorized[fullSubject] = [];
+                let newItem = { classDate: cDate, title: "", link: link, rowIdx: -1 };
+                libraryDataStore.categorized[fullSubject].push(newItem);
+
+                activeTab = cat; renderTabs();
+                showToast("Saving new mapping...");
+
+                google.script.run
+                .withSuccessHandler(function(res) {
+                    if(res.success) {
+                        newItem.rowIdx = res.newRowIdx;
+                        renderTabs();
+                        showToast("Mapping Saved!", "success");
+                    } else showToast("Failed to save: " + res.message, "error");
+                })
+                .withFailureHandler(function(err){ showToast("Connection error", "error"); })
+                .saveLibraryMapping(month, week, cDate, link, fullSubject);
+            }
+        }
+
+        // GRAND SUMMARY APPROVAL SYSTEM
+        function saveGrandSummary(subject, linkId) {
+            var link = document.getElementById(linkId).value;
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+
+            if(!link) return showToast("Grand Summary Link is required!", "error");
+
+            if (!libraryDataStore.grandSummaries) libraryDataStore.grandSummaries = {};
+            libraryDataStore.grandSummaries[subject] = { link: link, status: 'Pending', notes: '' };
+            activeTab = 'Grand Summary'; renderTabs();
+            showToast("Saving Grand Summary...");
+
+            google.script.run
+            .withSuccessHandler(function(res) {
+                if(res.success) showToast("Grand Summary Saved!", "success");
+                else showToast("Failed to save: " + res.message, "error");
+            })
+            .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
+            .saveGrandSummaryBackend(month, week, subject, link);
+        }
+
+        function accGrandSummary(subject) {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+
+            if(confirm("Are you sure you want to approve the summary for " + subject + "?")) {
+                libraryDataStore.grandSummaries[subject].status = 'Approved';
+                libraryDataStore.grandSummaries[subject].notes = '';
+                activeTab = 'Grand Summary'; renderTabs();
+                showToast("Approving summary...");
+
+                google.script.run
+                .withSuccessHandler(function(res) {
+                    if(res.success) showToast("Approved successfully!", "success");
+                    else showToast("Failed to approve: " + res.message, "error");
+                })
+                .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
+                .approveGrandSummaryBackend(month, week, subject, loggedInUser);
+            }
+        }
+
+        function decGrandSummary(subject) {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+
+            var reason = prompt("Enter revision notes / reason for decline:");
+            if(reason !== null && reason.trim() !== "") {
+                libraryDataStore.grandSummaries[subject].status = 'Declined';
+                libraryDataStore.grandSummaries[subject].notes = reason;
+                activeTab = 'Grand Summary'; renderTabs();
+                showToast("Declining summary...");
+
+                google.script.run
+                .withSuccessHandler(function(res) {
+                    if(res.success) showToast("Declined successfully!", "success");
+                    else showToast("Failed to decline: " + res.message, "error");
+                })
+                .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
+                .declineGrandSummaryBackend(month, week, subject, reason);
+            }
+        }
+
+        // FINAL SUMMARY LOGIC 
+        window.editFinalSummary = function(idx, cat) {
+            let tdInput = document.getElementById('td_fs_input_' + idx);
+            let tdAction = document.getElementById('td_fs_action_' + idx);
+            let existingLink = document.getElementById('fs_link_' + idx).value;
+            
+            tdInput.innerHTML = `<input type="text" id="fs_link_${idx}" value="${existingLink}" placeholder="Paste final summary link..." style="width: 100%; padding: 6px; border-radius:4px; border:1px solid #ccc; font-family:inherit;">`;
+            tdAction.innerHTML = `<button class="btn-map" onclick="saveFinalSummary('${cat}', 'fs_link_${idx}')" style="background-color: #33691e; padding: 4px 8px;">💾 Save Final</button>`;
+        }
+
+        function saveFinalSummary(category, linkId) {
+            var link = document.getElementById(linkId).value;
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+
+            if(!link) return showToast("Final Summary Link is required!", "error");
+
+            if (!libraryDataStore.finalSummaries) libraryDataStore.finalSummaries = {};
+            libraryDataStore.finalSummaries[category] = { link: link };
+            activeTab = 'Grand Summary'; renderTabs();
+            showToast("Saving Final Summary...");
+
+            google.script.run
+            .withSuccessHandler(function(res) {
+                if(res.success) showToast("Final Summary Saved!", "success");
+                else showToast("Failed to save: " + res.message, "error");
+            })
+            .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
+            .saveFinalSummaryBackend(month, week, category, link);
+        }
+        
+        // MANUAL ENTRY & PERIOD CONFIG
+        function openManualModal() {
+            document.getElementById('manualModal').style.display = 'flex';
+            document.getElementById('manClassDate').value = '';
+            document.getElementById('manTitle').value = '';
+            document.getElementById('manLink').value = '';
+            document.getElementById('manCategory').selectedIndex = 0;
+            document.getElementById('manSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>';
+        }
+
+        function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
+
+        function updateManualModalSubjects() {
+            var cat = document.getElementById('manCategory').value;
+            var subjSelect = document.getElementById('manSubjectItem');
+            subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
+        }
+
+        function saveManualEntry() {
+            var cDate = document.getElementById('manClassDate').value;
+            var title = document.getElementById('manTitle').value;
+            var link = document.getElementById('manLink').value;
+            var cat = document.getElementById('manCategory').value;
+            var subjItem = document.getElementById('manSubjectItem').value;
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+
+            if(!cDate || !link || !cat || !subjItem) return showToast("Please fill all fields!", "error");
+            
+            var fullSubject = cat + ' - ' + subjItem;
+            closeManualModal();
+
+            if (!libraryDataStore.categorized[fullSubject]) libraryDataStore.categorized[fullSubject] = [];
+            let newItem = { classDate: cDate, title: title, link: link, rowIdx: -1 };
+            libraryDataStore.categorized[fullSubject].push(newItem);
+
+            activeTab = cat; renderTabs();
+            showToast("Saving Entry...");
+
+            google.script.run
+            .withSuccessHandler(function(res) {
+                if(res.success) {
+                    newItem.rowIdx = res.newRowIdx;
+                    renderTabs();
+                    showToast("Entry saved!", "success");
+                } else showToast("Failed to save: " + res.message, "error");
+            })
+            .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
+            .saveManualLibraryEntry(month, week, cDate, title, link, fullSubject);
+        }
+
+        function openPeriodModal() { document.getElementById('periodModal').style.display = 'flex'; document.getElementById('periodStatus').style.display = 'none'; document.getElementById('cfgMonthLabel').value = ''; }
+        function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
+        
+        function savePeriodConfig() {
+            var mLabel = document.getElementById('cfgMonthLabel').value; var tWeeks = document.getElementById('cfgTotalWeeks').value; var sDuty = document.getElementById('cfgSatDuty').value; var pStatus = document.getElementById('periodStatus');
+            if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
+            google.script.run.withSuccessHandler(function(res) { if (res.success) { closePeriodModal(); initPeriodConfig(); } else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; } }).savePeriodSettings(mLabel, tWeeks, sDuty, loggedInUser);
+        }
+    </script>
+</body>
+</html>
+// ==========================================
+// 5_LibraryDB.gs
+// BACKEND FOR LIBRARY DATABASE PANEL
+// ==========================================
+
+var STUDENT_DB_ID = "1HuhVZDeiW57KuD6ulCHUd90DPgBeKwOBx12vlE2yn3Y"; 
+
+function normalizeURL(url) {
+  if (!url) return "";
+  return String(url).replace(/^https?:\/\//i, '').replace(/\/$/, '').trim().toLowerCase();
+}
+
+function getLibraryData(month, week) {
+  try {
+    if (typeof getActiveRoomData !== 'function') throw new Error("getActiveRoomData function not found.");
+    var roomData = getActiveRoomData(month, week); 
+
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var libSheet = ss.getSheetByName('Library_Database');
+    if (!libSheet) {
+      libSheet = ss.insertSheet('Library_Database');
+      libSheet.appendRow(['Timestamp', 'Month', 'Week', 'ClassDate', 'Link', 'Category_Subject', 'IsManual', 'Title']);
+    }
+
+    var libDb = libSheet.getDataRange().getValues();
+    var manualEntries = [];
+    var categorized = {}; 
+    var mappedCounts = {}; 
+
+    for (var i = 1; i < libDb.length; i++) {
+      // 🚀 ANTI-GHOSTING: Konversi jika Google Sheets mengubahnya jadi Date Object
+      var rawMonth = libDb[i][1];
+      var mStr = "";
+      if (rawMonth instanceof Date) {
+          var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+          mStr = monthNames[rawMonth.getMonth()] + " " + rawMonth.getFullYear();
+      } else {
+          mStr = String(rawMonth);
+      }
+      
+      var m = mStr.trim().toLowerCase();
+      var w = String(libDb[i][2]).trim().toLowerCase();
+      
+      if (m === String(month).trim().toLowerCase() && w === String(week).trim().toLowerCase()) {
+        var cDate = String(libDb[i][3]).trim();   
+        var lnk = String(libDb[i][4]).trim();     
+        var catSubj = String(libDb[i][5]).trim(); 
+        var isMan = (String(libDb[i][6]).trim().toUpperCase() === 'TRUE'); 
+        var title = libDb[i].length > 7 ? String(libDb[i][7]).trim() : ""; 
+        
+        if (isMan) {
+          manualEntries.push({ rowIdx: i + 1, classDate: cDate, title: title, link: lnk, subject: catSubj });
+        } else {
+          var normL = normalizeURL(lnk);
+          mappedCounts[normL] = (mappedCounts[normL] || 0) + 1; 
+          
+          if (!categorized[catSubj]) categorized[catSubj] = [];
+          categorized[catSubj].push({ classDate: cDate, title: "", link: lnk, rowIdx: i + 1 });
+        }
+      }
+    }
+
+    var unassigned = [];
+    var rooms = roomData.rooms;
+    
+    for (var r in rooms) {
+      rooms[r].forEach(function(s) {
+        var stats = (s.activity.sumStat || '').split(',');
+        var links = s.activity.sumLinks || [];
+        
+        for (var j = 0; j < 4; j++) {
+          var st = String(stats[j]).trim();
+          var rawLk = String(links[j]).trim();
+          var normLk = normalizeURL(rawLk);
+          
+          if (st === 'Approved' && rawLk.length > 4) {
+            if (mappedCounts[normLk] && mappedCounts[normLk] > 0) {
+               mappedCounts[normLk]--; 
+            } else {
+               unassigned.push({ link: rawLk, room: r });
+            }
+          }
+        }
+      });
+    }
+
+    manualEntries.forEach(function(me) {
+      if (!categorized[me.subject]) categorized[me.subject] = [];
+      categorized[me.subject].push(me);
+    });
+
+    var gsData = {};
+    var gsSheet = ss.getSheetByName('Grand_Summaries');
+    if (gsSheet) {
+      var gVals = gsSheet.getDataRange().getValues();
+      for(var i=1; i<gVals.length; i++) {
+        var gRawM = gVals[i][0];
+        var gmStr = (gRawM instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][gRawM.getMonth()] + " " + gRawM.getFullYear()) : String(gRawM);
+        
+        if(gmStr.trim().toLowerCase() === String(month).trim().toLowerCase()) {
+          gsData[gVals[i][1]] = { link: gVals[i][2], status: gVals[i][4], notes: gVals[i][5] || "" };
+        }
+      }
+    }
+
+    var fsData = {};
+    var fsSheet = ss.getSheetByName('Final_Summaries');
+    if (fsSheet) {
+      var fVals = fsSheet.getDataRange().getValues();
+      for(var i=1; i<fVals.length; i++) {
+        var fRawM = fVals[i][0];
+        var fmStr = (fRawM instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][fRawM.getMonth()] + " " + fRawM.getFullYear()) : String(fRawM);
+        
+        if(fmStr.trim().toLowerCase() === String(month).trim().toLowerCase()) {
+          fsData[fVals[i][1]] = { link: fVals[i][2] }; 
+        }
+      }
+    }
+
+    return { 
+        success: true, 
+        unassigned: unassigned, 
+        categorized: categorized,
+        grandSummaries: gsData,
+        finalSummaries: fsData
+    };
+    
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+// 🚀 FUNGSI SAVE AMAN (Menyisipkan tanda kutip "'" agar Google Sheets tidak mengubahnya)
+function saveLibraryMapping(month, week, classDate, link, subject) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Library_Database');
+    var ts = new Date().toLocaleString('en-GB');
+    sheet.appendRow([ts, "'" + month, "'" + week, "'" + classDate, link, subject, false, ""]);
+    SpreadsheetApp.flush(); 
+    return { success: true, newRowIdx: sheet.getLastRow() };
+  } catch (e) { return { success: false, message: e.toString() }; } 
+}
+
+function updateLibraryMapping(rowIdx, month, week, classDate, link, subject) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Library_Database');
+    sheet.getRange(rowIdx, 4).setValue("'" + classDate); 
+    sheet.getRange(rowIdx, 5).setValue(link);      
+    sheet.getRange(rowIdx, 6).setValue(subject);   
+    SpreadsheetApp.flush(); 
+    return { success: true };
+  } catch (e) { return { success: false, message: e.toString() }; } 
+}
+
+function saveManualLibraryEntry(month, week, classDate, title, link, subject) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Library_Database');
+    var ts = new Date().toLocaleString('en-GB');
+    sheet.appendRow([ts, "'" + month, "'" + week, "'" + classDate, link, subject, true, title]);
+    SpreadsheetApp.flush();
+    return { success: true, newRowIdx: sheet.getLastRow() };
+  } catch (e) { return { success: false, message: e.toString() }; } 
+}
+
+// 🚀 GRAND SUMMARY AMAN
+function saveGrandSummaryBackend(month, week, subject, link) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Grand_Summaries');
+    if (!sheet) {
+      sheet = ss.insertSheet('Grand_Summaries');
+      sheet.appendRow(['Month', 'Subject', 'Link', 'PIC_Placeholder', 'Status', 'Notes']);
+    }
+    var data = sheet.getDataRange().getValues();
+    var found = false;
+    for (var i = 1; i < data.length; i++) {
+      var m = data[i][0];
+      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
+
+      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
+          String(data[i][1]).trim() === subject) {
+        sheet.getRange(i + 1, 3).setValue(link); 
+        sheet.getRange(i + 1, 5).setValue('Pending'); 
+        sheet.getRange(i + 1, 6).setValue(''); 
+        found = true; break;
+      }
+    }
+    if (!found) sheet.appendRow(["'" + month, subject, link, "", 'Pending', '']);
+    SpreadsheetApp.flush();
+    return { success: true };
+  } catch (e) { return { success: false, message: e.toString() }; } 
+}
+
+function approveGrandSummaryBackend(month, week, subject, user) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Grand_Summaries');
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      var m = data[i][0];
+      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
+
+      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
+          String(data[i][1]).trim() === subject) {
+        sheet.getRange(i + 1, 5).setValue('Approved');
+        sheet.getRange(i + 1, 6).setValue('');
+        SpreadsheetApp.flush();
+        return { success: true };
+      }
+    }
+    return { success: false, message: "Entry not found!" };
+  } catch (e) { return { success: false, message: e.toString() }; }
+}
+
+function declineGrandSummaryBackend(month, week, subject, notes) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Grand_Summaries');
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      var m = data[i][0];
+      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
+
+      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
+          String(data[i][1]).trim() === subject) {
+        sheet.getRange(i + 1, 5).setValue('Declined');
+        sheet.getRange(i + 1, 6).setValue(notes); 
+        SpreadsheetApp.flush();
+        return { success: true };
+      }
+    }
+    return { success: false, message: "Entry not found!" };
+  } catch (e) { return { success: false, message: e.toString() }; }
+}
+
+function saveFinalSummaryBackend(month, week, category, link) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sheet = ss.getSheetByName('Final_Summaries');
+    if (!sheet) {
+      sheet = ss.insertSheet('Final_Summaries');
+      sheet.appendRow(['Month', 'Category', 'Link', 'PIC_Placeholder']);
+    }
+    var data = sheet.getDataRange().getValues();
+    var found = false;
+    for (var i = 1; i < data.length; i++) {
+      var m = data[i][0];
+      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
+
+      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
+          String(data[i][1]).trim() === category) {
+        sheet.getRange(i + 1, 3).setValue(link);
+        found = true; break;
+      }
+    }
+    if (!found) sheet.appendRow(["'" + month, category, link, ""]);
+    SpreadsheetApp.flush();
+    return { success: true };
+  } catch (e) { return { success: false, message: e.toString() }; }
+}
