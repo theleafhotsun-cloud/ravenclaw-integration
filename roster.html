@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Roster Exporter - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --warning: #f57f17;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s;}
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 20px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        
+        /* BOX FILTERING */
+        .control-panel { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;}
+        .control-panel label { font-size: 11px; font-weight: bold; color: var(--royal-blue); text-transform: uppercase;}
+        .selector-box { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
+        
+        /* BOX EXPORT OPTIONS */
+        .export-panel { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 15px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center;}
+        .export-panel .title { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #2e7d32; margin-right: 10px; border-right: 2px solid #a5d6a7; padding-right: 15px;}
+        .export-panel label { font-size: 12px; font-weight: bold; color: #1b5e20; cursor: pointer; display: flex; align-items: center; gap: 5px; background: white; padding: 5px 10px; border-radius: 6px; border: 1px solid #c8e6c9; transition: 0.2s;}
+        .export-panel label:hover { background: #c8e6c9; }
+        
+        .btn-manage { background-color: var(--success); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; transition: background 0.3s; display: flex; align-items: center; gap: 8px; margin-left: auto;}
+        .btn-manage:hover { background-color: #1b5e20; }
+        
+        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); flex-grow: 1;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;}
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 14px;}
+        .lvl-beginner { background-color: #e3f2fd; color: #1565c0; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #bbdefb;}
+        .lvl-advanced { background-color: #f3e5f5; color: #6a1b9a; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #e1bee7;}
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)" class="active">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="displayUsername"><?= username ?></span> 
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">Student Roster Exporter</h1>
+            </div>
+
+            <!-- 1. CONTROLS FOR FILTERING & SORTING -->
+            <div class="control-panel">
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label>Sort By:</label>
+                    <select id="sortBy" class="selector-box" onchange="renderTable()">
+                        <option value="Major_Vault">Major Priority (Separated)</option>
+                        <option value="Vault">Mixed Majors (Vault Ascending)</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label>Filter Level:</label>
+                    <select id="filterLevel" class="selector-box" onchange="renderTable()">
+                        <option value="All">All Levels</option>
+                        <option value="Beginner">Beginner (G1-G3 / Newizzy)</option>
+                        <option value="Advanced">Advanced (G4-G7)</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label>Filter Major:</label>
+                    <select id="filterMajor" class="selector-box" onchange="renderTable()">
+                        <option value="All">All Majors</option>
+                        <option value="Auror">Auror</option>
+                        <option value="Ministry">Ministry</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label>Filter Subject:</label>
+                    <select id="filterSubject" class="selector-box" onchange="renderTable()">
+                        <option value="All">All Subjects / Classes</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 2. CONTROLS FOR EXPORTING -->
+            <div class="export-panel">
+                <div class="title">Columns to Export:</div>
+                <label><input type="checkbox" class="col-chk" value="0" checked> Vault Code</label>
+                <label><input type="checkbox" class="col-chk" value="1" checked> Username</label>
+                <label><input type="checkbox" class="col-chk" value="2"> Grade</label>
+                <label><input type="checkbox" class="col-chk" value="3"> Level</label>
+                <label><input type="checkbox" class="col-chk" value="4"> Major</label>
+                <label><input type="checkbox" class="col-chk" value="5"> Electives</label>
+                <label><input type="checkbox" class="col-chk" value="6"> Face Claim</label>
+                
+                <button class="btn-manage" onclick="copyTableToClipboard()" id="btnCopy">
+                    📋 Copy Checked Columns
+                </button>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Loading Student Database...</div>
+            
+            <div class="table-container">
+                <table id="rosterTable">
+                    <thead>
+                        <tr>
+                            <th>Vault Code</th>
+                            <th>Username</th>
+                            <th>Grade</th>
+                            <th>Class Level</th>
+                            <th>Major</th>
+                            <th>Electives (Subjects)</th>
+                            <th>Face Claim</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rosterBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <script>
+        // ==========================================
+        // 1. GLOBAL VARIABLES & IDENTITY
+        // ==========================================
+        let loggedInUser = "<?= username ?>";
+        let windowUserRole = "unknown"; // Menyimpan role dari backend secara aman
+
+        // Jika ada override user via URL (untuk keperluan view / admin)
+        try { 
+            let urlParams = new URLSearchParams(window.location.search); 
+            if(urlParams.has('user')) { loggedInUser = urlParams.get('user'); } 
+        } catch(e){}
+
+        var rosterData = [];
+        var aurorSubjects = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
+        var ministrySubjects = ["Astronomy", "Divination", "Care Of Magical Creatures", "Muggle Studies", "History Of Magic"];
+
+        // ==========================================
+        // 2. INITIALIZATION (ON LOAD)
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('displayUsername').innerText = loggedInUser;
+            
+            // Atur Sidebar dengan memanggil backend agar aman dari SyntaxError Template
+            setupDynamicSidebar();
+
+            // Panggil API Backend untuk mengambil data database siswa
+            fetchRoster();
+        });
+
+        // ==========================================
+        // 3. SIDEBAR & NAVIGATION LOGIC
+        // ==========================================
+        function setupDynamicSidebar() {
+            google.script.run.withSuccessHandler(function(role) {
+                windowUserRole = String(role).toLowerCase();
+                
+                var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
+                var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
+                var isLeadroom = windowUserRole.includes('leadroom');
+                var isEditor = windowUserRole.includes('editor');
+
+                var sidebarTitle = document.getElementById('sidebarTitle');
+                if (sidebarTitle) {
+                    var positionName = (windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole;
+                    sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+                }
+
+                // SOP & Task Master pasti muncul untuk semua Role
+                var sopMenu = document.querySelector('.menu-sop');
+                var tmMenu = document.querySelector('.menu-taskmaster');
+                if (sopMenu) sopMenu.style.display = 'block';
+                if (tmMenu) tmMenu.style.display = 'block';
+
+                if (isHH) {
+                    document.querySelectorAll('#sidebarMenu li').forEach(function(el) { el.style.display = 'block'; });
+                } 
+                else if (isPrefect) {
+                    ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(function(c) {
+                        var el = document.querySelector('.' + c); if(el) el.style.display = 'block';
+                    });
+                }
+                else if (isLeadroom) {
+                    ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(function(c) {
+                        var el = document.querySelector('.' + c); if(el) el.style.display = 'block';
+                    });
+                }
+                else if (isEditor) {
+                    ['menu-birthdays'].forEach(function(c) {
+                        var el = document.querySelector('.' + c); if(el) el.style.display = 'block';
+                    });
+                }
+            }).getUserRole(loggedInUser);
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; // Default Fallback
+
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) {
+                targetPage = 'viceprefect';
+            } else if (windowUserRole.includes('prefect')) {
+                targetPage = 'prefect';
+            } else if (windowUserRole.includes('editor')) {
+                targetPage = 'editor';
+            } else if (windowUserRole.includes('leadroom')) {
+                targetPage = 'leadroom';
+            }
+
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl();
+        }
+
+        function navigate(targetPage, element) { 
+            element.innerText = "Wait..."; 
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
+            }).getScriptUrl(); 
+        }
+        
+        function logout(btnElement) { 
+            btnElement.innerText = "Wait..."; 
+            google.script.run.withSuccessHandler(function(url) { 
+                window.top.location.href = url; 
+            }).getScriptUrl(); 
+        }
+
+        // ==========================================
+        // 4. DATA FETCHING & RENDERING LOGIC
+        // ==========================================
+        function fetchRoster() {
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Connecting to Student Database...";
+            
+            google.script.run
+                .withSuccessHandler(function(data) {
+                    if (!data || data.error) { 
+                        document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + (data ? data.error : "Failed to load data") + "</span>"; 
+                        return; 
+                    }
+                    rosterData = data;
+                    populateFilters();
+                    renderTable();
+                    document.getElementById('loadingMsg').style.display = 'none';
+                })
+                .withFailureHandler(function(err) {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Server Connection Error: " + err.message + "</span>";
+                })
+                .getRosterData();
+        }
+
+        function populateFilters() {
+            var subjectSel = document.getElementById('filterSubject');
+            subjectSel.innerHTML = '<option value="All">All Subjects / Classes</option>';
+
+            var uniqueSubjects = [].concat(aurorSubjects).concat(ministrySubjects);
+
+            if (rosterData && rosterData.length > 0) {
+                rosterData.forEach(function(s) {
+                    if(s.electives && s.electives !== '-' && s.electives !== '') {
+                        var subs = s.electives.split(',');
+                        subs.forEach(function(sub) {
+                            var cleanSub = sub.trim();
+                            var exists = uniqueSubjects.findIndex(item => cleanSub.toLowerCase() === item.toLowerCase());
+                            if(cleanSub !== '' && exists === -1) {
+                                uniqueSubjects.push(cleanSub);
+                            }
+                        });
+                    }
+                });
+            }
+
+            uniqueSubjects.sort();
+
+            uniqueSubjects.forEach(function(sub) {
+                var opt = document.createElement('option'); opt.value = sub; opt.innerText = sub;
+                subjectSel.appendChild(opt);
+            });
+        }
+
+        function renderTable() {
+            var sortBy = document.getElementById('sortBy').value;
+            var lvlFilter = document.getElementById('filterLevel').value;
+            var majFilter = document.getElementById('filterMajor').value;
+            var subFilter = document.getElementById('filterSubject').value;
+            
+            var tbody = document.getElementById('rosterBody');
+            tbody.innerHTML = '';
+
+            if(!rosterData || rosterData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:gray;">No students data is available.</td></tr>';
+                return;
+            }
+
+            // FILTERING DATA
+            var filteredData = rosterData.filter(function(s) {
+                var matchLvl = (lvlFilter === 'All') || (s.level === lvlFilter);
+                var matchMaj = (majFilter === 'All') || (s.major === majFilter);
+                
+                var matchSub = false;
+                if (subFilter === 'All') {
+                    matchSub = true;
+                } else {
+                    var filterLower = subFilter.toLowerCase();
+                    var cleanMajor = s.major.trim().toLowerCase();
+                    var isMandatory = false;
+
+                    if (cleanMajor === 'auror') {
+                        var aurorLower = aurorSubjects.map(function(x) { return x.toLowerCase(); });
+                        if (aurorLower.indexOf(filterLower) !== -1) isMandatory = true;
+                    } 
+                    else if (cleanMajor === 'ministry') {
+                        var ministryLower = ministrySubjects.map(function(x) { return x.toLowerCase(); });
+                        if (ministryLower.indexOf(filterLower) !== -1) isMandatory = true;
+                    }
+
+                    var isElective = false;
+                    if (s.electives && s.electives !== '-') {
+                        var studentSubs = s.electives.split(',').map(function(item) { return item.trim().toLowerCase(); });
+                        if (studentSubs.indexOf(filterLower) !== -1) isElective = true;
+                    }
+
+                    matchSub = isMandatory || isElective;
+                }
+
+                return matchLvl && matchMaj && matchSub;
+            });
+
+            // SORTING DATA
+            filteredData.sort(function(a, b) {
+                var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 0;
+                var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 0;
+                
+                if(vaultA === 0 && vaultB === 0) {
+                    vaultA = String(a.vault).toLowerCase();
+                    vaultB = String(b.vault).toLowerCase();
+                }
+
+                if (sortBy === 'Major_Vault') {
+                    var majorA = String(a.major).toLowerCase();
+                    var majorB = String(b.major).toLowerCase();
+                    
+                    if (majorA !== majorB) {
+                        var primaryMajor = 'auror'; 
+                        if (subFilter !== 'All') {
+                            var filterLower = subFilter.toLowerCase();
+                            var isMinistrySub = ministrySubjects.map(function(x){return x.toLowerCase();}).indexOf(filterLower) !== -1;
+                            if (isMinistrySub) {
+                                primaryMajor = 'ministry';
+                            }
+                        }
+
+                        if (primaryMajor === 'ministry') {
+                            if (majorA === 'ministry') return -1;
+                            if (majorB === 'ministry') return 1;
+                        } else {
+                            if (majorA === 'auror') return -1;
+                            if (majorB === 'auror') return 1;
+                        }
+                        
+                        if (majorA < majorB) return -1;
+                        if (majorA > majorB) return 1;
+                    }
+                    
+                    if (vaultA < vaultB) return -1;
+                    if (vaultA > vaultB) return 1;
+                    return 0;
+                } else {
+                    if (vaultA < vaultB) return -1;
+                    if (vaultA > vaultB) return 1;
+                    return 0;
+                }
+            });
+
+            // RENDERING TO TABLE
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:gray;">No students found matching the selected filters.</td></tr>';
+                return;
+            }
+
+            filteredData.forEach(function(s) {
+                var lvlBadge = s.level === 'Beginner' ? '<span class="lvl-beginner">Beginner</span>' : '<span class="lvl-advanced">Advanced</span>';
+                
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="vault-tag">${s.vault}</td>
+                    <td><b>${s.username}</b></td>
+                    <td>${s.grade}</td>
+                    <td>${lvlBadge}</td>
+                    <td>${s.major}</td>
+                    <td>${s.electives}</td>
+                    <td>${s.faceClaim}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // 5. EXPORT & CLIPBOARD
+        // ==========================================
+        function copyTableToClipboard() {
+            var btn = document.getElementById('btnCopy');
+            var originalText = btn.innerText;
+            btn.innerText = "⏳ Copying...";
+
+            var checkboxes = document.querySelectorAll('.col-chk');
+            var selectedCols = [];
+            checkboxes.forEach(function(chk) { if(chk.checked) selectedCols.push(parseInt(chk.value)); });
+
+            if(selectedCols.length === 0) {
+                alert("Please select at least 1 column to copy!");
+                btn.innerText = originalText;
+                return;
+            }
+
+            var rows = document.querySelectorAll("#rosterTable tr");
+            var tsvContent = "";
+
+            rows.forEach(function(row) {
+                var rowData = [];
+                if (row.cells.length > 1) {
+                    for(var i = 0; i < row.cells.length; i++) {
+                        if(selectedCols.indexOf(i) !== -1) {
+                            var text = row.cells[i].innerText.trim();
+                            text = text.replace(/\t/g, ' ').replace(/\n/g, ' ');
+                            rowData.push(text);
+                        }
+                    }
+                    tsvContent += rowData.join("\t") + "\n";
+                }
+            });
+
+            navigator.clipboard.writeText(tsvContent).then(function() {
+                btn.innerText = "✅ DATA COPIED!";
+                btn.style.backgroundColor = "#1b5e20";
+                setTimeout(function() { btn.innerText = originalText; btn.style.backgroundColor = "var(--success)"; }, 3000);
+            }).catch(function(err) {
+                alert("Failed to copy. Error: " + err);
+                btn.innerText = originalText;
+            });
+        }
+    </script>
+</body>
+</html>
