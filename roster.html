@@ -8,9 +8,11 @@
         :root {
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
             --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
-            --success: #2e7d32; --warning: #f57f17;
+            --success: #2e7d32; --warning: #f57f17; --danger: #c62828;
         }
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -19,13 +21,17 @@
         .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s;}
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
-        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        /* SCROLL FIX */
+        .content-area { padding: 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 20px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -44,7 +50,7 @@
         .btn-manage { background-color: var(--success); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; transition: background 0.3s; display: flex; align-items: center; gap: 8px; margin-left: auto;}
         .btn-manage:hover { background-color: #1b5e20; }
         
-        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); flex-grow: 1;}
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 30px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead { position: sticky; top: 0; z-index: 1;}
         th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
@@ -65,25 +71,25 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)" class="active">Student Roster Exporter</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')" class="active">Student Roster Exporter</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
-                Welcome, <span id="displayUsername"><?= username ?></span> 
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                Welcome, <span id="displayUsername">Loading...</span> 
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -165,19 +171,17 @@
         </div>
     </div>
 
-    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <!-- SCRIPT AREA -->
     <script>
         // ==========================================
         // 1. GLOBAL VARIABLES & IDENTITY
         // ==========================================
-        let loggedInUser = "<?= username ?>";
-        let windowUserRole = "unknown"; // Menyimpan role dari backend secara aman
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
 
-        // Jika ada override user via URL (untuk keperluan view / admin)
-        try { 
-            let urlParams = new URLSearchParams(window.location.search); 
-            if(urlParams.has('user')) { loggedInUser = urlParams.get('user'); } 
-        } catch(e){}
+        let loggedInUser = localStorage.getItem("session_username");
+        let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
+        if (!loggedInUser) window.location.href = "index.html";
 
         var rosterData = [];
         var aurorSubjects = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
@@ -188,11 +192,7 @@
         // ==========================================
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('displayUsername').innerText = loggedInUser;
-            
-            // Atur Sidebar dengan memanggil backend agar aman dari SyntaxError Template
             setupDynamicSidebar();
-
-            // Panggil API Backend untuk mengambil data database siswa
             fetchRoster();
         });
 
@@ -200,102 +200,81 @@
         // 3. SIDEBAR & NAVIGATION LOGIC
         // ==========================================
         function setupDynamicSidebar() {
-            google.script.run.withSuccessHandler(function(role) {
-                windowUserRole = String(role).toLowerCase();
-                
-                var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
-                var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
-                var isLeadroom = windowUserRole.includes('leadroom');
-                var isEditor = windowUserRole.includes('editor');
+            var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
+            var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
+            var isLeadroom = windowUserRole.includes('leadroom');
+            var isEditor = windowUserRole.includes('editor');
 
-                var sidebarTitle = document.getElementById('sidebarTitle');
-                if (sidebarTitle) {
-                    var positionName = (windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole;
-                    sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
-                }
-
-                // SOP & Task Master pasti muncul untuk semua Role
-                var sopMenu = document.querySelector('.menu-sop');
-                var tmMenu = document.querySelector('.menu-taskmaster');
-                if (sopMenu) sopMenu.style.display = 'block';
-                if (tmMenu) tmMenu.style.display = 'block';
-
-                if (isHH) {
-                    document.querySelectorAll('#sidebarMenu li').forEach(function(el) { el.style.display = 'block'; });
-                } 
-                else if (isPrefect) {
-                    ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(function(c) {
-                        var el = document.querySelector('.' + c); if(el) el.style.display = 'block';
-                    });
-                }
-                else if (isLeadroom) {
-                    ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(function(c) {
-                        var el = document.querySelector('.' + c); if(el) el.style.display = 'block';
-                    });
-                }
-                else if (isEditor) {
-                    ['menu-birthdays'].forEach(function(c) {
-                        var el = document.querySelector('.' + c); if(el) el.style.display = 'block';
-                    });
-                }
-            }).getUserRole(loggedInUser);
-        }
-
-        function navigateHome(element) {
-            element.innerText = "Loading...";
-            var targetPage = 'headhouse'; // Default Fallback
-
-            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) {
-                targetPage = 'viceprefect';
-            } else if (windowUserRole.includes('prefect')) {
-                targetPage = 'prefect';
-            } else if (windowUserRole.includes('editor')) {
-                targetPage = 'editor';
-            } else if (windowUserRole.includes('leadroom')) {
-                targetPage = 'leadroom';
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            google.script.run.withSuccessHandler(function(url) { 
-                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
-            }).getScriptUrl();
+            var dirMenu = document.querySelector('.menu-taskdirectory');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) {
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isLeadroom) {
+                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+            else if (isEditor) {
+                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
         }
 
-        function navigate(targetPage, element) { 
-            element.innerText = "Wait..."; 
-            google.script.run.withSuccessHandler(function(url) { 
-                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
-            }).getScriptUrl(); 
+        function navigateHome() {
+            var targetPage = 'headhouse';
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
+            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
+            else if (windowUserRole.includes('editor')) targetPage = 'editor';
+            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage) {
+            window.location.href = targetPage + ".html";
         }
         
-        function logout(btnElement) { 
-            btnElement.innerText = "Wait..."; 
-            google.script.run.withSuccessHandler(function(url) { 
-                window.top.location.href = url; 
-            }).getScriptUrl(); 
+        function logout() { 
+            localStorage.clear();
+            window.location.href = "index.html";
         }
 
         // ==========================================
-        // 4. DATA FETCHING & RENDERING LOGIC
+        // 4. DATA FETCHING & RENDERING LOGIC (FETCH API)
         // ==========================================
         function fetchRoster() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Connecting to Student Database...";
             
-            google.script.run
-                .withSuccessHandler(function(data) {
-                    if (!data || data.error) { 
-                        document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + (data ? data.error : "Failed to load data") + "</span>"; 
-                        return; 
-                    }
-                    rosterData = data;
+            fetch(API_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getRosterData" })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === "success") {
+                    rosterData = result.data;
                     populateFilters();
                     renderTable();
                     document.getElementById('loadingMsg').style.display = 'none';
-                })
-                .withFailureHandler(function(err) {
-                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Server Connection Error: " + err.message + "</span>";
-                })
-                .getRosterData();
+                } else {
+                    throw new Error(result.message || result.error);
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Server Connection Error: " + err.message + "</span>";
+            });
         }
 
         function populateFilters() {
