@@ -12,6 +12,7 @@
         }
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
         
+        /* Sidebar Styles */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -21,24 +22,27 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
         
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize;}
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
         
-        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        /* SCROLL FIX */
+        .content-area { padding: 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
-        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
         
-        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
-        .filter-group { display: flex; gap: 10px; align-items: center; }
+        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
+        .filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
         .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
         .btn-reset { background-color: var(--danger); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: background 0.3s;}
         .btn-reset:hover { background-color: #b71c1c; }
 
+        /* Tabs */
         .room-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
         .tab-btn { background-color: #f0f0f0; border: none; padding: 10px 18px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
         .tab-btn.active { background-color: var(--info); color: white; border-bottom: 2px solid #01579b;}
@@ -48,7 +52,8 @@
 
         .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         
-        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); max-height: 500px;}
+        /* Table */
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 20px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead { position: sticky; top: 0; z-index: 1;}
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 13px; vertical-align: middle;}
@@ -57,6 +62,7 @@
 
         .subject-name { font-weight: bold; color: var(--royal-blue); font-size: 14px;}
         
+        /* Badges */
         .stat-badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid transparent; }
         .stat-normal { background-color: #e8f5e9; color: var(--success); border-color: #c8e6c9; }
         .stat-replacement { background-color: #fff3e0; color: #e65100; border-color: #ffe0b2; }
@@ -68,13 +74,15 @@
         .task-link { background-color: #e8eaf6; color: var(--sapphire); padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold; display: inline-block; border: 1px solid #c5cae9; transition: 0.2s;}
         .task-link:hover { background-color: var(--sapphire); color: white; }
 
+        /* Buttons */
         .btn-edit { background-color: var(--sapphire); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
         .btn-edit:hover { background-color: var(--royal-blue); }
         .btn-drive { background-color: #1a73e8; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;}
         .btn-drive:hover { background-color: #0d47a1; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        /* COMPACT MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px;}
         
         .form-group { margin-bottom: 15px; }
@@ -89,32 +97,32 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
+    <!-- Dynamic Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)" class="active">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')" class="active">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
-                Welcome, <span><?= username ?></span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                Welcome, <span id="display-username">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -199,33 +207,29 @@
         </div>
     </div>
 
-    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <!-- SCRIPT AREA -->
     <script>
         // ==========================================
-        // 1. GLOBAL VARIABLES
+        // 1. GLOBAL VARIABLES & VERCEL INIT
         // ==========================================
-        let loggedInUser = "<?= username ?>";
-        let windowUserRole = "unknown";
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+
+        let loggedInUser = localStorage.getItem("session_username");
+        let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
+        if (!loggedInUser) window.location.href = "index.html";
 
         var activeTab = "Beginner Ministry";
         var currentData = {};
         var dynamicPicMap = {};
 
         const subjectRoomMap = {
-            "Astronomy": "Eternclaw",
-            "Charm": "Eternclaw",
-            "Herbology": "Eternclaw", 
-            "Defence Against The Dark Arts": "Eternclaw",
-            "Potion": "Ravelynx",
-            "Divination": "Ravelynx",
-            "Ancient Runes": "Ravenion",
-            "Care Of Magical Creatures": "Ravenion",
-            "Muggle Studies": "Ravenrow",
-            "Arithmancy": "Ravenrow",
-            "Transfiguration": "Velaclaw",
-            "History Of Magic": "Velaclaw",
-            "Quidditch Practice": "PVP",
-            "Quidditch Match": "PVP"
+            "Astronomy": "Eternclaw", "Charm": "Eternclaw", "Herbology": "Eternclaw", "Defence Against The Dark Arts": "Eternclaw",
+            "Potion": "Ravelynx", "Divination": "Ravelynx",
+            "Ancient Runes": "Ravenion", "Care Of Magical Creatures": "Ravenion",
+            "Muggle Studies": "Ravenrow", "Arithmancy": "Ravenrow",
+            "Transfiguration": "Velaclaw", "History Of Magic": "Velaclaw",
+            "Quidditch Practice": "PVP", "Quidditch Match": "PVP"
         };
 
         const classCategories = {
@@ -240,6 +244,7 @@
         // 2. ONLOAD INITIALIZATION
         // ==========================================
         window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
             populateMonths();
         });
@@ -248,94 +253,73 @@
         // 3. LOGIKA SIDEBAR & NAVIGASI
         // ==========================================
         function setupDynamicSidebar() {
-            google.script.run.withSuccessHandler(function(role) {
-                windowUserRole = String(role).toLowerCase();
-                
-                var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
-                var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
-                var isLeadroom = windowUserRole.includes('leadroom');
-                var isEditor = windowUserRole.includes('editor');
+            var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
+            var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
+            var isLeadroom = windowUserRole.includes('leadroom');
+            var isEditor = windowUserRole.includes('editor');
 
-                var sidebarTitle = document.getElementById('sidebarTitle');
-                if (sidebarTitle) {
-                    var positionName = (windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole;
-                    sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
-                }
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
 
-                var sopMenu = document.querySelector('.menu-sop');
-                var tmMenu = document.querySelector('.menu-taskmaster');
-                if (sopMenu) sopMenu.style.display = 'block';
-                if (tmMenu) tmMenu.style.display = 'block';
+            var dirMenu = document.querySelector('.menu-taskdirectory');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
 
-                if (isHH) {
-                    document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-                } 
-                else if (isPrefect) {
-                    ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-                }
-                else if (isLeadroom) {
-                    ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-                }
-                else if (isEditor) {
-                    ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-                }
-            }).getUserRole(loggedInUser);
+            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            else if (isPrefect) ['menu-salary', 'menu-workreport', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome(element) {
-            element.innerText = "Loading...";
+        function navigateHome() {
             var targetPage = 'headhouse';
-
-            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) {
-                targetPage = 'viceprefect';
-            } else if (windowUserRole.includes('prefect')) {
-                targetPage = 'prefect';
-            } else if (windowUserRole.includes('editor')) {
-                targetPage = 'editor';
-            } else if (windowUserRole.includes('leadroom')) {
-                targetPage = 'leadroom';
-            }
-
-            google.script.run.withSuccessHandler(function(url) { 
-                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
-            }).getScriptUrl();
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
+            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
+            else if (windowUserRole.includes('editor')) targetPage = 'editor';
+            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
         }
 
-        function navigate(targetPage, element) {
-            element.innerText = "Wait..."; 
-            google.script.run.withSuccessHandler(function(url) {
-                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser);
-            }).getScriptUrl();
+        function navigate(targetPage) {
+            window.location.href = targetPage + ".html";
         }
 
-        function logout(btnElement) {
-            btnElement.innerText = "Wait...";
-            google.script.run.withSuccessHandler(function(url) { window.top.location.href = url; }).getScriptUrl();
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
         }
 
         // ==========================================
-        // 4. LOGIKA CLASS DATABASE & RENDER
+        // 4. LOGIKA CLASS DATABASE & RENDER (FETCH API)
         // ==========================================
         function populateMonths() {
-            google.script.run.withSuccessHandler(function(res) {
-                var mSel = document.getElementById('monthSelector');
-                if(res.activeMonth) {
-                    var opt = document.createElement('option');
-                    opt.value = res.activeMonth.monthLabel;
-                    opt.innerText = res.activeMonth.monthLabel + " (Active)";
-                    opt.selected = true;
-                    mSel.appendChild(opt);
-                }
-                if(res.archivedMonths) {
-                    res.archivedMonths.forEach(function(m) {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
+            })
+            .then(r => r.json())
+            .then(result => {
+                if(result.status === 'success') {
+                    var res = result.data;
+                    var mSel = document.getElementById('monthSelector');
+                    if(res.activeMonth) {
                         var opt = document.createElement('option');
-                        opt.value = m.monthLabel;
-                        opt.innerText = m.monthLabel;
+                        opt.value = res.activeMonth.monthLabel;
+                        opt.innerText = res.activeMonth.monthLabel + " (Active)";
+                        opt.selected = true;
                         mSel.appendChild(opt);
-                    });
+                    }
+                    if(res.archivedMonths) {
+                        res.archivedMonths.forEach(function(m) {
+                            var opt = document.createElement('option');
+                            opt.value = m.monthLabel; opt.innerText = m.monthLabel;
+                            mSel.appendChild(opt);
+                        });
+                    }
+                    fetchClassData(); 
                 }
-                fetchClassData(); 
-            }).getPeriodConfig(loggedInUser);
+            });
         }
 
         function fetchClassData() {
@@ -346,16 +330,24 @@
             document.getElementById('categoryTabs').style.display = 'none';
             document.getElementById('tabContainer').innerHTML = '';
 
-            google.script.run.withSuccessHandler(function(res) {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getClassData", month: month, week: week })
+            })
+            .then(r => r.json())
+            .then(res => {
                 document.getElementById('loadingMsg').style.display = 'none';
-                if(res.success) {
+                if(res.status === 'success' || res.success) {
                     currentData = res.data || {};
                     dynamicPicMap = res.picData || {}; 
                     renderTables();
                 } else {
                     alert("Error loading data: " + res.message);
                 }
-            }).getClassData(month, week);
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerText = "Connection Error.";
+            });
         }
 
         function safeLink(linkStr) {
@@ -557,15 +549,20 @@
             var btn = document.getElementById('btnSave');
             btn.innerText = "Saving..."; btn.disabled = true;
 
-            google.script.run.withSuccessHandler(function(res) {
-                if(res.success) {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveClassData", month: month, week: week, category: category, subject: subject, status: status, deadline: deadline, detail: detail })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
                     closeModal();
                     fetchClassData(); 
                 } else {
                     alert("Failed to save: " + res.message);
                 }
                 btn.innerText = "Save Changes"; btn.disabled = false;
-            }).saveClassData(month, week, category, subject, status, deadline, detail);
+            });
         }
 
         function resetWeekData() {
@@ -578,19 +575,21 @@
                 document.getElementById('categoryTabs').style.display = 'none';
                 document.getElementById('tabContainer').innerHTML = '';
 
-                google.script.run.withSuccessHandler(function(res) {
-                    if(res.success) {
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "resetClassData", month: month, week: week })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if(res.status === 'success' || res.success) {
                         alert("✅ Reset successful. This week's data has been reverted to default.");
-                        
-                        // MENGOSONGKAN CACHE FRONTEND AGAR DATA LAMA TIDAK TAMPIL KEMBALI
                         currentData = {}; 
-                        
                         fetchClassData();
                     } else {
                         alert("❌ Reset failed: " + res.message);
                         fetchClassData();
                     }
-                }).resetClassData(month, week);
+                });
             }
         }
     </script>
