@@ -48,6 +48,16 @@
         .btn-master-pdf { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-transform: uppercase; transition: background 0.3s; }
         .btn-master-pdf:hover { background-color: var(--sapphire); }
 
+        /* Preset & Folder Management Styles */
+        .preset-box { background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--shellstone); }
+        .preset-box strong { font-size: 13px; color: var(--royal-blue); display: block; margin-bottom: 10px; text-transform: uppercase; }
+        .preset-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .preset-controls select { flex-grow: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--shellstone); font-weight: bold;}
+        .btn-preset { padding: 8px 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; color: white;}
+        .btn-preset.load { background-color: var(--sapphire); }
+        .btn-preset.save { background-color: var(--success); }
+        .btn-preset.delete { background-color: var(--danger); }
+
         /* Editable Table Styles */
         .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
@@ -65,7 +75,7 @@
 
         /* Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 600px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 650px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 20px;}
         
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
@@ -73,7 +83,10 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
         .form-group input { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); }
+        .form-group input[type="file"] { padding: 6px; font-size: 11px; background-color: var(--swan-wing); }
         
+        .preview-img { max-height: 40px; margin-top: 10px; display: none; border-radius: 4px; border: 1px dashed var(--shellstone); padding: 2px;}
+
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
@@ -84,34 +97,25 @@
         @media print {
             @page { size: A4 portrait; margin: 15mm 15mm 15mm 15mm; }
             body * { visibility: hidden; }
-            
             body.print-master #masterPayslipArea, body.print-master #masterPayslipArea * { visibility: visible; }
             body.print-master #masterPayslipArea { 
                 display: block; position: absolute; left: 0; top: 0; width: 100%; 
-                background-color: white; color: black; 
-                font-family: 'Times New Roman', Times, serif; 
-                page-break-inside: avoid;
+                background-color: white; color: black; font-family: 'Times New Roman', Times, serif; page-break-inside: avoid;
             }
-            
             .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
             .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
             .header-text p { font-size: 13px; margin: 0; color: #333; }
             .header-logo img { width: 75px; height: auto; }
-            
             .pdf-divider { border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px; }
-            
             .master-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; page-break-inside: auto; }
             .master-table tr { page-break-inside: avoid; page-break-after: auto; }
             .master-table th, .master-table td { border: 1px solid #000; padding: 6px 8px; text-align: center; color: black;}
             .master-table th { font-weight: bold; font-size: 11px; background-color: #f2f2f2 !important; color: black !important; text-transform: uppercase;}
-            
             .summary-container { page-break-inside: avoid; }
             .table-no-border { width: 100%; border-collapse: collapse; }
             .table-no-border td { border: none !important; padding: 2px 0; text-align: left; font-size: 12px;}
-            
             .master-summary { width: 50%; font-size: 12px; margin-bottom: 30px; }
             .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-            
             .master-signatures { display: flex; justify-content: space-between; font-size: 13px; margin-top: 30px; page-break-inside: avoid; }
             .sig-block { text-align: center; width: 40%; position: relative;}
             .sig-block-right { text-align: center; width: 40%; position: relative;}
@@ -122,7 +126,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -130,7 +133,7 @@
         </div>
         <ul class="nav-links" id="sidebarMenu">
             <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)" class="active">Salary Master</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)" class="active">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
             <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
@@ -155,14 +158,29 @@
             <div class="header-actions">
                 <h1 class="page-title">Salary Master</h1>
                 
+                <!-- Filter dari Database Asli -->
                 <div class="filter-container">
-                    <label for="monthFilter">📁 Period Folder:</label>
+                    <label for="monthFilter">📡 Live Database Filter:</label>
                     <select id="monthFilter" onchange="filterByMonth()">
                         <option value="ALL">All Active Periods</option>
                     </select>
                 </div>
 
-                <button class="btn-master-pdf" onclick="openPrintSettings()">🖨️ Download Master Salary PDF</button>
+                <button class="btn-master-pdf" onclick="openPrintSettings()">🖨️ Master Salary PDF Settings</button>
+            </div>
+
+            <!-- FOLDER DATA SNAPSHOT (Menyimpan Tabel) -->
+            <div class="preset-box" style="border-color: var(--sapphire); background-color: #f8f9fa;">
+                <strong>🗂️ Data Table Folders (Saved Snapshots)</strong>
+                <div class="preset-controls">
+                    <select id="snapshotSelect">
+                        <option value="LIVE">🟢 Show Live Data from Database</option>
+                    </select>
+                    <button class="btn-preset load" onclick="loadSnapshot()">Load Folder</button>
+                    <button class="btn-preset save" onclick="saveSnapshot()">Save Current Table to Folder</button>
+                    <button class="btn-preset delete" onclick="deleteSnapshot()">Delete Folder</button>
+                </div>
+                <div style="font-size:10px; color:gray; margin-top:5px;">💡 Fill in the Vault Codes and Adjustments below, then click "Save to Folder". Your edited data will be saved here safely, even if new data enters the Live Database next month!</div>
             </div>
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Calculating salaries from Work Reports...</div>
@@ -198,11 +216,22 @@
     <!-- PRINT SETTINGS MODAL -->
     <div class="modal-overlay" id="printSettingsModal">
         <div class="modal-box">
-            <h3>Customize Master Salary Document</h3>
+            <h3>Document Settings & Presets</h3>
             
+            <!-- Preset Management Section -->
+            <div class="preset-box">
+                <strong>📄 Save/Load Document PDF Settings</strong>
+                <div class="preset-controls">
+                    <select id="presetSelect"></select>
+                    <button class="btn-preset load" onclick="loadPreset()">Load Settings</button>
+                    <button class="btn-preset save" onclick="savePreset()">Save Current Settings</button>
+                    <button class="btn-preset delete" onclick="deletePreset()">Delete Settings</button>
+                </div>
+            </div>
+
             <div class="form-row">
                 <div class="form-group">
-                    <label>Report Month & Year</label>
+                    <label>Report Month & Year (Preset Name)</label>
                     <input type="text" id="setMonthYear" placeholder="e.g. July 2026">
                 </div>
                 <div class="form-group">
@@ -214,13 +243,17 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Signatory 1 (Left)</label>
-                    <input type="text" id="setSig1" value="Jeremius Alderton">
-                    <input type="text" id="setSigImg1" placeholder="Signature Image URL (Optional)" style="margin-top: 5px; font-size: 11px;">
+                    <input type="text" id="setSig1" value="Jeremius Alderton" style="margin-bottom: 5px;">
+                    <input type="file" id="uploadSig1" accept="image/*" onchange="handleImageUpload(event, 1)">
+                    <input type="hidden" id="sigBase64_1">
+                    <img id="previewSig1" class="preview-img" alt="Preview 1">
                 </div>
                 <div class="form-group">
                     <label>Signatory 2 (Right)</label>
-                    <input type="text" id="setSig2" value="Gresham Adams">
-                    <input type="text" id="setSigImg2" placeholder="Signature Image URL (Optional)" style="margin-top: 5px; font-size: 11px;">
+                    <input type="text" id="setSig2" value="Gresham Adams" style="margin-bottom: 5px;">
+                    <input type="file" id="uploadSig2" accept="image/*" onchange="handleImageUpload(event, 2)">
+                    <input type="hidden" id="sigBase64_2">
+                    <img id="previewSig2" class="preview-img" alt="Preview 2">
                 </div>
             </div>
 
@@ -281,32 +314,26 @@
                 </tr>
             </thead>
             <tbody id="masterTableBody">
-                <!-- Data injected by JS upon printing -->
             </tbody>
         </table>
         
         <div class="summary-container">
             <div class="master-summary">
                 <div class="summary-row" style="font-weight:bold; margin-bottom: 8px; font-size: 13px;">
-                    <span>TOTAL SALARY</span> 
-                    <span id="masterTotalSalary"></span>
+                    <span>TOTAL SALARY</span> <span id="masterTotalSalary"></span>
                 </div>
                 <div class="summary-row" style="font-weight:bold; margin-bottom: 20px; font-size: 13px;">
-                    <span>TOTAL BONUS</span> 
-                    <span id="masterTotalBonus"></span>
+                    <span>TOTAL BONUS</span> <span id="masterTotalBonus"></span>
                 </div>
-                
                 <div class="summary-row" style="font-weight:bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px;">
                     <span>SOURCE</span><span></span>
                 </div>
-                
                 <table class="table-no-border">
                     <tr><td id="outSrcName1"></td><td style="text-align: right;" id="outSrcAmt1"></td></tr>
                     <tr><td id="outSrcName2"></td><td style="text-align: right;" id="outSrcAmt2"></td></tr>
                     <tr><td id="outSrcName3"></td><td style="text-align: right;" id="outSrcAmt3"></td></tr>
                     <tr><td id="outSrcName4"></td><td style="text-align: right;" id="outSrcAmt4"></td></tr>
                 </table>
-                
                 <div style="font-size:10px; font-style:italic; margin-top:6px;">exclude tax</div>
             </div>
             
@@ -327,178 +354,165 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // --- 1. SETTING URL API ---
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
 
-        // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
-        if (!loggedInUser) {
-            window.location.href = "index.html";
-        }
+        if (!loggedInUser) window.location.href = "index.html";
 
         let salaryDataStore = [];
         let currentGrandTotal = 0; 
+        const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
+        const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
 
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
+            loadSnapshotDropdown();
 
-            // --- 3. FETCH API MENGAMBIL DATA GAJI ---
             fetch(API_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getSalaryCalculations" })
             })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(result => {
-                if (result.status === "success") {
-                    initSalaryData(result.data);
-                } else {
-                    throw new Error(result.message);
-                }
+                if (result.status === "success") initSalaryData(result.data);
+                else throw new Error(result.message);
             })
-            .catch(err => {
-                document.getElementById('loadingMsg').innerText = "Error: " + err.message;
-            });
+            .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
         };
 
-        // ==========================================
-        // LOGIKA SIDEBAR
-        // ==========================================
-        function setupDynamicSidebar() {
-            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
-            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
-            var isLeadroom = userRole.includes('leadroom');
-            var isEditor = userRole.includes('editor');
+        // --- SISTEM FOLDER / TABLE SNAPSHOTS ---
+        function getSnapshots() { return JSON.parse(localStorage.getItem(SNAPSHOT_STORAGE_KEY) || '{}'); }
 
-            var sidebarTitle = document.getElementById('sidebarTitle');
-            if (sidebarTitle) {
-                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
-                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+        function loadSnapshotDropdown() {
+            const snaps = getSnapshots();
+            const select = document.getElementById('snapshotSelect');
+            select.innerHTML = '<option value="LIVE">🟢 Show Live Data from Database</option>';
+            Object.keys(snaps).forEach(key => {
+                select.innerHTML += `<option value="${key}">📁 ${key}</option>`;
+            });
+        }
+
+        function saveSnapshot() {
+            const snapName = prompt("Berikan nama untuk folder ini (Contoh: Gaji Juli Final):");
+            if (!snapName) return;
+
+            let snapData = [];
+            const rowsCount = document.querySelectorAll('#tableBody tr').length;
+            
+            for (let i = 0; i < rowsCount; i++) {
+                const tr = document.querySelectorAll('#tableBody tr')[i];
+                if(!tr) continue;
+                
+                snapData.push({
+                    username: tr.getAttribute('data-username'),
+                    kpi: tr.getAttribute('data-kpi'),
+                    targetTugas: tr.getAttribute('data-target'),
+                    vault: document.getElementById(`vault_${i}`).value,
+                    position: document.getElementById(`pos_${i}`).value,
+                    baseSalary: Number(document.getElementById(`base_${i}`).value),
+                    durasi: Number(document.getElementById(`dur_${i}`).value),
+                    positionBonus: Number(document.getElementById(`posBonus_${i}`).value),
+                    performanceBonus: Number(document.getElementById(`perfBonus_${i}`).value)
+                });
             }
 
-            var sopMenu = document.querySelector('.menu-sop');
-            var tmMenu = document.querySelector('.menu-taskmaster');
-            if (sopMenu) sopMenu.style.display = 'block';
-            if (tmMenu) tmMenu.style.display = 'block';
+            const snaps = getSnapshots();
+            snaps[snapName] = snapData;
+            localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
+            loadSnapshotDropdown();
+            alert(`Tabel berhasil disimpan ke folder "${snapName}"!`);
+        }
 
-            if (isHH) {
-                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            } 
-            else if (isPrefect) {
-                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
-            else if (isLeadroom) {
-                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
-            else if (isEditor) {
-                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+        function loadSnapshot() {
+            const key = document.getElementById('snapshotSelect').value;
+            if (key === "LIVE") {
+                filterByMonth(); // Kembali panggil data Live dari GAS
+            } else {
+                const data = getSnapshots()[key];
+                if (data) renderTable(data, true);
             }
         }
 
-        // ==========================================
-        // LOGIKA NAVIGASI (VERCEL)
-        // ==========================================
-        function navigateHome(element) {
-            element.innerText = "Loading...";
-            var targetPage = 'headhouse'; 
+        function deleteSnapshot() {
+            const key = document.getElementById('snapshotSelect').value;
+            if (key === "LIVE") return alert("Data Live tidak bisa dihapus dari sini!");
+            if (!confirm(`Hapus folder "${key}" selamanya?`)) return;
 
-            if (userRole.includes('vp') || userRole.includes('vice')) {
-                targetPage = 'viceprefect';
-            } else if (userRole.includes('prefect')) {
-                targetPage = 'prefect';
-            } else if (userRole.includes('editor')) {
-                targetPage = 'editor';
-            } else if (userRole.includes('leadroom')) {
-                targetPage = 'leadroom';
-            }
-
-            window.location.href = targetPage + "-dashboard.html";
+            const snaps = getSnapshots();
+            delete snaps[key];
+            localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
+            loadSnapshotDropdown();
+            document.getElementById('snapshotSelect').value = "LIVE";
+            filterByMonth();
         }
 
-        function navigate(targetPage, element) {
-            element.innerText = "Wait..."; 
-            window.location.href = targetPage + ".html";
-        }
-
-        function logout(btnElement) {
-            btnElement.innerText = "Wait...";
-            localStorage.clear();
-            window.location.href = "index.html";
-        }
-
-        // ==========================================
-        // LOGIKA SALARY MASTER & PDF
-        // ==========================================
-        function formatMoney(num) {
-            return Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }); 
-        }
+        // --- SISTEM RENDER TABEL UTAMA ---
+        function formatMoney(num) { return Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }); }
 
         function initSalaryData(data) {
             salaryDataStore = data;
-            
             const monthSelect = document.getElementById('monthFilter');
             const months = [...new Set(data.map(item => item.monthFolder))];
             
             months.forEach(m => {
-                if(m) {
-                    const opt = document.createElement('option');
-                    opt.value = m;
-                    opt.innerText = m;
-                    monthSelect.appendChild(opt);
-                }
+                if(m) { const opt = document.createElement('option'); opt.value = m; opt.innerText = m; monthSelect.appendChild(opt); }
             });
-
             renderTable(data);
         }
 
         function filterByMonth() {
+            // Pastikan dropdown folder snapshot pindah ke LIVE
+            document.getElementById('snapshotSelect').value = "LIVE";
             const selectedMonth = document.getElementById('monthFilter').value;
-            if (selectedMonth === 'ALL') {
-                renderTable(salaryDataStore);
-            } else {
-                const filtered = salaryDataStore.filter(item => item.monthFolder === selectedMonth);
-                renderTable(filtered);
-            }
+            if (selectedMonth === 'ALL') renderTable(salaryDataStore);
+            else renderTable(salaryDataStore.filter(item => item.monthFolder === selectedMonth));
         }
 
-        function renderTable(data) {
+        function renderTable(data, isSnapshot = false) {
             document.getElementById('loadingMsg').style.display = 'none';
             document.getElementById('salaryTable').style.display = 'table';
             document.getElementById('tableFooter').style.display = 'table-footer-group';
-            
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
             if (!data || data.length === 0 || data.error) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.error || 'No approved reports for this period.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.error || 'No reports found.'}</td></tr>`;
                 document.getElementById('tableFooter').style.display = 'none';
                 return;
             }
 
             data.forEach((row, index) => {
-                const totalCombinedBonus = row.performanceBonus + row.backupBonus;
-                
+                // Kalkulasi bonus gabungan jika ini data Live dari GAS
+                let perfBonusToDisplay = 0;
+                if(isSnapshot) {
+                    perfBonusToDisplay = row.performanceBonus || 0;
+                } else {
+                    perfBonusToDisplay = (row.performanceBonus || 0) + (row.backupBonus || 0);
+                }
+
                 const tr = document.createElement('tr');
+                // Menyimpan data murni ke elemen agar bisa diambil saat disave jadi Snapshot
+                tr.setAttribute('data-username', row.username || '');
+                tr.setAttribute('data-kpi', row.kpi || 0);
+                tr.setAttribute('data-target', row.targetTugas || 0);
+
                 tr.innerHTML = `
-                    <td>
-                        <strong>${row.username}</strong>
-                        <span class="kpi-info">KPI: ${row.kpi}% | Target: ${row.targetTugas}</span>
-                    </td>
-                    <td><input type="text" class="edit-input code" id="vault_${index}" placeholder="Code"></td>
-                    <td><input type="text" class="edit-input text" id="pos_${index}" value="${row.position}"></td>
-                    <td><input type="number" class="edit-input" id="base_${index}" value="${row.baseSalary}" oninput="recalculate()"></td>
-                    <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="${row.durasi}" oninput="recalculate()"></td>
-                    <td><input type="number" class="edit-input" id="posBonus_${index}" value="${row.positionBonus}" oninput="recalculate()"></td>
-                    <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="${totalCombinedBonus}" oninput="recalculate()"></td>
-                    <td class="total-display" id="totalDisplay_${index}">ʛ${formatMoney(row.totalSalary)}</td>
+                    <td><strong>${row.username}</strong><span class="kpi-info">KPI: ${row.kpi || 0}% | Target: ${row.targetTugas || 0}</span></td>
+                    <td><input type="text" class="edit-input code" id="vault_${index}" value="${row.vault || ''}" placeholder="Code"></td>
+                    <td><input type="text" class="edit-input text" id="pos_${index}" value="${row.position || ''}"></td>
+                    <td><input type="number" class="edit-input" id="base_${index}" value="${row.baseSalary || 0}" oninput="recalculate()"></td>
+                    <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="${row.durasi || 0}" oninput="recalculate()"></td>
+                    <td><input type="number" class="edit-input" id="posBonus_${index}" value="${row.positionBonus || 0}" oninput="recalculate()"></td>
+                    <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="${perfBonusToDisplay}" oninput="recalculate()"></td>
+                    <td class="total-display" id="totalDisplay_${index}">ʛ0</td>
                 `;
                 tbody.appendChild(tr);
             });
-            
             recalculate(); 
         }
 
@@ -524,6 +538,108 @@
             checkAllocation(); 
         }
 
+        // --- SISTEM SIDEBAR & NAVIGASI ---
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
+
+            var sopMenu = document.querySelector('.menu-sop');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (sopMenu) sopMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; 
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
+        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
+
+        // --- SISTEM PDF DAN PRESET DOKUMEN ---
+        function getPresets() { return JSON.parse(localStorage.getItem(PRESET_STORAGE_KEY) || '{}'); }
+
+        function loadPresetDropdown() {
+            const presets = getPresets();
+            const select = document.getElementById('presetSelect');
+            select.innerHTML = '<option value="">-- Select Saved Settings --</option>';
+            Object.keys(presets).forEach(key => { select.innerHTML += `<option value="${key}">${key}</option>`; });
+        }
+
+        function savePreset() {
+            const monthYear = document.getElementById('setMonthYear').value.trim();
+            if(!monthYear) return alert("Isi Report Month & Year terlebih dahulu!");
+
+            const presets = getPresets();
+            presets[monthYear] = {
+                sigDate: document.getElementById('setSignatureDate').value,
+                sig1: document.getElementById('setSig1').value,
+                sig2: document.getElementById('setSig2').value,
+                sigBase64_1: document.getElementById('sigBase64_1').value,
+                sigBase64_2: document.getElementById('sigBase64_2').value,
+                srcName1: document.getElementById('setSrcName1').value, srcAmt1: document.getElementById('setSrcAmt1').value,
+                srcName2: document.getElementById('setSrcName2').value, srcAmt2: document.getElementById('setSrcAmt2').value,
+                srcName3: document.getElementById('setSrcName3').value, srcAmt3: document.getElementById('setSrcAmt3').value,
+                srcName4: document.getElementById('setSrcName4').value, srcAmt4: document.getElementById('setSrcAmt4').value
+            };
+            localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presets));
+            loadPresetDropdown();
+            alert(`Document settings for "${monthYear}" saved!`);
+        }
+
+        function loadPreset() {
+            const key = document.getElementById('presetSelect').value;
+            if(!key) return alert("Pilih settings dari dropdown dulu!");
+            
+            const data = getPresets()[key];
+            document.getElementById('setMonthYear').value = key;
+            document.getElementById('setSignatureDate').value = data.sigDate || '';
+            document.getElementById('setSig1').value = data.sig1 || '';
+            document.getElementById('setSig2').value = data.sig2 || '';
+            
+            document.getElementById('sigBase64_1').value = data.sigBase64_1 || '';
+            const prev1 = document.getElementById('previewSig1');
+            if(data.sigBase64_1) { prev1.src = data.sigBase64_1; prev1.style.display = 'block'; } else { prev1.style.display = 'none'; }
+
+            document.getElementById('sigBase64_2').value = data.sigBase64_2 || '';
+            const prev2 = document.getElementById('previewSig2');
+            if(data.sigBase64_2) { prev2.src = data.sigBase64_2; prev2.style.display = 'block'; } else { prev2.style.display = 'none'; }
+
+            document.getElementById('setSrcName1').value = data.srcName1 || ''; document.getElementById('setSrcAmt1').value = data.srcAmt1 || 0;
+            document.getElementById('setSrcName2').value = data.srcName2 || ''; document.getElementById('setSrcAmt2').value = data.srcAmt2 || 0;
+            document.getElementById('setSrcName3').value = data.srcName3 || ''; document.getElementById('setSrcAmt3').value = data.srcAmt3 || 0;
+            document.getElementById('setSrcName4').value = data.srcName4 || ''; document.getElementById('setSrcAmt4').value = data.srcAmt4 || 0;
+            checkAllocation();
+        }
+
+        function deletePreset() {
+            const key = document.getElementById('presetSelect').value;
+            if(!key) return alert("Pilih settings dari dropdown dulu!");
+            if(!confirm(`Hapus settings "${key}"?`)) return;
+
+            const presets = getPresets();
+            delete presets[key];
+            localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presets));
+            loadPresetDropdown();
+            alert("Settings deleted!");
+        }
+
         function checkAllocation() {
             const s1 = Number(document.getElementById('setSrcAmt1').value) || 0;
             const s2 = Number(document.getElementById('setSrcAmt2').value) || 0;
@@ -536,16 +652,27 @@
 
             if (remaining === 0) {
                 statusEl.innerText = "Perfect Allocation (Remaining: ʛ0)";
-                statusEl.style.backgroundColor = "var(--success)";
-                statusEl.style.color = "white";
+                statusEl.style.backgroundColor = "var(--success)"; statusEl.style.color = "white";
             } else if (remaining > 0) {
                 statusEl.innerText = "Under-funded! Remaining to allocate: ʛ" + formatMoney(remaining);
-                statusEl.style.backgroundColor = "var(--danger)";
-                statusEl.style.color = "white";
+                statusEl.style.backgroundColor = "var(--danger)"; statusEl.style.color = "white";
             } else {
                 statusEl.innerText = "Over-allocated by: ʛ" + formatMoney(Math.abs(remaining));
-                statusEl.style.backgroundColor = "var(--warning)";
-                statusEl.style.color = "white";
+                statusEl.style.backgroundColor = "var(--warning)"; statusEl.style.color = "white";
+            }
+        }
+
+        function handleImageUpload(event, sigNumber) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64String = e.target.result;
+                    document.getElementById('sigBase64_' + sigNumber).value = base64String;
+                    const preview = document.getElementById('previewSig' + sigNumber);
+                    preview.src = base64String; preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         }
 
@@ -558,16 +685,15 @@
             if (d % 10 == 2 && d != 12) suffix = "nd";
             if (d % 10 == 3 && d != 13) suffix = "rd";
 
-            document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
-            document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`;
+            if(!document.getElementById('setMonthYear').value) { document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`; }
+            if(!document.getElementById('setSignatureDate').value) { document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`; }
             
+            loadPresetDropdown();
             checkAllocation(); 
             document.getElementById('printSettingsModal').style.display = 'flex';
         }
 
-        function closePrintSettings() {
-            document.getElementById('printSettingsModal').style.display = 'none';
-        }
+        function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
 
         function confirmAndPrint() {
             const tbody = document.getElementById('masterTableBody');
@@ -622,17 +748,15 @@
 
             document.getElementById('masterMonthYear').innerText = document.getElementById('setMonthYear').value;
             document.getElementById('outSigDate').innerText = document.getElementById('setSignatureDate').value;
-            
             document.getElementById('masterTotalSalary').innerText = "ʛ" + formatMoney(sumTotalSalary);
             document.getElementById('masterTotalBonus').innerText = "ʛ" + formatMoney(sumTotalBonus);
-            
             document.getElementById('outSig1').innerText = document.getElementById('setSig1').value;
             document.getElementById('outSig2').innerText = document.getElementById('setSig2').value;
 
-            const imgUrl1 = document.getElementById('setSigImg1').value;
-            const imgUrl2 = document.getElementById('setSigImg2').value;
-            document.getElementById('sigImgContainer1').innerHTML = imgUrl1 ? `<img src="${imgUrl1}" class="sig-img">` : '';
-            document.getElementById('sigImgContainer2').innerHTML = imgUrl2 ? `<img src="${imgUrl2}" class="sig-img">` : '';
+            const imgData1 = document.getElementById('sigBase64_1').value;
+            const imgData2 = document.getElementById('sigBase64_2').value;
+            document.getElementById('sigImgContainer1').innerHTML = imgData1 ? `<img src="${imgData1}" class="sig-img">` : '';
+            document.getElementById('sigImgContainer2').innerHTML = imgData2 ? `<img src="${imgData2}" class="sig-img">` : '';
 
             document.getElementById('outSrcName1').innerText = document.getElementById('setSrcName1').value;
             document.getElementById('outSrcAmt1').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt1').value);
