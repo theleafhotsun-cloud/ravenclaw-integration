@@ -23,14 +23,15 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        /* PERBAIKAN BUG LANDSCAPE: scroll natural, bukan flexbox */
+        .content-area { padding: 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -42,12 +43,11 @@
         .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
         .btn-primary:hover { background-color: var(--sapphire); }
 
-        /* Database Table */
-        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex-grow: 1; border: 1px solid var(--shellstone);}
+        /* PERBAIKAN BUG TABEL TERPOTONG: Margin bawah ditambah, hapus flex-grow */
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 40px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        thead { position: sticky; top: 0; z-index: 1;}
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
-        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
         tr:hover { background-color: var(--swan-wing); }
         
         .row-dimmed { background-color: #f5f5f5 !important; }
@@ -72,29 +72,30 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
         .btn-icon:hover { transform: scale(1.2); }
 
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 700px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px; font-size: 16px;}
+        /* PERBAIKAN POPUP MODAL: Lebih kecil (compact) dan bisa discroll dengan baik */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 15px;}
         
-        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 15px 0 10px 0; }
+        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 12px 0 8px 0; }
 
-        .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
         .form-row .form-group { flex: 1; margin-bottom: 0; }
-        .form-group { margin-bottom: 12px; }
+        .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 4px; text-transform: uppercase; }
-        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 8px 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 12px;}
+        /* Pengecilan kotak input */
+        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 6px 8px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 11px;}
         .form-group select:disabled { background-color: #e0e0e0; cursor: not-allowed; font-weight: bold; color: var(--royal-blue); }
         
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px solid var(--shellstone); min-height: 38px; align-items: center;}
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; background: white; padding: 8px; border-radius: 4px; border: 1px solid var(--shellstone); min-height: 30px; align-items: center;}
         .checkbox-item { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: bold; color: var(--royal-blue); cursor: pointer; }
         .checkbox-item input { margin: 0; cursor: pointer; }
         
         .empty-electives-msg { font-size: 11px; color: gray; font-style: italic; }
 
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
-        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 12px;}
-        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 12px;}
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--shellstone); padding-top: 10px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
+        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
     </style>
 </head>
 <body>
@@ -229,13 +230,13 @@
                 <div class="form-group"><label>Face Claim</label><input type="text" id="studFaceClaim" placeholder="Face Claim"></div>
             </div>
 
-            <!-- BAGIAN WARNING LETTERS: BOX KHUSUS WL1 DAN WL2 -->
+            <!-- BAGIAN WARNING LETTERS -->
             <div class="section-header">Warning Letters Records</div>
             <div class="form-row">
                 <!-- BOX WL 1 -->
-                <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 12px; border-radius: 6px;">
+                <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px;">
                     <label style="color: #c62828;">Warning Letter 1</label>
-                    <select id="wl1Reason" style="margin-bottom: 8px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
+                    <select id="wl1Reason" style="margin-bottom: 6px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
                         <option value="">- Select Issue / Reason -</option>
                         <option value="Class">CLASS</option>
                         <option value="Inactive">INACTIVE</option>
@@ -247,9 +248,9 @@
                 </div>
                 
                 <!-- BOX WL 2 -->
-                <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 12px; border-radius: 6px;">
+                <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px;">
                     <label style="color: #c62828;">Warning Letter 2</label>
-                    <select id="wl2Reason" style="margin-bottom: 8px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
+                    <select id="wl2Reason" style="margin-bottom: 6px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
                         <option value="">- Select Issue / Reason -</option>
                         <option value="Class">CLASS</option>
                         <option value="Inactive">INACTIVE</option>
