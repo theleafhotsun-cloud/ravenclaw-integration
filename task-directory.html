@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Directory - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2; --danger: #c62828;
+        }
+
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar Styles */
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        .content-area { padding: 30px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
+        
+        .header-actions { border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; }
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 24px;}
+        .page-desc { font-size: 13px; color: gray; margin-top: 5px;}
+
+        /* Tab Navigation */
+        .tab-container { display: flex; border-bottom: 2px solid var(--shellstone); margin-bottom: 20px; gap: 10px; flex-wrap: wrap;}
+        .tab-btn { background: none; border: none; padding: 10px 20px; font-weight: bold; color: var(--sapphire); cursor: pointer; text-transform: uppercase; font-size: 13px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.3s;}
+        .tab-btn.active { color: var(--royal-blue); border-bottom: 3px solid var(--quicksand); background-color: var(--swan-wing); border-radius: 6px 6px 0 0;}
+        .tab-btn:hover:not(.active) { color: var(--royal-blue); background-color: #f9f9f9; border-radius: 6px 6px 0 0;}
+
+        /* Table Design */
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 40px;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .week-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block;}
+        .week-1 { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+        .week-2 { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .week-3 { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+        .week-4 { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
+        .week-0 { background-color: #f5f5f5; color: #616161; border: 1px solid #e0e0e0; }
+
+        .desc-cell { white-space: normal; min-width: 250px; line-height: 1.4; font-size: 12px;}
+        
+        #loadingMsg { text-align: center; color: var(--sapphire); font-weight: bold; margin: 30px 0; font-size: 16px; }
+        .error-message { background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border-left: 5px solid #c62828; margin: 20px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Dinamis -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu">
+            <!-- Ubah nama class dan text menjadi Task Directory -->
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)" class="active">Task Directory</a></li>
+            
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="display-username">Loading...</span>
+                <button class="btn-logout" onclick="logout(this)">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">Caretaker Task Directory</h1>
+                <p class="page-desc">Complete directory of all tasks, descriptions, and KPI parameters grouped by caretaker positions.</p>
+            </div>
+
+            <!-- Tab Navigation for Roles -->
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="loadTaskDirectory('prefect', this)">Prefect</button>
+                <button class="tab-btn" onclick="loadTaskDirectory('vice prefect', this)">Vice Prefect</button>
+                <button class="tab-btn" onclick="loadTaskDirectory('leadroom', this)">Lead Room</button>
+                <button class="tab-btn" onclick="loadTaskDirectory('editor', this)">Editor</button>
+            </div>
+
+            <div id="loadingMsg">Fetching Task Database...</div>
+            
+            <!-- Data Table (Read-Only) -->
+            <div class="table-container">
+                <table id="taskDirTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Period</th>
+                            <th style="width: 50px; text-align: center;">KPI</th>
+                            <th>Category</th>
+                            <th>Task Name</th>
+                            <th>Description & Instructions</th>
+                            <th style="width: 20%;">Time & Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT AREA -->
+    <script>
+        // ==========================================
+        // 1. SETTING URL API & SESI
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+
+        let loggedInUser = localStorage.getItem("session_username");
+        let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
+        if (!loggedInUser) window.location.href = "index.html";
+
+        window.onload = function() {
+            document.getElementById("display-username").innerText = loggedInUser;
+            setupDynamicSidebar(); 
+            
+            // Secara default, muat data Prefect saat halaman pertama kali dibuka
+            loadTaskDirectory('prefect', document.querySelector('.tab-btn.active'));
+        };
+
+        // ==========================================
+        // 2. LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
+            var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
+            var isLeadroom = windowUserRole.includes('leadroom');
+            var isEditor = windowUserRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
+
+            // Ubah selektor menjadi .menu-taskdirectory
+            var dirMenu = document.querySelector('.menu-taskdirectory');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (dirMenu) dirMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+        }
+
+        function navigateHome(element) {
+            element.innerText = "Loading...";
+            var targetPage = 'headhouse'; 
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
+            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
+            else if (windowUserRole.includes('editor')) targetPage = 'editor';
+            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
+        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
+
+        // ==========================================
+        // 3. LOGIKA FETCH DATA TUGAS
+        // ==========================================
+        function loadTaskDirectory(roleToFetch, btnElement) {
+            // Ubah gaya tab yang sedang aktif
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            // Tampilkan tulisan loading
+            let loadMsg = document.getElementById('loadingMsg');
+            loadMsg.style.display = 'block';
+            loadMsg.innerHTML = `Fetching task directory for <b>${roleToFetch.toUpperCase()}</b>...`;
+            document.getElementById('taskDirTable').style.display = 'none';
+            document.getElementById('tableBody').innerHTML = '';
+
+            // Tembak API yang sama dengan Task Master
+            fetch(API_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "fetchMyTasks",
+                    role: roleToFetch 
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === "success") {
+                    renderTable(result.data);
+                } else {
+                    throw new Error(result.message);
+                }
+            })
+            .catch(err => {
+                loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`;
+            });
+        }
+
+        function renderTable(rawTasks) {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('taskDirTable').style.display = 'table';
+            const tbody = document.getElementById('tableBody');
+            
+            let tasks = [];
+            
+            // Konversi jadwal All Week menjadi 4 Baris (Week 1,2,3,4) agar rapi
+            if(rawTasks && rawTasks.length > 0) {
+                rawTasks.forEach(task => {
+                    let sec = String(task.section || '').toUpperCase();
+                    if (sec.includes('ALL WEEK') || sec.includes('ALLWEEK')) {
+                        for (let w = 1; w <= 4; w++) tasks.push({ ...task, targetWeek: w });
+                    } else {
+                        let wMatch = sec.match(/\d+/);
+                        let wNum = wMatch ? parseInt(wMatch[0]) : 0;
+                        tasks.push({ ...task, targetWeek: wNum });
+                    }
+                });
+            }
+
+            // Urutkan berdasarkan minggu
+            tasks.sort((a, b) => a.targetWeek - b.targetWeek);
+
+            if (tasks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:gray;">No tasks defined for this position in Master_Tugas database.</td></tr>';
+                return;
+            }
+
+            tasks.forEach((t) => {
+                const tr = document.createElement('tr');
+                
+                let safeCategory = t.category || t.kategori || "-";
+                let safeTaskName = t.taskName || "Untitled Task";
+                let safeDescription = t.description || "-";
+
+                // Error Handler dari backend jika ada yang kosong
+                if (t.section === "ERROR" || t.section === "DEBUG" || t.category === "INFO") {
+                    tbody.innerHTML = `<tr><td colspan="6"><div class="error-message"><b>${safeTaskName}</b><br>${safeDescription}<br>Time/Remarks: ${t.time} | ${t.remarks}</div></td></tr>`;
+                    return; 
+                }
+
+                let badgeClass = t.targetWeek >= 1 && t.targetWeek <= 4 ? `week-${t.targetWeek}` : 'week-0';
+                let weekLabel = t.targetWeek > 0 ? `Week ${t.targetWeek}` : (t.section || '-');
+
+                tr.innerHTML = `
+                    <td><span class="week-badge ${badgeClass}">${weekLabel}</span></td>
+                    <td style="text-align:center; font-weight:bold; color:var(--royal-blue);">${t.kpi || '-'}</td>
+                    <td><span style="background:var(--swan-wing); padding:3px 6px; border-radius:4px; font-size:11px; font-weight:bold;">${safeCategory}</span></td>
+                    <td style="color:var(--sapphire);"><b>${safeTaskName}</b></td>
+                    <td class="desc-cell">${safeDescription}</td>
+                    <td style="font-size:11px; line-height:1.4;">
+                        <b>Time:</b> ${t.time || '-'}<br>
+                        <i style="color:gray;"><b>Notes:</b> ${t.remarks || '-'}</i>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
