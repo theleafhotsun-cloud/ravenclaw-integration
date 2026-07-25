@@ -224,7 +224,7 @@
             </div>
 
             <!-- Tombol Tambah Baris Manual -->
-            <button class="btn-add-row" id="btnAddRow" style="display:none;" onclick="addManualRow()">➕ Tambah Baris Manual</button>
+            <button class="btn-add-row" id="btnAddRow" style="display:none;" onclick="addManualRow()">➕ Add Manual Entry</button>
 
         </div>
     </div>
@@ -416,7 +416,7 @@
         }
 
         function saveSnapshot() {
-            const snapName = prompt("Berikan nama untuk folder ini (Contoh: Gaji Juli Final):");
+            const snapName = prompt("Enter a folder name (e.g., July Payroll Final).");
             if (!snapName) return;
 
             let snapData = [];
@@ -448,7 +448,7 @@
             snaps[snapName] = snapData;
             localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
             loadSnapshotDropdown();
-            alert(`Tabel berhasil disimpan ke folder "${snapName}"!`);
+            alert(`Table successfully saved to the folder. "${snapName}"!`);
         }
 
         function loadSnapshot() {
@@ -463,8 +463,8 @@
 
         function deleteSnapshot() {
             const key = document.getElementById('snapshotSelect').value;
-            if (key === "LIVE") return alert("Data Live tidak bisa dihapus dari sini!");
-            if (!confirm(`Hapus folder "${key}" selamanya?`)) return;
+            if (key === "LIVE") return alert("Live data cannot be deleted from here!");
+            if (!confirm(`Delete this folder "${key}" permanently?`)) return;
 
             const snaps = getSnapshots();
             delete snaps[key];
@@ -503,7 +503,7 @@
                 <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="0" oninput="recalculate()"></td>
                 <td><input type="text" class="edit-input notes" id="notes_${index}" value="" placeholder="Notes..."></td>
                 <td class="total-display" id="totalDisplay_${index}">ʛ0</td>
-                <td style="text-align:center;"><button class="btn-del-row" onclick="deleteRow(this)" title="Hapus Baris">🗑️</button></td>
+                <td style="text-align:center;"><button class="btn-del-row" onclick="deleteRow(this)" title="Delete Row">🗑️</button></td>
             `;
             tbody.appendChild(tr);
             recalculate();
