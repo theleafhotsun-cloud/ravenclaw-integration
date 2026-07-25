@@ -30,13 +30,14 @@
 
         /* Main Content */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column;}
+        /* PERBAIKAN BUG LANDSCAPE: Menghapus flex-direction pada content area agar scroll natural */
+        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap;}
         .page-title { color: var(--royal-blue); margin: 0; }
@@ -49,7 +50,9 @@
         .btn-restore { background-color: var(--swan-wing); color: var(--sapphire); border: 1px solid var(--sapphire); padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: all 0.3s; }
         .btn-restore:hover { background-color: var(--sapphire); color: white; }
         
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; flex-grow: 1;}
+        /* PERBAIKAN BUG LANDSCAPE: Menghapus flex-grow pada tabel */
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 13px; vertical-align: middle;}
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
@@ -75,7 +78,8 @@
         .btn-archive { background-color: var(--shellstone); color: var(--royal-blue); border: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
         .btn-archive:hover { background-color: var(--danger); color: white; }
 
-        .monitoring-panel { background-color: var(--swan-wing); border: 2px dashed var(--sapphire); border-radius: 8px; padding: 20px; margin-top: 20px; }
+        /* PERBAIKAN BUG LANDSCAPE: Memberikan flex-shrink 0 agar kotak ini tidak pernah terpotong */
+        .monitoring-panel { background-color: var(--swan-wing); border: 2px dashed var(--sapphire); border-radius: 8px; padding: 20px; margin-bottom: 40px; flex-shrink: 0; }
         .monitoring-panel h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; font-size: 15px; }
         .tracker-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
         .btn-tracker { background-color: var(--sapphire); color: var(--swan-wing); border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: all 0.3s; flex-grow: 1; text-align: center; }
