@@ -21,13 +21,14 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
         
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        .content-area { padding: 25px; display: flex; flex-direction: column; height: calc(100vh - 60px); box-sizing: border-box;}
+        /* SCROLL FIX */
+        .content-area { padding: 25px; display: block; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -55,7 +56,7 @@
         
         .sop-banner { background-color: #e8eaf6; border-left: 4px solid var(--sapphire); padding: 12px 15px; margin-bottom: 15px; font-size: 11px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
 
-        .table-container { overflow-x: auto; overflow-y: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); max-height: 450px;}
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom:20px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead { position: sticky; top: 0; z-index: 1;}
         th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
@@ -71,8 +72,8 @@
         .badge-date { background-color: var(--quicksand); color: var(--royal-blue); font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; display: inline-block;}
 
         /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding:10px;}
+        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; max-width:95%; max-height:85vh; overflow-y:auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px; font-size: 16px;}
         
         .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 15px 0 10px 0; }
@@ -101,25 +102,25 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)" class="active">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')" class="active">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
-                Welcome, <span id="usernameDisplay"><?= username ?></span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                Welcome, <span id="usernameDisplay">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -136,7 +137,7 @@
             </div>
 
             <div class="period-controller">
-                <div style="display:flex; align-items:center; gap:20px;">
+                <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
                     <div style="background:var(--sapphire); padding:5px 10px; border-radius:6px; display:flex; gap:10px;">
                         <label style="margin:0; cursor:pointer;"><input type="radio" name="modeArchive" value="active" checked onchange="toggleArchiveMode()"> Active Month</label>
                         <label style="margin:0; cursor:pointer;"><input type="radio" name="modeArchive" value="archive" onchange="toggleArchiveMode()"> Archive</label>
@@ -272,18 +273,21 @@
         </div>
     </div>
 
-    <!-- SATU-SATUNYA SCRIPT AREA -->
+    <!-- SCRIPT AREA -->
     <script>
         // ==========================================
         // 1. GLOBAL VARIABLES
         // ==========================================
-        let loggedInUser = "<?= username ?>";
-        let userRole = "<?= typeof userRole !== 'undefined' ? userRole : 'unknown' ?>".toLowerCase();
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+        
+        if (!loggedInUser) window.location.href = "index.html";
 
         var activeTab = "Pending Mapping"; 
         var libraryDataStore = null;
         var periodConfigStore = null;
-        var windowUserRole = "";
         var canApproveGrandSummary = false;
 
         const catMap = {
@@ -298,6 +302,7 @@
         // 2. ONLOAD INITIALIZATION
         // ==========================================
         window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('usernameDisplay').innerText = loggedInUser;
             setupDynamicSidebar();
             initPeriodConfig();
         });
@@ -317,7 +322,6 @@
         // 3. LOGIKA SIDEBAR & NAVIGASI
         // ==========================================
         function setupDynamicSidebar() {
-            windowUserRole = userRole; 
             canApproveGrandSummary = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -331,9 +335,9 @@
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            var sopMenu = document.querySelector('.menu-sop');
+            var dirMenu = document.querySelector('.menu-taskdirectory');
             var tmMenu = document.querySelector('.menu-taskmaster');
-            if (sopMenu) sopMenu.style.display = 'block';
+            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
             if (tmMenu) tmMenu.style.display = 'block';
 
             if (isHH) {
@@ -341,7 +345,7 @@
                 document.getElementById('btnManagePeriod').style.display = 'inline-block';
             } 
             else if (isPrefect) {
-                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                ['menu-salary', 'menu-workreport', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
                 if (userRole.includes('vp') || userRole.includes('vice')) {
                     document.getElementById('btnManagePeriod').style.display = 'inline-block';
                 }
@@ -354,47 +358,40 @@
             }
         }
 
-        function navigateHome(element) {
-            element.innerText = "Loading...";
-            var targetPage = 'headhouse'; // Default fallback
-
-            if (userRole.includes('vp') || userRole.includes('vice')) {
-                targetPage = 'viceprefect';
-            } else if (userRole.includes('prefect')) {
-                targetPage = 'prefect';
-            } else if (userRole.includes('editor')) {
-                targetPage = 'editor';
-            } else if (userRole.includes('leadroom')) {
-                targetPage = 'leadroom';
-            }
-
-            google.script.run.withSuccessHandler(function(url) { 
-                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
-            }).getScriptUrl();
+        function navigateHome() {
+            var targetPage = 'headhouse';
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
         }
 
-        function navigate(targetPage, element) { 
-            element.innerText = "Wait..."; 
-            google.script.run.withSuccessHandler(function(url) { 
-                window.top.location.href = url + "?page=" + targetPage + "&user=" + encodeURIComponent(loggedInUser); 
-            }).getScriptUrl(); 
+        function navigate(targetPage) {
+            window.location.href = targetPage + ".html"; 
         }
 
-        function logout(btnElement) {
-            btnElement.innerText = "Wait...";
-            google.script.run.withSuccessHandler(function(url) { window.top.location.href = url; }).getScriptUrl();
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
         }
 
         // ==========================================
-        // 4. LOGIKA LIBRARY DB (UTUH 100%)
+        // 4. LOGIKA LIBRARY DB (FETCH API)
         // ==========================================
         function initPeriodConfig() {
-            google.script.run.withSuccessHandler(function(res) {
-                if(res && !res.error) {
-                    periodConfigStore = res;
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    periodConfigStore = res.data;
                     toggleArchiveMode(); 
                 }
-            }).getPeriodConfig(loggedInUser);
+            })
+            .catch(err => { showToast("Initialization Error", "error"); });
         }
 
         function toggleArchiveMode() {
@@ -434,17 +431,20 @@
             document.getElementById('categoryTabs').style.display = 'none';
             document.getElementById('tabContainer').innerHTML = '<div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Scanning Data from Spreadsheet...</div>';
             
-            google.script.run
-            .withSuccessHandler(function(res) {
-                if(res.success) {
-                    libraryDataStore = res;
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getLibraryData", month: month, week: week })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    libraryDataStore = res.data || res;
                     renderTabs();
                 } else {
-                    showToast("Error loading data", "error");
+                    showToast("Error loading data: " + res.message, "error");
                 }
             })
-            .withFailureHandler(function(err){ showToast("Connection error: " + err, "error"); })
-            .getLibraryData(month, week);
+            .catch(err => { showToast("Connection error: " + err, "error"); });
         }
 
         function safeLink(link) { return link.indexOf('http') === 0 ? link : 'https://' + link; }
@@ -581,7 +581,7 @@
                     
                     if (canApproveGrandSummary) {
                         actionHtml = `<button class="btn-primary" style="background-color: var(--success); margin-right:5px; padding: 4px 8px;" onclick="accGrandSummary('${subj}')">✔ Approve</button>
-                                      <button class="btn-del" style="padding: 4px 8px;" onclick="decGrandSummary('${subj}')">✖ Decline</button>`;
+                                      <button class="btn-del" style="background-color: var(--danger); color:white; border:none; border-radius:4px; padding: 4px 8px; cursor:pointer;" onclick="decGrandSummary('${subj}')">✖ Decline</button>`;
                     } else {
                         actionHtml = `<span style="color: gray; font-size:11px;">Locked</span>`;
                     }
@@ -726,13 +726,15 @@
                 activeTab = cat; renderTabs();
                 showToast("Updating changes...");
 
-                google.script.run
-                .withSuccessHandler(function(res) {
-                    if(res.success) { showToast("Mapping Updated!", "success"); } 
-                    else { showToast("Failed to update: " + res.message, "error"); }
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "updateLibraryMapping", rowIdx: rowIdx, month: month, week: week, classDate: cDate, link: link, subject: fullSubject })
                 })
-                .withFailureHandler(function(err){ showToast("Connection error", "error"); })
-                .updateLibraryMapping(rowIdx, month, week, cDate, link, fullSubject);
+                .then(r => r.json())
+                .then(res => {
+                    if(res.status === 'success' || res.success) { showToast("Mapping Updated!", "success"); } 
+                    else { showToast("Failed to update: " + res.message, "error"); }
+                });
             } 
             else {
                 var unIndex = libraryDataStore.unassigned.findIndex(item => item.link === link);
@@ -745,16 +747,18 @@
                 activeTab = cat; renderTabs();
                 showToast("Saving new mapping...");
 
-                google.script.run
-                .withSuccessHandler(function(res) {
-                    if(res.success) {
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "saveLibraryMapping", month: month, week: week, classDate: cDate, link: link, subject: fullSubject })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if(res.status === 'success' || res.success) {
                         newItem.rowIdx = res.newRowIdx;
                         renderTabs();
                         showToast("Mapping Saved!", "success");
                     } else showToast("Failed to save: " + res.message, "error");
-                })
-                .withFailureHandler(function(err){ showToast("Connection error", "error"); })
-                .saveLibraryMapping(month, week, cDate, link, fullSubject);
+                });
             }
         }
 
@@ -771,13 +775,15 @@
             activeTab = 'Grand Summary'; renderTabs();
             showToast("Saving Grand Summary...");
 
-            google.script.run
-            .withSuccessHandler(function(res) {
-                if(res.success) showToast("Grand Summary Saved!", "success");
-                else showToast("Failed to save: " + res.message, "error");
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveGrandSummaryBackend", month: month, week: week, subject: subject, link: link })
             })
-            .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
-            .saveGrandSummaryBackend(month, week, subject, link);
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) showToast("Grand Summary Saved!", "success");
+                else showToast("Failed to save: " + res.message, "error");
+            });
         }
 
         function accGrandSummary(subject) {
@@ -790,13 +796,15 @@
                 activeTab = 'Grand Summary'; renderTabs();
                 showToast("Approving summary...");
 
-                google.script.run
-                .withSuccessHandler(function(res) {
-                    if(res.success) showToast("Approved successfully!", "success");
-                    else showToast("Failed to approve: " + res.message, "error");
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "approveGrandSummaryBackend", month: month, week: week, subject: subject, user: loggedInUser })
                 })
-                .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
-                .approveGrandSummaryBackend(month, week, subject, loggedInUser);
+                .then(r => r.json())
+                .then(res => {
+                    if(res.status === 'success' || res.success) showToast("Approved successfully!", "success");
+                    else showToast("Failed to approve: " + res.message, "error");
+                });
             }
         }
 
@@ -811,13 +819,15 @@
                 activeTab = 'Grand Summary'; renderTabs();
                 showToast("Declining summary...");
 
-                google.script.run
-                .withSuccessHandler(function(res) {
-                    if(res.success) showToast("Declined successfully!", "success");
-                    else showToast("Failed to decline: " + res.message, "error");
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "declineGrandSummaryBackend", month: month, week: week, subject: subject, notes: reason })
                 })
-                .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
-                .declineGrandSummaryBackend(month, week, subject, reason);
+                .then(r => r.json())
+                .then(res => {
+                    if(res.status === 'success' || res.success) showToast("Declined successfully!", "success");
+                    else showToast("Failed to decline: " + res.message, "error");
+                });
             }
         }
 
@@ -843,13 +853,15 @@
             activeTab = 'Grand Summary'; renderTabs();
             showToast("Saving Final Summary...");
 
-            google.script.run
-            .withSuccessHandler(function(res) {
-                if(res.success) showToast("Final Summary Saved!", "success");
-                else showToast("Failed to save: " + res.message, "error");
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveFinalSummaryBackend", month: month, week: week, category: category, link: link })
             })
-            .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
-            .saveFinalSummaryBackend(month, week, category, link);
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) showToast("Final Summary Saved!", "success");
+                else showToast("Failed to save: " + res.message, "error");
+            });
         }
         
         // MANUAL ENTRY & PERIOD CONFIG
@@ -892,16 +904,18 @@
             activeTab = cat; renderTabs();
             showToast("Saving Entry...");
 
-            google.script.run
-            .withSuccessHandler(function(res) {
-                if(res.success) {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: week, classDate: cDate, title: title, link: link, subject: fullSubject })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
                     newItem.rowIdx = res.newRowIdx;
                     renderTabs();
                     showToast("Entry saved!", "success");
                 } else showToast("Failed to save: " + res.message, "error");
-            })
-            .withFailureHandler(function(err){ showToast("Error: " + err, "error"); })
-            .saveManualLibraryEntry(month, week, cDate, title, link, fullSubject);
+            });
         }
 
         function openPeriodModal() { document.getElementById('periodModal').style.display = 'flex'; document.getElementById('periodStatus').style.display = 'none'; document.getElementById('cfgMonthLabel').value = ''; }
@@ -910,271 +924,17 @@
         function savePeriodConfig() {
             var mLabel = document.getElementById('cfgMonthLabel').value; var tWeeks = document.getElementById('cfgTotalWeeks').value; var sDuty = document.getElementById('cfgSatDuty').value; var pStatus = document.getElementById('periodStatus');
             if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
-            google.script.run.withSuccessHandler(function(res) { if (res.success) { closePeriodModal(); initPeriodConfig(); } else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; } }).savePeriodSettings(mLabel, tWeeks, sDuty, loggedInUser);
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "savePeriodSettings", mLabel: mLabel, tWeeks: tWeeks, sDuty: sDuty, username: loggedInUser })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) { closePeriodModal(); initPeriodConfig(); } 
+                else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; } 
+            });
         }
     </script>
 </body>
 </html>
-// ==========================================
-// 5_LibraryDB.gs
-// BACKEND FOR LIBRARY DATABASE PANEL
-// ==========================================
-
-var STUDENT_DB_ID = "1HuhVZDeiW57KuD6ulCHUd90DPgBeKwOBx12vlE2yn3Y"; 
-
-function normalizeURL(url) {
-  if (!url) return "";
-  return String(url).replace(/^https?:\/\//i, '').replace(/\/$/, '').trim().toLowerCase();
-}
-
-function getLibraryData(month, week) {
-  try {
-    if (typeof getActiveRoomData !== 'function') throw new Error("getActiveRoomData function not found.");
-    var roomData = getActiveRoomData(month, week); 
-
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var libSheet = ss.getSheetByName('Library_Database');
-    if (!libSheet) {
-      libSheet = ss.insertSheet('Library_Database');
-      libSheet.appendRow(['Timestamp', 'Month', 'Week', 'ClassDate', 'Link', 'Category_Subject', 'IsManual', 'Title']);
-    }
-
-    var libDb = libSheet.getDataRange().getValues();
-    var manualEntries = [];
-    var categorized = {}; 
-    var mappedCounts = {}; 
-
-    for (var i = 1; i < libDb.length; i++) {
-      // 🚀 ANTI-GHOSTING: Konversi jika Google Sheets mengubahnya jadi Date Object
-      var rawMonth = libDb[i][1];
-      var mStr = "";
-      if (rawMonth instanceof Date) {
-          var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-          mStr = monthNames[rawMonth.getMonth()] + " " + rawMonth.getFullYear();
-      } else {
-          mStr = String(rawMonth);
-      }
-      
-      var m = mStr.trim().toLowerCase();
-      var w = String(libDb[i][2]).trim().toLowerCase();
-      
-      if (m === String(month).trim().toLowerCase() && w === String(week).trim().toLowerCase()) {
-        var cDate = String(libDb[i][3]).trim();   
-        var lnk = String(libDb[i][4]).trim();     
-        var catSubj = String(libDb[i][5]).trim(); 
-        var isMan = (String(libDb[i][6]).trim().toUpperCase() === 'TRUE'); 
-        var title = libDb[i].length > 7 ? String(libDb[i][7]).trim() : ""; 
-        
-        if (isMan) {
-          manualEntries.push({ rowIdx: i + 1, classDate: cDate, title: title, link: lnk, subject: catSubj });
-        } else {
-          var normL = normalizeURL(lnk);
-          mappedCounts[normL] = (mappedCounts[normL] || 0) + 1; 
-          
-          if (!categorized[catSubj]) categorized[catSubj] = [];
-          categorized[catSubj].push({ classDate: cDate, title: "", link: lnk, rowIdx: i + 1 });
-        }
-      }
-    }
-
-    var unassigned = [];
-    var rooms = roomData.rooms;
-    
-    for (var r in rooms) {
-      rooms[r].forEach(function(s) {
-        var stats = (s.activity.sumStat || '').split(',');
-        var links = s.activity.sumLinks || [];
-        
-        for (var j = 0; j < 4; j++) {
-          var st = String(stats[j]).trim();
-          var rawLk = String(links[j]).trim();
-          var normLk = normalizeURL(rawLk);
-          
-          if (st === 'Approved' && rawLk.length > 4) {
-            if (mappedCounts[normLk] && mappedCounts[normLk] > 0) {
-               mappedCounts[normLk]--; 
-            } else {
-               unassigned.push({ link: rawLk, room: r });
-            }
-          }
-        }
-      });
-    }
-
-    manualEntries.forEach(function(me) {
-      if (!categorized[me.subject]) categorized[me.subject] = [];
-      categorized[me.subject].push(me);
-    });
-
-    var gsData = {};
-    var gsSheet = ss.getSheetByName('Grand_Summaries');
-    if (gsSheet) {
-      var gVals = gsSheet.getDataRange().getValues();
-      for(var i=1; i<gVals.length; i++) {
-        var gRawM = gVals[i][0];
-        var gmStr = (gRawM instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][gRawM.getMonth()] + " " + gRawM.getFullYear()) : String(gRawM);
-        
-        if(gmStr.trim().toLowerCase() === String(month).trim().toLowerCase()) {
-          gsData[gVals[i][1]] = { link: gVals[i][2], status: gVals[i][4], notes: gVals[i][5] || "" };
-        }
-      }
-    }
-
-    var fsData = {};
-    var fsSheet = ss.getSheetByName('Final_Summaries');
-    if (fsSheet) {
-      var fVals = fsSheet.getDataRange().getValues();
-      for(var i=1; i<fVals.length; i++) {
-        var fRawM = fVals[i][0];
-        var fmStr = (fRawM instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][fRawM.getMonth()] + " " + fRawM.getFullYear()) : String(fRawM);
-        
-        if(fmStr.trim().toLowerCase() === String(month).trim().toLowerCase()) {
-          fsData[fVals[i][1]] = { link: fVals[i][2] }; 
-        }
-      }
-    }
-
-    return { 
-        success: true, 
-        unassigned: unassigned, 
-        categorized: categorized,
-        grandSummaries: gsData,
-        finalSummaries: fsData
-    };
-    
-  } catch (e) {
-    return { success: false, message: e.toString() };
-  }
-}
-
-// 🚀 FUNGSI SAVE AMAN (Menyisipkan tanda kutip "'" agar Google Sheets tidak mengubahnya)
-function saveLibraryMapping(month, week, classDate, link, subject) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Library_Database');
-    var ts = new Date().toLocaleString('en-GB');
-    sheet.appendRow([ts, "'" + month, "'" + week, "'" + classDate, link, subject, false, ""]);
-    SpreadsheetApp.flush(); 
-    return { success: true, newRowIdx: sheet.getLastRow() };
-  } catch (e) { return { success: false, message: e.toString() }; } 
-}
-
-function updateLibraryMapping(rowIdx, month, week, classDate, link, subject) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Library_Database');
-    sheet.getRange(rowIdx, 4).setValue("'" + classDate); 
-    sheet.getRange(rowIdx, 5).setValue(link);      
-    sheet.getRange(rowIdx, 6).setValue(subject);   
-    SpreadsheetApp.flush(); 
-    return { success: true };
-  } catch (e) { return { success: false, message: e.toString() }; } 
-}
-
-function saveManualLibraryEntry(month, week, classDate, title, link, subject) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Library_Database');
-    var ts = new Date().toLocaleString('en-GB');
-    sheet.appendRow([ts, "'" + month, "'" + week, "'" + classDate, link, subject, true, title]);
-    SpreadsheetApp.flush();
-    return { success: true, newRowIdx: sheet.getLastRow() };
-  } catch (e) { return { success: false, message: e.toString() }; } 
-}
-
-// 🚀 GRAND SUMMARY AMAN
-function saveGrandSummaryBackend(month, week, subject, link) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Grand_Summaries');
-    if (!sheet) {
-      sheet = ss.insertSheet('Grand_Summaries');
-      sheet.appendRow(['Month', 'Subject', 'Link', 'PIC_Placeholder', 'Status', 'Notes']);
-    }
-    var data = sheet.getDataRange().getValues();
-    var found = false;
-    for (var i = 1; i < data.length; i++) {
-      var m = data[i][0];
-      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
-
-      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
-          String(data[i][1]).trim() === subject) {
-        sheet.getRange(i + 1, 3).setValue(link); 
-        sheet.getRange(i + 1, 5).setValue('Pending'); 
-        sheet.getRange(i + 1, 6).setValue(''); 
-        found = true; break;
-      }
-    }
-    if (!found) sheet.appendRow(["'" + month, subject, link, "", 'Pending', '']);
-    SpreadsheetApp.flush();
-    return { success: true };
-  } catch (e) { return { success: false, message: e.toString() }; } 
-}
-
-function approveGrandSummaryBackend(month, week, subject, user) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Grand_Summaries');
-    var data = sheet.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      var m = data[i][0];
-      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
-
-      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
-          String(data[i][1]).trim() === subject) {
-        sheet.getRange(i + 1, 5).setValue('Approved');
-        sheet.getRange(i + 1, 6).setValue('');
-        SpreadsheetApp.flush();
-        return { success: true };
-      }
-    }
-    return { success: false, message: "Entry not found!" };
-  } catch (e) { return { success: false, message: e.toString() }; }
-}
-
-function declineGrandSummaryBackend(month, week, subject, notes) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Grand_Summaries');
-    var data = sheet.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      var m = data[i][0];
-      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
-
-      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
-          String(data[i][1]).trim() === subject) {
-        sheet.getRange(i + 1, 5).setValue('Declined');
-        sheet.getRange(i + 1, 6).setValue(notes); 
-        SpreadsheetApp.flush();
-        return { success: true };
-      }
-    }
-    return { success: false, message: "Entry not found!" };
-  } catch (e) { return { success: false, message: e.toString() }; }
-}
-
-function saveFinalSummaryBackend(month, week, category, link) {
-  try {
-    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
-    var sheet = ss.getSheetByName('Final_Summaries');
-    if (!sheet) {
-      sheet = ss.insertSheet('Final_Summaries');
-      sheet.appendRow(['Month', 'Category', 'Link', 'PIC_Placeholder']);
-    }
-    var data = sheet.getDataRange().getValues();
-    var found = false;
-    for (var i = 1; i < data.length; i++) {
-      var m = data[i][0];
-      var mStr = (m instanceof Date) ? (["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m.getMonth()] + " " + m.getFullYear()) : String(m);
-
-      if (mStr.trim().toLowerCase() === String(month).trim().toLowerCase() && 
-          String(data[i][1]).trim() === category) {
-        sheet.getRange(i + 1, 3).setValue(link);
-        found = true; break;
-      }
-    }
-    if (!found) sheet.appendRow(["'" + month, category, link, ""]);
-    SpreadsheetApp.flush();
-    return { success: true };
-  } catch (e) { return { success: false, message: e.toString() }; }
-}
