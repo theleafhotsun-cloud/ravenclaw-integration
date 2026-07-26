@@ -30,8 +30,9 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* CONTENT & TABLE */
+        /* CONTENT AREA SCROLL */
         .content-area { padding: 25px 25px 80px 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
+        
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
         
@@ -71,7 +72,6 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
         .btn-icon:hover { transform: scale(1.2); }
 
-        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 15px;}
@@ -98,7 +98,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -157,9 +156,7 @@
                             <th style="text-align:center;">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Data injected by JS -->
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -229,7 +226,6 @@
                 <div class="form-group"><label>Face Claim</label><input type="text" id="studFaceClaim" placeholder="Face Claim"></div>
             </div>
 
-            <!-- BAGIAN WARNING LETTERS -->
             <div class="section-header">Warning Letters Records</div>
             <div class="form-row">
                 <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px;">
@@ -240,6 +236,7 @@
                         <option value="Inactive">INACTIVE</option>
                         <option value="Hiatus">HIATUS</option>
                         <option value="Conflict">CONFLICT</option>
+                        <option value="N.E.W.T">N.E.W.T</option>
                     </select>
                     <input type="text" id="studWl1Link" placeholder="Link WL 1 (URL)" style="border-color:#ffcdd2;">
                 </div>
@@ -252,6 +249,7 @@
                         <option value="Inactive">INACTIVE</option>
                         <option value="Hiatus">HIATUS</option>
                         <option value="Conflict">CONFLICT</option>
+                        <option value="N.E.W.T">N.E.W.T</option>
                     </select>
                     <input type="text" id="studWl2Link" placeholder="Link WL 2 (URL)" style="border-color:#ffcdd2;">
                 </div>
@@ -283,14 +281,12 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        const API_URL = "URL_APPS_SCRIPT_ANDA_DISINI";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
-        if (!loggedInUser) {
-            window.location.href = "index.html";
-        }
+        if (!loggedInUser) window.location.href = "index.html";
 
         let studentDataStore = [];
 
@@ -304,7 +300,7 @@
         };
 
         // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI
+        // SIDEBAR LOGIC
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -336,7 +332,7 @@
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
-        // LOGIKA STUDENT DATABASE & FETCH API
+        // FETCH API & RENDERING
         // ==========================================
         function fetchStudents() {
             document.getElementById('loadingMsg').style.display = 'block';
@@ -377,28 +373,31 @@
                 if(student.wlInactive) wlBadges += `<span class="wl-badge">INACTIVE</span>`;
                 if(student.wlHiatus) wlBadges += `<span class="wl-badge">HIATUS</span>`;
                 if(student.wlConflict) wlBadges += `<span class="wl-badge">CONFLICT</span>`;
+                if(student.wlNewt) wlBadges += `<span class="wl-badge">N.E.W.T</span>`;
 
                 let statusBadges = '';
                 if(student.isDeactive) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
                 if(student.isResigned) statusBadges += `<span class="status-badge status-resigned">RESIGNED</span> `;
                 if(student.isDropOut) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
-                
-                // Cek Re-Registration & Last Update
                 if(student.isReReg) statusBadges += `<span class="status-badge status-rereg">RE-REGISTERED</span> `;
 
+                // MENYARING TAUTAN PALSU "FALSE" ATAU "TRUE"
+                let link1 = String(student.wl1Link).trim();
+                let link2 = String(student.wl2Link).trim();
                 let linkHtml = '';
-                if(student.wl1Link) linkHtml += `<a href="${student.wl1Link}" target="_blank" class="link-icon">🔗 WL1</a>`;
-                if(student.wl2Link) linkHtml += `<a href="${student.wl2Link}" target="_blank" class="link-icon">🔗 WL2</a>`;
                 
-                // Menampilkan Tanggal Edit Terakhir
+                if(link1 && link1.toUpperCase() !== 'FALSE' && link1.toUpperCase() !== 'TRUE' && link1 !== '-') {
+                    linkHtml += `<a href="${link1}" target="_blank" class="link-icon">🔗 WL1</a>`;
+                }
+                if(link2 && link2.toUpperCase() !== 'FALSE' && link2.toUpperCase() !== 'TRUE' && link2 !== '-') {
+                    linkHtml += `<a href="${link2}" target="_blank" class="link-icon">🔗 WL2</a>`;
+                }
+                
                 let lastEditHtml = '';
                 if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:4px;">Last Edit: ${student.lastUpdate}</div>`;
 
-                // PEMBERSIH TEKS "FALSE" JIKA TERLANJUR MASUK KE SHEET ANDA
                 let cleanNotes = student.notesEtc || '-';
-                if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') {
-                    cleanNotes = '-';
-                }
+                if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') { cleanNotes = '-'; }
 
                 const isInactiveStatus = student.isDeactive || student.isResigned || student.isDropOut;
                 const rowClass = isInactiveStatus ? 'row-dimmed' : '';
@@ -454,27 +453,18 @@
         }
 
         function quickChangeRoom(rowIdx, selectEl) {
-            selectEl.style.backgroundColor = '#e8f5e9'; 
-            selectEl.disabled = true;
-
+            selectEl.style.backgroundColor = '#e8f5e9'; selectEl.disabled = true;
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "updateStudentRoom", rowIdx: rowIdx, roomName: selectEl.value })
-            })
-            .then(res => res.json())
-            .then(result => {
+            }).then(res => res.json()).then(result => {
                 if(result.status === 'success') {
-                    selectEl.style.backgroundColor = '#c8e6c9'; 
-                    selectEl.disabled = false;
+                    selectEl.style.backgroundColor = '#c8e6c9'; selectEl.disabled = false;
                     setTimeout(() => { selectEl.style.backgroundColor = '#fbfbfb'; }, 1000); 
-                    let s = studentDataStore.find(x => x.rowIdx === rowIdx);
-                    if(s) s.room = selectEl.value;
-                } else { throw new Error(result.message); }
-            })
-            .catch(err => {
-                alert("Failed to save room: " + err.message);
-                selectEl.disabled = false;
-                selectEl.style.backgroundColor = '#ffebee';
+                    let s = studentDataStore.find(x => x.rowIdx === rowIdx); if(s) s.room = selectEl.value;
+                } else throw new Error(result.message);
+            }).catch(err => {
+                alert("Failed to save room: " + err.message); selectEl.disabled = false; selectEl.style.backgroundColor = '#ffebee';
             });
         }
 
@@ -496,7 +486,6 @@
             container.innerHTML = ''; 
             
             let options = [];
-            // Buat case-insensitive match
             if (majorVal && majorVal.toUpperCase() === 'MINISTRY') options = electivesMinistry;
             else if (majorVal && majorVal.toUpperCase() === 'AUROR') options = electivesAuror;
 
@@ -504,18 +493,15 @@
                 container.innerHTML = '<span class="empty-electives-msg">Please select a Major first to view available electives.</span>';
             } else {
                 options.forEach(subj => {
-                    const label = document.createElement('label');
-                    label.className = 'checkbox-item';
+                    const label = document.createElement('label'); label.className = 'checkbox-item';
                     label.innerHTML = `<input type="checkbox" name="studElective" value="${subj}"> ${subj}`;
                     container.appendChild(label);
                 });
 
                 document.querySelectorAll('input[name="studElective"]').forEach(box => {
                     box.addEventListener('change', function() {
-                        let checkedCount = document.querySelectorAll('input[name="studElective"]:checked').length;
-                        if (checkedCount > 3) {
-                            this.checked = false;
-                            alert("Maximum 3 electives allowed!");
+                        if (document.querySelectorAll('input[name="studElective"]:checked').length > 3) {
+                            this.checked = false; alert("Maximum 3 electives allowed!");
                         }
                         updateClassCounter();
                     });
@@ -526,150 +512,94 @@
 
         function updateClassCounter() {
             let selectedMajor = document.querySelector('input[name="studMajor"]:checked');
-            let majorVal = selectedMajor ? selectedMajor.value : "";
+            let base = selectedMajor ? 6 : 0;
             let countElectives = document.querySelectorAll('input[name="studElective"]:checked').length;
-            let base = majorVal !== "" ? 6 : 0;
-            const total = base + countElectives;
-            document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${total} (Major: ${base} + Electives: ${countElectives})`;
+            document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${base + countElectives} (Major: ${base} + Electives: ${countElectives})`;
         }
 
-        // LOGIKA PENANGKAP FORMAT TANGGAL YANG JAUH LEBIH KUAT
+        // PERBAIKAN PEMBACAAN TANGGAL LAHIR
         function formatDOBForPicker(dateString) {
             if (!dateString || dateString === '-') return "";
-            // Jika sudah berformat YYYY-MM-DD
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString; 
             
-            // Tangkap format manual Indonesia/Inggris seperti DD/MM/YYYY atau DD-MM-YYYY
             if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(dateString)) {
                 let parts = dateString.split(/[\/\-\.]/);
-                let d = parseInt(parts[0]);
-                let m = parseInt(parts[1]);
-                let y = parseInt(parts[2]);
-                return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                return `${parts[2]}-${String(parts[1]).padStart(2, '0')}-${String(parts[0]).padStart(2, '0')}`;
             }
             
-            // Tangkap format tulisan seperti "12 Jun 2005"
             let dObj = new Date(dateString);
             if (!isNaN(dObj.getTime())) {
-                let month = '' + (dObj.getMonth() + 1);
-                let day = '' + dObj.getDate();
-                let year = dObj.getFullYear();
-                if (month.length < 2) month = '0' + month;
-                if (day.length < 2) day = '0' + day;
-                return [year, month, day].join('-');
+                let m = '' + (dObj.getMonth() + 1); let d = '' + dObj.getDate(); let y = dObj.getFullYear();
+                return [y, m.padStart(2,'0'), d.padStart(2,'0')].join('-');
             }
             return ""; 
         }
 
         function openStudentModal(rowIdx = null) {
             const modal = document.getElementById('studentModal');
-            const title = document.getElementById('modalTitle');
             const statusBox = document.getElementById('modalStatus');
-            const gradeSelect = document.getElementById('studGrade');
             
-            // RESET STATUS TOMBOL 
+            // RESET TOMBOL SAVE AGAR TIDAK NGE-FREEZE
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
-            btnSubmit.innerText = "Save Record";
-            btnSubmit.disabled = false;
-            btnCancel.disabled = false;
+            btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
             
-            modal.style.display = 'flex';
-            statusBox.style.display = 'none';
-            
-            document.querySelectorAll('input[name="studMajor"]').forEach(r => r.checked = false);
-            handleMajorChange("");
+            modal.style.display = 'flex'; statusBox.style.display = 'none';
+            document.querySelectorAll('input[name="studMajor"]').forEach(r => r.checked = false); handleMajorChange("");
 
             if (rowIdx !== null) {
                 const s = studentDataStore.find(x => x.rowIdx === rowIdx);
                 if(!s) return;
 
-                title.innerText = "Edit Student Record";
+                document.getElementById('modalTitle').innerText = "Edit Student Record";
                 document.getElementById('studRowIdx').value = s.rowIdx;
                 document.getElementById('studRoomHidden').value = s.room || ''; 
                 document.getElementById('studVault').value = s.vault;
                 document.getElementById('studUsername').value = s.username;
+                document.getElementById('studGrade').value = s.grade || 'Newizzy'; document.getElementById('studGrade').disabled = false;
                 
-                gradeSelect.value = s.grade || 'Newizzy';
-                gradeSelect.disabled = false;
-                
-                if(s.major) {
-                    let dbMajor = s.major.trim().toUpperCase();
+                if(s.major && s.major !== '-') {
                     let radios = document.querySelectorAll('input[name="studMajor"]');
                     for(let r of radios) {
-                        if(r.value.toUpperCase() === dbMajor) {
-                            r.checked = true;
-                            handleMajorChange(r.value);
-                            break;
+                        if(r.value.toUpperCase() === s.major.trim().toUpperCase()) {
+                            r.checked = true; handleMajorChange(r.value); break;
                         }
                     }
                 }
-                
-                if(s.electives) {
+                if(s.electives && s.electives !== '-') {
                     let elArr = s.electives.split(',').map(e => e.trim().toLowerCase());
-                    let checkboxes = document.querySelectorAll('input[name="studElective"]');
-                    checkboxes.forEach(c => {
-                        if(elArr.includes(c.value.toLowerCase())) {
-                            c.checked = true;
-                        }
+                    document.querySelectorAll('input[name="studElective"]').forEach(c => {
+                        if(elArr.includes(c.value.toLowerCase())) c.checked = true;
                     });
                 }
 
-                document.getElementById('studFullName').value = s.fullName;
-                document.getElementById('studNickname').value = s.nickname;
+                document.getElementById('studFullName').value = s.fullName !== '-' ? s.fullName : '';
+                document.getElementById('studNickname').value = s.nickname !== '-' ? s.nickname : '';
                 
-                // MENGISI DATA TANGGAL
+                // MENGISI TANGGAL LAHIR
                 document.getElementById('studDOB').value = formatDOBForPicker(s.dob);
-                document.getElementById('studFaceClaim').value = s.faceClaim;
+                document.getElementById('studFaceClaim').value = s.faceClaim !== '-' ? s.faceClaim : '';
 
                 let reasons = [];
-                if(s.wlClass) reasons.push("Class");
-                if(s.wlInactive) reasons.push("Inactive");
-                if(s.wlHiatus) reasons.push("Hiatus");
-                if(s.wlConflict) reasons.push("Conflict");
+                if(s.wlClass) reasons.push("Class"); if(s.wlInactive) reasons.push("Inactive"); if(s.wlHiatus) reasons.push("Hiatus"); if(s.wlConflict) reasons.push("Conflict"); if(s.wlNewt) reasons.push("N.E.W.T");
 
-                document.getElementById('wl1Reason').value = reasons[0] || "";
-                document.getElementById('wl2Reason').value = reasons[1] || "";
-                document.getElementById('studWl1Link').value = s.wl1Link;
-                document.getElementById('studWl2Link').value = s.wl2Link;
+                document.getElementById('wl1Reason').value = reasons[0] || ""; document.getElementById('wl2Reason').value = reasons[1] || "";
                 
-                // BERSIHKAN TULISAN FALSE JIKA TERDAPAT DI DB
+                let link1 = String(s.wl1Link).trim(); let link2 = String(s.wl2Link).trim();
+                document.getElementById('studWl1Link').value = (link1.toUpperCase() === 'FALSE' || link1.toUpperCase() === 'TRUE' || link1 === '-') ? '' : link1;
+                document.getElementById('studWl2Link').value = (link2.toUpperCase() === 'FALSE' || link2.toUpperCase() === 'TRUE' || link2 === '-') ? '' : link2;
+                
                 let cleanNotes = s.notesEtc || '';
-                if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') {
-                    cleanNotes = '';
-                }
+                if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') cleanNotes = '';
                 document.getElementById('studNotesEtc').value = cleanNotes;
                 
                 document.getElementById('chkReReg').checked = s.isReReg || false;
-                document.getElementById('chkDeactive').checked = s.isDeactive;
-                document.getElementById('chkResigned').checked = s.isResigned;
-                document.getElementById('chkDropOut').checked = s.isDropOut;
-                
+                document.getElementById('chkDeactive').checked = s.isDeactive; document.getElementById('chkResigned').checked = s.isResigned; document.getElementById('chkDropOut').checked = s.isDropOut;
             } else {
-                title.innerText = "Add New Student";
-                document.getElementById('studRowIdx').value = "";
-                document.getElementById('studRoomHidden').value = "";
-                document.getElementById('studVault').value = "";
-                document.getElementById('studUsername').value = "";
-                
-                gradeSelect.value = "Newizzy";
-                gradeSelect.disabled = true; 
-                
-                document.getElementById('studFullName').value = "";
-                document.getElementById('studNickname').value = "";
-                document.getElementById('studDOB').value = "";
-                document.getElementById('studFaceClaim').value = "";
-
-                document.getElementById('wl1Reason').value = "";
-                document.getElementById('wl2Reason').value = "";
-                document.getElementById('studWl1Link').value = "";
-                document.getElementById('studWl2Link').value = "";
-                
-                document.getElementById('chkReReg').checked = false;
-                document.getElementById('chkDeactive').checked = false;
-                document.getElementById('chkResigned').checked = false;
-                document.getElementById('chkDropOut').checked = false;
-                document.getElementById('studNotesEtc').value = "";
+                document.getElementById('modalTitle').innerText = "Add New Student";
+                ['studRowIdx', 'studRoomHidden', 'studVault', 'studUsername', 'studFullName', 'studNickname', 'studDOB', 'studFaceClaim', 'wl1Reason', 'wl2Reason', 'studWl1Link', 'studWl2Link', 'studNotesEtc'].forEach(id => document.getElementById(id).value = "");
+                document.getElementById('studGrade').value = "Newizzy"; document.getElementById('studGrade').disabled = true; 
+                ['chkReReg', 'chkDeactive', 'chkResigned', 'chkDropOut'].forEach(id => document.getElementById(id).checked = false);
             }
             updateClassCounter();
         }
@@ -677,105 +607,44 @@
         function closeStudentModal() { document.getElementById('studentModal').style.display = 'none'; }
 
         function saveStudent() {
-            const btnSubmit = document.getElementById('btnSubmit');
-            const btnCancel = document.getElementById('btnCancel');
-            const statusBox = document.getElementById('modalStatus');
-
+            const btnSubmit = document.getElementById('btnSubmit'); const btnCancel = document.getElementById('btnCancel'); const statusBox = document.getElementById('modalStatus');
             let selectedMajor = document.querySelector('input[name="studMajor"]:checked');
-            // PASTIKAN MAJOR MENJADI UPPERCASE (HURUF BESAR SEMUA)
             let majorValue = selectedMajor ? selectedMajor.value.toUpperCase() : "";
             let electivesValue = Array.from(document.querySelectorAll('input[name="studElective"]:checked')).map(el => el.value).join(', ');
 
-            let rawDob = document.getElementById('studDOB').value;
-            let formattedDob = rawDob;
-            if(rawDob) {
-                let d = new Date(rawDob);
-                if(!isNaN(d.getTime())) {
-                    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    formattedDob = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
-                }
-            }
+            let rawDob = document.getElementById('studDOB').value; let formattedDob = rawDob;
+            if(rawDob) { let d = new Date(rawDob); if(!isNaN(d.getTime())) { let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; formattedDob = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear(); } }
 
-            let r1 = document.getElementById('wl1Reason').value;
-            let r2 = document.getElementById('wl2Reason').value;
-
-            // Generate Timestamp Lokal untuk Perubahan Data
+            let r1 = document.getElementById('wl1Reason').value; let r2 = document.getElementById('wl2Reason').value;
             let currentTime = new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 
             const payload = {
-                rowIdx: document.getElementById('studRowIdx').value,
-                vault: document.getElementById('studVault').value,
-                username: document.getElementById('studUsername').value,
-                grade: document.getElementById('studGrade').value,
-                major: majorValue,
-                electives: electivesValue,
-                fullName: document.getElementById('studFullName').value,
-                nickname: document.getElementById('studNickname').value,
-                dob: formattedDob,
-                faceClaim: document.getElementById('studFaceClaim').value,
-                room: document.getElementById('studRoomHidden').value, 
-                
-                wlClass: (r1 === 'Class' || r2 === 'Class'),
-                wlInactive: (r1 === 'Inactive' || r2 === 'Inactive'),
-                wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus'),
-                wlConflict: (r1 === 'Conflict' || r2 === 'Conflict'),
-                
-                wl1Link: document.getElementById('studWl1Link').value,
-                wl2Link: document.getElementById('studWl2Link').value,
-                
-                // MENGIRIM DATA RE-REGISTER DAN TIMESTAMP
-                isReReg: document.getElementById('chkReReg').checked,
-                isDeactive: document.getElementById('chkDeactive').checked,
-                isResigned: document.getElementById('chkResigned').checked,
-                isDropOut: document.getElementById('chkDropOut').checked,
-                notesEtc: document.getElementById('studNotesEtc').value,
-                lastUpdate: currentTime
+                rowIdx: document.getElementById('studRowIdx').value, vault: document.getElementById('studVault').value, username: document.getElementById('studUsername').value, grade: document.getElementById('studGrade').value, major: majorValue, electives: electivesValue, fullName: document.getElementById('studFullName').value, nickname: document.getElementById('studNickname').value, dob: formattedDob, faceClaim: document.getElementById('studFaceClaim').value, room: document.getElementById('studRoomHidden').value, 
+                wlClass: (r1 === 'Class' || r2 === 'Class'), wlInactive: (r1 === 'Inactive' || r2 === 'Inactive'), wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus'), wlConflict: (r1 === 'Conflict' || r2 === 'Conflict'), wlNewt: (r1 === 'N.E.W.T' || r2 === 'N.E.W.T'),
+                wl1Link: document.getElementById('studWl1Link').value, wl2Link: document.getElementById('studWl2Link').value,
+                isReReg: document.getElementById('chkReReg').checked, isDeactive: document.getElementById('chkDeactive').checked, isResigned: document.getElementById('chkResigned').checked, isDropOut: document.getElementById('chkDropOut').checked, notesEtc: document.getElementById('studNotesEtc').value, lastUpdate: currentTime
             };
 
-            if(!payload.vault || !payload.username) {
-                statusBox.innerText = "Vault Code and Username are required!";
-                statusBox.style.color = "red"; statusBox.style.display = "block";
-                return;
-            }
-
-            btnSubmit.innerText = "Saving..."; btnSubmit.disabled = true; btnCancel.disabled = true;
-            statusBox.style.display = "none";
+            if(!payload.vault || !payload.username) { statusBox.innerText = "Vault Code and Username are required!"; statusBox.style.color = "red"; statusBox.style.display = "block"; return; }
+            btnSubmit.innerText = "Saving..."; btnSubmit.disabled = true; btnCancel.disabled = true; statusBox.style.display = "none";
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "saveStudent", data: payload })
             })
-            .then(res => res.json())
-            .then(response => {
-                if(response.status === 'success' || response.success) {
-                    closeStudentModal();
-                    fetchStudents(); 
-                } else {
-                    statusBox.innerText = response.message;
-                    statusBox.style.color = "red"; statusBox.style.display = "block";
-                    btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
-                }
-            })
-            .catch(err => {
-                statusBox.innerText = "System Error: Failed to save.";
-                statusBox.style.color = "red"; statusBox.style.display = "block";
-                btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
+            .then(res => res.json()).then(response => {
+                if(response.status === 'success' || response.success) { closeStudentModal(); fetchStudents(); } 
+                else { statusBox.innerText = response.message; statusBox.style.color = "red"; statusBox.style.display = "block"; btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false; }
+            }).catch(err => {
+                statusBox.innerText = "System Error: Failed to save."; statusBox.style.color = "red"; statusBox.style.display = "block"; btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
             });
         }
 
         function deleteRecord(rowIdx, username) {
             if(confirm(`Are you sure you want to completely delete ${username} from the Master Database?`)) {
-                document.getElementById('loadingMsg').style.display = 'block';
-                document.getElementById('loadingMsg').innerText = "Deleting record...";
-                document.getElementById('studentTable').style.display = 'none';
-                
-                fetch(API_URL, {
-                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: "deleteStudent", rowIdx: rowIdx })
-                })
-                .then(res => res.json())
-                .then(() => fetchStudents())
-                .catch(() => fetchStudents());
+                document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Deleting record..."; document.getElementById('studentTable').style.display = 'none';
+                fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "deleteStudent", rowIdx: rowIdx }) })
+                .then(res => res.json()).then(() => fetchStudents()).catch(() => fetchStudents());
             }
         }
     </script>
