@@ -31,8 +31,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN BUG LANDSCAPE */
-        .content-area { padding: 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        /* SCROLL FIX (Ditambah padding-bottom 60px agar tidak mentok di bawah) */
+        .content-area { padding: 25px 25px 60px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -105,7 +105,7 @@
         .link-icon { text-decoration: none; font-weight: bold; font-size: 10px; padding: 3px 8px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; display: inline-block; margin: 2px;}
         .link-icon:hover { background-color: var(--sapphire); color: white; }
         
-        /* PERBAIKAN BUG MODAL KEBESARAN */
+        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 16px;}
@@ -130,17 +130,17 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)">Task Directory</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)" class="active">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')" class="active">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -149,7 +149,7 @@
         <div class="topbar">
             <div class="user-profile">
                 Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -158,11 +158,11 @@
                 <h1 class="page-title">Room Activity Database</h1>
             </div>
 
-            <!-- SOP BANNER -->
+            <!-- SOP BANNER (UPDATED WITH UTC+7 & KAS INFO) -->
             <div class="sop-banner">
                 <div class="sop-col">
                     <b style="color:var(--danger);">📌 WEEKLY FORM DEADLINE:</b><br>
-                    • Submission deadline: <b>Sunday 18:00 WIB</b>.<br>
+                    • Submission deadline: <b>Sunday 18:00 UTC+7</b>.<br>
                     • Late submission: <b>Late</b> (+ʛ50 fine).<br>
                     • No submission: <b>No Submit</b> (+ʛ100 fine | For <b>Newizzy</b>: +ʛ60).
                 </div>
@@ -173,10 +173,10 @@
                     • <b>Class Shortage Fines:</b> G1-G2 (ʛ20) | G3-G4 (ʛ40) | G5-G6 (ʛ50).
                 </div>
                 <div class="sop-col" style="border-left: 1px solid var(--sapphire); padding-left: 15px;">
-                    <b>📌 FREE CLASS & SUMMARIES:</b><br>
-                    • <b>Free Class:</b> Canceled class without replacement (reduces mandatory requirement).<br>
+                    <b>📌 SUMMARY & DUES (KAS):</b><br>
                     • <b>Summary Reward:</b> ʛ50 per valid summary.<br>
-                    • <b>LR Late Checking:</b> ʛ100 per student.
+                    • <b>LR Late Checking:</b> ʛ100 per student.<br>
+                    • <b>Monthly Dues (Kas):</b> G1-G2 (ʛ100) | G3-G4 (ʛ150) | G5-G7 (ʛ200).
                 </div>
             </div>
 
@@ -392,7 +392,7 @@
     <!-- SCRIPT AREA -->
     <script>
         // 1. GLOBAL VARIABLES
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        const API_URL = "URL_APPS_SCRIPT_ANDA_DISINI";
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -446,8 +446,7 @@
             else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome(element) {
-            element.innerText = "Loading...";
+        function navigateHome() {
             var targetPage = 'headhouse'; 
             if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
             else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
@@ -456,8 +455,8 @@
             window.location.href = targetPage + "-dashboard.html";
         }
 
-        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
-        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
         // 4. DATA INITIALIZATION & FILTER (FETCH API)
