@@ -29,8 +29,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* SCROLL FIX */
-        .content-area { padding: 30px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        /* SCROLL FIX: Ditambah padding bawah 80px agar tidak mentok */
+        .content-area { padding: 25px 25px 80px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; }
 
@@ -245,12 +245,45 @@
             });
         }
 
+        // FUNGSI PENERJEMAH TANGGAL YANG KEBAL FORMAT
+        function formatDisplayDate(dateString) {
+            if (!dateString || dateString === '-') return '-';
+            
+            let d = new Date(dateString);
+            
+            if (isNaN(d.getTime())) {
+                let str = String(dateString).toLowerCase()
+                    .replace('januari', 'january').replace('februari', 'february')
+                    .replace('maret', 'march').replace('mei', 'may')
+                    .replace('juni', 'june').replace('juli', 'july')
+                    .replace('agustus', 'august').replace('oktober', 'october')
+                    .replace('nopember', 'november').replace('nov', 'november').replace('desember', 'december');
+                d = new Date(str);
+            }
+            
+            if (isNaN(d.getTime())) {
+                let parts = String(dateString).split(/[-/]/);
+                if (parts.length >= 3) {
+                    let day = parseInt(parts[0]);
+                    let month = parseInt(parts[1]) - 1; 
+                    let year = parseInt(parts[2]);
+                    if (year < 100) year += (year > 50 ? 1900 : 2000);
+                    d = new Date(year, month, day); 
+                }
+            }
+            
+            if (isNaN(d.getTime())) {
+                return dateString; // Tampilkan aslinya jika sama sekali tidak bisa dibaca
+            }
+            
+            return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+        }
+
         function parseUpcomingBirthday(dobString) {
             if(!dobString) return null;
             
             let d = new Date(dobString);
             
-            // Try to handle Indonesian month names
             if(isNaN(d.getTime())) {
                 let str = String(dobString).toLowerCase()
                     .replace('januari', 'january').replace('februari', 'february')
@@ -261,7 +294,6 @@
                 d = new Date(str);
             }
             
-            // Try DD-MM-YYYY format
             if(isNaN(d.getTime())) {
                 let parts = String(dobString).split(/[-/]/);
                 if(parts.length >= 2) {
@@ -271,7 +303,6 @@
                 }
             }
             
-            // Complete failure
             if(isNaN(d.getTime())) {
                 return { dateObj: new Date(), daysLeft: 999, displayDate: dobString };
             }
@@ -285,7 +316,7 @@
                 nextBday.setFullYear(today.getFullYear() + 1);
             }
             
-            let diffTime = nextBday - today; // Fixed logic
+            let diffTime = nextBday - today; 
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             
             return { dateObj: nextBday, daysLeft: diffDays, displayDate: nextBday.toLocaleDateString('en-GB', {day:'numeric', month:'long'}) };
@@ -308,6 +339,9 @@
                 ctBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No data found in Caretakers sheet.</td></tr>';
             } else {
                 data.caretakers.forEach(c => {
+                    // PENGGUNAAN FUNGSI PENERJEMAH TANGGAL YANG BARU
+                    let formattedDOB = formatDisplayDate(c.dob);
+                    
                     ctBody.innerHTML += `
                         <tr>
                             <td class="vault-tag">${c.vault || '-'}</td>
@@ -315,7 +349,7 @@
                             <td>${c.nama || '-'}</td>
                             <td><span class="role-badge">${c.position || '-'}</span></td>
                             <td>${c.room || '-'}</td>
-                            <td>${c.dob ? new Date(c.dob).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '-'}</td>
+                            <td>${formattedDOB}</td>
                             <td>${c.faceClaim || '-'}</td>
                         </tr>
                     `;
@@ -338,7 +372,6 @@
                 });
             }
 
-            // Urutkan dari yang terdekat
             processedBdays.sort((a, b) => a.daysLeft - b.daysLeft);
 
             if(processedBdays.length === 0) {
