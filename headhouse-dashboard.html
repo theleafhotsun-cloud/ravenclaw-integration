@@ -23,16 +23,18 @@
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
 
         /* Main Content Styles */
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; }
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
+        
+        /* PERBAIKAN HEADER MENYEMPIT */
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; min-height: 60px; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* Content Area */
-        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; }
-        .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; }
+        /* PERBAIKAN KONTEN TERPOTONG */
+        .content-area { padding: 30px 30px 80px 30px; overflow-y: auto; flex-grow: 1; display: block; box-sizing: border-box; }
+        .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px;}
 
         /* Performance Section */
         .performance-card { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
@@ -44,9 +46,9 @@
         .btn-reset:hover { background-color: #b71c1c; }
 
         /* Table Styles */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 40px;}
         th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px; }
-        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; }
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
         tr:hover { background-color: var(--swan-wing); }
         .checkbox-container { text-align: center; } 
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sapphire); margin: 0; vertical-align: middle; }
@@ -74,10 +76,10 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary', this)">Salary Master</a></li>
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">SOP</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" class="active" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" class="active" onclick="navigate('task-master', this)">Task Master</a></li>
             <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)">Task Directory</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
@@ -108,6 +110,7 @@
                         <div class="progress-bar" id="progressBar"></div>
                     </div>
                 </div>
+                <!-- HANYA TOMBOL RESET, TIDAK ADA TOMBOL KPI -->
                 <button class="btn-reset" onclick="resetAllCheckboxes()">Reset All Tasks</button>
             </div>
 
@@ -140,7 +143,6 @@
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
-        // Proteksi: Jika belum login, tendang ke halaman awal
         if (!loggedInUser) {
             window.location.href = "index.html";
         }
@@ -149,13 +151,12 @@
         let completedTasks = 0;
 
         window.onload = function() {
-            // Tampilkan nama di Topbar
             document.getElementById("display-username").innerText = loggedInUser;
-            
             setupDynamicSidebar();
             
             let loadMsg = document.getElementById('loadingMsg');
-            loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + userRole + "</b>... <br><br><small style='color:gray;'>(If stuck, please press <b>F12</b> -> <b>Console</b> tab to view the process)</small>";
+            var fetchRole = userRole === 'unknown' ? 'headhouse' : userRole;
+            loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + fetchRole + "</b>... <br><br><small style='color:gray;'>(If stuck, please press <b>F12</b> -> <b>Console</b> tab to view the process)</small>";
 
             // --- 3. FETCH API UNTUK MENGAMBIL DATA TUGAS ---
             fetch(API_URL, {
@@ -163,21 +164,19 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
-                    action: "fetchMyTasks", // Memberi tahu Apps Script apa yang harus dilakukan
-                    role: userRole 
+                    action: "fetchMyTasks",
+                    role: fetchRole 
                 })
             })
             .then(response => response.json())
             .then(result => {
                 if (result.status === "success") {
-                    console.log("DATA SUCCESSFULLY FETCHED: ", result.data);
                     renderTable(result.data);
                 } else {
                     throw new Error(result.message);
                 }
             })
             .catch(err => {
-                console.error("FAILED: ", err);
                 loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`; 
             });
         };
@@ -222,31 +221,24 @@
             }
         }
 
-        // --- 4. NAVIGASI BARU (VERCEL STYLE) ---
+        // --- 4. NAVIGASI BARU ---
         function navigateHome(element) {
             element.innerText = "Loading...";
-            var targetPage = 'headhouse'; 
-            if (userRole.includes('prefect')) targetPage = 'prefect';
-            else if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
-            else if (userRole.includes('editor')) targetPage = 'editor';
-            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-
-            window.location.href = targetPage + "-dashboard.html";
+            window.location.href = "sop.html"; // Mengarah ke SOP
         }
 
         function navigate(targetPage, element) {
             element.innerText = "Wait..."; 
-            // Vercel tidak butuh getScriptUrl, langsung panggil nama file HTML-nya
             window.location.href = targetPage + ".html"; 
         }
 
         function logout(btnElement) {
             btnElement.innerText = "Wait...";
-            localStorage.clear(); // Hapus sesi login
-            window.location.href = "index.html"; // Kembali ke halaman login
+            localStorage.clear();
+            window.location.href = "index.html"; 
         }
 
-        // --- FUNGSI TRACKER (TIDAK ADA YANG BERUBAH) ---
+        // --- FUNGSI TRACKER ---
         function getStorageKey(taskName, weekNum) {
             return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`;
         }
