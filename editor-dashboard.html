@@ -24,14 +24,17 @@
 
         /* Main Content */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        
+        /* PERBAIKAN HEADER MENYEMPIT: Tambahkan flex-shrink: 0 */
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; min-height: 60px;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; }
+        /* PERBAIKAN KONTEN TERPOTONG: Tambahkan padding-bottom 80px */
+        .content-area { padding: 30px 30px 80px 30px; overflow-y: auto; flex-grow: 1; display: block; box-sizing: border-box;}
         .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; }
 
         /* Performance & KPI Section */
@@ -48,9 +51,9 @@
         .btn-reset:hover { background-color: #b71c1c; }
 
         /* Table Design */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 40px;}
         th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px;}
-        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; }
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
         tr:hover { background-color: var(--swan-wing); }
         
         .checkbox-container { text-align: center; } 
@@ -93,11 +96,11 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">SOP</a></li>
             <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
             
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" class="active" onclick="navigateHome(this)">Task Master</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" class="active" onclick="navigate('task-master', this)">Task Master</a></li>
             
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
@@ -161,6 +164,11 @@
             <h3>Monthly Report & KPI</h3>
             <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:14px;"></div>
             
+            <!-- Peringatan Missed Tasks Otomatis -->
+            <div id="missedTasksWarning" style="display:none; background-color:#ffebee; border:1px solid #ef9a9a; color:#c62828; padding:10px; border-radius:4px; font-size:11px; margin-bottom:15px; font-weight:bold; line-height:1.4;">
+                <!-- Disesuaikan oleh JS -->
+            </div>
+
             <div class="form-row">
                 <div class="form-group">
                     <label>Main Tasks</label>
@@ -204,6 +212,7 @@
         let totalTasks = 0;
         let completedTasks = 0;
         let currentPercentage = 0;
+        let missedTasksArray = []; // Penyimpan Data Tugas Terlewat
 
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
@@ -272,22 +281,7 @@
         // ========================================================
         function navigateHome(element) {
             element.innerText = "Loading...";
-            var targetPage = 'headhouse'; // Default fallback
-
-            if (userRole.includes('vp') || userRole.includes('vice')) {
-                targetPage = 'viceprefect';
-            } 
-            else if (userRole.includes('prefect')) {
-                targetPage = 'prefect';
-            } 
-            else if (userRole.includes('editor')) {
-                targetPage = 'editor';
-            } 
-            else if (userRole.includes('leadroom')) {
-                targetPage = 'leadroom';
-            }
-
-            window.location.href = targetPage + "-dashboard.html";
+            window.location.href = "sop.html"; // MENGARAHKAN KEMBALI KE SOP.HTML
         }
 
         function navigate(targetPage, element) { 
@@ -380,7 +374,7 @@
 
                 tr.innerHTML = `
                     <td class="checkbox-container">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
+                        <input type="checkbox" data-taskname="${escapedName} [W${t.targetWeek}]" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
                     </td>
                     <td><span class="week-badge ${badgeClass}">${weekLabel}</span></td>
                     <td style="text-align:center; font-weight:bold;">${t.kpi || '-'}</td>
@@ -432,6 +426,28 @@
         // ==========================================
         function openKpiModal() {
             if(totalTasks === 0) { alert("No tasks available to report!"); return; }
+            
+            // 1. CARI SEMUA KOTAK YANG TIDAK DICENTANG!
+            missedTasksArray = [];
+            const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                if (!cb.checked) {
+                    missedTasksArray.push(cb.getAttribute('data-taskname'));
+                }
+            });
+
+            // 2. MUNCULKAN PERINGATAN JIKA ADA TUGAS YANG TERLEWAT
+            const warningBox = document.getElementById('missedTasksWarning');
+            if (missedTasksArray.length > 0) {
+                warningBox.style.display = 'block';
+                warningBox.innerHTML = `⚠️ <b>WARNING: You missed ${missedTasksArray.length} tasks!</b><br>
+                                        <div style="margin-top:5px; font-weight:normal;">${missedTasksArray.join(', ')}</div>
+                                        <div style="margin-top:5px; color:var(--royal-blue);">Please provide an explanation in the <b>Monthly Notes</b> below.</div>`;
+            } else {
+                warningBox.style.display = 'none';
+                warningBox.innerHTML = '';
+            }
+
             document.getElementById('kpiModal').style.display = 'flex';
             document.getElementById('modalCompleted').value = `${completedTasks} / ${totalTasks}`;
             document.getElementById('modalPercentage').value = `${currentPercentage}%`;
@@ -447,6 +463,9 @@
             const btnCancel = document.getElementById('btnCancel');
             const status = document.getElementById('modalStatus');
             
+            // RUBAH ARRAY JADI TEKS AGAR BISA DISIMPAN KE SHEET
+            const missedTasksText = missedTasksArray.length > 0 ? missedTasksArray.join(', ') : '-';
+
             const kpiData = {
                 username: loggedInUser,
                 position: userRole === 'unknown' ? 'Editor' : userRole,
@@ -454,7 +473,8 @@
                 total: totalTasks,
                 percentage: currentPercentage,
                 backupTasks: document.getElementById('modalBackup').value || 0,
-                notes: document.getElementById('modalNotes').value
+                notes: document.getElementById('modalNotes').value,
+                missedList: missedTasksText // KIRIMKAN DAFTAR TUGAS BOLONG KE BACKEND
             };
 
             btnSubmit.innerText = 'Sending...';
