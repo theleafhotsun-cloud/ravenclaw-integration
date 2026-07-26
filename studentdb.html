@@ -30,9 +30,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN SCROLL: Jarak bawah disesuaikan agar tidak "lebay" tapi tidak terpotong */
-        .content-area { padding: 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
-        
+        /* CONTENT & TABLE */
+        .content-area { padding: 25px 25px 80px 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
         
@@ -43,7 +42,7 @@
         .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
         .btn-primary:hover { background-color: var(--sapphire); }
 
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 20px;}
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 60px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
@@ -72,6 +71,7 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
         .btn-icon:hover { transform: scale(1.2); }
 
+        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 15px;}
@@ -240,7 +240,6 @@
                         <option value="Inactive">INACTIVE</option>
                         <option value="Hiatus">HIATUS</option>
                         <option value="Conflict">CONFLICT</option>
-                        <option value="N.E.W.T">N.E.W.T</option>
                     </select>
                     <input type="text" id="studWl1Link" placeholder="Link WL 1 (URL)" style="border-color:#ffcdd2;">
                 </div>
@@ -253,7 +252,6 @@
                         <option value="Inactive">INACTIVE</option>
                         <option value="Hiatus">HIATUS</option>
                         <option value="Conflict">CONFLICT</option>
-                        <option value="N.E.W.T">N.E.W.T</option>
                     </select>
                     <input type="text" id="studWl2Link" placeholder="Link WL 2 (URL)" style="border-color:#ffcdd2;">
                 </div>
@@ -325,8 +323,7 @@
             else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome(element) {
-            element.innerText = "Loading...";
+        function navigateHome() {
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -380,14 +377,13 @@
                 if(student.wlInactive) wlBadges += `<span class="wl-badge">INACTIVE</span>`;
                 if(student.wlHiatus) wlBadges += `<span class="wl-badge">HIATUS</span>`;
                 if(student.wlConflict) wlBadges += `<span class="wl-badge">CONFLICT</span>`;
-                if(student.wlNewt) wlBadges += `<span class="wl-badge">N.E.W.T</span>`;
 
                 let statusBadges = '';
                 if(student.isDeactive) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
                 if(student.isResigned) statusBadges += `<span class="status-badge status-resigned">RESIGNED</span> `;
                 if(student.isDropOut) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
                 
-                // Cek Re-Registration & Last Update dari backend
+                // Cek Re-Registration & Last Update
                 if(student.isReReg) statusBadges += `<span class="status-badge status-rereg">RE-REGISTERED</span> `;
 
                 let linkHtml = '';
@@ -397,6 +393,12 @@
                 // Menampilkan Tanggal Edit Terakhir
                 let lastEditHtml = '';
                 if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:4px;">Last Edit: ${student.lastUpdate}</div>`;
+
+                // PEMBERSIH TEKS "FALSE" JIKA TERLANJUR MASUK KE SHEET ANDA
+                let cleanNotes = student.notesEtc || '-';
+                if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') {
+                    cleanNotes = '-';
+                }
 
                 const isInactiveStatus = student.isDeactive || student.isResigned || student.isDropOut;
                 const rowClass = isInactiveStatus ? 'row-dimmed' : '';
@@ -427,8 +429,8 @@
                         ${wlBadges || '<span style="color:gray;">-</span>'}
                     </td>
                     <td>
-                        <div>${student.notesEtc || '-'}</div>
-                        <div>${linkHtml}</div>
+                        <div>${cleanNotes}</div>
+                        <div style="margin-top:4px;">${linkHtml}</div>
                         ${lastEditHtml}
                     </td>
                     <td>
@@ -531,14 +533,27 @@
             document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${total} (Major: ${base} + Electives: ${countElectives})`;
         }
 
+        // LOGIKA PENANGKAP FORMAT TANGGAL YANG JAUH LEBIH KUAT
         function formatDOBForPicker(dateString) {
-            if (!dateString) return "";
+            if (!dateString || dateString === '-') return "";
+            // Jika sudah berformat YYYY-MM-DD
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString; 
-            let d = new Date(dateString);
-            if (!isNaN(d.getTime())) {
-                let month = '' + (d.getMonth() + 1);
-                let day = '' + d.getDate();
-                let year = d.getFullYear();
+            
+            // Tangkap format manual Indonesia/Inggris seperti DD/MM/YYYY atau DD-MM-YYYY
+            if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(dateString)) {
+                let parts = dateString.split(/[\/\-\.]/);
+                let d = parseInt(parts[0]);
+                let m = parseInt(parts[1]);
+                let y = parseInt(parts[2]);
+                return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            }
+            
+            // Tangkap format tulisan seperti "12 Jun 2005"
+            let dObj = new Date(dateString);
+            if (!isNaN(dObj.getTime())) {
+                let month = '' + (dObj.getMonth() + 1);
+                let day = '' + dObj.getDate();
+                let year = dObj.getFullYear();
                 if (month.length < 2) month = '0' + month;
                 if (day.length < 2) day = '0' + day;
                 return [year, month, day].join('-');
@@ -552,7 +567,7 @@
             const statusBox = document.getElementById('modalStatus');
             const gradeSelect = document.getElementById('studGrade');
             
-            // RESET STATUS TOMBOL (Perbaikan Bug "Nge-Freeze / Nge-klik Sendiri")
+            // RESET STATUS TOMBOL 
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
             btnSubmit.innerText = "Save Record";
@@ -602,6 +617,8 @@
 
                 document.getElementById('studFullName').value = s.fullName;
                 document.getElementById('studNickname').value = s.nickname;
+                
+                // MENGISI DATA TANGGAL
                 document.getElementById('studDOB').value = formatDOBForPicker(s.dob);
                 document.getElementById('studFaceClaim').value = s.faceClaim;
 
@@ -610,18 +627,24 @@
                 if(s.wlInactive) reasons.push("Inactive");
                 if(s.wlHiatus) reasons.push("Hiatus");
                 if(s.wlConflict) reasons.push("Conflict");
-                if(s.wlNewt) reasons.push("N.E.W.T");
 
                 document.getElementById('wl1Reason').value = reasons[0] || "";
                 document.getElementById('wl2Reason').value = reasons[1] || "";
                 document.getElementById('studWl1Link').value = s.wl1Link;
                 document.getElementById('studWl2Link').value = s.wl2Link;
                 
+                // BERSIHKAN TULISAN FALSE JIKA TERDAPAT DI DB
+                let cleanNotes = s.notesEtc || '';
+                if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') {
+                    cleanNotes = '';
+                }
+                document.getElementById('studNotesEtc').value = cleanNotes;
+                
                 document.getElementById('chkReReg').checked = s.isReReg || false;
                 document.getElementById('chkDeactive').checked = s.isDeactive;
                 document.getElementById('chkResigned').checked = s.isResigned;
                 document.getElementById('chkDropOut').checked = s.isDropOut;
-                document.getElementById('studNotesEtc').value = s.notesEtc;
+                
             } else {
                 title.innerText = "Add New Student";
                 document.getElementById('studRowIdx').value = "";
@@ -696,7 +719,6 @@
                 wlInactive: (r1 === 'Inactive' || r2 === 'Inactive'),
                 wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus'),
                 wlConflict: (r1 === 'Conflict' || r2 === 'Conflict'),
-                wlNewt: (r1 === 'N.E.W.T' || r2 === 'N.E.W.T'),
                 
                 wl1Link: document.getElementById('studWl1Link').value,
                 wl2Link: document.getElementById('studWl2Link').value,
