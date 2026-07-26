@@ -166,16 +166,15 @@
             btn.disabled = true;
             status.style.display = 'none';
 
-            // Ambil nilai dari input
             const inputUsername = formObject.Username.value;
             const inputPassword = formObject.Password.value;
 
-            // Gunakan Fetch API untuk Vercel
             fetch(API_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
+                    action: "loginSystem", // Kita beri nama action khusus agar rapi
                     username: inputUsername,
                     password: inputPassword
                 })
@@ -187,17 +186,33 @@
                     status.innerHTML = 'Login successful! Redirecting...';
                     status.style.display = 'block';
                     
-                    // Simpan sesi login
                     localStorage.setItem("session_username", result.data.username);
                     localStorage.setItem("session_role", result.data.role);
 
-                    // Bersihkan spasi dari role (contoh: "Vice Prefect" jadi "viceprefect")
+                    // Logika Penentuan Dashboard berdasarkan Posisi
                     const rawPosition = result.data.role.toString().toLowerCase();
-                    const pageParam = rawPosition.replace(/\s+/g, ''); 
-                    
-                    // Arahkan ke halaman HTML yang sesuai (misal: headhouse-dashboard.html)
+                    let targetPage = "";
+
+                    if (rawPosition.includes('headhouse') || rawPosition.includes('system admin')) {
+                        targetPage = "headhouse-dashboard.html";
+                    } else if (rawPosition.includes('vice prefect') || rawPosition.includes('vp')) {
+                        targetPage = "viceprefect-dashboard.html";
+                    } else if (rawPosition.includes('prefect')) {
+                        targetPage = "prefect-dashboard.html";
+                    } else if (rawPosition.includes('lead room') || rawPosition.includes('leadroom')) {
+                        targetPage = "leadroom-dashboard.html";
+                    } else if (rawPosition.includes('editor')) {
+                        targetPage = "editor-dashboard.html";
+                    } else {
+                        status.style.color = '#c62828';
+                        status.innerHTML = 'Access Denied: Your position does not have a dashboard.';
+                        btn.innerHTML = 'Sign In';
+                        btn.disabled = false;
+                        return;
+                    }
+
                     setTimeout(() => {
-                        window.location.href = pageParam + "-dashboard.html";
+                        window.location.href = targetPage;
                     }, 1000);
 
                 } else {
