@@ -45,9 +45,15 @@
         .filter-container label { font-size: 13px; font-weight: bold; color: var(--royal-blue); }
         .filter-container select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; background-color: white; color: var(--royal-blue); font-weight: bold;}
 
-        /* Archive Buttons */
-        .btn-restore { background-color: var(--swan-wing); color: var(--sapphire); border: 1px solid var(--sapphire); padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: all 0.3s; }
-        .btn-restore:hover { background-color: var(--sapphire); color: white; }
+        /* Preset & Folder Management Styles */
+        .preset-box { background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--shellstone); }
+        .preset-box strong { font-size: 13px; color: var(--royal-blue); display: block; margin-bottom: 10px; text-transform: uppercase; }
+        .preset-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .preset-controls select { flex-grow: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--shellstone); font-weight: bold;}
+        .btn-preset { padding: 8px 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; color: white;}
+        .btn-preset.load { background-color: var(--sapphire); }
+        .btn-preset.save { background-color: var(--success); }
+        .btn-preset.delete { background-color: var(--danger); }
         
         .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; }
         
@@ -73,15 +79,16 @@
         .action-cell { display: flex; gap: 5px; }
         .btn-eval { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
         .btn-eval:hover { background-color: var(--sapphire); }
-        .btn-archive { background-color: var(--shellstone); color: var(--royal-blue); border: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
-        .btn-archive:hover { background-color: var(--danger); color: white; }
+        
+        .btn-delete { background-color: var(--shellstone); color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
+        .btn-delete:hover { background-color: var(--danger); color: white; }
 
         /* Evaluation Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 500px; max-width: 95%; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; }
         
-        .eval-summary { background-color: white; padding: 10px; border-radius: 4px; border: 1px dashed var(--shellstone); margin-bottom: 15px; font-size: 12px; }
+        .eval-summary { background-color: white; padding: 15px; border-radius: 4px; border: 1px dashed var(--shellstone); margin-bottom: 15px; font-size: 12px; line-height: 1.6;}
         .eval-summary span { font-weight: bold; color: var(--royal-blue); }
 
         .current-app-view { background-color: #f2f2f2; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; border-left: 3px solid var(--sapphire);}
@@ -106,17 +113,17 @@
         </div>
         <ul class="nav-links" id="sidebarMenu">
             <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)" class="active">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)">Task Directory</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')" class="active">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -124,7 +131,7 @@
         <div class="topbar">
             <div class="user-profile">
                 Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -133,12 +140,25 @@
                 <h1 class="page-title">Submitted Work Reports</h1>
                 
                 <div class="filter-container">
-                    <button class="btn-restore" onclick="clearArchive()">👁️ Unhide Archived</button>
-                    <label for="monthFilter">📁 Period Folder:</label>
+                    <label for="monthFilter">📡 Live Database Filter:</label>
                     <select id="monthFilter" onchange="filterByMonth()">
                         <option value="ALL">All Active Periods</option>
                     </select>
                 </div>
+            </div>
+
+            <!-- FOLDER DATA SNAPSHOT -->
+            <div class="preset-box" style="border-color: var(--sapphire); background-color: #f8f9fa;">
+                <strong>🗂️ Report Folders (Saved Snapshots)</strong>
+                <div class="preset-controls">
+                    <select id="snapshotSelect">
+                        <option value="LIVE">🟢 Show Live Data from Database</option>
+                    </select>
+                    <button class="btn-preset load" onclick="loadSnapshot()">Load Folder</button>
+                    <button class="btn-preset save" onclick="saveSnapshot()">Save Current Reports to Folder</button>
+                    <button class="btn-preset delete" onclick="deleteSnapshot()">Delete Folder</button>
+                </div>
+                <div style="font-size:10px; color:gray; margin-top:5px;">💡 Securely save the current state of reports (including grades and approvals) into an offline folder before they get overwritten next month.</div>
             </div>
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Fetching submitted reports...</div>
@@ -205,8 +225,8 @@
             </div>
             
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeEvalModal()" id="btnCancel">Cancel</button>
-                <button class="btn-submit" onclick="submitEvaluation()" id="btnSubmit">Save & Approve</button>
+                <button type="button" class="btn-cancel" onclick="closeEvalModal()" id="btnCancel">Cancel</button>
+                <button type="button" class="btn-submit" onclick="submitEvaluation()" id="btnSubmit">Save & Approve</button>
             </div>
         </div>
     </div>
@@ -214,9 +234,9 @@
     <!-- SCRIPT AREA -->
     <script>
         // ==========================================
-        // 1. GLOBAL VARIABLES & VERCEL INIT
+        // 1. GLOBAL VARIABLES
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; // PASTIKAN MENGGANTI INI DENGAN URL DEPLOY TERBARU
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -229,6 +249,9 @@
         let originalApp1 = "Pending";
         let originalApp2 = "Pending";
         let evaluatingAs = "admin";
+        
+        const SNAPSHOT_STORAGE_KEY = 'ravenclaw_workreport_snapshots';
+        let isViewSnapshot = false;
 
         // ==========================================
         // 2. ONLOAD INITIALIZATION
@@ -236,8 +259,8 @@
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
+            loadSnapshotDropdown();
             
-            // Fetch Headhouse Names for Approval System
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getHeadhouseList" })
@@ -250,12 +273,11 @@
                 }
             });
 
-            // Fetch Table Reports
             fetchReports();
         });
 
         // ==========================================
-        // 3. LOGIKA SIDEBAR & NAVIGASI (VERCEL)
+        // 3. LOGIKA SIDEBAR & NAVIGASI 
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
@@ -277,8 +299,7 @@
             else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome(element) {
-            element.innerText = "Loading...";
+        function navigateHome() {
             var targetPage = 'headhouse'; 
             if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
             else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
@@ -287,17 +308,79 @@
             window.location.href = targetPage + "-dashboard.html";
         }
 
-        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
-        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
-        // 4. LOGIKA WORK REPORT & EVALUASI
+        // 4. FOLDER SNAPSHOT LOGIC
+        // ==========================================
+        function getSnapshots() { return JSON.parse(localStorage.getItem(SNAPSHOT_STORAGE_KEY) || '{}'); }
+
+        function loadSnapshotDropdown() {
+            const snaps = getSnapshots();
+            const select = document.getElementById('snapshotSelect');
+            select.innerHTML = '<option value="LIVE">🟢 Show Live Data from Database</option>';
+            Object.keys(snaps).forEach(key => {
+                select.innerHTML += `<option value="${key}">📁 ${key}</option>`;
+            });
+        }
+
+        function saveSnapshot() {
+            const snapName = prompt("Enter a folder name (e.g., July Evaluations Final).");
+            if (!snapName) return;
+
+            const selectedMonth = document.getElementById('monthFilter').value;
+            let visibleReports = allReports;
+            if (selectedMonth !== 'ALL') {
+                visibleReports = visibleReports.filter(item => item.monthFolder === selectedMonth);
+            }
+
+            const snaps = getSnapshots();
+            snaps[snapName] = visibleReports;
+            localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
+            loadSnapshotDropdown();
+            alert(`Reports successfully saved to the folder "${snapName}"!`);
+        }
+
+        function loadSnapshot() {
+            const key = document.getElementById('snapshotSelect').value;
+            if (key === "LIVE") {
+                isViewSnapshot = false;
+                fetchReports(); 
+            } else {
+                const data = getSnapshots()[key];
+                if (data) {
+                    isViewSnapshot = true;
+                    allReports = data; 
+                    renderTable(data);
+                }
+            }
+        }
+
+        function deleteSnapshot() {
+            const key = document.getElementById('snapshotSelect').value;
+            if (key === "LIVE") return alert("Live data cannot be deleted from here!");
+            if (!confirm(`Delete this folder "${key}" permanently?`)) return;
+
+            const snaps = getSnapshots();
+            delete snaps[key];
+            localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
+            loadSnapshotDropdown();
+            document.getElementById('snapshotSelect').value = "LIVE";
+            isViewSnapshot = false;
+            fetchReports();
+        }
+
+        // ==========================================
+        // 5. LOGIKA WORK REPORT & EVALUASI
         // ==========================================
         function fetchReports() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Fetching submitted reports...";
             document.getElementById('reportTable').style.display = 'none';
             document.getElementById('tableBody').innerHTML = '';
+            document.getElementById('snapshotSelect').value = "LIVE";
+            isViewSnapshot = false;
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -331,37 +414,15 @@
             });
         }
 
-        // --- ARCHIVE / HIDE LOGIC ---
-        const ARCHIVE_KEY = 'ravenclaw_archived_reports';
-        
-        function getArchivedReports() {
-            return JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
-        }
-
-        function archiveReport(rowIdx) {
-            if(!confirm("Hide this report? You can unhide it later by clicking 'Unhide Archived'.")) return;
-            let archived = getArchivedReports();
-            if(!archived.includes(rowIdx)) {
-                archived.push(rowIdx);
-                localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archived));
-            }
-            filterByMonth(); 
-        }
-
-        function clearArchive() {
-            if(!confirm("Restore all hidden reports to the table?")) return;
-            localStorage.removeItem(ARCHIVE_KEY);
-            filterByMonth();
-        }
-
         function filterByMonth() {
-            const selectedMonth = document.getElementById('monthFilter').value;
-            const archivedIds = getArchivedReports();
-            
-            // First filter out archived
-            let visibleReports = allReports.filter(r => !archivedIds.includes(r.rowIdx));
+            if (isViewSnapshot) {
+                renderTable(allReports);
+                return;
+            }
 
-            // Then filter by month
+            const selectedMonth = document.getElementById('monthFilter').value;
+            let visibleReports = allReports;
+            
             if (selectedMonth !== 'ALL') {
                 visibleReports = visibleReports.filter(item => item.monthFolder === selectedMonth);
             }
@@ -387,7 +448,7 @@
             tbody.innerHTML = '';
 
             if (!reports || reports.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:gray;">No work reports visible for this period.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:gray;">No work reports found.</td></tr>';
                 return;
             }
 
@@ -396,9 +457,23 @@
                 const app1Class = getAppClass(report.approval1);
                 const app2Class = getAppClass(report.approval2);
                 
-                // Original Index used for Modal mapping
                 const originalIndex = allReports.findIndex(r => r.rowIdx === report.rowIdx);
                 
+                // KALKULASI TUGAS YANG TIDAK DIKERJAKAN
+                let missedTasks = (Number(report.total) || 0) - (Number(report.completed) || 0);
+                if (missedTasks < 0) missedTasks = 0;
+                let missedWarning = missedTasks > 0 ? `<div style="margin-top:5px; font-size:11px; color:var(--danger);"><b>Missed:</b> ${missedTasks} Tasks</div>` : '';
+
+                // TAMPILKAN TEKS TUGAS YANG TERLEWAT JIKA DIKIRIMKAN DARI BACKEND
+                let missedListText = (report.missedList && String(report.missedList).trim() !== '' && report.missedList !== '-') 
+                    ? `<div style="margin-top:3px; font-size:10px; color:#c62828; line-height:1.3;">❌ <i>${String(report.missedList).replace(/,/g, '<br>❌ ')}</i></div>` 
+                    : '';
+
+                const actionHtml = isViewSnapshot 
+                    ? `<span style="font-size:10px; color:gray; font-weight:bold;">LOCKED<br>(SNAPSHOT VIEW)</span>` 
+                    : `<button class="btn-eval" onclick="openEvalModal(${originalIndex})">Review</button>
+                       <button class="btn-delete" onclick="deleteReport(${report.rowIdx})" title="Permanently Delete Report">🗑️</button>`;
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
@@ -409,7 +484,9 @@
                     <td>
                         <div>${report.completed} / ${report.total} Tasks</div>
                         <div style="margin-top:5px;"><span class="kpi-badge">${report.kpi}</span></div>
-                        <div style="margin-top:5px; font-size:11px;"><b>Backup:</b> ${report.backup}</div>
+                        ${missedWarning}
+                        ${missedListText}
+                        <div style="margin-top:3px; font-size:11px;"><b>Backup:</b> ${report.backup}</div>
                     </td>
                     <td class="notes-cell">${report.notes || '-'}</td>
                     <td class="eval-cell">
@@ -421,24 +498,59 @@
                         <div style="font-size:11px;">${hh2Name}: <span class="app-badge ${app2Class}">${report.approval2 || 'Pending'}</span></div>
                     </td>
                     <td class="action-cell">
-                        <button class="btn-eval" onclick="openEvalModal(${originalIndex})">Review</button>
-                        <button class="btn-archive" onclick="archiveReport(${report.rowIdx})" title="Hide Report">📁 Hide</button>
+                        ${actionHtml}
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        function deleteReport(rowIdx) {
+            if(!confirm("Are you sure you want to PERMANENTLY delete this report? This action cannot be undone.")) return;
+            
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Deleting report from server...";
+            document.getElementById('reportTable').style.display = 'none';
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "deleteWorkReport", rowIdx: rowIdx })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    fetchReports(); 
+                } else {
+                    alert("Failed to delete report: " + res.message);
+                    fetchReports();
+                }
+            })
+            .catch(err => {
+                alert("Connection Error: " + err.message);
+                fetchReports();
+            });
+        }
+
         function openEvalModal(arrayIndex) {
+            if (isViewSnapshot) return alert("You cannot edit records while viewing a snapshot.");
+
             const report = allReports[arrayIndex];
             
             document.getElementById('evalModal').style.display = 'flex';
             document.getElementById('modalStatus').style.display = 'none';
             
+            let missedTasks = (Number(report.total) || 0) - (Number(report.completed) || 0);
+            if (missedTasks < 0) missedTasks = 0;
+
+            let missedDetailModal = (report.missedList && String(report.missedList).trim() !== '' && report.missedList !== '-') 
+                ? `<br><span style="color:var(--danger);">Missed Details:</span> <i style="color:#c62828;">${report.missedList}</i>` 
+                : '';
+
             document.getElementById('evalSummary').innerHTML = `
                 Member: <span>${report.username} (${report.position})</span><br>
-                KPI: <span>${report.kpi} (${report.completed}/${report.total} Tasks)</span> | Backup: <span>${report.backup}</span><br>
-                Notes: <i>"${report.notes || 'No notes'}"</i>
+                KPI: <span>${report.kpi} (${report.completed}/${report.total} Tasks)</span> | <span style="color:var(--danger);">Missed: ${missedTasks}</span> | Backup: <span>${report.backup}</span>
+                ${missedDetailModal}
+                <br>Notes: <i>"${report.notes || 'No notes'}"</i>
             `;
             document.getElementById('evalRowIdx').value = report.rowIdx;
 
