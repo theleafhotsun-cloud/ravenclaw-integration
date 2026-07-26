@@ -30,8 +30,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN BUG LANDSCAPE: scroll natural, bukan flexbox */
-        .content-area { padding: 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
+        /* PERBAIKAN SCROLL: Padding bawah 80px agar tidak mentok */
+        .content-area { padding: 25px 25px 80px 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -43,8 +43,8 @@
         .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
         .btn-primary:hover { background-color: var(--sapphire); }
 
-        /* PERBAIKAN BUG TABEL TERPOTONG: Margin bawah ditambah, hapus flex-grow */
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 40px;}
+        /* PERBAIKAN TABEL: Margin bawah 60px */
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 60px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
@@ -72,7 +72,6 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
         .btn-icon:hover { transform: scale(1.2); }
 
-        /* PERBAIKAN POPUP MODAL: Lebih kecil (compact) dan bisa discroll dengan baik */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 15px;}
@@ -83,7 +82,6 @@
         .form-row .form-group { flex: 1; margin-bottom: 0; }
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 4px; text-transform: uppercase; }
-        /* Pengecilan kotak input */
         .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 6px 8px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 11px;}
         .form-group select:disabled { background-color: #e0e0e0; cursor: not-allowed; font-weight: bold; color: var(--royal-blue); }
         
@@ -108,17 +106,17 @@
         </div>
         <ul class="nav-links" id="sidebarMenu">
             <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)">Task Directory</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)" class="active">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')" class="active">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -126,7 +124,7 @@
         <div class="topbar">
             <div class="user-profile">
                 Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -328,8 +326,7 @@
             else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome(element) {
-            element.innerText = "Loading...";
+        function navigateHome() {
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -338,8 +335,8 @@
             window.location.href = targetPage + "-dashboard.html";
         }
 
-        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
-        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
         // LOGIKA STUDENT DATABASE & FETCH API
@@ -486,7 +483,6 @@
             container.innerHTML = ''; 
             
             let options = [];
-            // Buat case-insensitive match
             if (majorVal && majorVal.toLowerCase() === 'ministry') options = electivesMinistry;
             else if (majorVal && majorVal.toLowerCase() === 'auror') options = electivesAuror;
 
@@ -563,7 +559,6 @@
                 gradeSelect.value = s.grade || 'Newizzy';
                 gradeSelect.disabled = false;
                 
-                // SOLUSI BUG CASE-SENSITIVE MAJOR:
                 if(s.major) {
                     let dbMajor = s.major.trim().toLowerCase();
                     let radios = document.querySelectorAll('input[name="studMajor"]');
@@ -576,7 +571,6 @@
                     }
                 }
                 
-                // SOLUSI BUG CASE-SENSITIVE ELECTIVES:
                 if(s.electives) {
                     let elArr = s.electives.split(',').map(e => e.trim().toLowerCase());
                     let checkboxes = document.querySelectorAll('input[name="studElective"]');
