@@ -30,8 +30,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN SCROLL: Padding bawah 80px agar tidak mentok */
-        .content-area { padding: 25px 25px 80px 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
+        /* PERBAIKAN SCROLL: Jarak bawah disesuaikan agar tidak "lebay" tapi tidak terpotong */
+        .content-area { padding: 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -43,8 +43,7 @@
         .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
         .btn-primary:hover { background-color: var(--sapphire); }
 
-        /* PERBAIKAN TABEL: Margin bawah 60px */
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 60px;}
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 20px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
@@ -60,9 +59,10 @@
         
         .wl-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background-color: #ffebee; color: var(--danger); font-weight: bold; border: 1px solid #ffcdd2; margin-right: 2px;}
         .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold;}
-        .status-deactive { background-color: #fff3e0; color: #e65100; }
-        .status-resigned { background-color: #ffebee; color: var(--danger); }
-        .status-dropout { background-color: #424242; color: #ffffff; }
+        .status-deactive { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;}
+        .status-resigned { background-color: #ffebee; color: var(--danger); border: 1px solid #ffcdd2;}
+        .status-dropout { background-color: #424242; color: #ffffff; border: 1px solid #212121;}
+        .status-rereg { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;}
         
         .link-icon { text-decoration: none; font-weight: bold; font-size: 11px; padding: 2px 6px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; margin-right: 3px;}
         .link-icon:hover { background-color: var(--sapphire); color: white; }
@@ -151,8 +151,8 @@
                             <th>Grade</th>
                             <th>Major & Electives</th>
                             <th>Total Classes</th>
-                            <th>WL / Status</th>
-                            <th>Notes / Links</th>
+                            <th>WL & Flags</th>
+                            <th>Notes & Last Updates</th>
                             <th>Room Alloc.</th>
                             <th style="text-align:center;">Action</th>
                         </tr>
@@ -200,8 +200,8 @@
                 <div class="form-group">
                     <label>Major (Base 6 Classes)</label>
                     <div class="checkbox-group">
-                        <label class="checkbox-item"><input type="radio" name="studMajor" value="Auror" onchange="handleMajorChange(this.value)"> Auror</label>
-                        <label class="checkbox-item"><input type="radio" name="studMajor" value="Ministry" onchange="handleMajorChange(this.value)"> Ministry</label>
+                        <label class="checkbox-item"><input type="radio" name="studMajor" value="AUROR" onchange="handleMajorChange(this.value)"> AUROR</label>
+                        <label class="checkbox-item"><input type="radio" name="studMajor" value="MINISTRY" onchange="handleMajorChange(this.value)"> MINISTRY</label>
                     </div>
                 </div>
             </div>
@@ -232,7 +232,6 @@
             <!-- BAGIAN WARNING LETTERS -->
             <div class="section-header">Warning Letters Records</div>
             <div class="form-row">
-                <!-- BOX WL 1 -->
                 <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px;">
                     <label style="color: #c62828;">Warning Letter 1</label>
                     <select id="wl1Reason" style="margin-bottom: 6px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
@@ -246,7 +245,6 @@
                     <input type="text" id="studWl1Link" placeholder="Link WL 1 (URL)" style="border-color:#ffcdd2;">
                 </div>
                 
-                <!-- BOX WL 2 -->
                 <div class="form-group" style="background: #fff5f5; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px;">
                     <label style="color: #c62828;">Warning Letter 2</label>
                     <select id="wl2Reason" style="margin-bottom: 6px; font-weight:bold; color:var(--danger); border-color:#ffcdd2; background: white;">
@@ -266,6 +264,7 @@
                 <div class="form-group" style="flex: 1.2;">
                     <label>Status Flags</label>
                     <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox" id="chkReReg"> RE-REGISTERED</label>
                         <label class="checkbox-item"><input type="checkbox" id="chkDeactive"> DEACTIVE</label>
                         <label class="checkbox-item"><input type="checkbox" id="chkResigned"> RESIGNED</label>
                         <label class="checkbox-item"><input type="checkbox" id="chkDropOut"> DROP OUT</label>
@@ -278,8 +277,8 @@
             </div>
 
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeStudentModal()" id="btnCancel">Cancel</button>
-                <button class="btn-submit" onclick="saveStudent()" id="btnSubmit">Save Record</button>
+                <button type="button" class="btn-cancel" onclick="closeStudentModal()" id="btnCancel">Cancel</button>
+                <button type="button" class="btn-submit" onclick="saveStudent()" id="btnSubmit">Save Record</button>
             </div>
         </div>
     </div>
@@ -326,7 +325,8 @@
             else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome() {
+        function navigateHome(element) {
+            element.innerText = "Loading...";
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -386,10 +386,17 @@
                 if(student.isDeactive) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
                 if(student.isResigned) statusBadges += `<span class="status-badge status-resigned">RESIGNED</span> `;
                 if(student.isDropOut) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
+                
+                // Cek Re-Registration & Last Update dari backend
+                if(student.isReReg) statusBadges += `<span class="status-badge status-rereg">RE-REGISTERED</span> `;
 
                 let linkHtml = '';
                 if(student.wl1Link) linkHtml += `<a href="${student.wl1Link}" target="_blank" class="link-icon">🔗 WL1</a>`;
                 if(student.wl2Link) linkHtml += `<a href="${student.wl2Link}" target="_blank" class="link-icon">🔗 WL2</a>`;
+                
+                // Menampilkan Tanggal Edit Terakhir
+                let lastEditHtml = '';
+                if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:4px;">Last Edit: ${student.lastUpdate}</div>`;
 
                 const isInactiveStatus = student.isDeactive || student.isResigned || student.isDropOut;
                 const rowClass = isInactiveStatus ? 'row-dimmed' : '';
@@ -415,10 +422,14 @@
                         <div style="font-size:10px; color:gray;"><b>Electives:</b> ${student.electives || '-'}</div>
                     </td>
                     <td><span class="class-badge">${student.totalClasses} Classes</span></td>
-                    <td>${wlBadges || '<span style="color:gray;">-</span>'}</td>
                     <td>
-                        <div>${statusBadges} ${linkHtml}</div>
-                        <div style="font-size:10px; color:gray;">${student.notesEtc || ''}</div>
+                        <div style="margin-bottom: 4px;">${statusBadges}</div>
+                        ${wlBadges || '<span style="color:gray;">-</span>'}
+                    </td>
+                    <td>
+                        <div>${student.notesEtc || '-'}</div>
+                        <div>${linkHtml}</div>
+                        ${lastEditHtml}
                     </td>
                     <td>
                         <select class="select-room" onchange="quickChangeRoom(${student.rowIdx}, this)">
@@ -483,8 +494,9 @@
             container.innerHTML = ''; 
             
             let options = [];
-            if (majorVal && majorVal.toLowerCase() === 'ministry') options = electivesMinistry;
-            else if (majorVal && majorVal.toLowerCase() === 'auror') options = electivesAuror;
+            // Buat case-insensitive match
+            if (majorVal && majorVal.toUpperCase() === 'MINISTRY') options = electivesMinistry;
+            else if (majorVal && majorVal.toUpperCase() === 'AUROR') options = electivesAuror;
 
             if (options.length === 0) {
                 container.innerHTML = '<span class="empty-electives-msg">Please select a Major first to view available electives.</span>';
@@ -540,6 +552,13 @@
             const statusBox = document.getElementById('modalStatus');
             const gradeSelect = document.getElementById('studGrade');
             
+            // RESET STATUS TOMBOL (Perbaikan Bug "Nge-Freeze / Nge-klik Sendiri")
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnCancel = document.getElementById('btnCancel');
+            btnSubmit.innerText = "Save Record";
+            btnSubmit.disabled = false;
+            btnCancel.disabled = false;
+            
             modal.style.display = 'flex';
             statusBox.style.display = 'none';
             
@@ -560,10 +579,10 @@
                 gradeSelect.disabled = false;
                 
                 if(s.major) {
-                    let dbMajor = s.major.trim().toLowerCase();
+                    let dbMajor = s.major.trim().toUpperCase();
                     let radios = document.querySelectorAll('input[name="studMajor"]');
                     for(let r of radios) {
-                        if(r.value.toLowerCase() === dbMajor) {
+                        if(r.value.toUpperCase() === dbMajor) {
                             r.checked = true;
                             handleMajorChange(r.value);
                             break;
@@ -598,6 +617,7 @@
                 document.getElementById('studWl1Link').value = s.wl1Link;
                 document.getElementById('studWl2Link').value = s.wl2Link;
                 
+                document.getElementById('chkReReg').checked = s.isReReg || false;
                 document.getElementById('chkDeactive').checked = s.isDeactive;
                 document.getElementById('chkResigned').checked = s.isResigned;
                 document.getElementById('chkDropOut').checked = s.isDropOut;
@@ -622,6 +642,7 @@
                 document.getElementById('studWl1Link').value = "";
                 document.getElementById('studWl2Link').value = "";
                 
+                document.getElementById('chkReReg').checked = false;
                 document.getElementById('chkDeactive').checked = false;
                 document.getElementById('chkResigned').checked = false;
                 document.getElementById('chkDropOut').checked = false;
@@ -638,7 +659,8 @@
             const statusBox = document.getElementById('modalStatus');
 
             let selectedMajor = document.querySelector('input[name="studMajor"]:checked');
-            let majorValue = selectedMajor ? selectedMajor.value : "";
+            // PASTIKAN MAJOR MENJADI UPPERCASE (HURUF BESAR SEMUA)
+            let majorValue = selectedMajor ? selectedMajor.value.toUpperCase() : "";
             let electivesValue = Array.from(document.querySelectorAll('input[name="studElective"]:checked')).map(el => el.value).join(', ');
 
             let rawDob = document.getElementById('studDOB').value;
@@ -653,6 +675,9 @@
 
             let r1 = document.getElementById('wl1Reason').value;
             let r2 = document.getElementById('wl2Reason').value;
+
+            // Generate Timestamp Lokal untuk Perubahan Data
+            let currentTime = new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 
             const payload = {
                 rowIdx: document.getElementById('studRowIdx').value,
@@ -675,10 +700,14 @@
                 
                 wl1Link: document.getElementById('studWl1Link').value,
                 wl2Link: document.getElementById('studWl2Link').value,
+                
+                // MENGIRIM DATA RE-REGISTER DAN TIMESTAMP
+                isReReg: document.getElementById('chkReReg').checked,
                 isDeactive: document.getElementById('chkDeactive').checked,
                 isResigned: document.getElementById('chkResigned').checked,
                 isDropOut: document.getElementById('chkDropOut').checked,
-                notesEtc: document.getElementById('studNotesEtc').value
+                notesEtc: document.getElementById('studNotesEtc').value,
+                lastUpdate: currentTime
             };
 
             if(!payload.vault || !payload.username) {
