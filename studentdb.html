@@ -72,6 +72,7 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
         .btn-icon:hover { transform: scale(1.2); }
 
+        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 15px;}
@@ -98,6 +99,7 @@
 </head>
 <body>
 
+    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -156,7 +158,9 @@
                             <th style="text-align:center;">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody"></tbody>
+                    <tbody id="tableBody">
+                        <!-- Data injected by JS -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -236,7 +240,6 @@
                         <option value="Inactive">INACTIVE</option>
                         <option value="Hiatus">HIATUS</option>
                         <option value="Conflict">CONFLICT</option>
-                        <option value="N.E.W.T">N.E.W.T</option>
                     </select>
                     <input type="text" id="studWl1Link" placeholder="Link WL 1 (URL)" style="border-color:#ffcdd2;">
                 </div>
@@ -249,7 +252,6 @@
                         <option value="Inactive">INACTIVE</option>
                         <option value="Hiatus">HIATUS</option>
                         <option value="Conflict">CONFLICT</option>
-                        <option value="N.E.W.T">N.E.W.T</option>
                     </select>
                     <input type="text" id="studWl2Link" placeholder="Link WL 2 (URL)" style="border-color:#ffcdd2;">
                 </div>
@@ -286,7 +288,9 @@
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
-        if (!loggedInUser) window.location.href = "index.html";
+        if (!loggedInUser) {
+            window.location.href = "index.html";
+        }
 
         let studentDataStore = [];
 
@@ -300,7 +304,7 @@
         };
 
         // ==========================================
-        // SIDEBAR LOGIC
+        // LOGIKA SIDEBAR & NAVIGASI
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -319,7 +323,8 @@
             else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome() {
+        function navigateHome(element) {
+            element.innerText = "Loading...";
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -332,7 +337,7 @@
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
-        // FETCH API & RENDERING
+        // LOGIKA STUDENT DATABASE & FETCH API
         // ==========================================
         function fetchStudents() {
             document.getElementById('loadingMsg').style.display = 'block';
@@ -373,12 +378,13 @@
                 if(student.wlInactive) wlBadges += `<span class="wl-badge">INACTIVE</span>`;
                 if(student.wlHiatus) wlBadges += `<span class="wl-badge">HIATUS</span>`;
                 if(student.wlConflict) wlBadges += `<span class="wl-badge">CONFLICT</span>`;
-                if(student.wlNewt) wlBadges += `<span class="wl-badge">N.E.W.T</span>`;
 
                 let statusBadges = '';
                 if(student.isDeactive) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
                 if(student.isResigned) statusBadges += `<span class="status-badge status-resigned">RESIGNED</span> `;
                 if(student.isDropOut) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
+                
+                // Cek Re-Registration
                 if(student.isReReg) statusBadges += `<span class="status-badge status-rereg">RE-REGISTERED</span> `;
 
                 // MENYARING TAUTAN PALSU "FALSE" ATAU "TRUE"
@@ -517,13 +523,40 @@
             document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${base + countElectives} (Major: ${base} + Electives: ${countElectives})`;
         }
 
-        // PERBAIKAN PEMBACAAN TANGGAL LAHIR
+        // PERBAIKAN PEMBACAAN TANGGAL LAHIR (KEBAL FORMAT)
         function formatDOBForPicker(dateString) {
             if (!dateString || dateString === '-') return "";
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString; 
             
-            if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(dateString)) {
-                let parts = dateString.split(/[\/\-\.]/);
+            let ds = dateString.toLowerCase().trim();
+            const monthMap = {
+                'januari':'01', 'january':'01', 'jan':'01',
+                'februari':'02', 'february':'02', 'feb':'02',
+                'maret':'03', 'march':'03', 'mar':'03',
+                'april':'04', 'apr':'04',
+                'mei':'05', 'may':'05',
+                'juni':'06', 'june':'06', 'jun':'06',
+                'juli':'07', 'july':'07', 'jul':'07',
+                'agustus':'08', 'august':'08', 'agu':'08', 'aug':'08',
+                'september':'09', 'sep':'09',
+                'oktober':'10', 'october':'10', 'okt':'10', 'oct':'10',
+                'november':'11', 'nopember':'11', 'nov':'11',
+                'desember':'12', 'december':'12', 'des':'12', 'dec':'12'
+            };
+            
+            // Format tulisan "12 Mei 2005"
+            let matchStr = ds.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
+            if(matchStr) {
+                let d = matchStr[1].padStart(2, '0');
+                let mStr = matchStr[2];
+                let y = matchStr[3];
+                let m = monthMap[mStr] || '01';
+                return `${y}-${m}-${d}`;
+            }
+
+            // Format "12/05/2005" atau "12-05-2005"
+            if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(ds)) {
+                let parts = ds.split(/[\/\-\.]/);
                 return `${parts[2]}-${String(parts[1]).padStart(2, '0')}-${String(parts[0]).padStart(2, '0')}`;
             }
             
@@ -581,7 +614,7 @@
                 document.getElementById('studFaceClaim').value = s.faceClaim !== '-' ? s.faceClaim : '';
 
                 let reasons = [];
-                if(s.wlClass) reasons.push("Class"); if(s.wlInactive) reasons.push("Inactive"); if(s.wlHiatus) reasons.push("Hiatus"); if(s.wlConflict) reasons.push("Conflict"); if(s.wlNewt) reasons.push("N.E.W.T");
+                if(s.wlClass) reasons.push("Class"); if(s.wlInactive) reasons.push("Inactive"); if(s.wlHiatus) reasons.push("Hiatus"); if(s.wlConflict) reasons.push("Conflict");
 
                 document.getElementById('wl1Reason').value = reasons[0] || ""; document.getElementById('wl2Reason').value = reasons[1] || "";
                 
@@ -620,7 +653,7 @@
 
             const payload = {
                 rowIdx: document.getElementById('studRowIdx').value, vault: document.getElementById('studVault').value, username: document.getElementById('studUsername').value, grade: document.getElementById('studGrade').value, major: majorValue, electives: electivesValue, fullName: document.getElementById('studFullName').value, nickname: document.getElementById('studNickname').value, dob: formattedDob, faceClaim: document.getElementById('studFaceClaim').value, room: document.getElementById('studRoomHidden').value, 
-                wlClass: (r1 === 'Class' || r2 === 'Class'), wlInactive: (r1 === 'Inactive' || r2 === 'Inactive'), wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus'), wlConflict: (r1 === 'Conflict' || r2 === 'Conflict'), wlNewt: (r1 === 'N.E.W.T' || r2 === 'N.E.W.T'),
+                wlClass: (r1 === 'Class' || r2 === 'Class'), wlInactive: (r1 === 'Inactive' || r2 === 'Inactive'), wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus'), wlConflict: (r1 === 'Conflict' || r2 === 'Conflict'),
                 wl1Link: document.getElementById('studWl1Link').value, wl2Link: document.getElementById('studWl2Link').value,
                 isReReg: document.getElementById('chkReReg').checked, isDeactive: document.getElementById('chkDeactive').checked, isResigned: document.getElementById('chkResigned').checked, isDropOut: document.getElementById('chkDropOut').checked, notesEtc: document.getElementById('studNotesEtc').value, lastUpdate: currentTime
             };
