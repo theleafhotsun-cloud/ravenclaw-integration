@@ -30,8 +30,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s;}
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
         
-        /* SCROLL FIX */
-        .content-area { padding: 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        /* SCROLL FIX: Tambah padding bawah 60px */
+        .content-area { padding: 25px 25px 60px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 20px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -176,7 +176,7 @@
         // ==========================================
         // 1. GLOBAL VARIABLES & IDENTITY
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; // PASTIKAN SUDAH DIGANTI
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
