@@ -31,8 +31,8 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* SCROLL FIX (Ditambah padding-bottom 60px agar tidak mentok di bawah) */
-        .content-area { padding: 25px 25px 60px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        /* PERBAIKAN SCROLL: Menambahkan padding-bottom agar konten tidak terpotong */
+        .content-area { padding: 25px 25px 80px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
@@ -158,7 +158,7 @@
                 <h1 class="page-title">Room Activity Database</h1>
             </div>
 
-            <!-- SOP BANNER (UPDATED WITH UTC+7 & KAS INFO) -->
+            <!-- SOP BANNER -->
             <div class="sop-banner">
                 <div class="sop-col">
                     <b style="color:var(--danger);">📌 WEEKLY FORM DEADLINE:</b><br>
@@ -193,6 +193,7 @@
                     </div>
                 </div>
                 <div style="display:flex; gap: 10px;">
+                    <!-- TOMBOL SET MONTH CONFIG -->
                     <button id="btnManagePeriod" class="btn-manage" style="display:none; background-color:var(--quicksand); color:var(--royal-blue);" onclick="openPeriodModal()">⚙️ Set Month Config</button>
                 </div>
             </div>
