@@ -350,8 +350,8 @@
 
             <div class="section-header">Additional Information</div>
             <div class="form-group">
-                <label>Notes / Catatan</label>
-                <textarea id="adjNotes" rows="2" placeholder="Catatan khusus dari Lead Room atau Headhouse..."></textarea>
+                <label>Notes</label>
+                <textarea id="adjNotes" rows="2" placeholder="Special notes from Lead Room or Headhouse..."></textarea>
             </div>
 
             <div class="modal-actions">
@@ -667,7 +667,6 @@
                                 excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>';
                             } else { excTextDisp = ''; }
 
-                            // TAMPILAN NOTES (Jika ada isi catatannya)
                             var notesDisp = act.notes ? '<div style="font-size:9px; color:#112250; font-style:italic; max-width:120px; white-space:normal;">' + act.notes.replace(/\n/g, '<br>') + '</div>' : '<span style="color:#ccc;">-</span>';
 
                             roomActHtml += '<tr>' +
@@ -683,7 +682,7 @@
                                 '<td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td>' +
                                 '<td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td>' +
                                 '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
-                                '<td>' + notesDisp + '</td>' + // PENAMBAHAN KOLOM NOTES
+                                '<td>' + notesDisp + '</td>' +
                                 '<td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td>' +
                                 '</tr>';
                         });
@@ -691,7 +690,6 @@
                    
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="sendReport(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
 
-                    // HEADER TABLE (DITAMBAHKAN NOTES)
                     var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
                         '<th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th>' +
                         '<th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th>' +
@@ -773,7 +771,7 @@
                         '<div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div>' +
                         '<div class="card"><h5>Total Fines</h5><div class="amount minus">ʛ' + formatMoney(totalDenda) + '</div></div>' +
                         '<div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div>' +
-                        '</div><div class="table-container"><table><thead><tr><th>Vault Code</th><th>Username</th><th title="Effective Attended / Mandatory Requirement">Attendance<br>(Att / Req)</th><th>Petty Cash<br>/ Dues</th><th>Fines</th><th>Rewards</th><th title="Penjelasan detail kalkulasi denda">Fines Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
+                        '</div><div class="table-container"><table><thead><tr><th>Vault Code</th><th>Username</th><th title="Effective Attended / Mandatory Requirement">Attendance<br>(Att / Req)</th><th>Petty Cash<br>/ Dues</th><th>Fines</th><th>Rewards</th><th title="Detailed calculation breakdown of fines">Fines Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
 
                     // Tampilkan di web
                     var div = document.createElement('div');
@@ -907,7 +905,6 @@
             
             document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended; document.getElementById('adjAbsences').value = act.absences; document.getElementById('adjExcused').value = act.excused; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; document.getElementById('adjLrLate').checked = act.lrLate; 
             
-            // INJEKSI NILAI NOTES KE DALAM TEXTAREA
             document.getElementById('adjNotes').value = act.notes || '';
             document.getElementById('adjLockSync').checked = act.lockSync || false;
             
@@ -934,7 +931,7 @@
                 loaLink: document.getElementById('adjLoaLink').value, 
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
-                notes: document.getElementById('adjNotes').value, // MENYIMPAN NILAI NOTES
+                notes: document.getElementById('adjNotes').value, 
                 lockSync: document.getElementById('adjLockSync').checked 
             };
             
