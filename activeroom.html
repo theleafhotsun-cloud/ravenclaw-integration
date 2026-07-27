@@ -190,7 +190,6 @@
                     </div>
                 </div>
                 <div style="display:flex; gap: 10px;">
-                    <!-- TOMBOL SET MONTH CONFIG -->
                     <button id="btnAssignRot" class="btn-manage" style="display:none; background-color:#6a1b9a; color:white;" onclick="openRotModal()">🔄 Assign Subjects</button>
                     <button id="btnManagePeriod" class="btn-manage" style="display:none; background-color:var(--quicksand); color:var(--royal-blue);" onclick="openPeriodModal()">⚙️ Set Month Config</button>
                 </div>
@@ -349,6 +348,12 @@
                 </div>
             </div>
 
+            <div class="section-header">Additional Information</div>
+            <div class="form-group">
+                <label>Notes / Catatan</label>
+                <textarea id="adjNotes" rows="2" placeholder="Catatan khusus dari Lead Room atau Headhouse..."></textarea>
+            </div>
+
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAdjustModal()">Cancel</button>
                 <button class="btn-submit" onclick="saveActivityAdjustment()">Save Activity</button>
@@ -434,7 +439,6 @@
         var currentUserRoom = "";
         var isPrivilegedUser = false;
 
-        // JADWAL BARU RAVENION (DADA & HERBOLOGY)
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
             "Ravelynx": "Tuesday: Beginner/Advanced Potion, Divination",
@@ -443,16 +447,12 @@
             "Velaclaw": "Friday: Beginner/Advanced Transfiguration, History Of Magic"
         };
 
-        // 2. ONLOAD INITIALIZATION
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
             initPeriodConfig();
         };
 
-        // ==========================================
-        // 3. LOGIKA SIDEBAR & NAVIGASI
-        // ==========================================
         function setupDynamicSidebar() {
             var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
             var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
@@ -485,9 +485,6 @@
         function navigate(targetPage) { window.location.href = targetPage + ".html"; }
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-        // ==========================================
-        // 4. DATA INITIALIZATION & FILTER (FETCH API)
-        // ==========================================
         function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Connecting to database...";
@@ -500,12 +497,12 @@
             .then(res => {
                 if(res.status === 'success') {
                     periodConfigStore = res.data;
-                    isPrivilegedUser = res.data.isPrivileged; // TRUE untuk HH dan PVP
+                    isPrivilegedUser = res.data.isPrivileged; 
                     currentUserRoom = res.data.userRoom;     
                    
                     if (isPrivilegedUser) {
                         document.getElementById('btnManagePeriod').style.display = 'inline-block';
-                        document.getElementById('btnAssignRot').style.display = 'inline-block'; // Tampilkan tombol Assign Subjects
+                        document.getElementById('btnAssignRot').style.display = 'inline-block';
                     } else {
                         if (currentUserRoom) activeTab = currentUserRoom;
                     }
@@ -618,9 +615,6 @@
             }
         }
 
-        // ==========================================
-        // 6. RENDERING TABS AND TABLES
-        // ==========================================
         function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
 
         function renderAllTabs() {
@@ -642,20 +636,17 @@
 
                     var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
                     var rSched = roomSchedules[roomName];
-                    
-                    // MENYUNTIKKAN NAMA TUGAS BERGILIR JIKA COCOK DENGAN KAMARNYA
                     var extraRot = "";
                     if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes";
                     if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
-                    
                     var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
                     // --- BOX 1: ROOM WEEKLY ACTIVITY ---
                     var roomActHtml = '';
                     if (!isWeekActive) {
-                        roomActHtml = '<tr><td colspan="13" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
                     } else if (students.length === 0) {
-                        roomActHtml = '<tr><td colspan="13" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
                     } else {
                         students.forEach(function(s, idx) {
                             var act = s.activity;
@@ -676,6 +667,9 @@
                                 excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>';
                             } else { excTextDisp = ''; }
 
+                            // TAMPILAN NOTES (Jika ada isi catatannya)
+                            var notesDisp = act.notes ? '<div style="font-size:9px; color:#112250; font-style:italic; max-width:120px; white-space:normal;">' + act.notes.replace(/\n/g, '<br>') + '</div>' : '<span style="color:#ccc;">-</span>';
+
                             roomActHtml += '<tr>' +
                                 '<td class="vault-tag">' + s.vault + '</td>' +
                                 '<td><b>' + s.username + '</b> ' + wlBadge + '</td>' +
@@ -689,6 +683,7 @@
                                 '<td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td>' +
                                 '<td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td>' +
                                 '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
+                                '<td>' + notesDisp + '</td>' + // PENAMBAHAN KOLOM NOTES
                                 '<td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td>' +
                                 '</tr>';
                         });
@@ -696,10 +691,11 @@
                    
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="sendReport(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
 
+                    // HEADER TABLE (DITAMBAHKAN NOTES)
                     var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
                         '<th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th>' +
                         '<th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th>' +
-                        '<th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Action</th>' +
+                        '<th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th>' +
                         '</tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
                     // --- BOX 2: ROOM SUMMARIES ---
@@ -758,7 +754,7 @@
                            
                             var kasDisplay = act.kasOverride !== '' ? '<span style="border-bottom:1px dashed green; cursor:help;">ʛ' + formatMoney(s.kas) + '</span>' : 'ʛ' + formatMoney(s.kas);
                             var dendaDisplay = act.dendaOverride !== '' ? '<span style="border-bottom:1px dashed red; cursor:help;">ʛ' + formatMoney(s.denda) + '</span>' : 'ʛ' + formatMoney(s.denda);
-                            var efektifHadir = (!isWeekActive || isPending) ? 0 : (act.attended + act.excused + act.replacements + act.freeClass);
+                            var efektifHadir = (!isWeekActive || isPending) ? 0 : (act.attended + act.replacements + act.freeClass);
                            
                             var cellKasStr = isPrivilegedUser ? '<td class="money editable-cell" onclick="quickEditFinance(\'' + s.vault + '\', \'KAS\', \'' + kasVal + '\')">' + kasDisplay + '</td>' : '<td class="money">' + kasDisplay + '</td>';
                             var cellDendaStr = isPrivilegedUser ? '<td class="money editable-cell ' + (s.denda > 0 ? 'minus' : '') + '" onclick="quickEditFinance(\'' + s.vault + '\', \'DENDA\', \'' + denVal + '\')">' + (s.denda > 0 ? '-' + dendaDisplay : '-') + '</td>' : '<td class="money ' + (s.denda > 0 ? 'minus' : '') + '">' + (s.denda > 0 ? '-' + dendaDisplay : '-') + '</td>';
@@ -826,9 +822,6 @@
             } catch (err) { alert("Render Error: " + err.message); }
         }
 
-        // ==========================================
-        // 7. HELPER FUNCTIONS UNTUK TABS DAN MODALS
-        // ==========================================
         function quickEditFinance(vault, type, currentVal) {
             if (!isPrivilegedUser) return;
             var label = type === 'KAS' ? 'Room Dues (Kas)' : 'Fines (Denda)';
@@ -868,7 +861,6 @@
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                // parameter sDuty dihilangkan karena Saturday Duty diganti dengan rotating subjects
                 body: JSON.stringify({ action: "savePeriodSettings", mLabel: mLabel, tWeeks: tWeeks, username: loggedInUser })
             })
             .then(r => r.json())
@@ -878,7 +870,6 @@
             });
         }
 
-        // FUNGSI UNTUK ROTATING SUBJECTS
         function openRotModal() {
             document.getElementById('rotModal').style.display = 'flex';
             document.getElementById('rotStatus').style.display = 'none';
@@ -894,13 +885,7 @@
             var btn = document.querySelector('#rotModal .btn-submit');
             btn.innerText = "Saving..."; btn.disabled = true;
             
-            var payload = {
-                action: "saveRotSubjects",
-                month: document.getElementById('monthSelector').value,
-                week: document.getElementById('weekSelector').value,
-                runes: document.getElementById('rotRunes').value,
-                comc: document.getElementById('rotComc').value
-            };
+            var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value, week: document.getElementById('weekSelector').value, runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -908,14 +893,8 @@
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success') {
-                    closeRotModal();
-                    fetchRoomData(); 
-                } else {
-                    document.getElementById('rotStatus').innerText = res.message;
-                    document.getElementById('rotStatus').style.color = "red";
-                    document.getElementById('rotStatus').style.display = "block";
-                }
+                if(res.status === 'success') { closeRotModal(); fetchRoomData(); } 
+                else { document.getElementById('rotStatus').innerText = res.message; document.getElementById('rotStatus').style.color = "red"; document.getElementById('rotStatus').style.display = "block"; }
                 btn.innerText = "Save Assignment"; btn.disabled = false;
             });
         }
@@ -924,7 +903,14 @@
             var student = fullDataStore.rooms[roomName][index];
             currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
             document.getElementById('adjustModal').style.display = 'flex'; document.getElementById('modalStatus').style.display = 'none'; document.getElementById('adjVault').innerText = student.vault; document.getElementById('adjUsername').innerText = student.username;
-            var act = student.activity; document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended; document.getElementById('adjAbsences').value = act.absences; document.getElementById('adjExcused').value = act.excused; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; document.getElementById('adjLrLate').checked = act.lrLate; document.getElementById('adjLockSync').checked = true;
+            var act = student.activity; 
+            
+            document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended; document.getElementById('adjAbsences').value = act.absences; document.getElementById('adjExcused').value = act.excused; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; document.getElementById('adjLrLate').checked = act.lrLate; 
+            
+            // INJEKSI NILAI NOTES KE DALAM TEXTAREA
+            document.getElementById('adjNotes').value = act.notes || '';
+            document.getElementById('adjLockSync').checked = act.lockSync || false;
+            
             toggleLoaFields();
         }
        
@@ -933,7 +919,25 @@
        
         function saveActivityAdjustment() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
-            var payload = { status: document.getElementById('adjStatus').value, reqOverride: document.getElementById('adjReqOverride').value, attended: document.getElementById('adjAttended').value, absences: document.getElementById('adjAbsences').value, excused: document.getElementById('adjExcused').value, replacements: document.getElementById('adjReplacements').value, freeClass: document.getElementById('adjFreeClass').value, formStatus: document.getElementById('adjFormStatus').value, lrLate: document.getElementById('adjLrLate').checked, loaStart: document.getElementById('adjLoaStart').value, loaEnd: document.getElementById('adjLoaEnd').value, loaLink: document.getElementById('adjLoaLink').value, summaries: act.summaries, sumStat: act.sumStat, lockSync: document.getElementById('adjLockSync').checked };
+            var payload = { 
+                status: document.getElementById('adjStatus').value, 
+                reqOverride: document.getElementById('adjReqOverride').value, 
+                attended: document.getElementById('adjAttended').value, 
+                absences: document.getElementById('adjAbsences').value, 
+                excused: document.getElementById('adjExcused').value, 
+                replacements: document.getElementById('adjReplacements').value, 
+                freeClass: document.getElementById('adjFreeClass').value, 
+                formStatus: document.getElementById('adjFormStatus').value, 
+                lrLate: document.getElementById('adjLrLate').checked, 
+                loaStart: document.getElementById('adjLoaStart').value, 
+                loaEnd: document.getElementById('adjLoaEnd').value, 
+                loaLink: document.getElementById('adjLoaLink').value, 
+                summaries: act.summaries, 
+                sumStat: act.sumStat, 
+                notes: document.getElementById('adjNotes').value, // MENYIMPAN NILAI NOTES
+                lockSync: document.getElementById('adjLockSync').checked 
+            };
+            
             var btn = document.querySelector('#adjustModal .btn-submit'); btn.innerText = "Saving..."; btn.disabled = true;
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
@@ -953,7 +957,7 @@
             var student = fullDataStore.rooms[roomName][index];
             currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
             document.getElementById('adjustSumModal').style.display = 'flex'; document.getElementById('modalStatusSum').style.display = 'none'; document.getElementById('adjSumVault').innerText = student.vault; document.getElementById('adjSumUsername').innerText = student.username;
-            var act = student.activity; document.getElementById('adjSumCount').value = act.summaries; document.getElementById('adjLockSyncSum').checked = true;
+            var act = student.activity; document.getElementById('adjSumCount').value = act.summaries; document.getElementById('adjLockSyncSum').checked = act.lockSync || false;
             var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; document.getElementById('adjSumStat3').value = stats[2] || 'Pending'; document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
         }
        
@@ -962,7 +966,7 @@
         function saveSummariesAdjustment() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
-            var payload = { status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, lrLate: act.lrLate, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, summaries: document.getElementById('adjSumCount').value, sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked };
+            var payload = { status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, lrLate: act.lrLate, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: document.getElementById('adjSumCount').value, sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked };
             var btn = document.querySelector('#adjustSumModal .btn-submit'); btn.innerText = "Saving..."; btn.disabled = true;
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
