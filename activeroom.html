@@ -31,7 +31,6 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN SCROLL: Menambahkan padding-bottom agar konten tidak terpotong */
         .content-area { padding: 25px 25px 80px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
@@ -79,7 +78,6 @@
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 10px; text-transform: uppercase; }
         tr:hover { background-color: var(--swan-wing); }
         
-        /* BADGES & TEXT FORMATTING */
         .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 13px;}
         .num-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: #e0e0e0; font-weight: bold; font-size: 10px;}
         .money { font-family: monospace; font-weight: bold; font-size: 12px;}
@@ -123,7 +121,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -194,6 +191,7 @@
                 </div>
                 <div style="display:flex; gap: 10px;">
                     <!-- TOMBOL SET MONTH CONFIG -->
+                    <button id="btnAssignRot" class="btn-manage" style="display:none; background-color:#6a1b9a; color:white;" onclick="openRotModal()">🔄 Assign Subjects</button>
                     <button id="btnManagePeriod" class="btn-manage" style="display:none; background-color:var(--quicksand); color:var(--royal-blue);" onclick="openPeriodModal()">⚙️ Set Month Config</button>
                 </div>
             </div>
@@ -217,7 +215,44 @@
         </div>
     </div>
 
-    <!-- MODAL 1: SET MONTH CONFIG (Hanya Admin) -->
+    <!-- MODAL ASSIGN ROTATING SUBJECTS -->
+    <div class="modal-overlay" id="rotModal">
+        <div class="modal-box" style="width: 400px;">
+            <h3>🔄 Assign Rotating Subjects</h3>
+            <div id="rotStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+            <p style="font-size:11px; color:gray; margin-top:-10px;">For: <span id="rotPeriodLabel" style="font-weight:bold; color:var(--royal-blue);"></span></p>
+
+            <div class="form-group">
+                <label>Ancient Runes Room</label>
+                <select id="rotRunes">
+                    <option value="-">-- Select Room --</option>
+                    <option value="Eternclaw">Eternclaw</option>
+                    <option value="Ravelynx">Ravelynx</option>
+                    <option value="Ravenion">Ravenion</option>
+                    <option value="Ravenrow">Ravenrow</option>
+                    <option value="Velaclaw">Velaclaw</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Care Of Magical Creatures Room</label>
+                <select id="rotComc">
+                    <option value="-">-- Select Room --</option>
+                    <option value="Eternclaw">Eternclaw</option>
+                    <option value="Ravelynx">Ravelynx</option>
+                    <option value="Ravenion">Ravenion</option>
+                    <option value="Ravenrow">Ravenrow</option>
+                    <option value="Velaclaw">Velaclaw</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeRotModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveRotSubjects()">Save Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SET MONTH CONFIG (Hanya Admin) -->
     <div class="modal-overlay" id="periodModal">
         <div class="modal-box" style="width: 450px;">
             <h3>⚙️ Configure Month Config</h3>
@@ -235,16 +270,6 @@
                     <option value="4" selected>4 Weeks</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Saturday Duty Delegation (Herbology & DADA)</label>
-                <select id="cfgSatDuty">
-                    <option value="Eternclaw">Eternclaw</option>
-                    <option value="Ravelynx">Ravelynx</option>
-                    <option value="Ravenion">Ravenion</option>
-                    <option value="Ravenrow">Ravenrow</option>
-                    <option value="Velaclaw">Velaclaw</option>
-                </select>
-            </div>
            
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePeriodModal()">Cancel</button>
@@ -253,7 +278,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ADJUST WEEKLY ACTIVITY -->
+    <!-- MODAL ADJUST WEEKLY ACTIVITY -->
     <div class="modal-overlay" id="adjustModal">
         <div class="modal-box">
             <h3 id="modalTitle">Adjust Weekly Activity</h3>
@@ -331,7 +356,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: ADJUST SUMMARIES -->
+    <!-- MODAL ADJUST SUMMARIES -->
     <div class="modal-overlay" id="adjustSumModal">
         <div class="modal-box" style="width: 500px;">
             <h3 id="modalTitleSum">Adjust Summaries & Approvals</h3>
@@ -393,7 +418,7 @@
     <!-- SCRIPT AREA -->
     <script>
         // 1. GLOBAL VARIABLES
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; // PASTIKAN GANTI INI
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -409,10 +434,11 @@
         var currentUserRoom = "";
         var isPrivilegedUser = false;
 
+        // JADWAL BARU RAVENION (DADA & HERBOLOGY)
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
             "Ravelynx": "Tuesday: Beginner/Advanced Potion, Divination",
-            "Ravenion": "Wednesday: Beginner/Advanced Ancient Runes, Care Of Magical Creatures",
+            "Ravenion": "Wednesday: Beginner/Advanced Defence Against The Dark Arts, Herbology",
             "Ravenrow": "Thursday: Beginner/Advanced Muggle Studies, Arithmancy",
             "Velaclaw": "Friday: Beginner/Advanced Transfiguration, History Of Magic"
         };
@@ -474,11 +500,12 @@
             .then(res => {
                 if(res.status === 'success') {
                     periodConfigStore = res.data;
-                    isPrivilegedUser = res.data.isPrivileged;
+                    isPrivilegedUser = res.data.isPrivileged; // TRUE untuk HH dan PVP
                     currentUserRoom = res.data.userRoom;     
                    
                     if (isPrivilegedUser) {
                         document.getElementById('btnManagePeriod').style.display = 'inline-block';
+                        document.getElementById('btnAssignRot').style.display = 'inline-block'; // Tampilkan tombol Assign Subjects
                     } else {
                         if (currentUserRoom) activeTab = currentUserRoom;
                     }
@@ -555,9 +582,6 @@
             });
         }
 
-        // ==========================================
-        // 5. SEND REPORT FEATURE
-        // ==========================================
         function sendReport(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
@@ -618,8 +642,13 @@
 
                     var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
                     var rSched = roomSchedules[roomName];
-                    var satDutyInfo = (fullDataStore.satDutyRoom === roomName) ? "<br><b>✨ Saturday Schedule Duty:</b> Beginner/Advanced Herbology, Defence Against The Dark Arts" : "";
-                    var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + satDutyInfo + '</div>';
+                    
+                    // MENYUNTIKKAN NAMA TUGAS BERGILIR JIKA COCOK DENGAN KAMARNYA
+                    var extraRot = "";
+                    if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes";
+                    if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
+                    
+                    var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
                     // --- BOX 1: ROOM WEEKLY ACTIVITY ---
                     var roomActHtml = '';
@@ -834,17 +863,60 @@
         function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
        
         function savePeriodConfig() {
-            var mLabel = document.getElementById('cfgMonthLabel').value; var tWeeks = document.getElementById('cfgTotalWeeks').value; var sDuty = document.getElementById('cfgSatDuty').value; var pStatus = document.getElementById('periodStatus');
+            var mLabel = document.getElementById('cfgMonthLabel').value; var tWeeks = document.getElementById('cfgTotalWeeks').value; var pStatus = document.getElementById('periodStatus');
             if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "savePeriodSettings", mLabel: mLabel, tWeeks: tWeeks, sDuty: sDuty, username: loggedInUser })
+                // parameter sDuty dihilangkan karena Saturday Duty diganti dengan rotating subjects
+                body: JSON.stringify({ action: "savePeriodSettings", mLabel: mLabel, tWeeks: tWeeks, username: loggedInUser })
             })
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'success' || res.success) { closePeriodModal(); initPeriodConfig(); } 
                 else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; }
+            });
+        }
+
+        // FUNGSI UNTUK ROTATING SUBJECTS
+        function openRotModal() {
+            document.getElementById('rotModal').style.display = 'flex';
+            document.getElementById('rotStatus').style.display = 'none';
+            document.getElementById('rotPeriodLabel').innerText = document.getElementById('monthSelector').value + " - " + document.getElementById('weekSelector').value;
+            
+            document.getElementById('rotRunes').value = fullDataStore.rotRunes && fullDataStore.rotRunes !== '-' ? fullDataStore.rotRunes : '-';
+            document.getElementById('rotComc').value = fullDataStore.rotComc && fullDataStore.rotComc !== '-' ? fullDataStore.rotComc : '-';
+        }
+        
+        function closeRotModal() { document.getElementById('rotModal').style.display = 'none'; }
+        
+        function saveRotSubjects() {
+            var btn = document.querySelector('#rotModal .btn-submit');
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
+            var payload = {
+                action: "saveRotSubjects",
+                month: document.getElementById('monthSelector').value,
+                week: document.getElementById('weekSelector').value,
+                runes: document.getElementById('rotRunes').value,
+                comc: document.getElementById('rotComc').value
+            };
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    closeRotModal();
+                    fetchRoomData(); 
+                } else {
+                    document.getElementById('rotStatus').innerText = res.message;
+                    document.getElementById('rotStatus').style.color = "red";
+                    document.getElementById('rotStatus').style.display = "block";
+                }
+                btn.innerText = "Save Assignment"; btn.disabled = false;
             });
         }
 
