@@ -64,7 +64,7 @@
         .minus { color: var(--danger); }
         
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
-        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 650px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 450px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 15px;}
         
         .preview-table-container { overflow-y: auto; border: 1px solid var(--shellstone); border-radius: 4px; flex-grow: 1; margin-bottom: 10px;}
@@ -72,7 +72,7 @@
         .preview-table-container th { background-color: var(--sapphire); color: white; font-size: 11px; padding: 10px; text-transform: uppercase; position: sticky; top: 0;}
         .preview-table-container td { font-size: 12px; padding: 10px; border-bottom: 1px solid #eee;}
 
-        .preview-annotation { font-size: 11px; color: var(--danger); font-style: italic; margin-bottom: 15px; display: none; font-weight: bold; background-color: #ffebee; padding: 8px; border-radius: 4px; border-left: 3px solid var(--danger);}
+        .preview-annotation { font-size: 11px; color: var(--danger); font-style: italic; margin-bottom: 15px; display: none; background-color: #ffebee; padding: 8px; border-radius: 4px; border-left: 3px solid var(--danger);}
 
         .modal-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); text-transform: uppercase;}
@@ -82,7 +82,7 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -117,6 +117,7 @@
                 <h1 class="page-title">House Finance Master</h1>
             </div>
 
+            <!-- CONTROLLER -->
             <div class="period-controller">
                 <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
                     <label>Select Financial Period:</label>
@@ -130,17 +131,20 @@
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Compiling financial records across all rooms...</div>
             
             <div id="financeContent" style="display:none; display:flex; flex-direction:column; flex-grow:1;">
+                
+                <!-- DASHBOARD CARDS (Fines are now Positive Income for House) -->
                 <div class="dashboard-cards">
                     <div class="card"><h5>Total Petty Cash (Dues)</h5><div class="amount" id="sumDues">ʛ0</div></div>
-                    <div class="card"><h5>Total Fines</h5><div class="amount minus" id="sumFines">ʛ0</div></div>
+                    <div class="card"><h5>Total Fines Collected</h5><div class="amount plus" id="sumFines">ʛ0</div></div>
                     <div class="card"><h5>Total Rewards (Deduction)</h5><div class="amount minus" id="sumRewards">ʛ0</div></div>
                 </div>
 
                 <div class="btn-group">
-                    <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
-                    <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Rewards</button>
+                    <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines Withdrawal</button>
+                    <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Rewards Disbursement</button>
                 </div>
 
+                <!-- FULL DATA TABLE FOR ADMIN (Web Only) -->
                 <div class="table-container">
                     <table>
                         <thead>
@@ -174,9 +178,8 @@
                 </table>
             </div>
 
-            <!-- TEKS ANOTASI DI DALAM MODAL PREVIEW -->
             <div id="previewAnnotation" class="preview-annotation">
-                * ⚠️ Anotasi: Baris berlatar merah muda menandakan murid dikenakan denda (fines).
+                * ⚠️ <b>Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.
             </div>
 
             <div class="modal-actions">
@@ -187,6 +190,9 @@
     </div>
 
     <script>
+        // ==========================================
+        // 1. GLOBAL VARIABLES
+        // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
         
         let loggedInUser = localStorage.getItem('session_username') || "Guest";
@@ -202,6 +208,9 @@
             initPeriodConfig();
         };
 
+        // ==========================================
+        // 2. LOGIKA SIDEBAR & NAVIGASI
+        // ==========================================
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
@@ -245,6 +254,9 @@
         function navigate(targetPage) { window.location.href = targetPage + '.html'; }
         function logout() { localStorage.clear(); window.location.href = 'index.html'; }
 
+        // ==========================================
+        // 3. API FETCH & DATA PROCESSING
+        // ==========================================
         async function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('financeContent').style.display = 'none';
@@ -358,7 +370,7 @@
                         <td><b>${s.username}</b></td>
                         <td style="color:var(--sapphire); font-weight:bold;">${s.room}</td>
                         <td class="money">ʛ${formatMoney(s.kas)}</td>
-                        <td class="money ${s.denda > 0 ? 'minus':''}">${s.denda > 0 ? '-ʛ'+formatMoney(s.denda) : 'ʛ0'}</td>
+                        <td class="money ${s.denda > 0 ? 'plus':''}">${s.denda > 0 ? '+ʛ'+formatMoney(s.denda) : 'ʛ0'}</td>
                         <td class="money ${s.reward > 0 ? 'minus':''}">${s.reward > 0 ? '-ʛ'+formatMoney(s.reward) : 'ʛ0'}</td>
                     `;
                     tbody.appendChild(tr);
@@ -366,12 +378,12 @@
             }
 
             document.getElementById('sumDues').innerText = 'ʛ' + formatMoney(sumKas);
-            document.getElementById('sumFines').innerText = '-ʛ' + formatMoney(sumFines);
+            document.getElementById('sumFines').innerText = '+ʛ' + formatMoney(sumFines); // Fines are House Income
             document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
         }
 
         // ==========================================
-        // PREVIEW MODAL LOGIC 
+        // 4. PREVIEW MODAL LOGIC (ONLY VAULT & AMOUNT)
         // ==========================================
         function openPreview(type) {
             if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
@@ -384,22 +396,19 @@
             
             thead.innerHTML = ''; tbody.innerHTML = ''; annotBox.style.display = 'none';
             
-            var monthLabel = document.getElementById('monthSelector').value;
-            var weekLabel = document.getElementById('weekSelector').value;
-            var periodString = monthLabel + " - " + weekLabel;
-
-            var headersHtml = "<tr><th>Period</th><th>Vault</th><th>Username</th><th>Room</th>";
+            var headersHtml = "<tr><th style='width:50px;'>No.</th><th>Vault Code</th>";
             var hasFines = false;
             
             if(type === 'DUES_FINES') {
-                title.innerText = "Preview: Dues & Fines Data Download";
-                headersHtml += "<th>Petty Cash</th><th>Fines</th></tr>";
+                title.innerText = "Preview: Dues & Fines Withdrawal";
+                headersHtml += "<th>Total Amount</th></tr>";
             } else if (type === 'REWARDS') {
-                title.innerText = "Preview: Rewards Data Download";
-                headersHtml += "<th>Deduction</th></tr>";
+                title.innerText = "Preview: Rewards Disbursement";
+                headersHtml += "<th>Total Amount</th></tr>";
             }
             thead.innerHTML = headersHtml;
 
+            var counter = 1;
             masterFinanceList.forEach(function(s) {
                 if(type === 'DUES_FINES' && s.kas <= 0 && s.denda <= 0) return;
                 if(type === 'REWARDS' && s.reward <= 0) return;
@@ -408,15 +417,13 @@
                 if (isFined) hasFines = true;
 
                 var tr = document.createElement('tr');
-                if (isFined) {
-                    tr.style.backgroundColor = "#ffebee"; 
-                }
+                if (isFined) tr.style.backgroundColor = "#ffebee"; 
 
-                var rowHtml = `<td>${periodString}</td><td style="font-family:monospace; font-weight:bold;">${s.vault}</td><td>${s.username}${isFined ? ' ⚠️' : ''}</td><td>${s.room}</td>`;
+                var rowHtml = `<td style="text-align:center;">${counter++}</td><td style="font-family:monospace; font-weight:bold; font-size:14px;">${s.vault}</td>`;
 
                 if(type === 'DUES_FINES') { 
-                    let dendaText = isFined ? `<span style="color:red; font-weight:bold;">-ʛ${formatMoney(s.denda)}</span>` : '-';
-                    rowHtml += `<td>ʛ${formatMoney(s.kas)}</td><td>${dendaText}</td>`; 
+                    let totalAmount = s.kas + s.denda;
+                    rowHtml += `<td style="font-weight:bold;">ʛ${formatMoney(totalAmount)}</td>`; 
                 } 
                 else if (type === 'REWARDS') { 
                     rowHtml += `<td style="color:red; font-weight:bold;">-ʛ${formatMoney(s.reward)}</td>`; 
@@ -426,7 +433,7 @@
                 tbody.appendChild(tr);
             });
 
-            if (hasFines) { annotBox.style.display = 'block'; }
+            if (hasFines) annotBox.style.display = 'block';
             document.getElementById('previewModal').style.display = 'flex';
         }
 
@@ -435,7 +442,7 @@
         }
 
         // ==========================================
-        // EXPORT TO PDF LOGIC (PAGEBREAK FIXED)
+        // 5. EXPORT TO PDF LOGIC (AVOID PAGE BREAKS)
         // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
@@ -456,31 +463,23 @@
             var dateStr = dd + "/" + mm + "/" + yy;
 
             var subjectStr = "";
-            if(currentDownloadType === 'DUES_FINES') subjectStr = "Petty Cash & Fines - " + monthLabel + " " + weekLabel;
-            else if (currentDownloadType === 'REWARDS') subjectStr = "Summaries Reward (Deduction) - " + monthLabel + " " + weekLabel;
+            if(currentDownloadType === 'DUES_FINES') subjectStr = "House Dues & Fines Withdrawal - " + monthLabel + " " + weekLabel;
+            else if (currentDownloadType === 'REWARDS') subjectStr = "Summaries Reward Disbursement - " + monthLabel + " " + weekLabel;
 
             var tKas = 0, tFines = 0, tRewards = 0;
             var hasFines = false;
 
-            // HTML TABEL DENGAN INLINE CSS page-break-inside PADA SETIAP TR
             var tableHtml = `
-                <table style="width: 85%; margin: 15px auto; border-collapse: collapse; font-size: 11px;">
+                <table style="width: 70%; margin: 15px auto; border-collapse: collapse; font-size: 13px;">
                     <thead>
                         <tr style="page-break-inside: avoid;">
-                            <th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center; width: 30px;">No.</th>
-                            <th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
-                            <th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Username</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 50px;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center;">Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
             `;
-            
-            if (currentDownloadType === 'DUES_FINES') {
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Petty Cash</th>`;
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Fines Amount</th>`;
-            }
-            else if (currentDownloadType === 'REWARDS') {
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Reward Deduction</th>`;
-            }
-            
-            tableHtml += `</tr></thead><tbody>`;
 
             var counter = 1;
             masterFinanceList.forEach(s => {
@@ -494,19 +493,16 @@
                 
                 var bgColor = isFined ? "background-color: #ffebee;" : "";
 
-                // HARUS MENGGUNAKAN page-break-inside: avoid DI SETIAP BARIS TR
                 tableHtml += `<tr style="page-break-inside: avoid; ${bgColor}">
-                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold;">${s.vault}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${s.username}${isFined ? ' ⚠️' : ''}</td>`;
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:15px;">${s.vault}</td>`;
                     
                 if(currentDownloadType === 'DUES_FINES') {
-                    tableHtml += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">ʛ${formatMoney(s.kas)}</td>`;
-                    let dendaPdfText = isFined ? `<span style="color: red; font-weight: bold;">-ʛ${formatMoney(s.denda)}</span>` : `-`;
-                    tableHtml += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${dendaPdfText}</td>`;
+                    let totalAmount = s.kas + s.denda;
+                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: bold;">ʛ${formatMoney(totalAmount)}</td>`;
                 }
                 else if (currentDownloadType === 'REWARDS') {
-                    tableHtml += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(s.reward)}</td>`;
+                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: red; font-weight: bold;">-ʛ${formatMoney(s.reward)}</td>`;
                 }
                 
                 tableHtml += `</tr>`;
@@ -514,58 +510,43 @@
 
             tableHtml += `</tbody></table>`;
 
-            // BAGIAN FOOTER (DIBUNGKUS DALAM SATU DIV BERSAMA AGAR TIDAK TERPISAH DARI TOTAL)
-            var footerHtml = `<div style="page-break-inside: avoid; width: 85%; margin: 10px auto;">`;
-            
-            // TOTAL TABLE
-            footerHtml += `<table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 10px;">
-                <tr style="background-color: #f0f0f0; font-weight: bold;">
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">GRAND TOTAL</td>`;
-                
-            if(currentDownloadType === 'DUES_FINES') {
-                footerHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 20%;">ʛ${formatMoney(tKas)}</td>`;
-                footerHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red; width: 20%;">-ʛ${formatMoney(tFines)}</td>`;
-            }
-            else if (currentDownloadType === 'REWARDS') {
-                footerHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red; width: 25%;">-ʛ${formatMoney(tRewards)}</td>`;
-            }
-            footerHtml += `</tr></table>`;
+            // FOOTER & GRAND TOTAL (DIBUNGKUS safe-break)
+            var footerHtml = `<div style="page-break-inside: avoid; width: 70%; margin: 20px auto 0;">`;
 
-            // ANOTASI TEKS DI HASIL PDF
             if (hasFines && currentDownloadType === 'DUES_FINES') {
-                footerHtml += `<div style="font-size: 10px; color: #c62828; margin-bottom: 10px;">
-                    <i><b>* ⚠️ Anotasi:</b> Baris berlatar merah muda menunjukkan bahwa murid mendapatkan denda (Fines) pada minggu ini.</i>
+                footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;">
+                    <i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i>
                 </div>`;
             }
 
-            // KOTAK HIGHLIGHT KEUANGAN
             footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
+            
             if (currentDownloadType === 'DUES_FINES') {
-                footerHtml += `<tr><td style="padding: 10px 15px; text-align: right; font-weight: bold; font-size: 12px; color: #112250;">+ʛ${formatMoney(tKas)} to Ravenclaw Petty Cash</td></tr>`;
-                footerHtml += `<tr><td style="padding: 10px 15px; text-align: right; font-weight: bold; font-size: 12px; color: #c62828;">-ʛ${formatMoney(tFines)} from Ravenclaw Total Kas</td></tr>`;
+                footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 13px; color: #112250;">Total House Dues</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 13px; color: #112250;">+ʛ${formatMoney(tKas)}</td></tr>`;
+                footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 13px; color: #1b5e20;">Total Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 13px; color: #1b5e20;">+ʛ${formatMoney(tFines)}</td></tr>`;
+                footerHtml += `<tr style="border-top: 2px solid #3C507D; background-color: #c5cae9;"><td style="padding: 15px 20px; font-weight: bold; font-size: 15px; color: #112250;">Grand Total Withdrawn</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 15px; color: #112250;">+ʛ${formatMoney(tKas + tFines)}</td></tr>`;
             } else if (currentDownloadType === 'REWARDS') {
-                footerHtml += `<tr><td style="padding: 10px 15px; text-align: right; font-weight: bold; font-size: 12px; color: #c62828;">-ʛ${formatMoney(tRewards)} deducted from Petty Cash</td></tr>`;
+                footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 15px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 15px; color: #c62828;">-ʛ${formatMoney(tRewards)}</td></tr>`;
             }
             footerHtml += `</table>`;
 
-            // ALAMAT HOGWARTS (Selalu di bawah)
             footerHtml += `
-                <div style="margin-top: 40px; text-align: center; font-size: 9px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
-                    <span style="font-weight: bold; font-size: 11px; color: #112250;">Ravenclaw House</span><br>
+                <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
+                    <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
                     Hogwarts School of Witchcraft and Wizardry<br>
                     Highlands, Scotland, Great Britain
                 </div>
-            </div>`; // end of safe-break div
+            </div>`; 
 
             var pdfContainer = document.createElement('div');
             pdfContainer.innerHTML = `
-                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 20px 10px; color: #112250;">
+                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px 20px; color: #112250;">
                     <div style="text-align: center; margin-bottom: 5px;">
-                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
+                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 90px; height: auto;">
                     </div>
-                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 15px;">
+                    <hr style="border: 0; border-top: 3px solid #112250; margin-bottom: 20px;">
                     
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px; padding: 0 7.5%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px; padding: 0 15%;">
                         <div><b>Subject:</b> ${subjectStr}</div>
                         <div>${dateStr}</div>
                     </div>
@@ -575,14 +556,13 @@
                 </div>
             `;
 
-            // OPSI PDF DENGAN PENCEGAHAN PAGEBREAK YANG LEBIH BAIK
             var opt = {
-                margin:       [0.5, 0.2, 0.5, 0.2], // Margin yang lega agar html2pdf bisa mengalkulasi potongan
+                margin:       [0.4, 0, 0.4, 0], 
                 filename:     filename,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: 'css', avoid: 'tr' } // KUNCI MENCEGAH TERPOTONG DI TENGAH BARIS TABEL
+                pagebreak:    { mode: 'css', avoid: 'tr' } 
             };
 
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
