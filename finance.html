@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>House Finance - Ravenclaw</title>
+    <!-- Library PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -81,6 +82,7 @@
 </head>
 <body>
 
+    <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -101,6 +103,7 @@
         </ul>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -368,7 +371,7 @@
         }
 
         // ==========================================
-        // 4. PREVIEW MODAL LOGIC (UPDATED DENGAN HIGHLIGHT & ANOTASI)
+        // PREVIEW MODAL LOGIC 
         // ==========================================
         function openPreview(type) {
             if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
@@ -406,7 +409,7 @@
 
                 var tr = document.createElement('tr');
                 if (isFined) {
-                    tr.style.backgroundColor = "#ffebee"; // Warna background untuk yang kena denda di preview
+                    tr.style.backgroundColor = "#ffebee"; 
                 }
 
                 var rowHtml = `<td>${periodString}</td><td style="font-family:monospace; font-weight:bold;">${s.vault}</td><td>${s.username}${isFined ? ' ⚠️' : ''}</td><td>${s.room}</td>`;
@@ -423,11 +426,7 @@
                 tbody.appendChild(tr);
             });
 
-            // Tampilkan kotak anotasi di preview jika ada murid yang denda
-            if (hasFines) {
-                annotBox.style.display = 'block';
-            }
-
+            if (hasFines) { annotBox.style.display = 'block'; }
             document.getElementById('previewModal').style.display = 'flex';
         }
 
@@ -436,7 +435,7 @@
         }
 
         // ==========================================
-        // 5. EXPORT TO PDF LOGIC (DISEMPURNAKAN DENGAN PAGE BREAK AVOID)
+        // EXPORT TO PDF LOGIC (PAGEBREAK FIXED)
         // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
@@ -463,27 +462,22 @@
             var tKas = 0, tFines = 0, tRewards = 0;
             var hasFines = false;
 
-            // HTML UNTUK TABEL: Ditambahkan CSS page-break-inside: avoid agar tabel tidak terpotong
+            // HTML TABEL DENGAN INLINE CSS page-break-inside PADA SETIAP TR
             var tableHtml = `
-                <style>
-                    /* Class ini digunakan untuk menjaga baris tidak terpotong di tengah halaman */
-                    .safe-break { page-break-inside: avoid; }
-                    .highlight-row { background-color: #ffebee !important; }
-                </style>
-                <table style="width: 80%; margin: 15px auto; border-collapse: collapse; font-size: 13px;">
+                <table style="width: 85%; margin: 15px auto; border-collapse: collapse; font-size: 11px;">
                     <thead>
-                        <tr class="safe-break">
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 40px;">No.</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Username</th>
+                        <tr style="page-break-inside: avoid;">
+                            <th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center; width: 30px;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Username</th>
             `;
             
             if (currentDownloadType === 'DUES_FINES') {
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Petty Cash Amount</th>`;
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Fines Amount</th>`;
+                tableHtml += `<th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Petty Cash</th>`;
+                tableHtml += `<th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Fines Amount</th>`;
             }
             else if (currentDownloadType === 'REWARDS') {
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Reward Deduction</th>`;
+                tableHtml += `<th style="background-color: #112250; color: white; padding: 6px; border: 1px solid #ddd; text-align: center;">Reward Deduction</th>`;
             }
             
             tableHtml += `</tr></thead><tbody>`;
@@ -498,62 +492,66 @@
                 var isFined = (currentDownloadType === 'DUES_FINES' && s.denda > 0);
                 if (isFined) hasFines = true;
                 
-                var rowClass = isFined ? "safe-break highlight-row" : "safe-break";
+                var bgColor = isFined ? "background-color: #ffebee;" : "";
 
-                // Setiap <tr> dipasangkan class safe-break
-                tableHtml += `<tr class="${rowClass}">
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold;">${s.vault}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${s.username}${isFined ? ' ⚠️' : ''}</td>`;
+                // HARUS MENGGUNAKAN page-break-inside: avoid DI SETIAP BARIS TR
+                tableHtml += `<tr style="page-break-inside: avoid; ${bgColor}">
+                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
+                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold;">${s.vault}</td>
+                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${s.username}${isFined ? ' ⚠️' : ''}</td>`;
                     
                 if(currentDownloadType === 'DUES_FINES') {
-                    tableHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">ʛ${formatMoney(s.kas)}</td>`;
+                    tableHtml += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">ʛ${formatMoney(s.kas)}</td>`;
                     let dendaPdfText = isFined ? `<span style="color: red; font-weight: bold;">-ʛ${formatMoney(s.denda)}</span>` : `-`;
-                    tableHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${dendaPdfText}</td>`;
+                    tableHtml += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${dendaPdfText}</td>`;
                 }
                 else if (currentDownloadType === 'REWARDS') {
-                    tableHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(s.reward)}</td>`;
+                    tableHtml += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(s.reward)}</td>`;
                 }
                 
                 tableHtml += `</tr>`;
             });
 
-            // BARIS TOTAL
-            tableHtml += `<tr class="safe-break" style="background-color: #f0f0f0; font-weight: bold;">
-                <td colspan="3" style="padding: 10px; border: 1px solid #ddd; text-align: right;">GRAND TOTAL</td>`;
+            tableHtml += `</tbody></table>`;
+
+            // BAGIAN FOOTER (DIBUNGKUS DALAM SATU DIV BERSAMA AGAR TIDAK TERPISAH DARI TOTAL)
+            var footerHtml = `<div style="page-break-inside: avoid; width: 85%; margin: 10px auto;">`;
+            
+            // TOTAL TABLE
+            footerHtml += `<table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 10px;">
+                <tr style="background-color: #f0f0f0; font-weight: bold;">
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">GRAND TOTAL</td>`;
                 
             if(currentDownloadType === 'DUES_FINES') {
-                tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center;">ʛ${formatMoney(tKas)}</td>`;
-                tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(tFines)}</td>`;
+                footerHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; width: 20%;">ʛ${formatMoney(tKas)}</td>`;
+                footerHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red; width: 20%;">-ʛ${formatMoney(tFines)}</td>`;
             }
             else if (currentDownloadType === 'REWARDS') {
-                tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: red;">-ʛ${formatMoney(tRewards)}</td>`;
+                footerHtml += `<td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: red; width: 25%;">-ʛ${formatMoney(tRewards)}</td>`;
             }
+            footerHtml += `</tr></table>`;
 
-            tableHtml += `</tr></tbody></table>`;
-
-            // ANOTASI TEKS DI HASIL PDF (Hanya muncul kalau ada denda)
+            // ANOTASI TEKS DI HASIL PDF
             if (hasFines && currentDownloadType === 'DUES_FINES') {
-                tableHtml += `<div class="safe-break" style="width: 80%; margin: 5px auto; font-size: 11px; color: #c62828;">
-                    <i><b>* ⚠️ Anotasi:</b> Baris yang ditandai dengan warna merah muda menunjukkan bahwa murid yang bersangkutan mendapatkan denda (Fines) pada minggu ini.</i>
+                footerHtml += `<div style="font-size: 10px; color: #c62828; margin-bottom: 10px;">
+                    <i><b>* ⚠️ Anotasi:</b> Baris berlatar merah muda menunjukkan bahwa murid mendapatkan denda (Fines) pada minggu ini.</i>
                 </div>`;
             }
 
-            // FOOTER & HIGHLIGHT TOTAL (DIBUNGKUS safe-break AGAR TIDAK TERPISAH)
-            var footerHtml = `<div class="safe-break">`;
-            footerHtml += `<table style="width: 80%; margin: 20px auto 0; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
-            
+            // KOTAK HIGHLIGHT KEUANGAN
+            footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
             if (currentDownloadType === 'DUES_FINES') {
-                footerHtml += `<tr><td style="padding: 12px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tKas)} to Ravenclaw Petty Cash</td></tr>`;
-                footerHtml += `<tr><td style="padding: 12px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tFines)} from Ravenclaw Total Kas</td></tr>`;
+                footerHtml += `<tr><td style="padding: 10px 15px; text-align: right; font-weight: bold; font-size: 12px; color: #112250;">+ʛ${formatMoney(tKas)} to Ravenclaw Petty Cash</td></tr>`;
+                footerHtml += `<tr><td style="padding: 10px 15px; text-align: right; font-weight: bold; font-size: 12px; color: #c62828;">-ʛ${formatMoney(tFines)} from Ravenclaw Total Kas</td></tr>`;
             } else if (currentDownloadType === 'REWARDS') {
-                footerHtml += `<tr><td style="padding: 12px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tRewards)} deducted from Petty Cash</td></tr>`;
+                footerHtml += `<tr><td style="padding: 10px 15px; text-align: right; font-weight: bold; font-size: 12px; color: #c62828;">-ʛ${formatMoney(tRewards)} deducted from Petty Cash</td></tr>`;
             }
             footerHtml += `</table>`;
 
+            // ALAMAT HOGWARTS (Selalu di bawah)
             footerHtml += `
-                <div style="margin-top: 50px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 15px; width: 80%; margin-left: auto; margin-right: auto;">
-                    <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
+                <div style="margin-top: 40px; text-align: center; font-size: 9px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
+                    <span style="font-weight: bold; font-size: 11px; color: #112250;">Ravenclaw House</span><br>
                     Hogwarts School of Witchcraft and Wizardry<br>
                     Highlands, Scotland, Great Britain
                 </div>
@@ -561,13 +559,13 @@
 
             var pdfContainer = document.createElement('div');
             pdfContainer.innerHTML = `
-                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #112250;">
-                    <div class="safe-break" style="text-align: center; margin-bottom: 10px;">
-                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 90px; height: auto;">
+                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 20px 10px; color: #112250;">
+                    <div style="text-align: center; margin-bottom: 5px;">
+                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
                     </div>
-                    <hr class="safe-break" style="border: 0; border-top: 3px solid #112250; margin-bottom: 20px;">
+                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 15px;">
                     
-                    <div class="safe-break" style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; padding: 0 10%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px; padding: 0 7.5%;">
                         <div><b>Subject:</b> ${subjectStr}</div>
                         <div>${dateStr}</div>
                     </div>
@@ -577,14 +575,14 @@
                 </div>
             `;
 
-            // OPSI PDF DENGAN PERINTAH PAGEBREAK 'avoid-all'
+            // OPSI PDF DENGAN PENCEGAHAN PAGEBREAK YANG LEBIH BAIK
             var opt = {
-                margin:       [0.4, 0, 0.4, 0], // Margin atas bawah untuk mencegah teks terlalu mepet kertas
+                margin:       [0.5, 0.2, 0.5, 0.2], // Margin yang lega agar html2pdf bisa mengalkulasi potongan
                 filename:     filename,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: 'avoid-all' } // KUNCI MENCEGAH TERPOTONG DI TENGAH
+                pagebreak:    { mode: 'css', avoid: 'tr' } // KUNCI MENCEGAH TERPOTONG DI TENGAH BARIS TABEL
             };
 
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
