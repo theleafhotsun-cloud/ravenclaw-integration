@@ -82,7 +82,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -103,7 +102,6 @@
         </ul>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -117,7 +115,6 @@
                 <h1 class="page-title">House Finance Master</h1>
             </div>
 
-            <!-- CONTROLLER -->
             <div class="period-controller">
                 <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
                     <label>Select Financial Period:</label>
@@ -132,7 +129,6 @@
             
             <div id="financeContent" style="display:none; display:flex; flex-direction:column; flex-grow:1;">
                 
-                <!-- DASHBOARD CARDS (Fines are now Positive Income for House) -->
                 <div class="dashboard-cards">
                     <div class="card"><h5>Total Petty Cash (Dues)</h5><div class="amount" id="sumDues">ʛ0</div></div>
                     <div class="card"><h5>Total Fines Collected</h5><div class="amount plus" id="sumFines">ʛ0</div></div>
@@ -144,7 +140,6 @@
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Rewards Disbursement</button>
                 </div>
 
-                <!-- FULL DATA TABLE FOR ADMIN (Web Only) -->
                 <div class="table-container">
                     <table>
                         <thead>
@@ -159,7 +154,6 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <!-- Data Injected by JS -->
                         </tbody>
                     </table>
                 </div>
@@ -191,9 +185,7 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. GLOBAL VARIABLES
-        // ==========================================
+        // PASTIKAN MENGGANTI URL API INI
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
         
         let loggedInUser = localStorage.getItem('session_username') || "Guest";
@@ -209,9 +201,6 @@
             initPeriodConfig();
         };
 
-        // ==========================================
-        // 2. LOGIKA SIDEBAR & NAVIGASI
-        // ==========================================
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
@@ -255,9 +244,6 @@
         function navigate(targetPage) { window.location.href = targetPage + '.html'; }
         function logout() { localStorage.clear(); window.location.href = 'index.html'; }
 
-        // ==========================================
-        // 3. API FETCH & DATA PROCESSING
-        // ==========================================
         async function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('financeContent').style.display = 'none';
@@ -334,7 +320,7 @@
                                 masterFinanceList.push({
                                     vault: s.vault, username: s.username, room: rName,
                                     kas: s.kas || 0, denda: s.denda || 0, reward: s.reward || 0,
-                                    finesDetail: s.finesDetail || '-' // Menarik data Fines Detail dari server
+                                    finesDetail: s.finesDetail || '-'
                                 });
                             }
                         });
@@ -384,13 +370,10 @@
             }
 
             document.getElementById('sumDues').innerText = 'ʛ' + formatMoney(sumKas);
-            document.getElementById('sumFines').innerText = '+ʛ' + formatMoney(sumFines); // Fines are House Income
+            document.getElementById('sumFines').innerText = '+ʛ' + formatMoney(sumFines);
             document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
         }
 
-        // ==========================================
-        // 4. PREVIEW MODAL LOGIC (DENGAN FINES DETAIL)
-        // ==========================================
         function openPreview(type) {
             if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
             currentDownloadType = type;
@@ -407,7 +390,7 @@
             
             if(type === 'DUES_FINES') {
                 title.innerText = "Preview: Dues & Fines Withdrawal";
-                headersHtml += "<th>Total Amount</th><th>Fines Reason</th></tr>";
+                headersHtml += "<th>Total Amount</th><th>Fines Details</th></tr>";
             } else if (type === 'REWARDS') {
                 title.innerText = "Preview: Rewards Disbursement";
                 headersHtml += "<th>Total Amount</th></tr>";
@@ -448,9 +431,6 @@
             document.getElementById('previewModal').style.display = 'none';
         }
 
-        // ==========================================
-        // 5. EXPORT TO PDF LOGIC (AVOID PAGE BREAKS + KETERANGAN DENDA)
-        // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
             btn.innerText = "⏳ Generating...";
@@ -476,19 +456,17 @@
             var tKas = 0, tFines = 0, tRewards = 0;
             var hasFines = false;
 
-            // Lebarkan tabel menjadi 90% karena sekarang ada kolom keterangan
             var tableHtml = `
-                <table style="width: 90%; margin: 15px auto; border-collapse: collapse; font-size: 11px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
-                        <tr style="page-break-inside: avoid;">
-                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 40px;">No.</th>
-                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 100px;">Vault Code</th>
-                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 100px;">Total Amount</th>
+                        <tr class="pdf-row">
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 5%;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Total Amount</th>
             `;
             
-            // Tambah Header Detail Denda Jika DUES_FINES
             if (currentDownloadType === 'DUES_FINES') {
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left;">Fines Details</th>`;
+                tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 45%;">Fines Details</th>`;
             }
             
             tableHtml += `</tr></thead><tbody>`;
@@ -505,7 +483,7 @@
                 
                 var bgColor = isFined ? "background-color: #ffebee;" : "";
 
-                tableHtml += `<tr style="page-break-inside: avoid; ${bgColor}">
+                tableHtml += `<tr class="pdf-row" style="${bgColor}">
                     <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
                     <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:13px;">${s.vault}</td>`;
                     
@@ -525,7 +503,7 @@
             tableHtml += `</tbody></table>`;
 
             // FOOTER & GRAND TOTAL
-            var footerHtml = `<div style="page-break-inside: avoid; width: 90%; margin: 20px auto 0;">`;
+            var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
 
             if (hasFines && currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;">
@@ -538,8 +516,6 @@
             if (currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #112250;">Total House Dues</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #112250;">+ʛ${formatMoney(tKas)}</td></tr>`;
                 footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #1b5e20;">Total Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #1b5e20;">+ʛ${formatMoney(tFines)}</td></tr>`;
-                
-                // MENGUBAH TEKS GRAND TOTAL SEPERTI YANG DIMINTA
                 footerHtml += `<tr style="border-top: 2px solid #3C507D; background-color: #c5cae9;"><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Grand Total Withdrawn</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tKas + tFines)} to Ravenclaw's Petty Cash</td></tr>`;
             } else if (currentDownloadType === 'REWARDS') {
                 footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tRewards)} from Ravenclaw's Petty Cash</td></tr>`;
@@ -555,14 +531,16 @@
             </div>`; 
 
             var pdfContainer = document.createElement('div');
+            
+            // KUNCI: Memberikan fixed width pada container utama (750px) mencegah potongan halaman secara horizontal.
             pdfContainer.innerHTML = `
-                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px 20px; color: #112250;">
-                    <div style="text-align: center; margin-bottom: 5px;">
+                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 20px; color: #112250; width: 750px; margin: 0 auto; box-sizing: border-box;">
+                    <div class="pdf-row" style="text-align: center; margin-bottom: 5px;">
                         <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
                     </div>
-                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 15px;">
+                    <hr class="pdf-row" style="border: 0; border-top: 2px solid #112250; margin-bottom: 15px;">
                     
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px; padding: 0 5%;">
+                    <div class="pdf-row" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px;">
                         <div><b>Subject:</b> ${subjectStr}</div>
                         <div>${dateStr}</div>
                     </div>
@@ -573,12 +551,12 @@
             `;
 
             var opt = {
-                margin:       [0.5, 0.2, 0.5, 0.2], 
+                margin:       0.3, 
                 filename:     filename,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: 'css', avoid: 'tr' } 
+                pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
             };
 
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
