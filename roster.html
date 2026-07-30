@@ -139,11 +139,12 @@
                 <div class="title">Columns to Export:</div>
                 <label><input type="checkbox" class="col-chk" value="0" checked> Vault Code</label>
                 <label><input type="checkbox" class="col-chk" value="1" checked> Username</label>
-                <label><input type="checkbox" class="col-chk" value="2"> Grade</label>
-                <label><input type="checkbox" class="col-chk" value="3"> Level</label>
-                <label><input type="checkbox" class="col-chk" value="4"> Major</label>
-                <label><input type="checkbox" class="col-chk" value="5"> Electives</label>
-                <label><input type="checkbox" class="col-chk" value="6"> Face Claim</label>
+                <label><input type="checkbox" class="col-chk" value="2" checked> Full Name</label>
+                <label><input type="checkbox" class="col-chk" value="3"> Grade</label>
+                <label><input type="checkbox" class="col-chk" value="4"> Level</label>
+                <label><input type="checkbox" class="col-chk" value="5"> Major</label>
+                <label><input type="checkbox" class="col-chk" value="6"> Electives</label>
+                <label><input type="checkbox" class="col-chk" value="7"> Face Claim</label>
                 
                 <button class="btn-manage" onclick="copyTableToClipboard()" id="btnCopy">
                     📋 Copy Checked Columns
@@ -158,6 +159,7 @@
                         <tr>
                             <th>Vault Code</th>
                             <th>Username</th>
+                            <th>Full Name</th>
                             <th>Grade</th>
                             <th>Class Level</th>
                             <th>Major</th>
@@ -185,7 +187,9 @@
 
         var rosterData = [];
         var aurorSubjects = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
-        var ministrySubjects = ["Astronomy", "Divination", "Care Of Magical Creatures", "Muggle Studies", "History Of Magic"];
+        
+        // PERBAIKAN BUG: Ancient Runes sekarang masuk ke dalam daftar wajib Ministry
+        var ministrySubjects = ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"];
 
         // ==========================================
         // 2. INITIALIZATION (ON LOAD)
@@ -316,7 +320,7 @@
             tbody.innerHTML = '';
 
             if(!rosterData || rosterData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:gray;">No students data is available.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:gray;">No students data is available.</td></tr>';
                 return;
             }
 
@@ -402,7 +406,7 @@
 
             // RENDERING TO TABLE
             if (filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:gray;">No students found matching the selected filters.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:gray;">No students found matching the selected filters.</td></tr>';
                 return;
             }
 
@@ -413,6 +417,7 @@
                 tr.innerHTML = `
                     <td class="vault-tag">${s.vault}</td>
                     <td><b>${s.username}</b></td>
+                    <td>${s.fullName || '-'}</td>
                     <td>${s.grade}</td>
                     <td>${lvlBadge}</td>
                     <td>${s.major}</td>
