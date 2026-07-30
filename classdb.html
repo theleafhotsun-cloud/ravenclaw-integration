@@ -129,7 +129,6 @@
         <div class="content-area">
             <div class="header-actions">
                 <h1 class="page-title">Class Schedule & Assignment Database</h1>
-                <!-- ATTENDANCE BOARD BUTTON -->
                 <a href="https://drive.google.com/drive/folders/1nZK2fF4QKDc4bZyrX68VngoV3Eb0ncyI?usp=drive_link" target="_blank" class="btn-drive">
                     📋 Attendance Board
                 </a>
@@ -223,7 +222,6 @@
         var currentData = {};
         var dynamicPicMap = {};
 
-        // 🔄 PERUBAHAN: Peta PIC yang baru.
         const subjectRoomMap = {
             "Astronomy": "Eternclaw", "Charm": "Eternclaw", 
             "Potion": "Ravelynx", "Divination": "Ravelynx",
@@ -384,6 +382,11 @@
                     }
 
                     var pic = dynamicPicMap[roomCat] || roomCat; 
+                    
+                    // 🎯 INTERSEPSI KHUSUS QUIDDITCH MUTLAK PVP
+                    if (subj.includes("Quidditch")) {
+                        pic = "PVP";
+                    }
 
                     var statBadge = '<span class="stat-badge stat-normal">✅ Scheduled (Normal)</span>';
                     if (stat.includes('Canceled')) statBadge = '<span class="stat-badge stat-canceled">❌ Canceled (Free Class)</span>';
