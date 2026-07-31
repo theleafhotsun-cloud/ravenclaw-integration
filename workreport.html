@@ -90,14 +90,15 @@
         
         .eval-summary { background-color: white; padding: 15px; border-radius: 4px; border: 1px dashed var(--shellstone); margin-bottom: 15px; font-size: 12px; line-height: 1.6;}
         .eval-summary span { font-weight: bold; color: var(--royal-blue); }
-
-        .current-app-view { background-color: #f2f2f2; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; border-left: 3px solid var(--sapphire);}
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
         .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit;}
         .form-group textarea { resize: vertical; min-height: 70px; }
         
+        /* Disable Select Style */
+        select:disabled { background-color: #e9ecef; color: #6c757d; cursor: not-allowed; border-color: #ced4da; }
+
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--sapphire); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
@@ -193,20 +194,22 @@
             <div class="eval-summary" id="evalSummary"></div>
             <input type="hidden" id="evalRowIdx">
 
-            <!-- Read-Only View of Live Approvals -->
-            <div class="current-app-view">
-                <strong>Live Approval Status:</strong><br>
-                <span id="viewApp1Label">HH1:</span> <span id="viewApp1" style="font-weight:bold; color:var(--royal-blue);"></span> | 
-                <span id="viewApp2Label">HH2:</span> <span id="viewApp2" style="font-weight:bold; color:var(--royal-blue);"></span>
-            </div>
-
-            <!-- SMART ACTION: My Approval Only -->
-            <div class="form-group" id="myApprovalGroup">
-                <label>My Approval (<span id="myApproverName">Loading...</span>)</label>
-                <select id="myApprovalAction">
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                </select>
+            <!-- STRICT APPROVAL: 1 ORANG 1 AKUN (NO OVERRIDE) -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; background: #e8eaf6; padding: 10px; border-radius: 4px; border: 1px solid #c5cae9;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Approval 1 (<span id="app1NameLabel">HH1</span>)</label>
+                    <select id="app1Select">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Approval 2 (<span id="app2NameLabel">HH2</span>)</label>
+                    <select id="app2Select">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
             </div>
 
             <div class="form-group">
@@ -236,7 +239,7 @@
         // ==========================================
         // 1. GLOBAL VARIABLES
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; // PASTIKAN MENGGANTI INI DENGAN URL DEPLOY TERBARU
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -246,9 +249,6 @@
         let allReports = [];
         let hh1Name = "Headhouse 1";
         let hh2Name = "Headhouse 2";
-        let originalApp1 = "Pending";
-        let originalApp2 = "Pending";
-        let evaluatingAs = "admin";
         
         const SNAPSHOT_STORAGE_KEY = 'ravenclaw_workreport_snapshots';
         let isViewSnapshot = false;
@@ -459,12 +459,10 @@
                 
                 const originalIndex = allReports.findIndex(r => r.rowIdx === report.rowIdx);
                 
-                // KALKULASI TUGAS YANG TIDAK DIKERJAKAN
                 let missedTasks = (Number(report.total) || 0) - (Number(report.completed) || 0);
                 if (missedTasks < 0) missedTasks = 0;
                 let missedWarning = missedTasks > 0 ? `<div style="margin-top:5px; font-size:11px; color:var(--danger);"><b>Missed:</b> ${missedTasks} Tasks</div>` : '';
 
-                // TAMPILKAN TEKS TUGAS YANG TERLEWAT JIKA DIKIRIMKAN DARI BACKEND
                 let missedListText = (report.missedList && String(report.missedList).trim() !== '' && report.missedList !== '-') 
                     ? `<div style="margin-top:3px; font-size:10px; color:#c62828; line-height:1.3;">❌ <i>${String(report.missedList).replace(/,/g, '<br>❌ ')}</i></div>` 
                     : '';
@@ -554,33 +552,30 @@
             `;
             document.getElementById('evalRowIdx').value = report.rowIdx;
 
-            originalApp1 = report.approval1 === 'Approved' ? 'Approved' : 'Pending';
-            originalApp2 = report.approval2 === 'Approved' ? 'Approved' : 'Pending';
+            // ==========================================
+            // KUNCI LOGIKA: 1 ORANG 1 APPROVAL
+            // ==========================================
+            document.getElementById('app1NameLabel').innerText = hh1Name;
+            document.getElementById('app2NameLabel').innerText = hh2Name;
 
-            document.getElementById('viewApp1Label').innerText = hh1Name + ": ";
-            document.getElementById('viewApp1').innerText = originalApp1;
-            document.getElementById('viewApp1').style.color = originalApp1 === 'Approved' ? 'green' : 'red';
-            
-            document.getElementById('viewApp2Label').innerText = hh2Name + ": ";
-            document.getElementById('viewApp2').innerText = originalApp2;
-            document.getElementById('viewApp2').style.color = originalApp2 === 'Approved' ? 'green' : 'red';
+            const sel1 = document.getElementById('app1Select');
+            const sel2 = document.getElementById('app2Select');
+
+            sel1.value = report.approval1 === 'Approved' ? 'Approved' : 'Pending';
+            sel2.value = report.approval2 === 'Approved' ? 'Approved' : 'Pending';
 
             const lowerUser = loggedInUser.toLowerCase();
-            const appNameLabel = document.getElementById('myApproverName');
-            const myActionSelect = document.getElementById('myApprovalAction');
 
             if (lowerUser === hh1Name.toLowerCase()) {
-                evaluatingAs = "hh1";
-                appNameLabel.innerText = hh1Name;
-                myActionSelect.value = originalApp1; 
+                sel1.disabled = false;
+                sel2.disabled = true;
             } else if (lowerUser === hh2Name.toLowerCase()) {
-                evaluatingAs = "hh2";
-                appNameLabel.innerText = hh2Name;
-                myActionSelect.value = originalApp2; 
+                sel1.disabled = true;
+                sel2.disabled = false;
             } else {
-                evaluatingAs = "admin";
-                appNameLabel.innerText = "Admin Override (Approves Both)";
-                myActionSelect.value = "Pending"; 
+                // Jika bukan HH1 dan bukan HH2, dua-duanya dikunci
+                sel1.disabled = true;
+                sel2.disabled = true;
             }
 
             const gradeSelect = document.getElementById('evalGrade');
@@ -599,27 +594,13 @@
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
             const status = document.getElementById('modalStatus');
-            
-            let finalApp1 = originalApp1; 
-            let finalApp2 = originalApp2; 
-
-            const mySelection = document.getElementById('myApprovalAction').value;
-
-            if (evaluatingAs === "hh1") {
-                finalApp1 = mySelection; 
-            } else if (evaluatingAs === "hh2") {
-                finalApp2 = mySelection; 
-            } else if (evaluatingAs === "admin") {
-                finalApp1 = mySelection; 
-                finalApp2 = mySelection;
-            }
 
             const evalData = {
                 rowIdx: document.getElementById('evalRowIdx').value,
                 grade: document.getElementById('evalGrade').value,
                 feedback: document.getElementById('evalFeedback').value,
-                approval1: finalApp1, 
-                approval2: finalApp2  
+                approval1: document.getElementById('app1Select').value, 
+                approval2: document.getElementById('app2Select').value  
             };
 
             btnSubmit.innerText = 'Saving...';
