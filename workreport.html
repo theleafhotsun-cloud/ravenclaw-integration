@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salary Master - Ravenclaw</title>
-    <!-- Library PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>Work Reports & Evaluations - Ravenclaw</title>
     <style>
         :root {
             --sapphire: #3C507D;
@@ -14,12 +12,13 @@
             --swan-wing: #F5F0E9;
             --shellstone: #D9CBC2;
             --success: #2e7d32;
-            --danger: #c62828;
             --warning: #f57f17;
+            --danger: #c62828;
         }
 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
 
+        /* Sidebar Styles */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -29,25 +28,24 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        .content-area { padding: 30px; }
+        .content-area { padding: 30px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
-        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;}
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap;}
         .page-title { color: var(--royal-blue); margin: 0; }
         
         .filter-container { display: flex; align-items: center; gap: 10px; }
         .filter-container label { font-size: 13px; font-weight: bold; color: var(--royal-blue); }
         .filter-container select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; background-color: white; color: var(--royal-blue); font-weight: bold;}
 
-        .btn-master-pdf { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-transform: uppercase; transition: background 0.3s; }
-        .btn-master-pdf:hover { background-color: var(--sapphire); }
-
+        /* Preset & Folder Management Styles */
         .preset-box { background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--shellstone); }
         .preset-box strong { font-size: 13px; color: var(--royal-blue); display: block; margin-bottom: 10px; text-transform: uppercase; }
         .preset-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -56,70 +54,59 @@
         .btn-preset.load { background-color: var(--sapphire); }
         .btn-preset.save { background-color: var(--success); }
         .btn-preset.delete { background-color: var(--danger); }
-
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 13px; vertical-align: middle;}
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
         tr:hover { background-color: var(--swan-wing); }
         
-        .edit-input { padding: 5px; border: 1px solid var(--shellstone); border-radius: 4px; font-family: inherit; font-size: 12px; background-color: #fcfcfc;}
-        .edit-input:focus { border-color: var(--sapphire); outline: none; background-color: #fff;}
-        .edit-input.code { width: 60px; font-weight: bold;}
-        .edit-input.text { width: 90px;}
-        .edit-input.name-col { width: 100px; font-weight: bold; background: transparent; border-color: transparent;}
-        .edit-input.name-col:focus { background: white; border-color: var(--sapphire); }
-        .edit-input.notes { width: 110px; font-style: italic; }
+        .notes-cell { max-width: 180px; white-space: normal; color: var(--sapphire); font-style: italic; font-size: 12px;}
+        .eval-cell { max-width: 180px; white-space: normal; }
 
-        .total-display { font-weight: bold; color: var(--royal-blue); font-size: 13px; }
-        .kpi-info { font-size: 10px; color: gray; display: block; margin-top: 2px;}
-
-        .btn-del-row { background: transparent; border: none; cursor: pointer; font-size: 14px; transition: transform 0.2s; }
-        .btn-del-row:hover { transform: scale(1.3); }
-
-        .btn-add-row { margin-top: 15px; background: var(--sapphire); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.3s;}
-        .btn-add-row:hover { background: var(--royal-blue); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 650px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 20px;}
+        .kpi-badge { background-color: var(--quicksand); color: var(--royal-blue); padding: 4px 8px; border-radius: 12px; font-weight: bold; font-size: 12px;}
+        .grade-badge { padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 10px; text-transform: uppercase; display: inline-block; margin-bottom: 5px;}
+        .grade-pending { background-color: var(--shellstone); color: var(--royal-blue); }
+        .grade-excellent { background-color: var(--success); color: white; }
+        .grade-good { background-color: var(--sapphire); color: white; }
+        .grade-poor { background-color: var(--danger); color: white; }
         
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .app-badge { font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: bold; text-transform: uppercase;}
+        .app-approved { background-color: var(--success); color: white;}
+        .app-pending { background-color: var(--warning); color: white;}
+
+        .action-cell { display: flex; gap: 5px; }
+        .btn-eval { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
+        .btn-eval:hover { background-color: var(--sapphire); }
+        
+        .btn-delete { background-color: var(--shellstone); color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: background 0.3s; }
+        .btn-delete:hover { background-color: var(--danger); color: white; }
+
+        /* Evaluation Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 500px; max-width: 95%; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; }
+        
+        .eval-summary { background-color: white; padding: 15px; border-radius: 4px; border: 1px dashed var(--shellstone); margin-bottom: 15px; font-size: 12px; line-height: 1.6;}
+        .eval-summary span { font-weight: bold; color: var(--royal-blue); }
+        
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); }
-        .form-group input[type="file"] { padding: 6px; font-size: 11px; background-color: var(--swan-wing); }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit;}
+        .form-group textarea { resize: vertical; min-height: 70px; }
         
-        .preview-img { max-height: 40px; margin-top: 10px; display: none; border-radius: 4px; border: 1px dashed var(--shellstone); padding: 2px;}
+        /* Disable Select Style */
+        select:disabled { background-color: #e9ecef; color: #6c757d; cursor: not-allowed; border-color: #ced4da; }
 
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
-        .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
-
-        /* --- PDF PRINT STYLING UNTUK HTML2PDF --- */
-        #masterPayslipArea { display: none; }
-        .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
-        .header-text p { font-size: 13px; margin: 0; color: #333; }
-        .header-logo img { width: 75px; height: auto; }
-        .pdf-divider { border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px; }
-        .master-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-        .master-table th, .master-table td { border: 1px solid #000; padding: 6px 8px; text-align: center; color: black;}
-        .master-table th { font-weight: bold; font-size: 11px; background-color: #f2f2f2 !important; color: black !important; text-transform: uppercase;}
-        .table-no-border { width: 100%; border-collapse: collapse; }
-        .table-no-border td { border: none !important; padding: 2px 0; text-align: left; font-size: 12px;}
-        .master-summary { width: 50%; font-size: 12px; margin-bottom: 30px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .master-signatures { display: flex; justify-content: space-between; font-size: 13px; margin-top: 30px; }
-        .sig-block { text-align: center; width: 40%; position: relative;}
-        .sig-block-right { text-align: center; width: 40%; position: relative;}
-        .sig-img { height: 50px; width: auto; display: block; margin: 5px auto; }
-        .sig-line { border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-top: 10px; font-weight: bold; text-align: center; padding-bottom: 3px;}
+        .btn-submit { background-color: var(--sapphire); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
     </style>
 </head>
 <body>
 
+    <!-- Dynamic Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -127,17 +114,17 @@
         </div>
         <ul class="nav-links" id="sidebarMenu">
             <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)" class="active">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)">Task Directory</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')" class="active">Work Report</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -145,13 +132,13 @@
         <div class="topbar">
             <div class="user-profile">
                 Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
         <div class="content-area">
             <div class="header-actions">
-                <h1 class="page-title">Salary Master</h1>
+                <h1 class="page-title">Submitted Work Reports</h1>
                 
                 <div class="filter-container">
                     <label for="monthFilter">📡 Live Database Filter:</label>
@@ -159,233 +146,174 @@
                         <option value="ALL">All Active Periods</option>
                     </select>
                 </div>
-
-                <button class="btn-master-pdf" onclick="openPrintSettings()">🖨️ Master Salary PDF Settings</button>
             </div>
 
+            <!-- FOLDER DATA SNAPSHOT -->
             <div class="preset-box" style="border-color: var(--sapphire); background-color: #f8f9fa;">
-                <strong>🗂️ Data Table Folders (Saved Snapshots)</strong>
+                <strong>🗂️ Report Folders (Saved Snapshots)</strong>
                 <div class="preset-controls">
                     <select id="snapshotSelect">
                         <option value="LIVE">🟢 Show Live Data from Database</option>
                     </select>
                     <button class="btn-preset load" onclick="loadSnapshot()">Load Folder</button>
-                    <button class="btn-preset save" onclick="saveSnapshot()">Save Current Table to Folder</button>
+                    <button class="btn-preset save" onclick="saveSnapshot()">Save Current Reports to Folder</button>
                     <button class="btn-preset delete" onclick="deleteSnapshot()">Delete Folder</button>
                 </div>
-                <div style="font-size:10px; color:gray; margin-top:5px;">💡 Tweak the numbers, add/delete rows, or write notes. Then click "Save to Folder". Your data will be saved safely!</div>
+                <div style="font-size:10px; color:gray; margin-top:5px;">💡 Securely save the current state of reports (including grades and approvals) into an offline folder before they get overwritten next month.</div>
             </div>
 
-            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Calculating salaries from Work Reports...</div>
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Fetching submitted reports...</div>
             
             <div class="table-container">
-                <table id="salaryTable" style="display: none;">
+                <table id="reportTable" style="display: none;">
                     <thead>
                         <tr>
-                            <th>Account Name</th>
-                            <th>Vault Code</th>
-                            <th>Position</th>
-                            <th>Base Salary</th>
-                            <th>Dur</th>
-                            <th>Pos. Bonus</th>
-                            <th>Perf. Bonus</th>
+                            <th>Date / Name</th>
+                            <th>Progress (KPI)</th>
                             <th>Notes</th>
-                            <th>Total Salary</th>
-                            <th style="text-align: center;">Act</th>
+                            <th>Grade & Feedback</th>
+                            <th>Approvals</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <!-- Data injected by JS -->
+                        <!-- Data injected via JS -->
                     </tbody>
-                    <tfoot id="tableFooter" style="display: none;">
-                        <tr style="background-color: var(--swan-wing); border-top: 2px solid var(--royal-blue);">
-                            <td colspan="8" style="text-align: right; font-weight: bold; font-size: 13px; text-transform: uppercase;">Grand Total:</td>
-                            <td id="webGrandTotal" class="total-display" style="font-size: 14px;">ʛ0</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
-
-            <button class="btn-add-row" id="btnAddRow" style="display:none;" onclick="addManualRow()">➕ Add Manual Entry</button>
 
         </div>
     </div>
 
-    <!-- PRINT SETTINGS MODAL -->
-    <div class="modal-overlay" id="printSettingsModal">
+    <!-- Dual Approval & Evaluation Modal -->
+    <div class="modal-overlay" id="evalModal">
         <div class="modal-box">
-            <h3>Document Settings & Presets</h3>
+            <h3>Evaluate & Approve Report</h3>
+            <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:14px;"></div>
             
-            <div class="preset-box">
-                <strong>📄 Save/Load Document PDF Settings</strong>
-                <div class="preset-controls">
-                    <select id="presetSelect"></select>
-                    <button class="btn-preset load" onclick="loadPreset()">Load Settings</button>
-                    <button class="btn-preset save" onclick="savePreset()">Save Current Settings</button>
-                    <button class="btn-preset delete" onclick="deletePreset()">Delete Settings</button>
+            <div class="eval-summary" id="evalSummary"></div>
+            <input type="hidden" id="evalRowIdx">
+
+            <!-- STRICT APPROVAL: 1 ORANG 1 AKUN (NO OVERRIDE) -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; background: #e8eaf6; padding: 10px; border-radius: 4px; border: 1px solid #c5cae9;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Approval 1 (<span id="app1NameLabel">HH1</span>)</label>
+                    <select id="app1Select">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Approval 2 (<span id="app2NameLabel">HH2</span>)</label>
+                    <select id="app2Select">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Report Month & Year (Preset Name)</label>
-                    <input type="text" id="setMonthYear" placeholder="e.g. July 2026">
-                </div>
-                <div class="form-group">
-                    <label>Date of Signature</label>
-                    <input type="text" id="setSignatureDate" placeholder="e.g. July 31st 2026">
-                </div>
+            <div class="form-group">
+                <label>Overall Evaluation Grade</label>
+                <select id="evalGrade">
+                    <option value="Pending">Pending (Unreviewed / Hold Bonus)</option>
+                    <option value="Excellent">Excellent (100% Performance Bonus)</option>
+                    <option value="Good">Good (80% Performance Bonus)</option>
+                    <option value="Needs Improvement">Needs Improvement (50% Performance Bonus)</option>
+                </select>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Signatory 1 (Left)</label>
-                    <input type="text" id="setSig1" value="Jeremius Alderton" style="margin-bottom: 5px;">
-                    <input type="file" id="uploadSig1" accept="image/*" onchange="handleImageUpload(event, 1)">
-                    <input type="hidden" id="sigBase64_1">
-                    <img id="previewSig1" class="preview-img" alt="Preview 1">
-                </div>
-                <div class="form-group">
-                    <label>Signatory 2 (Right)</label>
-                    <input type="text" id="setSig2" value="Gresham Adams" style="margin-bottom: 5px;">
-                    <input type="file" id="uploadSig2" accept="image/*" onchange="handleImageUpload(event, 2)">
-                    <input type="hidden" id="sigBase64_2">
-                    <img id="previewSig2" class="preview-img" alt="Preview 2">
-                </div>
+            <div class="form-group">
+                <label>Feedback / Response (Shared)</label>
+                <textarea id="evalFeedback" placeholder="Enter feedback or appreciation..."></textarea>
             </div>
-
-            <h4 style="color: var(--sapphire); border-bottom: 1px solid var(--shellstone); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                Funding Sources Detail
-                <span id="allocStatus" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; font-weight: bold;">Loading...</span>
-            </h4>
             
-            <div class="form-row">
-                <div class="form-group"><input type="text" id="setSrcName1" value="School's petty cash"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt1" value="0" oninput="checkAllocation()"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><input type="text" id="setSrcName2" value="Ravenclaw's petty cash"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt2" value="0" oninput="checkAllocation()"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><input type="text" id="setSrcName3" value="8067"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt3" value="0" oninput="checkAllocation()"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><input type="text" id="setSrcName4" value="8223"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt4" value="0" oninput="checkAllocation()"></div>
-            </div>
-
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closePrintSettings()">Cancel</button>
-                <button class="btn-submit" onclick="confirmAndPrint()">Generate PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MASTER SALARY REPORT TEMPLATE HIDDEN DATA -->
-    <div id="masterPayslipArea">
-        <div class="print-header-container">
-            <div class="header-text">
-                <h1>RAVENCLAW CARETAKERS SALARY</h1>
-                <p id="masterMonthYear"></p>
-            </div>
-            <div class="header-logo">
-                <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
-            </div>
-        </div>
-        
-        <div class="pdf-divider"></div>
-        
-        <table class="master-table">
-            <thead>
-                <tr class="pdf-row">
-                    <th>Vault Code</th>
-                    <th>Position</th>
-                    <th>Base Salary</th>
-                    <th>Duration</th>
-                    <th>Salary</th>
-                    <th>Position<br>Bonus</th>
-                    <th>Performance<br>Bonus</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="masterTableBody">
-                <!-- Data injected by JS upon printing -->
-            </tbody>
-        </table>
-        
-        <div class="summary-container pdf-row">
-            <div class="master-summary">
-                <div class="summary-row" style="font-weight:bold; margin-bottom: 8px; font-size: 13px;">
-                    <span>TOTAL SALARY</span> <span id="masterTotalSalary"></span>
-                </div>
-                <div class="summary-row" style="font-weight:bold; margin-bottom: 20px; font-size: 13px;">
-                    <span>TOTAL BONUS</span> <span id="masterTotalBonus"></span>
-                </div>
-                <div class="summary-row" style="font-weight:bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px;">
-                    <span>SOURCE</span><span></span>
-                </div>
-                <table class="table-no-border">
-                    <tr><td id="outSrcName1"></td><td style="text-align: right;" id="outSrcAmt1"></td></tr>
-                    <tr><td id="outSrcName2"></td><td style="text-align: right;" id="outSrcAmt2"></td></tr>
-                    <tr><td id="outSrcName3"></td><td style="text-align: right;" id="outSrcAmt3"></td></tr>
-                    <tr><td id="outSrcName4"></td><td style="text-align: right;" id="outSrcAmt4"></td></tr>
-                </table>
-                <div style="font-size:10px; font-style:italic; margin-top:6px;">exclude tax</div>
-            </div>
-            
-            <div class="master-signatures">
-                <div class="sig-block">
-                    <p style="margin: 0; font-size: 12px; visibility: hidden;">Spacer</p>
-                    <div id="sigImgContainer1"></div>
-                    <div class="sig-line" id="outSig1"></div>
-                </div>
-                <div class="sig-block-right">
-                    <p style="margin: 0 0 5px 0; font-size: 12px;">Ravenclaw Tower, <span id="outSigDate"></span></p>
-                    <div id="sigImgContainer2"></div>
-                    <div class="sig-line" id="outSig2"></div>
-                </div>
+                <button type="button" class="btn-cancel" onclick="closeEvalModal()" id="btnCancel">Cancel</button>
+                <button type="button" class="btn-submit" onclick="submitEvaluation()" id="btnSubmit">Save & Approve</button>
             </div>
         </div>
     </div>
 
     <!-- SCRIPT AREA -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
+        // ==========================================
+        // 1. GLOBAL VARIABLES
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
 
         let loggedInUser = localStorage.getItem("session_username");
-        let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
         if (!loggedInUser) window.location.href = "index.html";
 
-        let salaryDataStore = [];
-        let currentGrandTotal = 0; 
-        let manualRowCounter = 9000; 
+        let allReports = [];
+        let hh1Name = "Headhouse 1";
+        let hh2Name = "Headhouse 2";
         
-        const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
-        const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
+        const SNAPSHOT_STORAGE_KEY = 'ravenclaw_workreport_snapshots';
+        let isViewSnapshot = false;
 
-        window.onload = function() {
+        // ==========================================
+        // 2. ONLOAD INITIALIZATION
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', function() {
             document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
             loadSnapshotDropdown();
-
+            
             fetch(API_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getSalaryCalculations" })
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getHeadhouseList" })
             })
-            .then(res => res.json())
-            .then(result => {
-                if (result.status === "success") initSalaryData(result.data);
-                else throw new Error(result.message);
-            })
-            .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
-        };
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' && res.data.length >= 2) {
+                    hh1Name = res.data[0];
+                    hh2Name = res.data[1];
+                }
+            });
 
+            fetchReports();
+        });
+
+        // ==========================================
+        // 3. LOGIKA SIDEBAR & NAVIGASI 
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
+            var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
+            var isLeadroom = windowUserRole.includes('leadroom');
+            var isEditor = windowUserRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
+
+            var sopMenu = document.querySelector('.menu-sop');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (sopMenu) sopMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
+            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-taskdirectory', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+        }
+
+        function navigateHome() {
+            var targetPage = 'headhouse'; 
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
+            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
+            else if (windowUserRole.includes('editor')) targetPage = 'editor';
+            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
+        // ==========================================
+        // 4. FOLDER SNAPSHOT LOGIC
+        // ==========================================
         function getSnapshots() { return JSON.parse(localStorage.getItem(SNAPSHOT_STORAGE_KEY) || '{}'); }
 
         function loadSnapshotDropdown() {
@@ -398,48 +326,34 @@
         }
 
         function saveSnapshot() {
-            const snapName = prompt("Enter a folder name (e.g., July Payroll Final).");
+            const snapName = prompt("Enter a folder name (e.g., July Evaluations Final).");
             if (!snapName) return;
 
-            let snapData = [];
-            const rows = document.querySelectorAll('#tableBody tr');
-            
-            for (let i = 0; i < rows.length; i++) {
-                const tr = rows[i];
-                if(!tr) continue;
-                
-                const baseInput = tr.querySelector('input[id^="base_"]');
-                if(!baseInput) continue;
-                const idx = baseInput.id.split('_')[1];
-
-                snapData.push({
-                    username: document.getElementById(`name_${idx}`).value,
-                    kpi: tr.getAttribute('data-kpi'),
-                    targetTugas: tr.getAttribute('data-target'),
-                    vault: document.getElementById(`vault_${idx}`).value,
-                    position: document.getElementById(`pos_${idx}`).value,
-                    baseSalary: Number(document.getElementById(`base_${idx}`).value),
-                    durasi: Number(document.getElementById(`dur_${idx}`).value),
-                    positionBonus: Number(document.getElementById(`posBonus_${idx}`).value),
-                    performanceBonus: Number(document.getElementById(`perfBonus_${idx}`).value),
-                    notes: document.getElementById(`notes_${idx}`).value
-                });
+            const selectedMonth = document.getElementById('monthFilter').value;
+            let visibleReports = allReports;
+            if (selectedMonth !== 'ALL') {
+                visibleReports = visibleReports.filter(item => item.monthFolder === selectedMonth);
             }
 
             const snaps = getSnapshots();
-            snaps[snapName] = snapData;
+            snaps[snapName] = visibleReports;
             localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
             loadSnapshotDropdown();
-            alert(`Table successfully saved to the folder. "${snapName}"!`);
+            alert(`Reports successfully saved to the folder "${snapName}"!`);
         }
 
         function loadSnapshot() {
             const key = document.getElementById('snapshotSelect').value;
             if (key === "LIVE") {
-                filterByMonth(); 
+                isViewSnapshot = false;
+                fetchReports(); 
             } else {
                 const data = getSnapshots()[key];
-                if (data) renderTable(data, true);
+                if (data) {
+                    isViewSnapshot = true;
+                    allReports = data; 
+                    renderTable(data);
+                }
             }
         }
 
@@ -453,437 +367,279 @@
             localStorage.setItem(SNAPSHOT_STORAGE_KEY, JSON.stringify(snaps));
             loadSnapshotDropdown();
             document.getElementById('snapshotSelect').value = "LIVE";
-            filterByMonth();
+            isViewSnapshot = false;
+            fetchReports();
         }
 
-        function deleteRow(btnElement) {
-            if (confirm("Hapus baris ini dari tampilan?")) {
-                btnElement.closest('tr').remove();
-                recalculate();
-            }
-        }
+        // ==========================================
+        // 5. LOGIKA WORK REPORT & EVALUASI
+        // ==========================================
+        function fetchReports() {
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Fetching submitted reports...";
+            document.getElementById('reportTable').style.display = 'none';
+            document.getElementById('tableBody').innerHTML = '';
+            document.getElementById('snapshotSelect').value = "LIVE";
+            isViewSnapshot = false;
 
-        function addManualRow() {
-            const tbody = document.getElementById('tableBody');
-            const index = manualRowCounter++;
-            
-            const tr = document.createElement('tr');
-            tr.setAttribute('data-kpi', 0);
-            tr.setAttribute('data-target', 0);
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getAllWorkReports" })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status !== 'success') {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
+                    return;
+                }
 
-            tr.innerHTML = `
-                <td>
-                    <input type="text" class="edit-input name-col" id="name_${index}" value="" placeholder="Type Name...">
-                    <span class="kpi-info">KPI: 0% | Target: 0</span>
-                </td>
-                <td><input type="text" class="edit-input code" id="vault_${index}" value="" placeholder="Code"></td>
-                <td><input type="text" class="edit-input text" id="pos_${index}" value=""></td>
-                <td><input type="number" class="edit-input" id="base_${index}" value="0" oninput="recalculate()"></td>
-                <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="1" oninput="recalculate()"></td>
-                <td><input type="number" class="edit-input" id="posBonus_${index}" value="0" oninput="recalculate()"></td>
-                <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="0" oninput="recalculate()"></td>
-                <td><input type="text" class="edit-input notes" id="notes_${index}" value="" placeholder="Notes..."></td>
-                <td class="total-display" id="totalDisplay_${index}">ʛ0</td>
-                <td style="text-align:center;"><button class="btn-del-row" onclick="deleteRow(this)" title="Delete Row">🗑️</button></td>
-            `;
-            tbody.appendChild(tr);
-            recalculate();
-        }
+                allReports = res.data;
+                
+                const monthSelect = document.getElementById('monthFilter');
+                monthSelect.innerHTML = '<option value="ALL">All Active Periods</option>';
+                const months = [...new Set(res.data.map(item => item.monthFolder))];
+                
+                months.forEach(m => {
+                    if(m) {
+                        const opt = document.createElement('option');
+                        opt.value = m; opt.innerText = m;
+                        monthSelect.appendChild(opt);
+                    }
+                });
 
-        // PERBAIKAN PEMBULATAN ANGKA
-        function formatMoney(num) { 
-            return Math.round(Number(num)).toLocaleString('id-ID'); 
-        }
-
-        function initSalaryData(data) {
-            salaryDataStore = data;
-            const monthSelect = document.getElementById('monthFilter');
-            const months = [...new Set(data.map(item => item.monthFolder))];
-            
-            months.forEach(m => {
-                if(m) { const opt = document.createElement('option'); opt.value = m; opt.innerText = m; monthSelect.appendChild(opt); }
+                filterByMonth();
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>";
             });
-            renderTable(data);
         }
 
         function filterByMonth() {
-            document.getElementById('snapshotSelect').value = "LIVE";
-            const selectedMonth = document.getElementById('monthFilter').value;
-            if (selectedMonth === 'ALL') renderTable(salaryDataStore);
-            else renderTable(salaryDataStore.filter(item => item.monthFolder === selectedMonth));
-        }
-
-        function renderTable(data, isSnapshot = false) {
-            document.getElementById('loadingMsg').style.display = 'none';
-            document.getElementById('salaryTable').style.display = 'table';
-            document.getElementById('tableFooter').style.display = 'table-footer-group';
-            document.getElementById('btnAddRow').style.display = 'inline-block'; 
-            
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            if (!data || data.length === 0 || data.error) {
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">${data.error || 'No reports found.'}</td></tr>`;
-                document.getElementById('tableFooter').style.display = 'none';
+            if (isViewSnapshot) {
+                renderTable(allReports);
                 return;
             }
 
-            data.forEach((row, index) => {
-                let perfBonusToDisplay = 0;
-                if(isSnapshot) {
-                    perfBonusToDisplay = row.performanceBonus || 0;
-                } else {
-                    perfBonusToDisplay = (row.performanceBonus || 0) + (row.backupBonus || 0);
-                }
+            const selectedMonth = document.getElementById('monthFilter').value;
+            let visibleReports = allReports;
+            
+            if (selectedMonth !== 'ALL') {
+                visibleReports = visibleReports.filter(item => item.monthFolder === selectedMonth);
+            }
+            
+            renderTable(visibleReports);
+        }
+
+        function getGradeClass(grade) {
+            if(!grade) return 'grade-pending';
+            let g = grade.toLowerCase();
+            if(g.includes('excellent')) return 'grade-excellent';
+            if(g.includes('good')) return 'grade-good';
+            if(g.includes('improvement')) return 'grade-poor';
+            return 'grade-pending';
+        }
+        
+        function getAppClass(status) { return status === 'Approved' ? 'app-approved' : 'app-pending'; }
+
+        function renderTable(reports) {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('reportTable').style.display = 'table';
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (!reports || reports.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:gray;">No work reports found.</td></tr>';
+                return;
+            }
+
+            reports.forEach((report) => {
+                const gradeClass = getGradeClass(report.grade);
+                const app1Class = getAppClass(report.approval1);
+                const app2Class = getAppClass(report.approval2);
+                
+                const originalIndex = allReports.findIndex(r => r.rowIdx === report.rowIdx);
+                
+                let missedTasks = (Number(report.total) || 0) - (Number(report.completed) || 0);
+                if (missedTasks < 0) missedTasks = 0;
+                let missedWarning = missedTasks > 0 ? `<div style="margin-top:5px; font-size:11px; color:var(--danger);"><b>Missed:</b> ${missedTasks} Tasks</div>` : '';
+
+                let missedListText = (report.missedList && String(report.missedList).trim() !== '' && report.missedList !== '-') 
+                    ? `<div style="margin-top:3px; font-size:10px; color:#c62828; line-height:1.3;">❌ <i>${String(report.missedList).replace(/,/g, '<br>❌ ')}</i></div>` 
+                    : '';
+
+                const actionHtml = isViewSnapshot 
+                    ? `<span style="font-size:10px; color:gray; font-weight:bold;">LOCKED<br>(SNAPSHOT VIEW)</span>` 
+                    : `<button class="btn-eval" onclick="openEvalModal(${originalIndex})">Review</button>
+                       <button class="btn-delete" onclick="deleteReport(${report.rowIdx})" title="Permanently Delete Report">🗑️</button>`;
 
                 const tr = document.createElement('tr');
-                tr.setAttribute('data-kpi', row.kpi || 0);
-                tr.setAttribute('data-target', row.targetTugas || 0);
-
                 tr.innerHTML = `
                     <td>
-                        <input type="text" class="edit-input name-col" id="name_${index}" value="${row.username || ''}" placeholder="Name">
-                        <span class="kpi-info">KPI: ${row.kpi || 0}% | Target: ${row.targetTugas || 0}</span>
+                        <div style="font-weight:bold; color:var(--royal-blue);">${report.username}</div>
+                        <div style="font-size:11px; color:gray;">${report.timestamp}</div>
+                        <div style="font-size:11px;">${report.position}</div>
                     </td>
-                    <td><input type="text" class="edit-input code" id="vault_${index}" value="${row.vault || ''}" placeholder="Code"></td>
-                    <td><input type="text" class="edit-input text" id="pos_${index}" value="${row.position || ''}"></td>
-                    <td><input type="number" class="edit-input" id="base_${index}" value="${row.baseSalary || 0}" oninput="recalculate()"></td>
-                    <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="${row.durasi || 0}" oninput="recalculate()"></td>
-                    <td><input type="number" class="edit-input" id="posBonus_${index}" value="${row.positionBonus || 0}" oninput="recalculate()"></td>
-                    <td><input type="number" step="0.001" class="edit-input" id="perfBonus_${index}" value="${perfBonusToDisplay}" oninput="recalculate()"></td>
-                    <td><input type="text" class="edit-input notes" id="notes_${index}" value="${row.notes || ''}" placeholder="Notes..."></td>
-                    <td class="total-display" id="totalDisplay_${index}">ʛ0</td>
-                    <td style="text-align:center;"><button class="btn-del-row" onclick="deleteRow(this)" title="Hapus Baris">🗑️</button></td>
+                    <td>
+                        <div>${report.completed} / ${report.total} Tasks</div>
+                        <div style="margin-top:5px;"><span class="kpi-badge">${report.kpi}</span></div>
+                        ${missedWarning}
+                        ${missedListText}
+                        <div style="margin-top:3px; font-size:11px;"><b>Backup:</b> ${report.backup}</div>
+                    </td>
+                    <td class="notes-cell">${report.notes || '-'}</td>
+                    <td class="eval-cell">
+                        <span class="grade-badge ${gradeClass}">${report.grade || 'Pending'}</span><br>
+                        <span style="font-size:11px; color:var(--success);"><b>Note:</b> ${report.feedback || '-'}</span>
+                    </td>
+                    <td>
+                        <div style="margin-bottom:4px; font-size:11px;">${hh1Name}: <span class="app-badge ${app1Class}">${report.approval1 || 'Pending'}</span></div>
+                        <div style="font-size:11px;">${hh2Name}: <span class="app-badge ${app2Class}">${report.approval2 || 'Pending'}</span></div>
+                    </td>
+                    <td class="action-cell">
+                        ${actionHtml}
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
-            recalculate(); 
         }
 
-        function recalculate() {
-            let tempGrandTotal = 0;
-            const rows = document.querySelectorAll('#tableBody tr');
+        function deleteReport(rowIdx) {
+            if(!confirm("Are you sure you want to PERMANENTLY delete this report? This action cannot be undone.")) return;
+            
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Deleting report from server...";
+            document.getElementById('reportTable').style.display = 'none';
 
-            rows.forEach((tr) => {
-                const baseInput = tr.querySelector('input[id^="base_"]');
-                if(!baseInput) return;
-                
-                const idx = baseInput.id.split('_')[1];
-
-                const base = Number(document.getElementById(`base_${idx}`).value) || 0;
-                const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
-                const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
-                const perfBonus = Number(document.getElementById(`perfBonus_${idx}`).value) || 0;
-                
-                const calculatedSalary = base * dur;
-                const grandTotal = calculatedSalary + posBonus + perfBonus;
-                
-                document.getElementById(`totalDisplay_${idx}`).innerText = "ʛ" + formatMoney(grandTotal);
-                tempGrandTotal += grandTotal;
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "deleteWorkReport", rowIdx: rowIdx })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    fetchReports(); 
+                } else {
+                    alert("Failed to delete report: " + res.message);
+                    fetchReports();
+                }
+            })
+            .catch(err => {
+                alert("Connection Error: " + err.message);
+                fetchReports();
             });
-
-            currentGrandTotal = tempGrandTotal;
-            document.getElementById('webGrandTotal').innerText = "ʛ" + formatMoney(currentGrandTotal);
-            checkAllocation(); 
         }
 
-        function setupDynamicSidebar() {
-            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
-            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
-            var isLeadroom = userRole.includes('leadroom');
-            var isEditor = userRole.includes('editor');
+        function openEvalModal(arrayIndex) {
+            if (isViewSnapshot) return alert("You cannot edit records while viewing a snapshot.");
 
-            var sidebarTitle = document.getElementById('sidebarTitle');
-            if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
-
-            var sopMenu = document.querySelector('.menu-sop');
-            var tmMenu = document.querySelector('.menu-taskmaster');
-            if (sopMenu) sopMenu.style.display = 'block';
-            if (tmMenu) tmMenu.style.display = 'block';
-
-            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-taskdirectory', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-        }
-
-        function navigateHome(element) {
-            element.innerText = "Loading...";
-            var targetPage = 'headhouse'; 
-            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
-            else if (userRole.includes('prefect')) targetPage = 'prefect';
-            else if (userRole.includes('editor')) targetPage = 'editor';
-            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = targetPage + "-dashboard.html";
-        }
-
-        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
-        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
-
-        function getPresets() { return JSON.parse(localStorage.getItem(PRESET_STORAGE_KEY) || '{}'); }
-
-        function loadPresetDropdown() {
-            const presets = getPresets();
-            const select = document.getElementById('presetSelect');
-            select.innerHTML = '<option value="">-- Select Saved Settings --</option>';
-            Object.keys(presets).forEach(key => { select.innerHTML += `<option value="${key}">${key}</option>`; });
-        }
-
-        function savePreset() {
-            const monthYear = document.getElementById('setMonthYear').value.trim();
-            if(!monthYear) return alert("Isi Report Month & Year terlebih dahulu!");
-
-            const presets = getPresets();
-            presets[monthYear] = {
-                sigDate: document.getElementById('setSignatureDate').value,
-                sig1: document.getElementById('setSig1').value,
-                sig2: document.getElementById('setSig2').value,
-                sigBase64_1: document.getElementById('sigBase64_1').value,
-                sigBase64_2: document.getElementById('sigBase64_2').value,
-                srcName1: document.getElementById('setSrcName1').value, srcAmt1: document.getElementById('setSrcAmt1').value,
-                srcName2: document.getElementById('setSrcName2').value, srcAmt2: document.getElementById('setSrcAmt2').value,
-                srcName3: document.getElementById('setSrcName3').value, srcAmt3: document.getElementById('setSrcAmt3').value,
-                srcName4: document.getElementById('setSrcName4').value, srcAmt4: document.getElementById('setSrcAmt4').value
-            };
-            localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presets));
-            loadPresetDropdown();
-            alert(`Document settings for "${monthYear}" saved!`);
-        }
-
-        function loadPreset() {
-            const key = document.getElementById('presetSelect').value;
-            if(!key) return alert("Pilih settings dari dropdown dulu!");
+            const report = allReports[arrayIndex];
             
-            const data = getPresets()[key];
-            document.getElementById('setMonthYear').value = key;
-            document.getElementById('setSignatureDate').value = data.sigDate || '';
-            document.getElementById('setSig1').value = data.sig1 || '';
-            document.getElementById('setSig2').value = data.sig2 || '';
+            document.getElementById('evalModal').style.display = 'flex';
+            document.getElementById('modalStatus').style.display = 'none';
             
-            document.getElementById('sigBase64_1').value = data.sigBase64_1 || '';
-            const prev1 = document.getElementById('previewSig1');
-            if(data.sigBase64_1) { prev1.src = data.sigBase64_1; prev1.style.display = 'block'; } else { prev1.style.display = 'none'; }
+            let missedTasks = (Number(report.total) || 0) - (Number(report.completed) || 0);
+            if (missedTasks < 0) missedTasks = 0;
 
-            document.getElementById('sigBase64_2').value = data.sigBase64_2 || '';
-            const prev2 = document.getElementById('previewSig2');
-            if(data.sigBase64_2) { prev2.src = data.sigBase64_2; prev2.style.display = 'block'; } else { prev2.style.display = 'none'; }
+            let missedDetailModal = (report.missedList && String(report.missedList).trim() !== '' && report.missedList !== '-') 
+                ? `<br><span style="color:var(--danger);">Missed Details:</span> <i style="color:#c62828;">${report.missedList}</i>` 
+                : '';
 
-            document.getElementById('setSrcName1').value = data.srcName1 || ''; document.getElementById('setSrcAmt1').value = data.srcAmt1 || 0;
-            document.getElementById('setSrcName2').value = data.srcName2 || ''; document.getElementById('setSrcAmt2').value = data.srcAmt2 || 0;
-            document.getElementById('setSrcName3').value = data.srcName3 || ''; document.getElementById('setSrcAmt3').value = data.srcAmt3 || 0;
-            document.getElementById('setSrcName4').value = data.srcName4 || ''; document.getElementById('setSrcAmt4').value = data.srcAmt4 || 0;
-            checkAllocation();
-        }
-
-        function deletePreset() {
-            const key = document.getElementById('presetSelect').value;
-            if(!key) return alert("Pilih settings dari dropdown dulu!");
-            if(!confirm(`Hapus settings "${key}"?`)) return;
-
-            const presets = getPresets();
-            delete presets[key];
-            localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(presets));
-            loadPresetDropdown();
-            alert("Settings deleted!");
-        }
-
-        function checkAllocation() {
-            const s1 = Number(document.getElementById('setSrcAmt1').value) || 0;
-            const s2 = Number(document.getElementById('setSrcAmt2').value) || 0;
-            const s3 = Number(document.getElementById('setSrcAmt3').value) || 0;
-            const s4 = Number(document.getElementById('setSrcAmt4').value) || 0;
-            
-            const totalAllocated = s1 + s2 + s3 + s4;
-            const remaining = currentGrandTotal - totalAllocated;
-            const statusEl = document.getElementById('allocStatus');
-
-            if (remaining === 0) {
-                statusEl.innerText = "Perfect Allocation (Remaining: ʛ0)";
-                statusEl.style.backgroundColor = "var(--success)"; statusEl.style.color = "white";
-            } else if (remaining > 0) {
-                statusEl.innerText = "Under-funded! Remaining to allocate: ʛ" + formatMoney(remaining);
-                statusEl.style.backgroundColor = "var(--danger)"; statusEl.style.color = "white";
-            } else {
-                statusEl.innerText = "Over-allocated by: ʛ" + formatMoney(Math.abs(remaining));
-                statusEl.style.backgroundColor = "var(--warning)"; statusEl.style.color = "white";
-            }
-        }
-
-        function handleImageUpload(event, sigNumber) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64String = e.target.result;
-                    document.getElementById('sigBase64_' + sigNumber).value = base64String;
-                    const preview = document.getElementById('previewSig' + sigNumber);
-                    preview.src = base64String; preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function openPrintSettings() {
-            const now = new Date();
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            let d = now.getDate();
-            let suffix = "th";
-            if (d % 10 == 1 && d != 11) suffix = "st";
-            if (d % 10 == 2 && d != 12) suffix = "nd";
-            if (d % 10 == 3 && d != 13) suffix = "rd";
-
-            if(!document.getElementById('setMonthYear').value) { document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`; }
-            if(!document.getElementById('setSignatureDate').value) { document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`; }
-            
-            // ==========================================
-            // KALKULASI OTOMATIS ALOKASI DANA
-            // ==========================================
-            let sumBaseSalary = 0;
-            let sumTotalBonus = 0;
-            
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach((tr) => {
-                const baseInput = tr.querySelector('input[id^="base_"]');
-                if(!baseInput) return;
-                
-                const idx = baseInput.id.split('_')[1];
-                const base = Number(document.getElementById(`base_${idx}`).value) || 0;
-                const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
-                const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
-                const perfBonus = Number(document.getElementById(`perfBonus_${idx}`).value) || 0;
-                
-                sumBaseSalary += (base * dur);
-                sumTotalBonus += (posBonus + perfBonus);
-            });
-
-            // Membagi rata sesuai aturan kas
-            document.getElementById('setSrcAmt1').value = Math.round(sumBaseSalary / 2); // School
-            document.getElementById('setSrcAmt2').value = Math.round(sumBaseSalary / 2); // Ravenclaw
-            document.getElementById('setSrcAmt3').value = Math.round(sumTotalBonus / 2); // 8067
-            document.getElementById('setSrcAmt4').value = Math.round(sumTotalBonus / 2); // 8223
-
-            loadPresetDropdown();
-            checkAllocation(); 
-            document.getElementById('printSettingsModal').style.display = 'flex';
-        }
-
-        function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
-
-        // --- SISTEM HTML2PDF ANTI TERPOTONG ---
-        function confirmAndPrint() {
-            const tbody = document.getElementById('masterTableBody');
-            tbody.innerHTML = '';
-            
-            let currentData = [];
-            const rows = document.querySelectorAll('#tableBody tr');
-
-            rows.forEach((tr) => {
-                const baseInput = tr.querySelector('input[id^="base_"]');
-                if(!baseInput) return;
-                
-                const idx = baseInput.id.split('_')[1];
-
-                const vaultVal = document.getElementById(`vault_${idx}`).value || "-";
-                const pos = document.getElementById(`pos_${idx}`).value;
-                const base = Number(document.getElementById(`base_${idx}`).value) || 0;
-                const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
-                const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
-                const perfBonus = Number(document.getElementById(`perfBonus_${idx}`).value) || 0;
-                
-                const calcSalary = base * dur;
-                const grandTotal = calcSalary + posBonus + perfBonus;
-                
-                let vaultNum = parseInt(vaultVal.replace(/\D/g, '')) || 999999;
-
-                currentData.push({
-                    vault: vaultVal, vaultNum: vaultNum, pos: pos, base: base, dur: dur,
-                    calcSalary: calcSalary, posBonus: posBonus, perfBonus: perfBonus, grandTotal: grandTotal
-                });
-            });
-
-            currentData.sort((a, b) => a.vaultNum - b.vaultNum);
-
-            let sumTotalSalary = 0;
-            let sumTotalBonus = 0;
-
-            currentData.forEach(row => {
-                sumTotalSalary += row.calcSalary; 
-                sumTotalBonus += (row.posBonus + row.perfBonus); 
-                
-                let formattedDuration = row.dur.toString().replace('.', ',');
-
-                const tr = document.createElement('tr');
-                tr.className = "pdf-row"; 
-                tr.innerHTML = `
-                    <td>${row.vault}</td>
-                    <td>${row.pos}</td>
-                    <td>${formatMoney(row.base)}</td>
-                    <td>${formattedDuration}</td>
-                    <td>${formatMoney(row.calcSalary)}</td>
-                    <td>${row.posBonus > 0 ? formatMoney(row.posBonus) : '-'}</td>
-                    <td>${row.perfBonus > 0 ? '+' + formatMoney(row.perfBonus) : '-'}</td>
-                    <td style="font-weight:bold;">+${formatMoney(row.grandTotal)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            const printMonthYear = document.getElementById('setMonthYear').value;
-            document.getElementById('masterMonthYear').innerText = printMonthYear;
-            document.getElementById('outSigDate').innerText = document.getElementById('setSignatureDate').value;
-            document.getElementById('masterTotalSalary').innerText = "ʛ" + formatMoney(sumTotalSalary);
-            document.getElementById('masterTotalBonus').innerText = "ʛ" + formatMoney(sumTotalBonus);
-            document.getElementById('outSig1').innerText = document.getElementById('setSig1').value;
-            document.getElementById('outSig2').innerText = document.getElementById('setSig2').value;
-
-            const imgData1 = document.getElementById('sigBase64_1').value;
-            const imgData2 = document.getElementById('sigBase64_2').value;
-            document.getElementById('sigImgContainer1').innerHTML = imgData1 ? `<img src="${imgData1}" class="sig-img">` : '';
-            document.getElementById('sigImgContainer2').innerHTML = imgData2 ? `<img src="${imgData2}" class="sig-img">` : '';
-
-            document.getElementById('outSrcName1').innerText = document.getElementById('setSrcName1').value;
-            document.getElementById('outSrcAmt1').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt1').value);
-            document.getElementById('outSrcName2').innerText = document.getElementById('setSrcName2').value;
-            document.getElementById('outSrcAmt2').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt2').value);
-            document.getElementById('outSrcName3').innerText = document.getElementById('setSrcName3').value;
-            document.getElementById('outSrcAmt3').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt3').value);
-            document.getElementById('outSrcName4').innerText = document.getElementById('setSrcName4').value;
-            document.getElementById('outSrcAmt4').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt4').value);
-
-            closePrintSettings();
-
-            // MULAI PROSES PDF
-            const btn = document.querySelector('.btn-submit');
-            btn.innerText = "⏳ Generating PDF...";
-            btn.disabled = true;
-
-            const pdfArea = document.getElementById('masterPayslipArea');
-            const pdfContainer = document.createElement('div');
-            
-            // KUNCI PERBAIKAN: position absolute melepaskan diri dari kutukan flexbox body
-            pdfContainer.innerHTML = `
-                <div style="position: absolute; left: 0; top: 0; width: 750px; font-family: 'Times New Roman', Times, serif; padding: 40px; box-sizing: border-box; background: white; color: black;">
-                    ${pdfArea.innerHTML}
-                </div>
+            document.getElementById('evalSummary').innerHTML = `
+                Member: <span>${report.username} (${report.position})</span><br>
+                KPI: <span>${report.kpi} (${report.completed}/${report.total} Tasks)</span> | <span style="color:var(--danger);">Missed: ${missedTasks}</span> | Backup: <span>${report.backup}</span>
+                ${missedDetailModal}
+                <br>Notes: <i>"${report.notes || 'No notes'}"</i>
             `;
+            document.getElementById('evalRowIdx').value = report.rowIdx;
 
-            var filename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
+            // ==========================================
+            // PERBAIKAN LOGIKA APPROVAL: SUPER KETAT
+            // ==========================================
+            document.getElementById('app1NameLabel').innerText = hh1Name;
+            document.getElementById('app2NameLabel').innerText = hh2Name;
 
-            var opt = {
-                margin:       0.3,
-                filename:     filename,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
+            const sel1 = document.getElementById('app1Select');
+            const sel2 = document.getElementById('app2Select');
+
+            sel1.value = report.approval1 === 'Approved' ? 'Approved' : 'Pending';
+            sel2.value = report.approval2 === 'Approved' ? 'Approved' : 'Pending';
+
+            // Bersihkan username dari karakter @, spasi, atau simbol agar pencocokan 100% akurat
+            const cleanUser = loggedInUser.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const cleanHH1 = hh1Name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const cleanHH2 = hh2Name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            if (cleanUser === cleanHH1) {
+                // Mutlak hanya HH1 yang bisa ubah App 1
+                sel1.disabled = false;
+                sel2.disabled = true;
+            } else if (cleanUser === cleanHH2) {
+                // Mutlak hanya HH2 yang bisa ubah App 2
+                sel1.disabled = true;
+                sel2.disabled = false;
+            } else {
+                // Akun lain (termasuk Admin secara umum) tidak bisa mengubah persetujuan ini
+                sel1.disabled = true;
+                sel2.disabled = true;
+            }
+
+            const gradeSelect = document.getElementById('evalGrade');
+            gradeSelect.value = "Pending"; 
+            for (let i = 0; i < gradeSelect.options.length; i++) {
+                if (gradeSelect.options[i].value === report.grade) {
+                    gradeSelect.selectedIndex = i; break;
+                }
+            }
+            document.getElementById('evalFeedback').value = report.feedback || '';
+        }
+
+        function closeEvalModal() { document.getElementById('evalModal').style.display = 'none'; }
+
+        function submitEvaluation() {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnCancel = document.getElementById('btnCancel');
+            const status = document.getElementById('modalStatus');
+
+            const evalData = {
+                rowIdx: document.getElementById('evalRowIdx').value,
+                grade: document.getElementById('evalGrade').value,
+                feedback: document.getElementById('evalFeedback').value,
+                approval1: document.getElementById('app1Select').value, 
+                approval2: document.getElementById('app2Select').value  
             };
 
-            html2pdf().set(opt).from(pdfContainer).save().then(function() {
-                btn.innerText = "Generate PDF";
-                btn.disabled = false;
-            }).catch(function(err) {
-                alert("Failed to generate PDF. Please try again.");
-                btn.innerText = "Generate PDF";
-                btn.disabled = false;
+            btnSubmit.innerText = 'Saving...';
+            btnSubmit.disabled = true;
+            btnCancel.disabled = true;
+            status.style.display = 'none';
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "submitEvaluation", data: evalData })
+            })
+            .then(r => r.json())
+            .then(response => {
+                if(response.status === 'success' || response.success) {
+                    status.style.color = '#2e7d32';
+                    status.innerText = response.message || "Saved successfully!";
+                    status.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        closeEvalModal();
+                        fetchReports(); 
+                    }, 1000);
+                } else {
+                    status.style.color = '#c62828';
+                    status.innerText = response.message || "Failed to save evaluation.";
+                    status.style.display = 'block';
+                }
+                btnSubmit.innerText = 'Save & Approve'; btnSubmit.disabled = false; btnCancel.disabled = false;
+            })
+            .catch(error => {
+                status.style.color = '#c62828';
+                status.innerText = 'System Error: Failed to connect to server.';
+                status.style.display = 'block';
+                btnSubmit.innerText = 'Save & Approve'; btnSubmit.disabled = false; btnCancel.disabled = false;
             });
         }
     </script>
