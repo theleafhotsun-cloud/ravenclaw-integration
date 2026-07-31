@@ -188,14 +188,15 @@
 
             <div id="timeGroup" style="display: none; background-color: #f5f5f5; padding: 10px; border-radius: 6px; border: 1px dashed #ccc; margin-bottom: 15px;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label id="labelDeadline">Schedule / Dateline</label>
+                    <label id="labelDeadline">Schedule / Dateline <span style="color:gray; font-weight:normal;">(Optional)</span></label>
                     <input type="datetime-local" id="modalDeadline">
+                    <span style="font-size: 10px; color: gray; display: block; margin-top: 4px;">Leave blank if to be announced (TBA)</span>
                 </div>
             </div>
 
             <div id="detailGroup" style="display: none; background-color: #f5f5f5; padding: 10px; border-radius: 6px; border: 1px dashed #ccc; margin-bottom: 15px;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label>Task Detail / Link (Tweet / GDocs)</label>
+                    <label>Task Detail / Link <span style="color:gray; font-weight:normal;">(Optional)</span></label>
                     <textarea id="modalDetail" placeholder="Paste task link, Google Docs link, or task instructions here..."></textarea>
                 </div>
             </div>
@@ -239,7 +240,7 @@
             "Beginner Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
             "Advanced Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
             "Advanced Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
-            "Quidditch": ["Quidditch"] // Hanya ada Quidditch sekarang
+            "Quidditch": ["Quidditch"]
         };
 
         // ==========================================
@@ -377,7 +378,6 @@
                     
                     var roomCat = subjectRoomMap[subj] || "Headhouse";
                     
-                    // 🔄 INTERSEPSI UNTUK KELAS ROTATING
                     if (subj === "Ancient Runes") {
                         roomCat = (window.rotRunes && window.rotRunes !== "-") ? window.rotRunes : "🔄 Unassigned";
                     } else if (subj === "Care Of Magical Creatures") {
@@ -386,7 +386,6 @@
 
                     var pic = dynamicPicMap[roomCat] || roomCat; 
                     
-                    // 🎯 INTERSEPSI KHUSUS QUIDDITCH MUTLAK PVP
                     if (subj.includes("Quidditch")) {
                         pic = "PVP";
                     }
@@ -527,11 +526,11 @@
             if (status.includes('Assignment')) {
                 timeGroup.style.display = 'block';
                 detailGroup.style.display = 'block'; 
-                labelDl.innerText = "Assignment Dateline";
+                labelDl.innerHTML = `Assignment Dateline <span style="color:gray; font-weight:normal;">(Optional)</span>`;
             } else if (status.includes('Replacement Class')) {
                 timeGroup.style.display = 'block';
                 detailGroup.style.display = 'none'; 
-                labelDl.innerText = "Replacement Schedule (Date & Time)";
+                labelDl.innerHTML = `Replacement Schedule <span style="color:gray; font-weight:normal;">(Optional)</span>`;
                 document.getElementById('modalDetail').value = ""; 
             } else {
                 timeGroup.style.display = 'none';
@@ -551,22 +550,13 @@
             var category = document.getElementById('modalCategory').value;
             var subject = document.getElementById('modalSubjectName').innerText;
             var status = document.getElementById('modalStatus').value;
+            
+            // Logika Tanpa Paksaan (Otomatis mengisi "-" jika dibiarkan kosong)
             var deadline = document.getElementById('modalDeadline').value;
             var detail = document.getElementById('modalDetail').value;
-
-            // ==========================================
-            // LOGIKA VALIDASI DILONGGARKAN
-            // (Hanya memberi alert pilihan, tapi tetap bisa dilanjutkan)
-            // ==========================================
-            if (status.includes('Assignment') && (!deadline || !detail.trim())) {
-                if (!confirm("⚠️ Peringatan!\nAnda belum mengisi Dateline atau Detail Tugas.\nApakah Anda yakin ingin tetap menyimpannya dengan data kosong?")) {
-                    return; // Batal simpan jika diklik "Cancel"
-                }
-            } else if (status.includes('Replacement Class') && !deadline) {
-                if (!confirm("⚠️ Peringatan!\nAnda belum menentukan Jadwal Pengganti (Date & Time).\nApakah Anda yakin ingin tetap menyimpannya tanpa jadwal?")) {
-                    return; // Batal simpan jika diklik "Cancel"
-                }
-            }
+            
+            if (!deadline) deadline = "-";
+            if (!detail || detail.trim() === "") detail = "-";
 
             var btn = document.getElementById('btnSave');
             btn.innerText = "Saving..."; btn.disabled = true;
