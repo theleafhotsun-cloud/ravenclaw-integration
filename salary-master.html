@@ -98,7 +98,7 @@
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
 
         /* --- PDF PRINT STYLING UNTUK HTML2PDF --- */
-        #masterPayslipArea { display: none; background-color: white; color: black; font-family: 'Times New Roman', Times, serif; }
+        #masterPayslipArea { display: none; }
         .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
         .header-text p { font-size: 13px; margin: 0; color: #333; }
@@ -262,19 +262,19 @@
             
             <div class="form-row">
                 <div class="form-group"><input type="text" id="setSrcName1" value="School's petty cash"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt1" value="4000" oninput="checkAllocation()"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt1" value="0" oninput="checkAllocation()"></div>
             </div>
             <div class="form-row">
                 <div class="form-group"><input type="text" id="setSrcName2" value="Ravenclaw's petty cash"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt2" value="4000" oninput="checkAllocation()"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt2" value="0" oninput="checkAllocation()"></div>
             </div>
             <div class="form-row">
                 <div class="form-group"><input type="text" id="setSrcName3" value="8067"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt3" value="11750" oninput="checkAllocation()"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt3" value="0" oninput="checkAllocation()"></div>
             </div>
             <div class="form-row">
                 <div class="form-group"><input type="text" id="setSrcName4" value="8223"></div>
-                <div class="form-group"><input type="number" id="setSrcAmt4" value="11750" oninput="checkAllocation()"></div>
+                <div class="form-group"><input type="number" id="setSrcAmt4" value="0" oninput="checkAllocation()"></div>
             </div>
 
             <div class="modal-actions">
@@ -284,7 +284,7 @@
         </div>
     </div>
 
-    <!-- MASTER SALARY REPORT TEMPLATE DENGAN HTML2PDF -->
+    <!-- MASTER SALARY REPORT TEMPLATE HIDDEN DATA -->
     <div id="masterPayslipArea">
         <div class="print-header-container">
             <div class="header-text">
@@ -490,7 +490,10 @@
             recalculate();
         }
 
-        function formatMoney(num) { return Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }); }
+        // PERBAIKAN PEMBULATAN ANGKA
+        function formatMoney(num) { 
+            return Math.round(Number(num)).toLocaleString('id-ID'); 
+        }
 
         function initSalaryData(data) {
             salaryDataStore = data;
@@ -732,6 +735,33 @@
             if(!document.getElementById('setMonthYear').value) { document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`; }
             if(!document.getElementById('setSignatureDate').value) { document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`; }
             
+            // ==========================================
+            // KALKULASI OTOMATIS ALOKASI DANA
+            // ==========================================
+            let sumBaseSalary = 0;
+            let sumTotalBonus = 0;
+            
+            const rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach((tr) => {
+                const baseInput = tr.querySelector('input[id^="base_"]');
+                if(!baseInput) return;
+                
+                const idx = baseInput.id.split('_')[1];
+                const base = Number(document.getElementById(`base_${idx}`).value) || 0;
+                const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
+                const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
+                const perfBonus = Number(document.getElementById(`perfBonus_${idx}`).value) || 0;
+                
+                sumBaseSalary += (base * dur);
+                sumTotalBonus += (posBonus + perfBonus);
+            });
+
+            // Membagi rata sesuai aturan kas
+            document.getElementById('setSrcAmt1').value = Math.round(sumBaseSalary / 2); // School
+            document.getElementById('setSrcAmt2').value = Math.round(sumBaseSalary / 2); // Ravenclaw
+            document.getElementById('setSrcAmt3').value = Math.round(sumTotalBonus / 2); // 8067
+            document.getElementById('setSrcAmt4').value = Math.round(sumTotalBonus / 2); // 8223
+
             loadPresetDropdown();
             checkAllocation(); 
             document.getElementById('printSettingsModal').style.display = 'flex';
@@ -739,7 +769,7 @@
 
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
 
-        // --- SISTEM HTML2PDF ---
+        // --- SISTEM HTML2PDF ANTI TERPOTONG ---
         function confirmAndPrint() {
             const tbody = document.getElementById('masterTableBody');
             tbody.innerHTML = '';
@@ -783,7 +813,7 @@
                 let formattedDuration = row.dur.toString().replace('.', ',');
 
                 const tr = document.createElement('tr');
-                tr.className = "pdf-row"; // Class untuk page-break avoid
+                tr.className = "pdf-row"; 
                 tr.innerHTML = `
                     <td>${row.vault}</td>
                     <td>${row.pos}</td>
@@ -829,9 +859,9 @@
             const pdfArea = document.getElementById('masterPayslipArea');
             const pdfContainer = document.createElement('div');
             
-            // Pengaturan kanvas untuk mencegah terpotong
+            // KUNCI PERBAIKAN: position absolute melepaskan diri dari kutukan flexbox body
             pdfContainer.innerHTML = `
-                <div style="width: 800px; padding: 40px; margin: 0 auto; box-sizing: border-box; background: white;">
+                <div style="position: absolute; left: 0; top: 0; width: 750px; font-family: 'Times New Roman', Times, serif; padding: 40px; box-sizing: border-box; background: white; color: black;">
                     ${pdfArea.innerHTML}
                 </div>
             `;
@@ -841,8 +871,8 @@
             var opt = {
                 margin:       0.3,
                 filename:     filename,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
                 pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
             };
