@@ -96,6 +96,9 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
+
+        /* AREA CETAK PDF DISembunyikan di DOM Utama */
+        #masterPayslipArea { display: none; }
     </style>
 </head>
 <body>
@@ -264,6 +267,9 @@
         </div>
     </div>
 
+    <!-- AREA CETAK PDF DISembunyikan di DOM Utama -->
+    <div id="masterPayslipArea"></div>
+
     <!-- SCRIPT AREA -->
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
@@ -403,7 +409,7 @@
             recalculate();
         }
 
-        // PERBAIKAN PEMBULATAN ANGKA
+        // PEMBULATAN ANGKA (HILANGKAN PECAHAN DESIMAL ANEH)
         function formatMoney(num) { 
             return Math.round(Number(num)).toLocaleString('id-ID'); 
         }
@@ -648,9 +654,7 @@
             if(!document.getElementById('setMonthYear').value) { document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`; }
             if(!document.getElementById('setSignatureDate').value) { document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`; }
             
-            // ==========================================
             // KALKULASI OTOMATIS ALOKASI DANA
-            // ==========================================
             let sumBaseSalary = 0;
             let sumTotalBonus = 0;
             
@@ -669,7 +673,6 @@
                 sumTotalBonus += (posBonus + perfBonus);
             });
 
-            // Membagi rata sesuai aturan kas
             document.getElementById('setSrcAmt1').value = Math.round(sumBaseSalary / 2); // School
             document.getElementById('setSrcAmt2').value = Math.round(sumBaseSalary / 2); // Ravenclaw
             document.getElementById('setSrcAmt3').value = Math.round(sumTotalBonus / 2); // 8067
@@ -682,7 +685,7 @@
 
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
 
-        // --- SISTEM HTML2PDF ANTI TERPOTONG (100% INLINE CSS) ---
+        // --- SISTEM HTML2PDF ANTI TERPOTONG (100% INLINE CSS & FIXED WIDTH) ---
         function confirmAndPrint() {
             let currentData = [];
             let sumTotalSalary = 0;
@@ -735,19 +738,19 @@
             const srcName4 = document.getElementById('setSrcName4').value;
             const srcAmt4 = document.getElementById('setSrcAmt4').value;
 
-            // Menyusun Tabel dengan Inline Styles Mutlak
+            // MENYUSUN TABEL - KUNCI: BACKGROUND #112250, TEKS #ffffff (PUTIH)
             let tableHtml = `
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; font-family: 'Times New Roman', Times, serif;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     <thead>
-                        <tr class="pdf-row" style="background-color: #f2f2f2;">
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Vault Code</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Position</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Base Salary</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Duration</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Salary</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Position<br>Bonus</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Performance<br>Bonus</th>
-                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Total</th>
+                        <tr class="pdf-row">
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Vault</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Position</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Base</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Dur</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Salary</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Pos Bonus</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Perf Bonus</th>
+                            <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -759,15 +762,15 @@
                 let formattedDuration = row.dur.toString().replace('.', ',');
 
                 tableHtml += `
-                    <tr class="pdf-row" style="background-color: transparent;">
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.vault}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.pos}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">ʛ${formatMoney(row.base)}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${formattedDuration}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">ʛ${formatMoney(row.calcSalary)}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.posBonus > 0 ? 'ʛ'+formatMoney(row.posBonus) : '-'}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.perfBonus > 0 ? '+ʛ' + formatMoney(row.perfBonus) : '-'}</td>
-                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight:bold; color: #000;">+ʛ${formatMoney(row.grandTotal)}</td>
+                    <tr class="pdf-row" style="background-color: #ffffff;">
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000; font-family: monospace; font-size:12px;">${row.vault}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000;">${row.pos}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000;">ʛ${formatMoney(row.base)}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000;">${formattedDuration}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000;">ʛ${formatMoney(row.calcSalary)}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000;">${row.posBonus > 0 ? 'ʛ'+formatMoney(row.posBonus) : '-'}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; color: #000;">${row.perfBonus > 0 ? '+ʛ' + formatMoney(row.perfBonus) : '-'}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px 4px; text-align: center; font-weight:bold; color: #000;">+ʛ${formatMoney(row.grandTotal)}</td>
                     </tr>
                 `;
             });
@@ -781,12 +784,12 @@
 
             const pdfContainer = document.createElement('div');
             
-            // Kanvas HTML terukir kuat tanpa menyentuh CSS eksternal
+            // KUNCI PERBAIKAN: Lebar tetap 750px untuk ukuran sempurna di kertas A4
             pdfContainer.innerHTML = `
-                <div style="width: 800px; padding: 40px; margin: 0 auto; box-sizing: border-box; background: white; color: black; font-family: 'Times New Roman', Times, serif;">
+                <div style="width: 750px; margin: 0 auto; padding: 20px; box-sizing: border-box; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div>
-                            <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px;">RAVENCLAW CARETAKERS SALARY</h1>
+                            <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #112250; letter-spacing: 1px;">RAVENCLAW CARETAKERS SALARY</h1>
                             <p style="font-size: 13px; margin: 0; color: #333;">${printMonthYear}</p>
                         </div>
                         <div>
@@ -794,40 +797,46 @@
                         </div>
                     </div>
 
-                    <div style="border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px;"></div>
+                    <div style="border-top: 2px solid #112250; border-bottom: 1px solid #112250; height: 2px; margin-bottom: 20px;"></div>
 
                     ${tableHtml}
 
                     <div class="pdf-row" style="display: flex; flex-direction: column;">
                         <div style="width: 50%; font-size: 12px; margin-bottom: 30px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #000;">
-                                <span>TOTAL SALARY</span> <span>ʛ${formatMoney(sumTotalSalary)}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 13px; color: #000;">
-                                <span>TOTAL BONUS</span> <span>ʛ${formatMoney(sumTotalBonus)}</span>
-                            </div>
-                            <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px; color: #000;">
-                                SOURCE
+                            
+                            <table style="width: 100%; border-collapse: collapse; border: 2px solid #3C507D; background-color: #f5f6fa;">
+                                <tr>
+                                    <td style="padding: 8px 10px; font-weight: bold; color: #112250;">TOTAL SALARY</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: bold; color: #112250;">ʛ${formatMoney(sumTotalSalary)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; font-weight: bold; color: #1b5e20;">TOTAL BONUS</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: bold; color: #1b5e20;">ʛ${formatMoney(sumTotalBonus)}</td>
+                                </tr>
+                            </table>
+                            
+                            <div style="font-weight: bold; border-bottom: 2px solid #112250; padding-bottom: 3px; margin-bottom: 8px; margin-top: 15px; color: #112250;">
+                                FUNDING SOURCE
                             </div>
                             <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #000;">
-                                <tr><td style="padding: 2px 0;">${srcName1}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt1)}</td></tr>
-                                <tr><td style="padding: 2px 0;">${srcName2}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt2)}</td></tr>
-                                <tr><td style="padding: 2px 0;">${srcName3}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt3)}</td></tr>
-                                <tr><td style="padding: 2px 0;">${srcName4}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt4)}</td></tr>
+                                <tr><td style="padding: 3px 0;">${srcName1}</td><td style="text-align: right; padding: 3px 0; color: #c62828; font-weight:bold;">-ʛ${formatMoney(srcAmt1)}</td></tr>
+                                <tr><td style="padding: 3px 0;">${srcName2}</td><td style="text-align: right; padding: 3px 0; color: #c62828; font-weight:bold;">-ʛ${formatMoney(srcAmt2)}</td></tr>
+                                <tr><td style="padding: 3px 0;">${srcName3}</td><td style="text-align: right; padding: 3px 0; color: #c62828; font-weight:bold;">-ʛ${formatMoney(srcAmt3)}</td></tr>
+                                <tr><td style="padding: 3px 0;">${srcName4}</td><td style="text-align: right; padding: 3px 0; color: #c62828; font-weight:bold;">-ʛ${formatMoney(srcAmt4)}</td></tr>
                             </table>
-                            <div style="font-size:10px; font-style:italic; margin-top:6px; color: #000;">exclude tax</div>
+                            <div style="font-size:10px; font-style:italic; margin-top:6px; color: #555;">* exclude tax</div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-top: 10px; color: #000;">
-                            <div style="text-align: center; width: 40%;">
-                                <p style="margin: 0; font-size: 12px; visibility: hidden;">Spacer</p>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 10px; color: #000;">
+                            <div style="text-align: center; width: 35%;">
+                                <p style="margin: 0; font-size: 11px; visibility: hidden;">Spacer</p>
                                 ${sigImg1}
-                                <div style="border-bottom: 1px solid #000; width: 100%; margin-top: 10px; font-weight: bold; padding-bottom: 3px; color: #000;">${sigName1}</div>
+                                <div style="border-bottom: 1px solid #000; width: 100%; margin-top: 10px; font-weight: bold; padding-bottom: 3px; color: #112250;">${sigName1}</div>
                             </div>
-                            <div style="text-align: center; width: 40%;">
-                                <p style="margin: 0 0 5px 0; font-size: 12px; color: #000;">Ravenclaw Tower, ${sigDate}</p>
+                            <div style="text-align: center; width: 35%;">
+                                <p style="margin: 0 0 5px 0; font-size: 11px; color: #000;">Ravenclaw Tower, ${sigDate}</p>
                                 ${sigImg2}
-                                <div style="border-bottom: 1px solid #000; width: 100%; margin-top: 10px; font-weight: bold; padding-bottom: 3px; color: #000;">${sigName2}</div>
+                                <div style="border-bottom: 1px solid #000; width: 100%; margin-top: 10px; font-weight: bold; padding-bottom: 3px; color: #112250;">${sigName2}</div>
                             </div>
                         </div>
                     </div>
@@ -837,10 +846,10 @@
             var filename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
 
             var opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3], 
+                margin:       0.3, 
                 filename:     filename,
                 image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
                 pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
             };
