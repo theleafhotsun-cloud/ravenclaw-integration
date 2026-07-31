@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salary Master - Ravenclaw</title>
+    <!-- Library PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --sapphire: #3C507D;
@@ -18,7 +20,6 @@
 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar Styles */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -28,7 +29,6 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
 
-        /* Main Content */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; overflow-y: auto;}
         .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
@@ -48,7 +48,6 @@
         .btn-master-pdf { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-transform: uppercase; transition: background 0.3s; }
         .btn-master-pdf:hover { background-color: var(--sapphire); }
 
-        /* Preset & Folder Management Styles */
         .preset-box { background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--shellstone); }
         .preset-box strong { font-size: 13px; color: var(--royal-blue); display: block; margin-bottom: 10px; text-transform: uppercase; }
         .preset-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -58,7 +57,6 @@
         .btn-preset.save { background-color: var(--success); }
         .btn-preset.delete { background-color: var(--danger); }
 
-        /* Editable Table Styles */
         .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
@@ -82,7 +80,6 @@
         .btn-add-row { margin-top: 15px; background: var(--sapphire); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.3s;}
         .btn-add-row:hover { background: var(--royal-blue); }
 
-        /* Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 650px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 20px;}
@@ -100,37 +97,25 @@
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
 
-        /* --- PDF PRINT STYLING --- */
-        #masterPayslipArea { display: none; } 
-
-        @media print {
-            @page { size: A4 portrait; margin: 15mm 15mm 15mm 15mm; }
-            body * { visibility: hidden; }
-            body.print-master #masterPayslipArea, body.print-master #masterPayslipArea * { visibility: visible; }
-            body.print-master #masterPayslipArea { 
-                display: block; position: absolute; left: 0; top: 0; width: 100%; 
-                background-color: white; color: black; font-family: 'Times New Roman', Times, serif; page-break-inside: avoid;
-            }
-            .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-            .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
-            .header-text p { font-size: 13px; margin: 0; color: #333; }
-            .header-logo img { width: 75px; height: auto; }
-            .pdf-divider { border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px; }
-            .master-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; page-break-inside: auto; }
-            .master-table tr { page-break-inside: avoid; page-break-after: auto; }
-            .master-table th, .master-table td { border: 1px solid #000; padding: 6px 8px; text-align: center; color: black;}
-            .master-table th { font-weight: bold; font-size: 11px; background-color: #f2f2f2 !important; color: black !important; text-transform: uppercase;}
-            .summary-container { page-break-inside: avoid; }
-            .table-no-border { width: 100%; border-collapse: collapse; }
-            .table-no-border td { border: none !important; padding: 2px 0; text-align: left; font-size: 12px;}
-            .master-summary { width: 50%; font-size: 12px; margin-bottom: 30px; }
-            .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-            .master-signatures { display: flex; justify-content: space-between; font-size: 13px; margin-top: 30px; page-break-inside: avoid; }
-            .sig-block { text-align: center; width: 40%; position: relative;}
-            .sig-block-right { text-align: center; width: 40%; position: relative;}
-            .sig-img { height: 50px; width: auto; display: block; margin: 5px auto; }
-            .sig-line { border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-top: 10px; font-weight: bold; text-align: center; padding-bottom: 3px;}
-        }
+        /* --- PDF PRINT STYLING UNTUK HTML2PDF --- */
+        #masterPayslipArea { display: none; background-color: white; color: black; font-family: 'Times New Roman', Times, serif; }
+        .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
+        .header-text p { font-size: 13px; margin: 0; color: #333; }
+        .header-logo img { width: 75px; height: auto; }
+        .pdf-divider { border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px; }
+        .master-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+        .master-table th, .master-table td { border: 1px solid #000; padding: 6px 8px; text-align: center; color: black;}
+        .master-table th { font-weight: bold; font-size: 11px; background-color: #f2f2f2 !important; color: black !important; text-transform: uppercase;}
+        .table-no-border { width: 100%; border-collapse: collapse; }
+        .table-no-border td { border: none !important; padding: 2px 0; text-align: left; font-size: 12px;}
+        .master-summary { width: 50%; font-size: 12px; margin-bottom: 30px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .master-signatures { display: flex; justify-content: space-between; font-size: 13px; margin-top: 30px; }
+        .sig-block { text-align: center; width: 40%; position: relative;}
+        .sig-block-right { text-align: center; width: 40%; position: relative;}
+        .sig-img { height: 50px; width: auto; display: block; margin: 5px auto; }
+        .sig-line { border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-top: 10px; font-weight: bold; text-align: center; padding-bottom: 3px;}
     </style>
 </head>
 <body>
@@ -168,7 +153,6 @@
             <div class="header-actions">
                 <h1 class="page-title">Salary Master</h1>
                 
-                <!-- Filter dari Database Asli -->
                 <div class="filter-container">
                     <label for="monthFilter">📡 Live Database Filter:</label>
                     <select id="monthFilter" onchange="filterByMonth()">
@@ -179,7 +163,6 @@
                 <button class="btn-master-pdf" onclick="openPrintSettings()">🖨️ Master Salary PDF Settings</button>
             </div>
 
-            <!-- FOLDER DATA SNAPSHOT -->
             <div class="preset-box" style="border-color: var(--sapphire); background-color: #f8f9fa;">
                 <strong>🗂️ Data Table Folders (Saved Snapshots)</strong>
                 <div class="preset-controls">
@@ -224,7 +207,6 @@
                 </table>
             </div>
 
-            <!-- Tombol Tambah Baris Manual -->
             <button class="btn-add-row" id="btnAddRow" style="display:none;" onclick="addManualRow()">➕ Add Manual Entry</button>
 
         </div>
@@ -302,7 +284,7 @@
         </div>
     </div>
 
-    <!-- MASTER SALARY REPORT TEMPLATE (OFFICIAL PDF FORMAT) -->
+    <!-- MASTER SALARY REPORT TEMPLATE DENGAN HTML2PDF -->
     <div id="masterPayslipArea">
         <div class="print-header-container">
             <div class="header-text">
@@ -318,7 +300,7 @@
         
         <table class="master-table">
             <thead>
-                <tr>
+                <tr class="pdf-row">
                     <th>Vault Code</th>
                     <th>Position</th>
                     <th>Base Salary</th>
@@ -334,7 +316,7 @@
             </tbody>
         </table>
         
-        <div class="summary-container">
+        <div class="summary-container pdf-row">
             <div class="master-summary">
                 <div class="summary-row" style="font-weight:bold; margin-bottom: 8px; font-size: 13px;">
                     <span>TOTAL SALARY</span> <span id="masterTotalSalary"></span>
@@ -380,7 +362,7 @@
 
         let salaryDataStore = [];
         let currentGrandTotal = 0; 
-        let manualRowCounter = 9000; // Mulai angka index tinggi agar tidak bentrok dengan data database
+        let manualRowCounter = 9000; 
         
         const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
         const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
@@ -404,7 +386,6 @@
             .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
         };
 
-        // --- SISTEM FOLDER / TABLE SNAPSHOTS ---
         function getSnapshots() { return JSON.parse(localStorage.getItem(SNAPSHOT_STORAGE_KEY) || '{}'); }
 
         function loadSnapshotDropdown() {
@@ -475,7 +456,6 @@
             filterByMonth();
         }
 
-        // --- SISTEM BARIS MANUAL & HAPUS BARIS ---
         function deleteRow(btnElement) {
             if (confirm("Hapus baris ini dari tampilan?")) {
                 btnElement.closest('tr').remove();
@@ -510,7 +490,6 @@
             recalculate();
         }
 
-        // --- SISTEM RENDER TABEL UTAMA ---
         function formatMoney(num) { return Number(num).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 }); }
 
         function initSalaryData(data) {
@@ -535,7 +514,7 @@
             document.getElementById('loadingMsg').style.display = 'none';
             document.getElementById('salaryTable').style.display = 'table';
             document.getElementById('tableFooter').style.display = 'table-footer-group';
-            document.getElementById('btnAddRow').style.display = 'inline-block'; // Tampilkan tombol tambah
+            document.getElementById('btnAddRow').style.display = 'inline-block'; 
             
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
@@ -605,7 +584,6 @@
             checkAllocation(); 
         }
 
-        // --- SISTEM SIDEBAR & NAVIGASI ---
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
@@ -639,7 +617,6 @@
         function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
         function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
 
-        // --- SISTEM PDF DAN PRESET DOKUMEN ---
         function getPresets() { return JSON.parse(localStorage.getItem(PRESET_STORAGE_KEY) || '{}'); }
 
         function loadPresetDropdown() {
@@ -762,6 +739,7 @@
 
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
 
+        // --- SISTEM HTML2PDF ---
         function confirmAndPrint() {
             const tbody = document.getElementById('masterTableBody');
             tbody.innerHTML = '';
@@ -805,6 +783,7 @@
                 let formattedDuration = row.dur.toString().replace('.', ',');
 
                 const tr = document.createElement('tr');
+                tr.className = "pdf-row"; // Class untuk page-break avoid
                 tr.innerHTML = `
                     <td>${row.vault}</td>
                     <td>${row.pos}</td>
@@ -818,7 +797,8 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('masterMonthYear').innerText = document.getElementById('setMonthYear').value;
+            const printMonthYear = document.getElementById('setMonthYear').value;
+            document.getElementById('masterMonthYear').innerText = printMonthYear;
             document.getElementById('outSigDate').innerText = document.getElementById('setSignatureDate').value;
             document.getElementById('masterTotalSalary').innerText = "ʛ" + formatMoney(sumTotalSalary);
             document.getElementById('masterTotalBonus').innerText = "ʛ" + formatMoney(sumTotalBonus);
@@ -840,9 +820,41 @@
             document.getElementById('outSrcAmt4').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt4').value);
 
             closePrintSettings();
-            document.body.className = 'print-master';
-            window.print();
-            setTimeout(() => { document.body.className = ''; }, 1000);
+
+            // MULAI PROSES PDF
+            const btn = document.querySelector('.btn-submit');
+            btn.innerText = "⏳ Generating PDF...";
+            btn.disabled = true;
+
+            const pdfArea = document.getElementById('masterPayslipArea');
+            const pdfContainer = document.createElement('div');
+            
+            // Pengaturan kanvas untuk mencegah terpotong
+            pdfContainer.innerHTML = `
+                <div style="width: 800px; padding: 40px; margin: 0 auto; box-sizing: border-box; background: white;">
+                    ${pdfArea.innerHTML}
+                </div>
+            `;
+
+            var filename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
+
+            var opt = {
+                margin:       0.3,
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
+            };
+
+            html2pdf().set(opt).from(pdfContainer).save().then(function() {
+                btn.innerText = "Generate PDF";
+                btn.disabled = false;
+            }).catch(function(err) {
+                alert("Failed to generate PDF. Please try again.");
+                btn.innerText = "Generate PDF";
+                btn.disabled = false;
+            });
         }
     </script>
 </body>
