@@ -96,9 +96,6 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
-
-        /* AREA CETAK PDF DISembunyikan di DOM Utama */
-        #masterPayslipArea { display: none; }
     </style>
 </head>
 <body>
@@ -267,9 +264,6 @@
         </div>
     </div>
 
-    <!-- AREA CETAK PDF DISembunyikan di DOM Utama -->
-    <div id="masterPayslipArea"></div>
-
     <!-- SCRIPT AREA -->
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
@@ -409,7 +403,6 @@
             recalculate();
         }
 
-        // PEMBULATAN ANGKA (HILANGKAN PECAHAN DESIMAL ANEH)
         function formatMoney(num) { 
             return Math.round(Number(num)).toLocaleString('id-ID'); 
         }
@@ -654,7 +647,6 @@
             if(!document.getElementById('setMonthYear').value) { document.getElementById('setMonthYear').value = `${monthNames[now.getMonth()]} ${now.getFullYear()}`; }
             if(!document.getElementById('setSignatureDate').value) { document.getElementById('setSignatureDate').value = `${monthNames[now.getMonth()]} ${d}${suffix} ${now.getFullYear()}`; }
             
-            // KALKULASI OTOMATIS ALOKASI DANA
             let sumBaseSalary = 0;
             let sumTotalBonus = 0;
             
@@ -673,10 +665,10 @@
                 sumTotalBonus += (posBonus + perfBonus);
             });
 
-            document.getElementById('setSrcAmt1').value = Math.round(sumBaseSalary / 2); // School
-            document.getElementById('setSrcAmt2').value = Math.round(sumBaseSalary / 2); // Ravenclaw
-            document.getElementById('setSrcAmt3').value = Math.round(sumTotalBonus / 2); // 8067
-            document.getElementById('setSrcAmt4').value = Math.round(sumTotalBonus / 2); // 8223
+            document.getElementById('setSrcAmt1').value = Math.round(sumBaseSalary / 2);
+            document.getElementById('setSrcAmt2').value = Math.round(sumBaseSalary / 2);
+            document.getElementById('setSrcAmt3').value = Math.round(sumTotalBonus / 2);
+            document.getElementById('setSrcAmt4').value = Math.round(sumTotalBonus / 2);
 
             loadPresetDropdown();
             checkAllocation(); 
@@ -685,7 +677,7 @@
 
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
 
-        // --- SISTEM HTML2PDF ANTI TERPOTONG (100% INLINE CSS & FIXED WIDTH) ---
+        // --- SISTEM HTML2PDF ANTI TERPOTONG TERBARU ---
         function confirmAndPrint() {
             let currentData = [];
             let sumTotalSalary = 0;
@@ -738,7 +730,7 @@
             const srcName4 = document.getElementById('setSrcName4').value;
             const srcAmt4 = document.getElementById('setSrcAmt4').value;
 
-            // MENYUSUN TABEL - KUNCI: BACKGROUND #112250, TEKS #ffffff (PUTIH)
+            // Header tabel disingkat agar tidak melebar
             let tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     <thead>
@@ -782,11 +774,18 @@
             btn.innerText = "⏳ Generating PDF...";
             btn.disabled = true;
 
+            // KUNCI: Membuat container khusus yang ditempel ke body agar layout tidak rusak
             const pdfContainer = document.createElement('div');
+            pdfContainer.id = "temp-pdf-export";
+            pdfContainer.style.position = "absolute";
+            pdfContainer.style.top = "0";
+            pdfContainer.style.left = "0";
+            pdfContainer.style.width = "800px";
+            pdfContainer.style.backgroundColor = "white";
+            pdfContainer.style.zIndex = "-9999"; 
             
-            // KUNCI PERBAIKAN: Lebar tetap 750px untuk ukuran sempurna di kertas A4
             pdfContainer.innerHTML = `
-                <div style="width: 750px; margin: 0 auto; padding: 20px; box-sizing: border-box; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <div style="padding: 40px; box-sizing: border-box; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div>
                             <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #112250; letter-spacing: 1px;">RAVENCLAW CARETAKERS SALARY</h1>
@@ -843,6 +842,9 @@
                 </div>
             `;
 
+            // Tempelkan ke body dengan paksa
+            document.body.appendChild(pdfContainer);
+
             var filename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
 
             var opt = {
@@ -855,9 +857,11 @@
             };
 
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
+                document.body.removeChild(pdfContainer); // Hapus elemen temp setelah selesai
                 btn.innerText = "Generate PDF";
                 btn.disabled = false;
             }).catch(function(err) {
+                if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
                 alert("Failed to generate PDF. Please try again.");
                 btn.innerText = "Generate PDF";
                 btn.disabled = false;
