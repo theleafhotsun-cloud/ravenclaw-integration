@@ -554,13 +554,18 @@
             var deadline = document.getElementById('modalDeadline').value;
             var detail = document.getElementById('modalDetail').value;
 
-            if (status.includes('Assignment') && (!deadline || !detail)) {
-                alert("Please fill in the Dateline AND Task Detail/Link for Replacement Assignment!");
-                return;
-            }
-            if (status.includes('Replacement Class') && !deadline) {
-                alert("Please fill in the Date & Time for Replacement Class!");
-                return;
+            // ==========================================
+            // LOGIKA VALIDASI DILONGGARKAN
+            // (Hanya memberi alert pilihan, tapi tetap bisa dilanjutkan)
+            // ==========================================
+            if (status.includes('Assignment') && (!deadline || !detail.trim())) {
+                if (!confirm("⚠️ Peringatan!\nAnda belum mengisi Dateline atau Detail Tugas.\nApakah Anda yakin ingin tetap menyimpannya dengan data kosong?")) {
+                    return; // Batal simpan jika diklik "Cancel"
+                }
+            } else if (status.includes('Replacement Class') && !deadline) {
+                if (!confirm("⚠️ Peringatan!\nAnda belum menentukan Jadwal Pengganti (Date & Time).\nApakah Anda yakin ingin tetap menyimpannya tanpa jadwal?")) {
+                    return; // Batal simpan jika diklik "Cancel"
+                }
             }
 
             var btn = document.getElementById('btnSave');
