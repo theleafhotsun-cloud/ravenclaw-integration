@@ -307,6 +307,14 @@
         const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
         const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
 
+        // ==========================================
+        // FUNGSI PROPER CASE (HURUF KAPITAL DI AWAL)
+        // ==========================================
+        function toProperCase(str) {
+            if (!str) return '';
+            return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+        }
+
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
@@ -480,13 +488,14 @@
                 tr.setAttribute('data-kpi', row.kpi || 0);
                 tr.setAttribute('data-target', row.targetTugas || 0);
 
+                // Menerapkan toProperCase pada data posisi
                 tr.innerHTML = `
                     <td>
                         <input type="text" class="edit-input name-col" id="name_${index}" value="${row.username || ''}" placeholder="Name">
                         <span class="kpi-info">KPI: ${row.kpi || 0}% | Target: ${row.targetTugas || 0}</span>
                     </td>
                     <td><input type="text" class="edit-input code" id="vault_${index}" value="${row.vault || ''}" placeholder="Code"></td>
-                    <td><input type="text" class="edit-input text" id="pos_${index}" value="${row.position || ''}"></td>
+                    <td><input type="text" class="edit-input text" id="pos_${index}" value="${toProperCase(row.position || '')}"></td>
                     <td><input type="number" class="edit-input" id="base_${index}" value="${row.baseSalary || 0}" oninput="recalculate()"></td>
                     <td><input type="number" step="0.1" class="edit-input" style="width:40px;" id="dur_${index}" value="${row.durasi || 0}" oninput="recalculate()"></td>
                     <td><input type="number" class="edit-input" id="posBonus_${index}" value="${row.positionBonus || 0}" oninput="recalculate()"></td>
@@ -723,7 +732,10 @@
                 const idx = baseInput.id.split('_')[1];
 
                 const vaultVal = document.getElementById(`vault_${idx}`).value || "-";
-                const pos = document.getElementById(`pos_${idx}`).value;
+                
+                // Menerapkan toProperCase pada data sebelum dimasukkan ke Array Cetak
+                const pos = toProperCase(document.getElementById(`pos_${idx}`).value);
+                
                 const base = Number(document.getElementById(`base_${idx}`).value) || 0;
                 const dur = Number(document.getElementById(`dur_${idx}`).value) || 0;
                 const posBonus = Number(document.getElementById(`posBonus_${idx}`).value) || 0;
@@ -765,7 +777,7 @@
 
             // Menyusun Tabel
             let tableHtml = `
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     <thead>
                         <tr class="pdf-row">
                             <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Vault</th>
@@ -804,7 +816,7 @@
             // Suntikkan ke Kertas Preview
             const pdfPaper = document.getElementById('pdfPaper');
             pdfPaper.innerHTML = `
-                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: black; font-size: 12px;">
+                <div id="pdfContentToPrint" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: black; font-size: 12px; padding: 0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div>
                             <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #112250; letter-spacing: 1px;">RAVENCLAW CARETAKERS SALARY</h1>
@@ -861,21 +873,20 @@
                 </div>
             `;
 
-            // Tampilkan Modal Preview
             closePrintSettings();
             document.getElementById('pdfPreviewModal').style.display = 'flex';
         }
 
-        // FUNGSI EKSEKUSI DOWNLOAD PDF YANG ASLI (Dari Kertas Preview)
+        // FUNGSI EKSEKUSI DOWNLOAD PDF
         function downloadActualPDF() {
             const btn = document.getElementById('btnDownloadActual');
             btn.innerText = "⏳ Downloading...";
             btn.disabled = true;
 
-            const element = document.getElementById('pdfPaper');
+            const element = document.getElementById('pdfContentToPrint');
 
             var opt = {
-                margin:       0.3, 
+                margin:       [0.6, 0.6, 0.6, 0.6], 
                 filename:     cachedFilename,
                 image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { scale: 2, useCORS: true },
