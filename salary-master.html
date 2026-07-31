@@ -80,12 +80,13 @@
         .btn-add-row { margin-top: 15px; background: var(--sapphire); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: background 0.3s;}
         .btn-add-row:hover { background: var(--royal-blue); }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 650px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; box-sizing: border-box;}
+        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 650px; max-width: 100%; max-height: 90vh; overflow-y: auto; overflow-x: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); box-sizing: border-box;}
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 20px;}
         
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;}
+        .form-row .form-group { flex: 1; margin-bottom: 0; min-width: 200px;}
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
         .form-group input { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); }
@@ -96,6 +97,12 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
+
+        /* Preview Modal Specifics */
+        #pdfPreviewModal .modal-box { background-color: #3b4249; padding: 20px; width: 900px;}
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; }
+        .preview-header h3 { color: white; border: none; margin: 0; padding: 0;}
+        .paper-container { background: white; padding: 40px; box-sizing: border-box; width: 794px; min-height: 1000px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.4); color: black;}
     </style>
 </head>
 <body>
@@ -259,8 +266,27 @@
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePrintSettings()">Cancel</button>
-                <button class="btn-submit" onclick="confirmAndPrint()">Generate PDF</button>
+                <button class="btn-submit" onclick="generatePreview()">Generate PDF</button>
             </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENT PREVIEW MODAL -->
+    <div class="modal-overlay" id="pdfPreviewModal">
+        <div class="modal-box">
+            <div class="preview-header">
+                <h3>Document Preview</h3>
+                <div>
+                    <button class="btn-cancel" onclick="closePreviewModal()" style="margin-right: 10px; color: white;">Edit Settings</button>
+                    <button class="btn-submit" onclick="downloadActualPDF()" id="btnDownloadActual" style="background-color: var(--success);">📥 Download PDF</button>
+                </div>
+            </div>
+            
+            <!-- KERTAS PREVIEW YANG AKAN DIPOTRET HTML2PDF -->
+            <div id="pdfPaper" class="paper-container">
+                <!-- Konten disuntikkan dari Javascript -->
+            </div>
+
         </div>
     </div>
 
@@ -276,6 +302,7 @@
         let salaryDataStore = [];
         let currentGrandTotal = 0; 
         let manualRowCounter = 9000; 
+        let cachedFilename = "Salary_Master.pdf";
         
         const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
         const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
@@ -403,6 +430,7 @@
             recalculate();
         }
 
+        // PEMBULATAN ANGKA
         function formatMoney(num) { 
             return Math.round(Number(num)).toLocaleString('id-ID'); 
         }
@@ -676,9 +704,12 @@
         }
 
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
+        function closePreviewModal() { document.getElementById('pdfPreviewModal').style.display = 'none'; document.getElementById('printSettingsModal').style.display = 'flex';}
 
-        // --- SISTEM HTML2PDF ANTI TERPOTONG TERBARU ---
-        function confirmAndPrint() {
+        // =======================================================
+        // SISTEM PREVIEW DOKUMEN DAN DOWNLOAD PDF
+        // =======================================================
+        function generatePreview() {
             let currentData = [];
             let sumTotalSalary = 0;
             let sumTotalBonus = 0;
@@ -712,6 +743,8 @@
             currentData.sort((a, b) => a.vaultNum - b.vaultNum);
 
             const printMonthYear = document.getElementById('setMonthYear').value;
+            cachedFilename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
+
             const sigDate = document.getElementById('setSignatureDate').value;
             const sigName1 = document.getElementById('setSig1').value;
             const sigName2 = document.getElementById('setSig2').value;
@@ -730,9 +763,9 @@
             const srcName4 = document.getElementById('setSrcName4').value;
             const srcAmt4 = document.getElementById('setSrcAmt4').value;
 
-            // Header tabel disingkat agar tidak melebar
+            // Menyusun Tabel
             let tableHtml = `
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px;">
                     <thead>
                         <tr class="pdf-row">
                             <th style="background-color: #112250; color: #ffffff; border: 1px solid #ccc; padding: 8px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">Vault</th>
@@ -768,24 +801,10 @@
             });
             tableHtml += `</tbody></table>`;
 
-            closePrintSettings();
-
-            const btn = document.querySelector('.btn-submit');
-            btn.innerText = "⏳ Generating PDF...";
-            btn.disabled = true;
-
-            // KUNCI: Membuat container khusus yang ditempel ke body agar layout tidak rusak
-            const pdfContainer = document.createElement('div');
-            pdfContainer.id = "temp-pdf-export";
-            pdfContainer.style.position = "absolute";
-            pdfContainer.style.top = "0";
-            pdfContainer.style.left = "0";
-            pdfContainer.style.width = "800px";
-            pdfContainer.style.backgroundColor = "white";
-            pdfContainer.style.zIndex = "-9999"; 
-            
-            pdfContainer.innerHTML = `
-                <div style="padding: 40px; box-sizing: border-box; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+            // Suntikkan ke Kertas Preview
+            const pdfPaper = document.getElementById('pdfPaper');
+            pdfPaper.innerHTML = `
+                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: black; font-size: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div>
                             <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #112250; letter-spacing: 1px;">RAVENCLAW CARETAKERS SALARY</h1>
@@ -842,28 +861,34 @@
                 </div>
             `;
 
-            // Tempelkan ke body dengan paksa
-            document.body.appendChild(pdfContainer);
+            // Tampilkan Modal Preview
+            closePrintSettings();
+            document.getElementById('pdfPreviewModal').style.display = 'flex';
+        }
 
-            var filename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
+        // FUNGSI EKSEKUSI DOWNLOAD PDF YANG ASLI (Dari Kertas Preview)
+        function downloadActualPDF() {
+            const btn = document.getElementById('btnDownloadActual');
+            btn.innerText = "⏳ Downloading...";
+            btn.disabled = true;
+
+            const element = document.getElementById('pdfPaper');
 
             var opt = {
                 margin:       0.3, 
-                filename:     filename,
+                filename:     cachedFilename,
                 image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
                 pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
             };
 
-            html2pdf().set(opt).from(pdfContainer).save().then(function() {
-                document.body.removeChild(pdfContainer); // Hapus elemen temp setelah selesai
-                btn.innerText = "Generate PDF";
+            html2pdf().set(opt).from(element).save().then(function() {
+                btn.innerText = "📥 Download PDF";
                 btn.disabled = false;
             }).catch(function(err) {
-                if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
                 alert("Failed to generate PDF. Please try again.");
-                btn.innerText = "Generate PDF";
+                btn.innerText = "📥 Download PDF";
                 btn.disabled = false;
             });
         }
