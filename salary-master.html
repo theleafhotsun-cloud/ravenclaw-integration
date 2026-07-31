@@ -96,26 +96,6 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
-
-        /* --- PDF PRINT STYLING UNTUK HTML2PDF --- */
-        #masterPayslipArea { display: none; }
-        .print-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .header-text h1 { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px; }
-        .header-text p { font-size: 13px; margin: 0; color: #333; }
-        .header-logo img { width: 75px; height: auto; }
-        .pdf-divider { border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px; }
-        .master-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-        .master-table th, .master-table td { border: 1px solid #000; padding: 6px 8px; text-align: center; color: black;}
-        .master-table th { font-weight: bold; font-size: 11px; background-color: #f2f2f2 !important; color: black !important; text-transform: uppercase;}
-        .table-no-border { width: 100%; border-collapse: collapse; }
-        .table-no-border td { border: none !important; padding: 2px 0; text-align: left; font-size: 12px;}
-        .master-summary { width: 50%; font-size: 12px; margin-bottom: 30px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .master-signatures { display: flex; justify-content: space-between; font-size: 13px; margin-top: 30px; }
-        .sig-block { text-align: center; width: 40%; position: relative;}
-        .sig-block-right { text-align: center; width: 40%; position: relative;}
-        .sig-img { height: 50px; width: auto; display: block; margin: 5px auto; }
-        .sig-line { border-bottom: 1px solid #000; width: 100%; display: inline-block; margin-top: 10px; font-weight: bold; text-align: center; padding-bottom: 3px;}
     </style>
 </head>
 <body>
@@ -280,73 +260,6 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePrintSettings()">Cancel</button>
                 <button class="btn-submit" onclick="confirmAndPrint()">Generate PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MASTER SALARY REPORT TEMPLATE HIDDEN DATA -->
-    <div id="masterPayslipArea">
-        <div class="print-header-container">
-            <div class="header-text">
-                <h1>RAVENCLAW CARETAKERS SALARY</h1>
-                <p id="masterMonthYear"></p>
-            </div>
-            <div class="header-logo">
-                <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
-            </div>
-        </div>
-        
-        <div class="pdf-divider"></div>
-        
-        <table class="master-table">
-            <thead>
-                <tr class="pdf-row">
-                    <th>Vault Code</th>
-                    <th>Position</th>
-                    <th>Base Salary</th>
-                    <th>Duration</th>
-                    <th>Salary</th>
-                    <th>Position<br>Bonus</th>
-                    <th>Performance<br>Bonus</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="masterTableBody">
-                <!-- Data injected by JS upon printing -->
-            </tbody>
-        </table>
-        
-        <div class="summary-container pdf-row">
-            <div class="master-summary">
-                <div class="summary-row" style="font-weight:bold; margin-bottom: 8px; font-size: 13px;">
-                    <span>TOTAL SALARY</span> <span id="masterTotalSalary"></span>
-                </div>
-                <div class="summary-row" style="font-weight:bold; margin-bottom: 20px; font-size: 13px;">
-                    <span>TOTAL BONUS</span> <span id="masterTotalBonus"></span>
-                </div>
-                <div class="summary-row" style="font-weight:bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px;">
-                    <span>SOURCE</span><span></span>
-                </div>
-                <table class="table-no-border">
-                    <tr><td id="outSrcName1"></td><td style="text-align: right;" id="outSrcAmt1"></td></tr>
-                    <tr><td id="outSrcName2"></td><td style="text-align: right;" id="outSrcAmt2"></td></tr>
-                    <tr><td id="outSrcName3"></td><td style="text-align: right;" id="outSrcAmt3"></td></tr>
-                    <tr><td id="outSrcName4"></td><td style="text-align: right;" id="outSrcAmt4"></td></tr>
-                </table>
-                <div style="font-size:10px; font-style:italic; margin-top:6px;">exclude tax</div>
-            </div>
-            
-            <div class="master-signatures">
-                <div class="sig-block">
-                    <p style="margin: 0; font-size: 12px; visibility: hidden;">Spacer</p>
-                    <div id="sigImgContainer1"></div>
-                    <div class="sig-line" id="outSig1"></div>
-                </div>
-                <div class="sig-block-right">
-                    <p style="margin: 0 0 5px 0; font-size: 12px;">Ravenclaw Tower, <span id="outSigDate"></span></p>
-                    <div id="sigImgContainer2"></div>
-                    <div class="sig-line" id="outSig2"></div>
-                </div>
             </div>
         </div>
     </div>
@@ -769,12 +682,12 @@
 
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
 
-        // --- SISTEM HTML2PDF ANTI TERPOTONG ---
+        // --- SISTEM HTML2PDF ANTI TERPOTONG (100% INLINE CSS) ---
         function confirmAndPrint() {
-            const tbody = document.getElementById('masterTableBody');
-            tbody.innerHTML = '';
-            
             let currentData = [];
+            let sumTotalSalary = 0;
+            let sumTotalBonus = 0;
+            
             const rows = document.querySelectorAll('#tableBody tr');
 
             rows.forEach((tr) => {
@@ -803,76 +716,131 @@
 
             currentData.sort((a, b) => a.vaultNum - b.vaultNum);
 
-            let sumTotalSalary = 0;
-            let sumTotalBonus = 0;
-
-            currentData.forEach(row => {
-                sumTotalSalary += row.calcSalary; 
-                sumTotalBonus += (row.posBonus + row.perfBonus); 
-                
-                let formattedDuration = row.dur.toString().replace('.', ',');
-
-                const tr = document.createElement('tr');
-                tr.className = "pdf-row"; 
-                tr.innerHTML = `
-                    <td>${row.vault}</td>
-                    <td>${row.pos}</td>
-                    <td>${formatMoney(row.base)}</td>
-                    <td>${formattedDuration}</td>
-                    <td>${formatMoney(row.calcSalary)}</td>
-                    <td>${row.posBonus > 0 ? formatMoney(row.posBonus) : '-'}</td>
-                    <td>${row.perfBonus > 0 ? '+' + formatMoney(row.perfBonus) : '-'}</td>
-                    <td style="font-weight:bold;">+${formatMoney(row.grandTotal)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
             const printMonthYear = document.getElementById('setMonthYear').value;
-            document.getElementById('masterMonthYear').innerText = printMonthYear;
-            document.getElementById('outSigDate').innerText = document.getElementById('setSignatureDate').value;
-            document.getElementById('masterTotalSalary').innerText = "ʛ" + formatMoney(sumTotalSalary);
-            document.getElementById('masterTotalBonus').innerText = "ʛ" + formatMoney(sumTotalBonus);
-            document.getElementById('outSig1').innerText = document.getElementById('setSig1').value;
-            document.getElementById('outSig2').innerText = document.getElementById('setSig2').value;
+            const sigDate = document.getElementById('setSignatureDate').value;
+            const sigName1 = document.getElementById('setSig1').value;
+            const sigName2 = document.getElementById('setSig2').value;
 
             const imgData1 = document.getElementById('sigBase64_1').value;
             const imgData2 = document.getElementById('sigBase64_2').value;
-            document.getElementById('sigImgContainer1').innerHTML = imgData1 ? `<img src="${imgData1}" class="sig-img">` : '';
-            document.getElementById('sigImgContainer2').innerHTML = imgData2 ? `<img src="${imgData2}" class="sig-img">` : '';
+            const sigImg1 = imgData1 ? `<img src="${imgData1}" style="height: 50px; width: auto; display: block; margin: 5px auto;">` : `<div style="height: 50px;"></div>`;
+            const sigImg2 = imgData2 ? `<img src="${imgData2}" style="height: 50px; width: auto; display: block; margin: 5px auto;">` : `<div style="height: 50px;"></div>`;
 
-            document.getElementById('outSrcName1').innerText = document.getElementById('setSrcName1').value;
-            document.getElementById('outSrcAmt1').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt1').value);
-            document.getElementById('outSrcName2').innerText = document.getElementById('setSrcName2').value;
-            document.getElementById('outSrcAmt2').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt2').value);
-            document.getElementById('outSrcName3').innerText = document.getElementById('setSrcName3').value;
-            document.getElementById('outSrcAmt3').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt3').value);
-            document.getElementById('outSrcName4').innerText = document.getElementById('setSrcName4').value;
-            document.getElementById('outSrcAmt4').innerText = "-ʛ" + formatMoney(document.getElementById('setSrcAmt4').value);
+            const srcName1 = document.getElementById('setSrcName1').value;
+            const srcAmt1 = document.getElementById('setSrcAmt1').value;
+            const srcName2 = document.getElementById('setSrcName2').value;
+            const srcAmt2 = document.getElementById('setSrcAmt2').value;
+            const srcName3 = document.getElementById('setSrcName3').value;
+            const srcAmt3 = document.getElementById('setSrcAmt3').value;
+            const srcName4 = document.getElementById('setSrcName4').value;
+            const srcAmt4 = document.getElementById('setSrcAmt4').value;
+
+            // Menyusun Tabel dengan Inline Styles Mutlak
+            let tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; font-family: 'Times New Roman', Times, serif;">
+                    <thead>
+                        <tr class="pdf-row" style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Vault Code</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Position</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Base Salary</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Duration</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Salary</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Position<br>Bonus</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Performance<br>Bonus</th>
+                            <th style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; color: #000;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            currentData.forEach(row => {
+                sumTotalSalary += row.calcSalary;
+                sumTotalBonus += (row.posBonus + row.perfBonus);
+                let formattedDuration = row.dur.toString().replace('.', ',');
+
+                tableHtml += `
+                    <tr class="pdf-row" style="background-color: transparent;">
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.vault}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.pos}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">ʛ${formatMoney(row.base)}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${formattedDuration}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">ʛ${formatMoney(row.calcSalary)}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.posBonus > 0 ? 'ʛ'+formatMoney(row.posBonus) : '-'}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; color: #000;">${row.perfBonus > 0 ? '+ʛ' + formatMoney(row.perfBonus) : '-'}</td>
+                        <td style="border: 1px solid #000; padding: 6px 8px; text-align: center; font-weight:bold; color: #000;">+ʛ${formatMoney(row.grandTotal)}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
 
             closePrintSettings();
 
-            // MULAI PROSES PDF
             const btn = document.querySelector('.btn-submit');
             btn.innerText = "⏳ Generating PDF...";
             btn.disabled = true;
 
-            const pdfArea = document.getElementById('masterPayslipArea');
             const pdfContainer = document.createElement('div');
             
-            // KUNCI PERBAIKAN: position absolute melepaskan diri dari kutukan flexbox body
+            // Kanvas HTML terukir kuat tanpa menyentuh CSS eksternal
             pdfContainer.innerHTML = `
-                <div style="position: absolute; left: 0; top: 0; width: 750px; font-family: 'Times New Roman', Times, serif; padding: 40px; box-sizing: border-box; background: white; color: black;">
-                    ${pdfArea.innerHTML}
+                <div style="width: 800px; padding: 40px; margin: 0 auto; box-sizing: border-box; background: white; color: black; font-family: 'Times New Roman', Times, serif;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div>
+                            <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 5px 0; color: #000; letter-spacing: 1px;">RAVENCLAW CARETAKERS SALARY</h1>
+                            <p style="font-size: 13px; margin: 0; color: #333;">${printMonthYear}</p>
+                        </div>
+                        <div>
+                            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 75px; height: auto;">
+                        </div>
+                    </div>
+
+                    <div style="border-top: 2px solid #000; border-bottom: 1px solid #000; height: 2px; margin-bottom: 20px;"></div>
+
+                    ${tableHtml}
+
+                    <div class="pdf-row" style="display: flex; flex-direction: column;">
+                        <div style="width: 50%; font-size: 12px; margin-bottom: 30px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #000;">
+                                <span>TOTAL SALARY</span> <span>ʛ${formatMoney(sumTotalSalary)}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 13px; color: #000;">
+                                <span>TOTAL BONUS</span> <span>ʛ${formatMoney(sumTotalBonus)}</span>
+                            </div>
+                            <div style="font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px; color: #000;">
+                                SOURCE
+                            </div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #000;">
+                                <tr><td style="padding: 2px 0;">${srcName1}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt1)}</td></tr>
+                                <tr><td style="padding: 2px 0;">${srcName2}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt2)}</td></tr>
+                                <tr><td style="padding: 2px 0;">${srcName3}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt3)}</td></tr>
+                                <tr><td style="padding: 2px 0;">${srcName4}</td><td style="text-align: right; padding: 2px 0;">-ʛ${formatMoney(srcAmt4)}</td></tr>
+                            </table>
+                            <div style="font-size:10px; font-style:italic; margin-top:6px; color: #000;">exclude tax</div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-top: 10px; color: #000;">
+                            <div style="text-align: center; width: 40%;">
+                                <p style="margin: 0; font-size: 12px; visibility: hidden;">Spacer</p>
+                                ${sigImg1}
+                                <div style="border-bottom: 1px solid #000; width: 100%; margin-top: 10px; font-weight: bold; padding-bottom: 3px; color: #000;">${sigName1}</div>
+                            </div>
+                            <div style="text-align: center; width: 40%;">
+                                <p style="margin: 0 0 5px 0; font-size: 12px; color: #000;">Ravenclaw Tower, ${sigDate}</p>
+                                ${sigImg2}
+                                <div style="border-bottom: 1px solid #000; width: 100%; margin-top: 10px; font-weight: bold; padding-bottom: 3px; color: #000;">${sigName2}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
 
             var filename = "Salary_Master_" + printMonthYear.replace(/\s+/g, '_') + ".pdf";
 
             var opt = {
-                margin:       0.3,
+                margin:       [0.3, 0.3, 0.3, 0.3], 
                 filename:     filename,
                 image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
                 pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
             };
