@@ -553,7 +553,7 @@
             document.getElementById('evalRowIdx').value = report.rowIdx;
 
             // ==========================================
-            // PERBAIKAN LOGIKA APPROVAL (KEBAL SPASI & @)
+            // PERBAIKAN LOGIKA APPROVAL: SUPER KETAT
             // ==========================================
             document.getElementById('app1NameLabel').innerText = hh1Name;
             document.getElementById('app2NameLabel').innerText = hh2Name;
@@ -564,28 +564,21 @@
             sel1.value = report.approval1 === 'Approved' ? 'Approved' : 'Pending';
             sel2.value = report.approval2 === 'Approved' ? 'Approved' : 'Pending';
 
-            // Bersihkan username dari karakter @ dan spasi
-            const cleanUser = loggedInUser.toLowerCase().replace('@', '').trim();
-            const cleanHH1 = hh1Name.toLowerCase().replace('@', '').trim();
-            const cleanHH2 = hh2Name.toLowerCase().replace('@', '').trim();
-
-            const isHHRole = windowUserRole.includes('headhouse') || windowUserRole.includes('admin');
+            // Bersihkan username dari karakter @, spasi, atau simbol agar pencocokan 100% akurat
+            const cleanUser = loggedInUser.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const cleanHH1 = hh1Name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const cleanHH2 = hh2Name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
             if (cleanUser === cleanHH1) {
-                // Jika login sebagai HH1 -> Hanya Approval 1 yang bisa diubah
+                // Mutlak hanya HH1 yang bisa ubah App 1
                 sel1.disabled = false;
                 sel2.disabled = true;
             } else if (cleanUser === cleanHH2) {
-                // Jika login sebagai HH2 -> Hanya Approval 2 yang bisa diubah
+                // Mutlak hanya HH2 yang bisa ubah App 2
                 sel1.disabled = true;
                 sel2.disabled = false;
-            } else if (isHHRole) {
-                // Jika akun ber-role Headhouse/Admin tetapi namanya tidak cocok persis:
-                // Izinkan mengubah Approval 1 & 2 agar tidak terkunci total!
-                sel1.disabled = false;
-                sel2.disabled = false;
             } else {
-                // Pengguna biasa / staf biasa -> Kunci keduanya
+                // Akun lain (termasuk Admin secara umum) tidak bisa mengubah persetujuan ini
                 sel1.disabled = true;
                 sel2.disabled = true;
             }
