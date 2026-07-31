@@ -211,7 +211,7 @@
     <!-- SCRIPT AREA -->
     <script>
         // ==========================================
-        // 1. GLOBAL VARIABLES & VERCEL INIT
+        // 1. GLOBAL VARIABLES & INIT
         // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec";
 
@@ -224,7 +224,7 @@
         var currentData = {};
         var dynamicPicMap = {};
 
-        // 🔄 PETA PIC KELAS
+        // MAP: Subject to Room Category
         const subjectRoomMap = {
             "Astronomy": "Eternclaw", "Charm": "Eternclaw", 
             "Potion": "Ravelynx", "Divination": "Ravelynx",
@@ -234,7 +234,7 @@
             "Quidditch": "PVP"
         };
 
-        // 🔄 PETA KATEGORI TAB
+        // MAP: Categories to Subjects
         const classCategories = {
             "Beginner Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
             "Beginner Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
@@ -253,7 +253,7 @@
         });
 
         // ==========================================
-        // 3. LOGIKA SIDEBAR & NAVIGASI
+        // 3. SIDEBAR & NAVIGATION LOGIC
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
@@ -294,7 +294,7 @@
         }
 
         // ==========================================
-        // 4. LOGIKA CLASS DATABASE & RENDER (FETCH API)
+        // 4. CLASS DATABASE LOGIC & RENDER (API FETCH)
         // ==========================================
         function populateMonths() {
             fetch(API_URL, {
@@ -395,11 +395,12 @@
                     else if (stat.includes('Assignment')) statBadge = '<span class="stat-badge stat-assignment">📝 Replacement Assignment</span>';
                     else if (stat.includes('Replacement Class')) statBadge = '<span class="stat-badge stat-replacement">🔄 Replacement Class</span>';
 
-                    var dlHtml = '-';
-                    var detailHtml = '-';
+                    var dlHtml = '<span style="color:gray; font-size:11px; font-style:italic;">-</span>';
+                    var detailHtml = '<span style="color:gray; font-size:11px; font-style:italic;">-</span>';
                     
+                    // Format Dateline / Schedule 
                     if (stat.includes('Assignment') || stat.includes('Replacement Class')) {
-                        if (dl !== '-') {
+                        if (dl !== '-' && dl !== '') {
                             var dObj = new Date(dl);
                             var icon = stat.includes('Assignment') ? '⏰ ' : '📅 ';
                             if (!isNaN(dObj.getTime())) {
@@ -407,9 +408,12 @@
                             } else {
                                 dlHtml = '<span class="deadline-text">' + icon + dl + '</span>';
                             }
+                        } else {
+                            dlHtml = '<span style="font-size:11px; color:#f57f17; font-weight:bold;">⏳ TBA</span>';
                         }
                     }
 
+                    // Format Task Detail
                     if (stat.includes('Assignment')) {
                         if (detail !== '-' && detail !== '') {
                             var checkStr = detail.toLowerCase();
@@ -419,13 +423,16 @@
                                 var shortText = detail.length > 25 ? detail.substring(0, 25) + '...' : detail;
                                 detailHtml = `<span style="font-size:10px; color:gray;" title="${detail}">${shortText}</span>`;
                             }
+                        } else {
+                            detailHtml = '<span style="font-size:11px; color:#f57f17; font-weight:bold;">⏳ TBA</span>';
                         }
                     }
 
+                    // Tambahkan Peringatan Tabel (TBA)
                     if (stat.includes('Assignment') && (dl === '-' || detail === '-')) {
-                        statBadge += '<br><span style="font-size:9px; color:red; font-weight:bold;">⚠️ Missing Details</span>';
+                        statBadge += '<br><span style="font-size:10px; color:#e65100; font-weight:bold;">⏳ To Be Announced</span>';
                     } else if (stat.includes('Replacement Class') && dl === '-') {
-                        statBadge += '<br><span style="font-size:9px; color:red; font-weight:bold;">⚠️ Missing Schedule</span>';
+                        statBadge += '<br><span style="font-size:10px; color:#e65100; font-weight:bold;">⏳ To Be Announced</span>';
                     }
 
                     tbodyHtml += `
@@ -551,7 +558,7 @@
             var subject = document.getElementById('modalSubjectName').innerText;
             var status = document.getElementById('modalStatus').value;
             
-            // Logika Tanpa Paksaan (Otomatis mengisi "-" jika dibiarkan kosong)
+            // Optional Logic (Automatically assigning "-" if left blank)
             var deadline = document.getElementById('modalDeadline').value;
             var detail = document.getElementById('modalDetail').value;
             
