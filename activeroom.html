@@ -162,7 +162,8 @@
                     • On-Time deadline: <b>Sunday 15:00 UTC+7</b>.<br>
                     • Late submission: <b>Sunday 15:01 - 18:00 UTC+7</b> (+ʛ50 fine).<br>
                     • Excused/Izin: <b>Must confirm before 18:00</b>.<br>
-                    • No submission (>18:00): <b>No Submit</b> (+ʛ100 fine | <b>Newizzy</b>: +ʛ60).
+                    • No submission (>18:00): <b>No Submit</b> (+ʛ100 fine | <b>Newizzy</b>: +ʛ60).<br>
+                    • LR Report Submission: <b>Sunday 19:00 UTC+7 Max</b> (Unless excused).
                 </div>
                 <div class="sop-col" style="border-left: 1px solid var(--sapphire); padding-left: 15px;">
                     <b>📌 ATTENDANCE & FINES POLICY:</b><br>
@@ -636,6 +637,16 @@
                     }
 
                     var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
+                    
+                    // ==========================================
+                    // AUTO-SORT: VAULT TERKECIL KE TERBESAR
+                    // ==========================================
+                    students.sort(function(a, b) {
+                        var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 999999;
+                        var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 999999;
+                        return vaultA - vaultB;
+                    });
+
                     var rSched = roomSchedules[roomName];
                     var extraRot = "";
                     if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes";
@@ -787,7 +798,11 @@
                 if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) {
                     actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>';
                 } else {
-                    fullDataStore.rawActivity.forEach(function(row) {
+                    // SORT RAW DATA BY VAULT CODE (Index 1)
+                    var sortedRawAct = fullDataStore.rawActivity.slice().sort(function(a,b) {
+                        return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
+                    });
+                    sortedRawAct.forEach(function(row) {
                         actHtml += '<tr>';
                         for(var i=0; i<11; i++) { actHtml += '<td>' + (row[i] || '-') + '</td>'; }
                         actHtml += '</tr>';
@@ -803,7 +818,11 @@
                 if(!fullDataStore.rawSummaries || fullDataStore.rawSummaries.length === 0) {
                     sumHtml = '<tr><td colspan="10" style="text-align:center;">No summaries submitted for this period.</td></tr>';
                 } else {
-                    fullDataStore.rawSummaries.forEach(function(row) {
+                    // SORT RAW SUMMARIES BY VAULT CODE (Index 1)
+                    var sortedRawSum = fullDataStore.rawSummaries.slice().sort(function(a,b) {
+                        return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
+                    });
+                    sortedRawSum.forEach(function(row) {
                         sumHtml += '<tr>';
                         for(var i=0; i<10; i++) {
                             if(i>=6 && row[i].toString().trim().length>4) sumHtml += '<td><a href="'+(row[i].toString().indexOf('http')===0?row[i]:'https://'+row[i])+'" target="_blank" class="link-icon">Link</a></td>';
