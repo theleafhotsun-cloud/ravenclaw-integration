@@ -155,13 +155,14 @@
                 <h1 class="page-title">Room Activity Database</h1>
             </div>
 
-            <!-- SOP BANNER -->
+            <!-- SOP BANNER DIPERBARUI -->
             <div class="sop-banner">
                 <div class="sop-col">
                     <b style="color:var(--danger);">📌 WEEKLY FORM DEADLINE:</b><br>
-                    • Submission deadline: <b>Sunday 18:00 UTC+7</b>.<br>
-                    • Late submission: <b>Late</b> (+ʛ50 fine).<br>
-                    • No submission: <b>No Submit</b> (+ʛ100 fine | For <b>Newizzy</b>: +ʛ60).
+                    • On-Time deadline: <b>Sunday 15:00 UTC+7</b>.<br>
+                    • Late submission: <b>Sunday 15:01 - 18:00 UTC+7</b> (+ʛ50 fine).<br>
+                    • Excused/Izin: <b>Must confirm before 18:00</b>.<br>
+                    • No submission (>18:00): <b>No Submit</b> (+ʛ100 fine | <b>Newizzy</b>: +ʛ60).
                 </div>
                 <div class="sop-col" style="border-left: 1px solid var(--sapphire); padding-left: 15px;">
                     <b>📌 ATTENDANCE & FINES POLICY:</b><br>
@@ -423,7 +424,7 @@
     <!-- SCRIPT AREA -->
     <script>
         // 1. GLOBAL VARIABLES
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; // PASTIKAN GANTI INI
+        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
