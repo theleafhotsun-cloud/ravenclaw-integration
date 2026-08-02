@@ -876,7 +876,10 @@
                 })
                 .then(r => r.json())
                 .then(res => {
-                    if(res.status === 'success' || res.success) { fullDataStore = res.data || res.freshData; renderAllTabs(); }
+                    if(res.status === 'success' || res.success) { 
+                        // ⚠️ FORCE WEBSITE UNTUK MEMBACA ULANG DATA BARU DARI DATABASE
+                        fetchRoomData(); 
+                    }
                     else alert("Failed to save: " + res.message);
                 });
             }
@@ -1019,7 +1022,11 @@
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success' || res.success) { fullDataStore = res.data || res.freshData; renderAllTabs(); closeAdjustModal(); } 
+                if(res.status === 'success' || res.success) { 
+                    closeAdjustModal();
+                    // ⚠️ FORCE WEBSITE UNTUK MEMBACA ULANG DATA BARU DARI DATABASE
+                    fetchRoomData(); 
+                } 
                 else { var statusBox = document.getElementById('modalStatus'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
                 btn.innerText = "Save Activity"; btn.disabled = false;
             });
@@ -1055,7 +1062,11 @@
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success' || res.success) { fullDataStore = res.data || res.freshData; renderAllTabs(); closeAdjustSumModal(); } 
+                if(res.status === 'success' || res.success) { 
+                    closeAdjustSumModal();
+                    // ⚠️ FORCE WEBSITE UNTUK MEMBACA ULANG DATA BARU DARI DATABASE
+                    fetchRoomData(); 
+                } 
                 else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
                 btn.innerText = "Save Summaries"; btn.disabled = false;
             });
@@ -1145,6 +1156,7 @@
             }
             
             alert("✅ Late Files Penalty successfully applied to " + successCount + " members of " + bpCurrentRoom + "!");
+            // ⚠️ FORCE WEBSITE UNTUK MEMBACA ULANG DATA BARU DARI DATABASE
             fetchRoomData(); 
         }
 
