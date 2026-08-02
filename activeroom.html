@@ -143,7 +143,6 @@
         </ul>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -213,7 +212,6 @@
                 <button class="tab-btn tab-raw" onclick="openTab('RawSummaries')">🔍 Raw: Summaries</button>
             </div>
 
-            <!-- TAB DATA CONTAINER -->
             <div id="tabContainer"></div>
         </div>
     </div>
@@ -347,7 +345,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label title="Masukkan angka (misal: 100 atau 500) jika anak ini menanggung denda. Biarkan 0 jika tidak ada.">Additional Fine / Custom (ʛ)</label>
+                    <label title="Akan masuk ke Kolom Q (Custom Denda)">Additional Fine (ʛ)</label>
                     <input type="number" id="adjCustomDenda" value="0" step="100">
                 </div>
             </div>
@@ -430,7 +428,7 @@
             <h3>🚨 Apply Bulk Late Penalty</h3>
             <p style="font-size:12px; color:var(--royal-blue); background:#e8eaf6; padding:10px; border-left:4px solid var(--sapphire);">
                 Room <b id="bpRoomName"></b> has <b id="bpCount"></b> members. <br>
-                Total Late Files Penalty (Without Permission): <b>ʛ<span id="bpTotal"></span></b>
+                Total Late Files Penalty (Without Permission): <b>机制<span id="bpTotal"></span></b>
             </p>
             
             <div class="form-group">
@@ -632,7 +630,7 @@
             .then(r => r.json())
             .then(res => {
                 if(res.status === 'success') {
-                    fullDataStore = res.data || res.freshData; 
+                    fullDataStore = res.data; 
                     renderAllTabs();
                 } else {
                     document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
@@ -676,6 +674,7 @@
                     if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
                     var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
+                    // --- BOX 1: ACTIVITY ---
                     var roomActHtml = '';
                     if (!isWeekActive) {
                         roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
@@ -722,7 +721,6 @@
                         });
                     }
                    
-                    // TOMBOL MEMBUKA JENDELA LAPORAN & APPLY BULK PENALTY
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;">' +
                         '<button class="btn-manage" style="background-color: var(--danger); font-size:12px; padding:10px 18px;" onclick="openBulkPenaltyModal(\'' + roomName + '\')">🚨 Apply Late Penalty (All Members)</button>' +
                         '<button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
@@ -733,7 +731,7 @@
                         '<th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th>' +
                         '</tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
-                    // --- BOX 2: ROOM SUMMARIES ---
+                    // --- BOX 2: ROOM SUMMARIES (KEMBALI LENGKAP!) ---
                     var roomSumHtml = '';
                     if (!isWeekActive) {
                         roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
@@ -817,7 +815,7 @@
                     container.appendChild(div);
                 });
 
-                // --- BOX RAW (AUDIT TRAIL) ---
+                // --- BOX RAW (AUDIT TRAIL KEMBALI LENGKAP) ---
                 var actHtml = '';
                 if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) {
                     actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>';
@@ -876,9 +874,7 @@
                 })
                 .then(r => r.json())
                 .then(res => {
-                    if(res.status === 'success' || res.success) { 
-                        setTimeout(function() { fetchRoomData(); }, 1000); 
-                    }
+                    if(res.status === 'success' || res.success) { setTimeout(function() { fetchRoomData(); }, 1000); }
                     else alert("Failed to save: " + res.message);
                 });
             }
@@ -990,7 +986,6 @@
             document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
             
             document.getElementById('adjCustomDenda').value = act.dendaOverride || 0;
-            
             document.getElementById('adjNotes').value = act.notes || '';
             document.getElementById('adjLockSync').checked = act.lockSync || false;
             
@@ -1011,7 +1006,7 @@
                 replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
                 freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
                 formStatus: document.getElementById('adjFormStatus').value, 
-                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0,
+                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0, // SIMPAN DENDA KE KOLOM Q
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
                 loaLink: document.getElementById('adjLoaLink').value, 
@@ -1037,14 +1032,7 @@
                     closeAdjustModal();
                     setTimeout(function() { fetchRoomData(); }, 1000);
                 } 
-                else { 
-                    var statusBox = document.getElementById('modalStatus'); 
-                    statusBox.innerText = res.message; 
-                    statusBox.style.color = "red"; 
-                    statusBox.style.display = "block"; 
-                    btn.innerText = "Save Activity"; 
-                    btn.disabled = false;
-                } 
+                else { var statusBox = document.getElementById('modalStatus'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; btn.innerText = "Save Activity"; btn.disabled = false; } 
             });
         }
 
@@ -1063,7 +1051,7 @@
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
             var payload = { 
                 status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                dendaOverride: act.dendaOverride, // Keep existing denda
+                dendaOverride: act.dendaOverride, 
                 loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, 
                 summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), 
                 sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked 
@@ -1146,15 +1134,15 @@
                 
                 var penaltyAmount = 0;
                 if (method === 'split') {
-                    penaltyAmount = (act.dendaOverride || 0) + 100; 
+                    penaltyAmount = (parseInt(act.dendaOverride) || 0) + 100; 
                 } else if (method === 'single') {
-                    if (s.vault === targetVault) penaltyAmount = (act.dendaOverride || 0) + totalPenalty; 
-                    else penaltyAmount = act.dendaOverride || 0; 
+                    if (s.vault === targetVault) penaltyAmount = (parseInt(act.dendaOverride) || 0) + totalPenalty; 
+                    else penaltyAmount = parseInt(act.dendaOverride) || 0; 
                 }
 
                 var payload = { 
                     status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                    dendaOverride: penaltyAmount, 
+                    dendaOverride: penaltyAmount, // MENAMBAH KE KOLOM Q
                     loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, summaries: act.summaries, sumStat: act.sumStat, notes: act.notes, lockSync: true 
                 };
                 
