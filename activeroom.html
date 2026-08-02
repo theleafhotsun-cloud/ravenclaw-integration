@@ -157,13 +157,13 @@
                 <h1 class="page-title">Room Activity Database</h1>
             </div>
 
-            <!-- SOP BANNER DIPERBARUI -->
+            <!-- SOP BANNER UPDATED -->
             <div class="sop-banner">
                 <div class="sop-col">
                     <b style="color:var(--danger);">📌 WEEKLY FORM DEADLINE:</b><br>
                     • On-Time deadline: <b>Sunday 15:00 UTC+7</b>.<br>
                     • Late submission: <b>Sunday 15:01 - 18:00 UTC+7</b> (+ʛ50 fine | <b>Newizzy W1: Free</b>).<br>
-                    • Excused/Izin: <b>Must confirm before 18:00</b>.<br>
+                    • Excused: <b>Must confirm before 18:00</b>.<br>
                     • No submission (>18:00): <b>No Submit</b> (+ʛ100 fine | <b>Newizzy</b>: +ʛ60).<br>
                     • LR Report Submission: <b>Sunday 19:00 UTC+7 Max</b> (Unless excused).
                 </div>
@@ -176,7 +176,7 @@
                 <div class="sop-col" style="border-left: 1px solid var(--sapphire); padding-left: 15px;">
                     <b>📌 SUMMARY & DUES (KAS):</b><br>
                     • <b>Summary Reward:</b> ʛ50 per valid summary.<br>
-                    • <b>Late Files (Tanpa Izin):</b> ʛ100 per anggota kamar (termasuk LR).<br>
+                    • <b>Late Files (No Permission):</b> ʛ100 per room member (incl. LR).<br>
                     • <b>Monthly Dues (Kas):</b> G1-G2 (ʛ50) | G3-G4 (ʛ100) | G5-G6 (ʛ150) | G7 (ʛ200).
                 </div>
             </div>
@@ -213,7 +213,7 @@
                 <button class="tab-btn tab-raw" onclick="openTab('RawSummaries')">🔍 Raw: Summaries</button>
             </div>
 
-            <!-- TEMPAT DATA TAB DITAMPILKAN -->
+            <!-- TAB DATA CONTAINER -->
             <div id="tabContainer"></div>
         </div>
     </div>
@@ -255,7 +255,7 @@
         </div>
     </div>
 
-    <!-- MODAL SET MONTH CONFIG (Hanya Admin) -->
+    <!-- MODAL SET MONTH CONFIG -->
     <div class="modal-overlay" id="periodModal">
         <div class="modal-box" style="width: 450px;">
             <h3>⚙️ Configure Month Config</h3>
@@ -342,12 +342,12 @@
                         <option value="Pending">Pending (0 Fines)</option>
                         <option value="On Time">On Time</option>
                         <option value="Late">Late (+ʛ50 / Newizzy W1: Free)</option>
-                        <option value="Late (Excused)">Late (Excused / Izin: 0 Fines)</option>
+                        <option value="Late (Excused)">Late (Excused: 0 Fines)</option>
                         <option value="No Submit">No Submit (+ʛ100 / Newizzy: +ʛ60)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label title="Masukkan angka (misal: 100 atau 500) jika anak ini menanggung denda keterlambatan berkas. Biarkan 0 jika bebas denda.">Late Files Penalty (ʛ)</label>
+                    <label title="Enter an amount (e.g. 100 or 500) if this student bears the late files penalty. Leave at 0 if no penalty.">Late Files Penalty (ʛ)</label>
                     <input type="number" id="adjLrLate" value="0" step="100">
                 </div>
             </div>
@@ -424,25 +424,25 @@
         </div>
     </div>
 
-    <!-- MODAL APPLY BULK PENALTY (BARU) -->
+    <!-- MODAL APPLY BULK PENALTY -->
     <div class="modal-overlay" id="bulkPenaltyModal">
         <div class="modal-box" style="width: 450px;">
             <h3>🚨 Apply Bulk Late Penalty</h3>
             <p style="font-size:12px; color:var(--royal-blue); background:#e8eaf6; padding:10px; border-left:4px solid var(--sapphire);">
-                Kamar <b id="bpRoomName"></b> memiliki <b id="bpCount"></b> anggota. <br>
-                Total Denda Keterlambatan Berkas (Tanpa Izin): <b>ʛ<span id="bpTotal"></span></b>
+                Room <b id="bpRoomName"></b> has <b id="bpCount"></b> members. <br>
+                Total Late Files Penalty (Without Permission): <b>ʛ<span id="bpTotal"></span></b>
             </p>
             
             <div class="form-group">
-                <label>Metode Penanggungan Denda</label>
+                <label>Penalty Bearing Method</label>
                 <select id="bpMethod" onchange="toggleBpTarget()">
-                    <option value="split">Dibagi rata ke masing-masing anggota (ʛ100 / anak)</option>
-                    <option value="single">Ditanggung total oleh 1 orang / Pihak Tertentu</option>
+                    <option value="split">Split evenly among all members (ʛ100 / student)</option>
+                    <option value="single">Borne entirely by 1 person / Specific Member</option>
                 </select>
             </div>
             
             <div class="form-group" id="bpTargetGroup" style="display:none;">
-                <label>Pilih Pihak yang Menanggung Denda (Total: ʛ<span id="bpTotal2"></span>)</label>
+                <label>Select the Member Bearing the Penalty (Total: ʛ<span id="bpTotal2"></span>)</label>
                 <select id="bpTargetVault"></select>
             </div>
             
@@ -477,7 +477,6 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // 1. GLOBAL VARIABLES
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -977,7 +976,6 @@
             
             document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended || 0; document.getElementById('adjAbsences').value = act.absences || 0; document.getElementById('adjExcused').value = act.excused || 0; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements || 0; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
             
-            // Masukkan nominal denda Late ke input Number
             document.getElementById('adjLrLate').value = act.lrLate || 0;
             
             document.getElementById('adjNotes').value = act.notes || '';
@@ -1000,7 +998,7 @@
                 replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
                 freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
                 formStatus: document.getElementById('adjFormStatus').value, 
-                lrLate: parseInt(document.getElementById('adjLrLate').value) || 0, // Nilai denda late ditangkap sbg nominal!
+                lrLate: parseInt(document.getElementById('adjLrLate').value) || 0, 
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
                 loaLink: document.getElementById('adjLoaLink').value, 
@@ -1063,13 +1061,10 @@
             });
         }
 
-        // ==========================================
-        // FUNGSI MASSAL (BULK LATE PENALTY)
-        // ==========================================
         function openBulkPenaltyModal(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
-            if(!month || !week) { alert("Pilih periode Bulan dan Minggu!"); return; }
+            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
 
             bpCurrentRoom = roomName;
             bpCurrentStudents = fullDataStore.rooms[roomName];
@@ -1111,7 +1106,7 @@
             var totalCount = bpCurrentStudents.length;
             var totalPenalty = totalCount * 100;
 
-            if(!confirm("Anda yakin ingin menyimpan denda keterlambatan ini? Pastikan pilihan penanggungan denda sudah benar!")) return;
+            if(!confirm("Are you sure you want to save this late penalty? Make sure the penalty bearer selection is correct!")) return;
 
             closeBulkPenaltyModal();
             document.getElementById('loadingMsg').style.display = 'block';
@@ -1149,19 +1144,16 @@
                 }
             }
             
-            alert("✅ Denda Keterlambatan Berkas berhasil diterapkan ke " + successCount + " anggota kamar " + bpCurrentRoom + "!");
+            alert("✅ Late Files Penalty successfully applied to " + successCount + " members of " + bpCurrentRoom + "!");
             fetchRoomData(); 
         }
 
-        // ==========================================
-        // FUNGSI JENDELA SUBMIT REPORT
-        // ==========================================
         function openReportModal(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
             
             if(!month || !week) { 
-                alert("Pilih periode Bulan dan Minggu terlebih dahulu di pojok kanan atas!"); 
+                alert("Please select the Month and Week period in the top right corner first!"); 
                 return; 
             }
 
