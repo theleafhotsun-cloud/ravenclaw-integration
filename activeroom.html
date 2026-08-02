@@ -176,7 +176,7 @@
                 <div class="sop-col" style="border-left: 1px solid var(--sapphire); padding-left: 15px;">
                     <b>📌 SUMMARY & DUES (KAS):</b><br>
                     • <b>Summary Reward:</b> ʛ50 per valid summary.<br>
-                    • <b>LR Late Checking:</b> ʛ100 per student.<br>
+                    • <b>Late Files (Tanpa Izin):</b> ʛ100 per anggota kamar (termasuk LR).<br>
                     • <b>Monthly Dues (Kas):</b> G1-G2 (ʛ50) | G3-G4 (ʛ100) | G5-G6 (ʛ150) | G7 (ʛ200).
                 </div>
             </div>
@@ -346,10 +346,9 @@
                         <option value="No Submit">No Submit (+ʛ100 / Newizzy: +ʛ60)</option>
                     </select>
                 </div>
-                <div class="form-group" style="display:flex; align-items:center;">
-                    <label style="margin-top:15px; color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;">
-                        <input type="checkbox" id="adjLrLate"> LR Late Summary Penalty (+ʛ100)
-                    </label>
+                <div class="form-group">
+                    <label title="Masukkan angka (misal: 100 atau 500) jika anak ini menanggung denda keterlambatan berkas. Biarkan 0 jika bebas denda.">Late Files Penalty (ʛ)</label>
+                    <input type="number" id="adjLrLate" value="0" step="100">
                 </div>
             </div>
 
@@ -425,7 +424,36 @@
         </div>
     </div>
 
-    <!-- MODAL SUBMIT REPORT (BARU) -->
+    <!-- MODAL APPLY BULK PENALTY (BARU) -->
+    <div class="modal-overlay" id="bulkPenaltyModal">
+        <div class="modal-box" style="width: 450px;">
+            <h3>🚨 Apply Bulk Late Penalty</h3>
+            <p style="font-size:12px; color:var(--royal-blue); background:#e8eaf6; padding:10px; border-left:4px solid var(--sapphire);">
+                Kamar <b id="bpRoomName"></b> memiliki <b id="bpCount"></b> anggota. <br>
+                Total Denda Keterlambatan Berkas (Tanpa Izin): <b>ʛ<span id="bpTotal"></span></b>
+            </p>
+            
+            <div class="form-group">
+                <label>Metode Penanggungan Denda</label>
+                <select id="bpMethod" onchange="toggleBpTarget()">
+                    <option value="split">Dibagi rata ke masing-masing anggota (ʛ100 / anak)</option>
+                    <option value="single">Ditanggung total oleh 1 orang / Pihak Tertentu</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="bpTargetGroup" style="display:none;">
+                <label>Pilih Pihak yang Menanggung Denda (Total: ʛ<span id="bpTotal2"></span>)</label>
+                <select id="bpTargetVault"></select>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeBulkPenaltyModal()">Cancel</button>
+                <button class="btn-submit" style="background-color: var(--danger);" onclick="executeBulkPenalty()">Apply Penalty</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SUBMIT REPORT -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal-box" style="width: 450px;">
             <h3>📤 Submit Room Report</h3>
@@ -467,7 +495,9 @@
         var isPrivilegedUser = false;
         
         var previousPeriod = { month: "", week: "" };
-        var currentReportRoom = ""; // Melacak Room mana yang sedang disubmit
+        var currentReportRoom = ""; 
+        var bpCurrentRoom = "";
+        var bpCurrentStudents = [];
 
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
@@ -693,8 +723,10 @@
                         });
                     }
                    
-                    // TOMBOL MEMBUKA JENDELA LAPORAN
-                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
+                    // TOMBOL MEMBUKA JENDELA LAPORAN & APPLY BULK PENALTY
+                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;">' +
+                        '<button class="btn-manage" style="background-color: var(--danger); font-size:12px; padding:10px 18px;" onclick="openBulkPenaltyModal(\'' + roomName + '\')">🚨 Apply Late Penalty (All Members)</button>' +
+                        '<button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
 
                     var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
                         '<th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th>' +
@@ -879,7 +911,6 @@
             var btn = document.getElementById('btnSaveConfig');
             btn.innerText = "Saving..."; btn.disabled = true;
 
-            // BOMBARDIS PENAMAAN AGAR TIDAK MUNCUL UNDEFINED DI API
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
@@ -944,7 +975,10 @@
             document.getElementById('adjustModal').style.display = 'flex'; document.getElementById('modalStatus').style.display = 'none'; document.getElementById('adjVault').innerText = student.vault; document.getElementById('adjUsername').innerText = student.username;
             var act = student.activity; 
             
-            document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended || 0; document.getElementById('adjAbsences').value = act.absences || 0; document.getElementById('adjExcused').value = act.excused || 0; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements || 0; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; document.getElementById('adjLrLate').checked = act.lrLate; 
+            document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended || 0; document.getElementById('adjAbsences').value = act.absences || 0; document.getElementById('adjExcused').value = act.excused || 0; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements || 0; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
+            
+            // Masukkan nominal denda Late ke input Number
+            document.getElementById('adjLrLate').value = act.lrLate || 0;
             
             document.getElementById('adjNotes').value = act.notes || '';
             document.getElementById('adjLockSync').checked = act.lockSync || false;
@@ -960,14 +994,13 @@
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
-                // Math.max & parseInt untuk Anti-Error (Kosong -> 0)
                 attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), 
                 absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
                 excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), 
                 replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
                 freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
                 formStatus: document.getElementById('adjFormStatus').value, 
-                lrLate: document.getElementById('adjLrLate').checked, 
+                lrLate: parseInt(document.getElementById('adjLrLate').value) || 0, // Nilai denda late ditangkap sbg nominal!
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
                 loaLink: document.getElementById('adjLoaLink').value, 
@@ -1031,7 +1064,97 @@
         }
 
         // ==========================================
-        // FUNGSI JENDELA SUBMIT REPORT (BARU)
+        // FUNGSI MASSAL (BULK LATE PENALTY)
+        // ==========================================
+        function openBulkPenaltyModal(roomName) {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            if(!month || !week) { alert("Pilih periode Bulan dan Minggu!"); return; }
+
+            bpCurrentRoom = roomName;
+            bpCurrentStudents = fullDataStore.rooms[roomName];
+            
+            var totalCount = bpCurrentStudents.length;
+            var totalPenalty = totalCount * 100;
+
+            document.getElementById('bpRoomName').innerText = roomName;
+            document.getElementById('bpCount').innerText = totalCount;
+            document.getElementById('bpTotal').innerText = totalPenalty;
+            document.getElementById('bpTotal2').innerText = totalPenalty;
+
+            var targetSelect = document.getElementById('bpTargetVault');
+            targetSelect.innerHTML = "";
+            bpCurrentStudents.forEach(function(s) {
+                targetSelect.innerHTML += `<option value="${s.vault}">${s.vault} - ${s.username}</option>`;
+            });
+
+            document.getElementById('bpMethod').value = "split";
+            toggleBpTarget();
+
+            document.getElementById('bulkPenaltyModal').style.display = 'flex';
+        }
+
+        function closeBulkPenaltyModal() {
+            document.getElementById('bulkPenaltyModal').style.display = 'none';
+        }
+
+        function toggleBpTarget() {
+            var method = document.getElementById('bpMethod').value;
+            document.getElementById('bpTargetGroup').style.display = method === 'single' ? 'block' : 'none';
+        }
+
+        async function executeBulkPenalty() {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            var method = document.getElementById('bpMethod').value;
+            var targetVault = document.getElementById('bpTargetVault').value;
+            var totalCount = bpCurrentStudents.length;
+            var totalPenalty = totalCount * 100;
+
+            if(!confirm("Anda yakin ingin menyimpan denda keterlambatan ini? Pastikan pilihan penanggungan denda sudah benar!")) return;
+
+            closeBulkPenaltyModal();
+            document.getElementById('loadingMsg').style.display = 'block';
+            
+            var successCount = 0;
+
+            for (var i = 0; i < totalCount; i++) {
+                var s = bpCurrentStudents[i];
+                var act = s.activity;
+                
+                var penaltyAmount = 0;
+                if (method === 'split') {
+                    penaltyAmount = 100; 
+                } else if (method === 'single') {
+                    if (s.vault === targetVault) penaltyAmount = totalPenalty; 
+                    else penaltyAmount = 0; 
+                }
+
+                var payload = { 
+                    status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
+                    lrLate: penaltyAmount, 
+                    loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, summaries: act.summaries, sumStat: act.sumStat, notes: act.notes, lockSync: true 
+                };
+                
+                document.getElementById('loadingMsg').innerText = "Applying penalty: " + (i + 1) + " of " + totalCount + " students...";
+                
+                try {
+                    await fetch(API_URL, {
+                        method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: s.vault, payload: payload })
+                    });
+                    successCount++;
+                } catch (err) {
+                    console.error("Failed to update vault " + s.vault, err);
+                }
+            }
+            
+            alert("✅ Denda Keterlambatan Berkas berhasil diterapkan ke " + successCount + " anggota kamar " + bpCurrentRoom + "!");
+            fetchRoomData(); 
+        }
+
+        // ==========================================
+        // FUNGSI JENDELA SUBMIT REPORT
         // ==========================================
         function openReportModal(roomName) {
             var month = document.getElementById('monthSelector').value;
@@ -1064,7 +1187,6 @@
             btn.innerHTML = "⏳ Sending...";
             btn.disabled = true;
 
-            // BUNDLE NOTES KE USERNAME AGAR API TIDAK BINGUNG
             var safeUsername = loggedInUser + "|||" + notes;
 
             fetch(API_URL, {
