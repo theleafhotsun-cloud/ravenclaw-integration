@@ -440,6 +440,8 @@
         var currentEditIdx = -1;
         var currentUserRoom = "";
         var isPrivilegedUser = false;
+        // VARIABEL UNTUK MELACAK PERIOD SEBELUMNYA
+        var previousPeriod = { month: "", week: "" };
 
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
@@ -558,10 +560,16 @@
             var week = document.getElementById('weekSelector').value;
             if(!month) return;
            
+            // KUNCI: Bersihkan Data & Raw Data Jika Period Berubah
+            if (previousPeriod.month !== month || previousPeriod.week !== week) {
+                fullDataStore = {};
+                document.getElementById('roomTabs').style.display = 'none';
+                document.getElementById('tabContainer').innerHTML = '';
+                previousPeriod = { month: month, week: week };
+            }
+
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Auto-Syncing with Google Spreadsheet...";
-            document.getElementById('roomTabs').style.display = 'none';
-            document.getElementById('tabContainer').innerHTML = '';
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
