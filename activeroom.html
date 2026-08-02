@@ -157,6 +157,7 @@
                 <h1 class="page-title">Room Activity Database</h1>
             </div>
 
+            <!-- SOP BANNER -->
             <div class="sop-banner">
                 <div class="sop-col">
                     <b style="color:var(--danger);">📌 WEEKLY FORM DEADLINE:</b><br>
@@ -200,6 +201,7 @@
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Initializing database...</div>
            
+            <!-- TABS -->
             <div class="room-tabs" id="roomTabs" style="display: none;">
                 <button class="tab-btn active" onclick="openTab('Eternclaw')">🏠 Eternclaw</button>
                 <button class="tab-btn" onclick="openTab('Ravelynx')">🏠 Ravelynx</button>
@@ -211,7 +213,71 @@
                 <button class="tab-btn tab-raw" onclick="openTab('RawSummaries')">🔍 Raw: Summaries</button>
             </div>
 
+            <!-- TAB DATA CONTAINER -->
             <div id="tabContainer"></div>
+        </div>
+    </div>
+
+    <!-- MODAL ASSIGN ROTATING SUBJECTS -->
+    <div class="modal-overlay" id="rotModal">
+        <div class="modal-box" style="width: 400px;">
+            <h3>🔄 Assign Rotating Subjects</h3>
+            <div id="rotStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+            <p style="font-size:11px; color:gray; margin-top:-10px;">For: <span id="rotPeriodLabel" style="font-weight:bold; color:var(--royal-blue);"></span></p>
+
+            <div class="form-group">
+                <label>Ancient Runes Room</label>
+                <select id="rotRunes">
+                    <option value="-">-- Select Room --</option>
+                    <option value="Eternclaw">Eternclaw</option>
+                    <option value="Ravelynx">Ravelynx</option>
+                    <option value="Ravenion">Ravenion</option>
+                    <option value="Ravenrow">Ravenrow</option>
+                    <option value="Velaclaw">Velaclaw</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Care Of Magical Creatures Room</label>
+                <select id="rotComc">
+                    <option value="-">-- Select Room --</option>
+                    <option value="Eternclaw">Eternclaw</option>
+                    <option value="Ravelynx">Ravelynx</option>
+                    <option value="Ravenion">Ravenion</option>
+                    <option value="Ravenrow">Ravenrow</option>
+                    <option value="Velaclaw">Velaclaw</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeRotModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveRotSubjects()">Save Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SET MONTH CONFIG -->
+    <div class="modal-overlay" id="periodModal">
+        <div class="modal-box" style="width: 450px;">
+            <h3>⚙️ Configure Month Config</h3>
+            <p style="font-size:11px; color:gray; margin-top:-10px;">Previous months will be automatically moved to the Archive.</p>
+            <div id="periodStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+           
+            <div class="form-group">
+                <label>Month & Year Label</label>
+                <input type="text" id="cfgMonthLabel" placeholder="e.g. August 2026">
+            </div>
+            <div class="form-group">
+                <label>Total Weeks for Activity Form (3 or 4)</label>
+                <select id="cfgTotalWeeks">
+                    <option value="3">3 Weeks</option>
+                    <option value="4" selected>4 Weeks</option>
+                </select>
+            </div>
+           
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePeriodModal()">Cancel</button>
+                <button class="btn-submit" onclick="savePeriodConfig()" id="btnSaveConfig">Save Config</button>
+            </div>
         </div>
     </div>
 
@@ -281,8 +347,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label title="Akan masuk ke Kolom Q (Custom Denda)">Additional Fine (ʛ)</label>
-                    <input type="number" id="adjCustomDenda" value="0" placeholder="e.g. 100">
+                    <label title="Masukkan angka (misal: 100 atau 500) jika anak ini menanggung denda. Biarkan 0 jika tidak ada.">Additional Fine / Custom (ʛ)</label>
+                    <input type="number" id="adjCustomDenda" value="0" step="100">
                 </div>
             </div>
 
@@ -295,6 +361,65 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAdjustModal()">Cancel</button>
                 <button class="btn-submit" onclick="saveActivityAdjustment()" id="btnSaveAct">Save Activity</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADJUST SUMMARIES -->
+    <div class="modal-overlay" id="adjustSumModal">
+        <div class="modal-box" style="width: 500px;">
+            <h3 id="modalTitleSum">Adjust Summaries & Approvals</h3>
+            <div id="modalStatusSum" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+           
+            <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
+                <div><b>Student:</b> <span id="adjSumVault"></span> - <span id="adjSumUsername"></span></div>
+                <label style="color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;" title="Lock this data to prevent Auto-Sync overrides">
+                    <input type="checkbox" id="adjLockSyncSum"> 🔒 Lock Sync
+                </label>
+            </div>
+
+            <div class="section-header">Total Summaries Count</div>
+            <div class="form-row">
+                <div class="form-group"><label>Total Valid Summaries</label><input type="number" id="adjSumCount" value="0"></div>
+            </div>
+
+            <div class="section-header">Link Approvals</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Link 1 Status</label>
+                    <select id="adjSumStat1">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Link 2 Status</label>
+                    <select id="adjSumStat2">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Link 3 Status</label>
+                    <select id="adjSumStat3">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Link 4 Status</label>
+                    <select id="adjSumStat4">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveSummariesAdjustment()" id="btnSaveSum">Save Summaries</button>
             </div>
         </div>
     </div>
@@ -328,6 +453,28 @@
         </div>
     </div>
 
+    <!-- MODAL SUBMIT REPORT -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-box" style="width: 450px;">
+            <h3>📤 Submit Room Report</h3>
+            <div class="rep-info">
+                <b>Room:</b> <span id="repRoomName"></span><br>
+                <b>Period:</b> <span id="repPeriod"></span>
+            </div>
+            
+            <div class="form-group">
+                <label>Additional Notes / Report Summary (Optional)</label>
+                <textarea id="repNotes" rows="4" placeholder="Type any important notes, excused/izin details, issues, or highlights for this week here..."></textarea>
+                <span style="font-size: 10px; color: gray; display: block; margin-top: 5px;">This note will be included in the email sent to Prefect/Headhouse.</span>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeReportModal()">Cancel</button>
+                <button class="btn-submit" style="background-color: var(--success);" onclick="executeSendReport()" id="btnConfirmReport">Send Report</button>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPT AREA -->
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
@@ -347,6 +494,7 @@
         var isPrivilegedUser = false;
         
         var previousPeriod = { month: "", week: "" };
+        var currentReportRoom = ""; 
         var bpCurrentRoom = "";
         var bpCurrentStudents = [];
 
@@ -373,16 +521,33 @@
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
 
+            var dirMenu = document.querySelector('.menu-taskdirectory');
+            var tmMenu = document.querySelector('.menu-taskmaster');
+            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
+            if (tmMenu) tmMenu.style.display = 'block';
+
             if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
             else if (isPrefect) ['menu-salary', 'menu-workreport', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
-        function navigateHome() { window.location.href = "headhouse-dashboard.html"; }
+        function navigateHome() {
+            var targetPage = 'headhouse'; 
+            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
+            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
+            else if (windowUserRole.includes('editor')) targetPage = 'editor';
+            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
         function navigate(targetPage) { window.location.href = targetPage + ".html"; }
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         function initPeriodConfig() {
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Connecting to database...";
+
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
@@ -393,8 +558,20 @@
                     periodConfigStore = res.data;
                     isPrivilegedUser = res.data.isPrivileged; 
                     currentUserRoom = res.data.userRoom;     
+                   
+                    if (isPrivilegedUser) {
+                        document.getElementById('btnManagePeriod').style.display = 'inline-block';
+                        document.getElementById('btnAssignRot').style.display = 'inline-block';
+                    } else {
+                        if (currentUserRoom) activeTab = currentUserRoom;
+                    }
                     toggleArchiveMode();
+                } else {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + res.message + "</span>";
                 }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + err.message + "</span>";
             });
         }
 
@@ -409,15 +586,22 @@
                 monthSel.appendChild(opt);
             } else {
                 var archs = periodConfigStore.archivedMonths || [];
-                archs.forEach(function(m) {
-                    var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel;
-                    monthSel.appendChild(opt);
-                });
+                if(archs.length === 0) {
+                    var opt = document.createElement('option'); opt.value = ""; opt.innerText = "-- No Archives --"; monthSel.appendChild(opt);
+                } else {
+                    archs.forEach(function(m) {
+                        var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel;
+                        monthSel.appendChild(opt);
+                    });
+                }
             }
             onMonthChange();
         }
 
         function onMonthChange() {
+            var selectedMonth = document.getElementById('monthSelector').value;
+            if(!selectedMonth) { document.getElementById('weekSelector').innerHTML = ''; return; }
+           
             var weekSel = document.getElementById('weekSelector'); weekSel.innerHTML = '';
             for (var i = 1; i <= 4; i++) {
                 var opt = document.createElement('option'); opt.value = "Week " + i; opt.innerText = "Period: Week " + i;
@@ -430,6 +614,13 @@
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
             if(!month) return;
+           
+            if (previousPeriod.month !== month || previousPeriod.week !== week) {
+                fullDataStore = {};
+                document.getElementById('roomTabs').style.display = 'none';
+                document.getElementById('tabContainer').innerHTML = '';
+                previousPeriod = { month: month, week: week };
+            }
 
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Auto-Syncing with Google Spreadsheet...";
@@ -441,98 +632,348 @@
             .then(r => r.json())
             .then(res => {
                 if(res.status === 'success') {
-                    fullDataStore = res.data || res; 
+                    fullDataStore = res.data || res.freshData; 
                     renderAllTabs();
+                } else {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
                 }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>";
             });
         }
 
         function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
 
         function renderAllTabs() {
-            document.getElementById('loadingMsg').style.display = 'none';
-            document.getElementById('roomTabs').style.display = 'flex';
-            var container = document.getElementById('tabContainer');
-            container.innerHTML = '';
-           
-            var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
-            var isWeekActive = fullDataStore.isWeekActive;
-           
-            rooms.forEach(function(roomName) {
-                var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
-                
-                var roomActHtml = '';
-                students.forEach(function(s, idx) {
-                    var act = s.activity;
-                    var isPending = (act.formStatus === 'Pending' && !act.lockSync);
+            try {
+                document.getElementById('loadingMsg').style.display = 'none';
+                document.getElementById('roomTabs').style.display = 'flex';
+                var container = document.getElementById('tabContainer');
+                container.innerHTML = '';
+               
+                var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
+                var isWeekActive = fullDataStore.isWeekActive;
+               
+                rooms.forEach(function(roomName) {
+                    if (!isPrivilegedUser && currentUserRoom && roomName.toLowerCase() !== currentUserRoom.toLowerCase()) {
+                        var btn = Array.from(document.querySelectorAll('.tab-btn')).find(function(el) { return el.innerText.toLowerCase().includes(roomName.toLowerCase()); });
+                        if (btn) btn.style.display = 'none';
+                        return;
+                    }
+
+                    var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
                     
-                    roomActHtml += '<tr>' +
-                        '<td class="vault-tag">' + s.vault + '</td>' +
-                        '<td><b>' + s.username + '</b></td>' +
-                        '<td><span style="font-weight:bold; color:var(--sapphire);">' + (s.grade || '-') + '</span></td>' +
-                        '<td>' + (act.status === 'Leave of Absence' ? '<span class="status-loa">LOA</span>' : '<span class="status-active">Active</span>') + '</td>' +
-                        '<td><span class="num-badge">' + s.totalClasses + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + (isPending?0:act.attended) + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + (isPending?0:act.absences) + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#fff3e0; color:#e65100;">' + (isPending?0:act.excused) + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td>' +
-                        '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
-                        '<td>' + (act.notes || '-') + '</td>' +
-                        '<td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td>' +
-                        '</tr>';
+                    students.sort(function(a, b) {
+                        var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 999999;
+                        var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 999999;
+                        return vaultA - vaultB;
+                    });
+
+                    var rSched = roomSchedules[roomName];
+                    var extraRot = "";
+                    if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes";
+                    if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
+                    var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
+
+                    var roomActHtml = '';
+                    if (!isWeekActive) {
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
+                    } else if (students.length === 0) {
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                    } else {
+                        students.forEach(function(s, idx) {
+                            var act = s.activity;
+                            var isPending = (act.formStatus === 'Pending' && !act.lockSync);
+                           
+                            var loaLabel = '<span class="status-loa">HIATUS / LOA</span>';
+                            if (act.status === 'Leave of Absence') {
+                                var sDate = act.loaStart ? act.loaStart : '...';
+                                var eDate = act.loaEnd ? act.loaEnd : '...';
+                                loaLabel = '<div style="display:flex; flex-direction:column; gap:3px;"><span class="status-loa" style="text-align:center;">HIATUS / LOA</span><span style="font-size:9px; color:gray; font-weight:bold; text-align:center;">' + sDate + ' to ' + eDate + '</span></div>';
+                                if (act.loaWarning) { loaLabel += '<span class="status-loa" style="background:#ffebee; color:#c62828; border-color:#ef9a9a; margin-top:2px; text-align:center;">⚠️ Return: ' + act.loaDaysText + '</span>'; }
+                            }
+                            var loaText = act.status === 'Leave of Absence' ? loaLabel : (isPending ? '<span class="status-pending">Pending Data</span>' : '<span class="status-active">Active</span>');
+                           
+                            var wlBadge = s.wl ? '<span class="wl-badge" title="Warning Letter">WL: ' + s.wl + '</span>' : '';
+                            var excTextDisp = act.excusedText;
+                            if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) {
+                                excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>';
+                            } else { excTextDisp = ''; }
+
+                            var notesDisp = act.notes ? '<div style="font-size:9px; color:#112250; font-style:italic; max-width:120px; white-space:normal;">' + act.notes.replace(/\n/g, '<br>') + '</div>' : '<span style="color:#ccc;">-</span>';
+
+                            roomActHtml += '<tr>' +
+                                '<td class="vault-tag">' + s.vault + '</td>' +
+                                '<td><b>' + s.username + '</b> ' + wlBadge + '</td>' +
+                                '<td><span style="font-weight:bold; color:var(--sapphire);">' + (s.grade || '-') + '</span></td>' +
+                                '<td>' + loaText + '</td>' +
+                                '<td><span class="num-badge">' + s.totalClasses + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + (isPending?0:act.attended) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + (isPending?0:act.absences) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#fff3e0; color:#e65100;">' + (isPending?0:act.excused) + '</span>' + excTextDisp + '</td>' +
+                                '<td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
+                                '<td>' + notesDisp + '</td>' +
+                                '<td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td>' +
+                                '</tr>';
+                        });
+                    }
+                   
+                    // TOMBOL MEMBUKA JENDELA LAPORAN & APPLY BULK PENALTY
+                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;">' +
+                        '<button class="btn-manage" style="background-color: var(--danger); font-size:12px; padding:10px 18px;" onclick="openBulkPenaltyModal(\'' + roomName + '\')">🚨 Apply Late Penalty (All Members)</button>' +
+                        '<button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
+
+                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
+                        '<th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th>' +
+                        '<th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th>' +
+                        '<th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th>' +
+                        '</tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
+
+                    // --- BOX 2: ROOM SUMMARIES ---
+                    var roomSumHtml = '';
+                    if (!isWeekActive) {
+                        roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
+                    } else if (students.length === 0) {
+                        roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                    } else {
+                        students.forEach(function(s, idx) {
+                            var act = s.activity;
+                            var isPending = (act.formStatus === 'Pending' && !act.lockSync);
+                            var sumStatuses = (act.sumStat || 'Pending,Pending,Pending,Pending').split(',');
+
+                            var linkCols = '';
+                            for(var j=0; j<4; j++) {
+                                var lnk = act.sumLinks[j];
+                                var stat = sumStatuses[j] || 'Pending';
+                                var badgeClass = stat === 'Approved' ? 'badge-approved' : 'badge-pending';
+                               
+                                if(lnk && lnk.toString().trim().length > 4) {
+                                    var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk;
+                                    linkCols += '<td><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>';
+                                } else {
+                                    linkCols += '<td>-</td>';
+                                }
+                            }
+                            roomSumHtml += '<tr>' +
+                                '<td class="vault-tag">' + s.vault + '</td>' +
+                                '<td><b>' + s.username + '</b></td>' +
+                                '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
+                                '<td>' + act.sumAuror + '</td>' +
+                                '<td>' + act.sumMinistry + '</td>' +
+                                '<td>' + act.sumExtra + '</td>' +
+                                linkCols +
+                                '<td><button class="btn-adjust-sum" onclick="openAdjustSumModal(\'' + roomName + '\', ' + idx + ')">Adjust</button></td>' +
+                                '</tr>';
+                        });
+                    }
+                    var boxSum = '<div class="box-section"><h4>2. Summaries Collection</h4>' + scheduleBanner + '<div class="table-container"><table><thead><tr>' +
+                        '<th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th>' +
+                        '</tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
+
+                    // --- BOX 3: FINANCE (PETTY CASH) ---
+                    var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
+                    if (students.length === 0) {
+                        finHtml = '<tr><td colspan="7" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                    } else {
+                        students.forEach(function(s) {
+                            totalKas += s.kas; totalDenda += s.denda; totalReward += s.reward;
+                            var act = s.activity;
+                            var isPending = (act.formStatus === 'Pending' && !act.lockSync);
+                           
+                            var kasVal = act.kasOverride !== '' ? act.kasOverride : '';
+                            var denVal = act.dendaOverride !== '' ? act.dendaOverride : '';
+                           
+                            var kasDisplay = act.kasOverride !== '' ? '<span style="border-bottom:1px dashed green; cursor:help;">ʛ' + formatMoney(s.kas) + '</span>' : 'ʛ' + formatMoney(s.kas);
+                            var dendaDisplay = act.dendaOverride !== '' ? '<span style="border-bottom:1px dashed red; cursor:help;">ʛ' + formatMoney(s.denda) + '</span>' : 'ʛ' + formatMoney(s.denda);
+                            var efektifHadir = (!isWeekActive || isPending) ? 0 : (act.attended + act.replacements + act.freeClass);
+                           
+                            var cellKasStr = isPrivilegedUser ? '<td class="money editable-cell" onclick="quickEditFinance(\'' + s.vault + '\', \'KAS\', \'' + kasVal + '\')">' + kasDisplay + '</td>' : '<td class="money">' + kasDisplay + '</td>';
+                            var cellDendaStr = isPrivilegedUser ? '<td class="money editable-cell ' + (s.denda > 0 ? 'minus' : '') + '" onclick="quickEditFinance(\'' + s.vault + '\', \'DENDA\', \'' + denVal + '\')">' + (s.denda > 0 ? '-' + dendaDisplay : '-') + '</td>' : '<td class="money ' + (s.denda > 0 ? 'minus' : '') + '">' + (s.denda > 0 ? '-' + dendaDisplay : '-') + '</td>';
+                           
+                            finHtml += '<tr>' +
+                                '<td class="vault-tag">' + s.vault + '</td>' +
+                                '<td><b>' + s.username + '</b></td>' +
+                                '<td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + efektifHadir + '</span> / <span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td>' +
+                                cellKasStr + cellDendaStr +
+                                '<td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td>' +
+                                '<td><div style="font-size:10px; color:var(--danger); line-height:1.4;">' + s.finesDetail + '</div></td>' +
+                                '</tr>';
+                        });
+                    }
+                    var boxFin = '<div class="box-section"><h4>3. Petty Cash (Room Dues & Fines)</h4><div class="dashboard-cards">' +
+                        '<div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div>' +
+                        '<div class="card"><h5>Total Fines</h5><div class="amount minus">ʛ' + formatMoney(totalDenda) + '</div></div>' +
+                        '<div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div>' +
+                        '</div><div class="table-container"><table><thead><tr><th>Vault Code</th><th>Username</th><th title="Effective Attended / Mandatory Requirement">Attendance<br>(Att / Req)</th><th>Petty Cash<br>/ Dues</th><th>Fines</th><th>Rewards</th><th title="Detailed calculation breakdown of fines">Fines Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
+
+                    var div = document.createElement('div');
+                    div.className = 'tab-content ' + (roomName === activeTab ? 'active' : '');
+                    div.id = 'tab-' + roomName;
+                    div.innerHTML = boxAct + boxSum + boxFin;
+                    container.appendChild(div);
                 });
 
-                var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
-                students.forEach(function(s) {
-                    totalKas += s.kas; totalDenda += s.denda; totalReward += s.reward;
-                    var act = s.activity;
-                    var isPending = (act.formStatus === 'Pending' && !act.lockSync);
-                    var efektifHadir = (!isWeekActive || isPending) ? 0 : (act.attended + act.replacements + act.freeClass);
+                // --- BOX RAW (AUDIT TRAIL) ---
+                var actHtml = '';
+                if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) {
+                    actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>';
+                } else {
+                    var sortedRawAct = fullDataStore.rawActivity.slice().sort(function(a,b) {
+                        return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
+                    });
+                    sortedRawAct.forEach(function(row) {
+                        actHtml += '<tr>';
+                        for(var i=0; i<11; i++) { actHtml += '<td>' + (row[i] || '-') + '</td>'; }
+                        actHtml += '</tr>';
+                    });
+                }
+                var divRawAct = document.createElement('div');
+                divRawAct.className = 'tab-content ' + (activeTab === 'RawActivity' ? 'active' : '');
+                divRawAct.id = 'tab-RawActivity';
+                divRawAct.innerHTML = '<div class="box-section"><h4>Raw: Weekly Activity Data (Audit Trail)</h4><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Vault Code</th><th>Room</th><th>Grade</th><th>Class Category</th><th>Classes Attended</th><th>Class Absences</th><th>Excused Absences</th><th>Replacement Assignments</th><th>Summaries</th><th>Leave of Absence</th></tr></thead><tbody>' + actHtml + '</tbody></table></div></div>';
+                container.appendChild(divRawAct);
 
-                    finHtml += '<tr>' +
-                        '<td class="vault-tag">' + s.vault + '</td>' +
-                        '<td><b>' + s.username + '</b></td>' +
-                        '<td><span class="num-badge">' + efektifHadir + ' / ' + s.mandatory + '</span></td>' +
-                        '<td class="money">ʛ' + formatMoney(s.kas) + '</td>' +
-                        '<td class="money ' + (s.denda > 0 ? 'minus' : '') + '">' + (s.denda > 0 ? '-ʛ' + formatMoney(s.denda) : '-') + '</td>' +
-                        '<td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td>' +
-                        '<td><div style="font-size:10px; color:var(--danger);">' + s.finesDetail + '</div></td>' +
-                        '</tr>';
+                var sumHtml = '';
+                if(!fullDataStore.rawSummaries || fullDataStore.rawSummaries.length === 0) {
+                    sumHtml = '<tr><td colspan="10" style="text-align:center;">No summaries submitted for this period.</td></tr>';
+                } else {
+                    var sortedRawSum = fullDataStore.rawSummaries.slice().sort(function(a,b) {
+                        return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
+                    });
+                    sortedRawSum.forEach(function(row) {
+                        sumHtml += '<tr>';
+                        for(var i=0; i<10; i++) {
+                            if(i>=6 && row[i].toString().trim().length>4) sumHtml += '<td><a href="'+(row[i].toString().indexOf('http')===0?row[i]:'https://'+row[i])+'" target="_blank" class="link-icon">Link</a></td>';
+                            else sumHtml += '<td>' + (row[i] || '-') + '</td>';
+                        }
+                        sumHtml += '</tr>';
+                    });
+                }
+                var divRawSum = document.createElement('div');
+                divRawSum.className = 'tab-content ' + (activeTab === 'RawSummaries' ? 'active' : '');
+                divRawSum.id = 'tab-RawSummaries';
+                divRawSum.innerHTML = '<div class="box-section"><h4>Raw: Summaries (Audit Trail)</h4><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Vault Code</th><th>Room</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th></tr></thead><tbody>' + sumHtml + '</tbody></table></div></div>';
+                container.appendChild(divRawSum);
+
+            } catch (err) { alert("Render Error: " + err.message); }
+        }
+
+        function quickEditFinance(vault, type, currentVal) {
+            if (!isPrivilegedUser) return;
+            var label = type === 'KAS' ? 'Room Dues (Kas)' : 'Fines (Denda)';
+            var val = prompt("Edit " + label + " for Vault " + vault + ":\n\n(Leave blank to reset to Auto-Calculate)", currentVal);
+            if (val !== null) {
+                document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Saving custom amount...";
+                var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
+                
+                fetch(API_URL, {
+                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: val.trim() })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if(res.status === 'success' || res.success) { 
+                        setTimeout(function() { fetchRoomData(); }, 1000); 
+                    }
+                    else alert("Failed to save: " + res.message);
                 });
-
-                var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;">' +
-                    '<button class="btn-manage" style="background-color: var(--danger); font-size:12px; padding:10px 18px;" onclick="openBulkPenaltyModal(\'' + roomName + '\')">🚨 Apply Late Penalty (All Members)</button></div>';
-
-                var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Grade</th><th>Status</th><th>Total Class</th><th>Req</th><th>Attended</th><th>Absences</th><th>Excused</th><th>Free</th><th>Replacements</th><th>Summaries</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
-                var boxFin = '<div class="box-section"><h4>2. Petty Cash & Fines</h4><div class="dashboard-cards"><div class="card"><h5>Total Fines</h5><div class="amount minus">ʛ' + formatMoney(totalDenda) + '</div></div></div><div class="table-container"><table><thead><tr><th>Vault Code</th><th>Username</th><th>Attendance</th><th>Dues</th><th>Fines</th><th>Rewards</th><th>Fines Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
-
-                var div = document.createElement('div');
-                div.className = 'tab-content ' + (roomName === activeTab ? 'active' : '');
-                div.id = 'tab-' + roomName;
-                div.innerHTML = boxAct + boxFin;
-                container.appendChild(div);
-            });
-            openTab(activeTab);
+            }
         }
 
         function openTab(tabName) {
             activeTab = tabName;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            var btn = Array.from(document.querySelectorAll('.tab-btn')).find(el => el.getAttribute('onclick').includes(tabName));
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(tab) { tab.classList.remove('active'); });
+            var btn = Array.from(document.querySelectorAll('.tab-btn')).find(function(el) { return el.getAttribute('onclick').indexOf(tabName) !== -1; });
             if(btn) btn.classList.add('active');
             var targetContent = document.getElementById('tab-' + tabName);
             if(targetContent) targetContent.classList.add('active');
         }
 
+        function openPeriodModal() { 
+            document.getElementById('periodModal').style.display = 'flex'; 
+            document.getElementById('periodStatus').style.display = 'none'; 
+            document.getElementById('cfgMonthLabel').value = ''; 
+        }
+
+        function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
+       
+        function savePeriodConfig() {
+            var mLabel = document.getElementById('cfgMonthLabel').value.trim(); 
+            var tWeeks = document.getElementById('cfgTotalWeeks').value; 
+            var pStatus = document.getElementById('periodStatus');
+            
+            if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
+            
+            var btn = document.getElementById('btnSaveConfig');
+            btn.innerText = "Saving..."; btn.disabled = true;
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "savePeriodSettings", 
+                    mLabel: mLabel, 
+                    monthLabel: mLabel, 
+                    month: mLabel, 
+                    tWeeks: tWeeks, 
+                    totalWeeks: tWeeks, 
+                    week: tWeeks,
+                    username: loggedInUser 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === 'success' || res.success) { 
+                    closePeriodModal(); 
+                    initPeriodConfig(); 
+                } else { 
+                    pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; 
+                }
+                btn.innerText = "Save Config"; btn.disabled = false;
+            })
+            .catch(err => {
+                pStatus.innerText = "Connection Error!"; pStatus.style.color = "red"; pStatus.style.display = "block";
+                btn.innerText = "Save Config"; btn.disabled = false;
+            });
+        }
+
+        function openRotModal() {
+            document.getElementById('rotModal').style.display = 'flex';
+            document.getElementById('rotStatus').style.display = 'none';
+            document.getElementById('rotPeriodLabel').innerText = document.getElementById('monthSelector').value + " - " + document.getElementById('weekSelector').value;
+            
+            document.getElementById('rotRunes').value = fullDataStore.rotRunes && fullDataStore.rotRunes !== '-' ? fullDataStore.rotRunes : '-';
+            document.getElementById('rotComc').value = fullDataStore.rotComc && fullDataStore.rotComc !== '-' ? fullDataStore.rotComc : '-';
+        }
+        
+        function closeRotModal() { document.getElementById('rotModal').style.display = 'none'; }
+        
+        function saveRotSubjects() {
+            var btn = document.querySelector('#rotModal .btn-submit');
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
+            var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value.trim(), week: document.getElementById('weekSelector').value.trim(), runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success') { closeRotModal(); fetchRoomData(); } 
+                else { document.getElementById('rotStatus').innerText = res.message; document.getElementById('rotStatus').style.color = "red"; document.getElementById('rotStatus').style.display = "block"; }
+                btn.innerText = "Save Assignment"; btn.disabled = false;
+            });
+        }
+
         function openAdjustModal(roomName, index) {
             var student = fullDataStore.rooms[roomName][index];
             currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
-            document.getElementById('adjustModal').style.display = 'flex'; 
-            document.getElementById('adjVault').innerText = student.vault; 
-            document.getElementById('adjUsername').innerText = student.username;
+            document.getElementById('adjustModal').style.display = 'flex'; document.getElementById('modalStatus').style.display = 'none'; document.getElementById('adjVault').innerText = student.vault; document.getElementById('adjUsername').innerText = student.username;
             var act = student.activity; 
             
             document.getElementById('adjStatus').value = act.status || 'Active'; 
@@ -543,19 +984,24 @@
             document.getElementById('adjExcused').value = act.excused || 0; 
             document.getElementById('adjFreeClass').value = act.freeClass || 0; 
             document.getElementById('adjReplacements').value = act.replacements || 0; 
+            document.getElementById('adjLoaStart').value = act.loaStart; 
+            document.getElementById('adjLoaEnd').value = act.loaEnd; 
+            document.getElementById('adjLoaLink').value = act.loaLink; 
             document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
             
-            // DENDA OVERRIDE DITULIS LANGSUNG KE INPUT (KOLOM Q)
             document.getElementById('adjCustomDenda').value = act.dendaOverride || 0;
+            
             document.getElementById('adjNotes').value = act.notes || '';
             document.getElementById('adjLockSync').checked = act.lockSync || false;
+            
+            toggleLoaFields();
         }
-
+       
+        function toggleLoaFields() { var status = document.getElementById('adjStatus').value; document.getElementById('loaSection').style.display = status === 'Leave of Absence' ? 'block' : 'none'; }
         function closeAdjustModal() { document.getElementById('adjustModal').style.display = 'none'; }
-
+       
         function saveActivityAdjustment() {
-            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
-            var act = s.activity;
+            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
@@ -565,10 +1011,18 @@
                 replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
                 freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
                 formStatus: document.getElementById('adjFormStatus').value, 
-                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0, // SIMPAN KE KOLOM Q (CUSTOM DENDA)
+                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0,
+                loaStart: document.getElementById('adjLoaStart').value, 
+                loaEnd: document.getElementById('adjLoaEnd').value, 
+                loaLink: document.getElementById('adjLoaLink').value, 
+                summaries: act.summaries, 
+                sumStat: act.sumStat, 
                 notes: document.getElementById('adjNotes').value, 
                 lockSync: document.getElementById('adjLockSync').checked 
             };
+            
+            var btn = document.getElementById('btnSaveAct'); 
+            btn.innerText = "Saving..."; btn.disabled = true;
             
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
@@ -581,14 +1035,64 @@
             .then(res => {
                 if(res.status === 'success' || res.success) { 
                     closeAdjustModal();
-                    setTimeout(function() { fetchRoomData(); }, 1000); 
-                }
+                    setTimeout(function() { fetchRoomData(); }, 1000);
+                } 
+                else { 
+                    var statusBox = document.getElementById('modalStatus'); 
+                    statusBox.innerText = res.message; 
+                    statusBox.style.color = "red"; 
+                    statusBox.style.display = "block"; 
+                    btn.innerText = "Save Activity"; 
+                    btn.disabled = false;
+                } 
+            });
+        }
+
+        function openAdjustSumModal(roomName, index) {
+            var student = fullDataStore.rooms[roomName][index];
+            currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
+            document.getElementById('adjustSumModal').style.display = 'flex'; document.getElementById('modalStatusSum').style.display = 'none'; document.getElementById('adjSumVault').innerText = student.vault; document.getElementById('adjSumUsername').innerText = student.username;
+            var act = student.activity; document.getElementById('adjSumCount').value = act.summaries || 0; document.getElementById('adjLockSyncSum').checked = act.lockSync || false;
+            var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; document.getElementById('adjSumStat3').value = stats[2] || 'Pending'; document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
+        }
+       
+        function closeAdjustSumModal() { document.getElementById('adjustSumModal').style.display = 'none'; }
+       
+        function saveSummariesAdjustment() {
+            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
+            var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
+            var payload = { 
+                status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
+                dendaOverride: act.dendaOverride, // Keep existing denda
+                loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, 
+                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), 
+                sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked 
+            };
+            
+            var btn = document.getElementById('btnSaveSum'); 
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
+            var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) { 
+                    closeAdjustSumModal();
+                    setTimeout(function() { fetchRoomData(); }, 1000);
+                } 
+                else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; btn.innerText = "Save Summaries"; btn.disabled = false; } 
             });
         }
 
         function openBulkPenaltyModal(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
+            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
+
             bpCurrentRoom = roomName;
             bpCurrentStudents = fullDataStore.rooms[roomName];
             
@@ -608,10 +1112,13 @@
 
             document.getElementById('bpMethod').value = "split";
             toggleBpTarget();
+
             document.getElementById('bulkPenaltyModal').style.display = 'flex';
         }
 
-        function closeBulkPenaltyModal() { document.getElementById('bulkPenaltyModal').style.display = 'none'; }
+        function closeBulkPenaltyModal() {
+            document.getElementById('bulkPenaltyModal').style.display = 'none';
+        }
 
         function toggleBpTarget() {
             var method = document.getElementById('bpMethod').value;
@@ -626,18 +1133,20 @@
             var totalCount = bpCurrentStudents.length;
             var totalPenalty = totalCount * 100;
 
-            if(!confirm("Apply late penalty to this room?")) return;
+            if(!confirm("Are you sure you want to save this late penalty? Make sure the penalty bearer selection is correct!")) return;
 
             closeBulkPenaltyModal();
             document.getElementById('loadingMsg').style.display = 'block';
             
+            var successCount = 0;
+
             for (var i = 0; i < totalCount; i++) {
                 var s = bpCurrentStudents[i];
                 var act = s.activity;
                 
                 var penaltyAmount = 0;
                 if (method === 'split') {
-                    penaltyAmount = (act.dendaOverride || 0) + 100; // Tambahkan 100 ke denda yang ada
+                    penaltyAmount = (act.dendaOverride || 0) + 100; 
                 } else if (method === 'single') {
                     if (s.vault === targetVault) penaltyAmount = (act.dendaOverride || 0) + totalPenalty; 
                     else penaltyAmount = act.dendaOverride || 0; 
@@ -645,19 +1154,92 @@
 
                 var payload = { 
                     status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                    dendaOverride: penaltyAmount, // SIMPAN KE KOLOM Q (CUSTOM DENDA)
-                    notes: act.notes, lockSync: true 
+                    dendaOverride: penaltyAmount, 
+                    loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, summaries: act.summaries, sumStat: act.sumStat, notes: act.notes, lockSync: true 
                 };
+                
+                document.getElementById('loadingMsg').innerText = "Applying penalty: " + (i + 1) + " of " + totalCount + " students...";
                 
                 try {
                     await fetch(API_URL, {
                         method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                         body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: s.vault, payload: payload })
                     });
-                } catch (err) {}
+                    successCount++;
+                } catch (err) {
+                    console.error("Failed to update vault " + s.vault, err);
+                }
             }
             
+            alert("✅ Late Files Penalty successfully applied to " + successCount + " members of " + bpCurrentRoom + "!");
             setTimeout(function() { fetchRoomData(); }, 1200);
+        }
+
+        function openReportModal(roomName) {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            if(!month || !week) { 
+                alert("Please select the Month and Week period in the top right corner first!"); 
+                return; 
+            }
+
+            currentReportRoom = roomName;
+            document.getElementById('repRoomName').innerText = roomName;
+            document.getElementById('repPeriod').innerText = month + " - " + week;
+            document.getElementById('repNotes').value = ""; 
+            
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function executeSendReport() {
+            var month = document.getElementById('monthSelector').value.trim();
+            var week = document.getElementById('weekSelector').value.trim();
+            var notes = document.getElementById('repNotes').value.trim();
+
+            var btn = document.getElementById('btnConfirmReport');
+            var originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ Sending...";
+            btn.disabled = true;
+
+            var safeUsername = loggedInUser + "|||" + notes;
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "sendWeeklyReport", 
+                    month: month, 
+                    week: week, 
+                    roomName: currentReportRoom, 
+                    username: safeUsername 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    alert("✅ Report for " + currentReportRoom + " successfully sent via email!");
+                    closeReportModal();
+                    
+                    var mainBtn = document.getElementById('btnReport_' + currentReportRoom);
+                    if(mainBtn) {
+                        mainBtn.innerHTML = "✅ Report Sent";
+                        mainBtn.style.backgroundColor = "gray";
+                    }
+                } else {
+                    alert("❌ Failed to send report: " + res.message);
+                }
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            })
+            .catch(err => {
+                alert("❌ Failed to send report: " + err.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
         }
     </script>
 </body>
