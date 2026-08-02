@@ -276,7 +276,7 @@
            
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePeriodModal()">Cancel</button>
-                <button class="btn-submit" onclick="savePeriodConfig()">Save Config</button>
+                <button class="btn-submit" onclick="savePeriodConfig()" id="btnSaveConfig">Save Config</button>
             </div>
         </div>
     </div>
@@ -466,7 +466,7 @@
         var isPrivilegedUser = false;
         
         var previousPeriod = { month: "", week: "" };
-        var currentReportRoom = ""; // Variable untuk melacak Room mana yang sedang disubmit
+        var currentReportRoom = ""; // Melacak Room mana yang sedang disubmit
 
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
@@ -646,7 +646,6 @@
                     if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
                     var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
-                    // --- BOX 1: ROOM WEEKLY ACTIVITY ---
                     var roomActHtml = '';
                     if (!isWeekActive) {
                         roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
@@ -861,21 +860,51 @@
             if(targetContent) targetContent.classList.add('active');
         }
 
-        function openPeriodModal() { document.getElementById('periodModal').style.display = 'flex'; document.getElementById('periodStatus').style.display = 'none'; document.getElementById('cfgMonthLabel').value = ''; }
+        function openPeriodModal() { 
+            document.getElementById('periodModal').style.display = 'flex'; 
+            document.getElementById('periodStatus').style.display = 'none'; 
+            document.getElementById('cfgMonthLabel').value = ''; 
+        }
+
         function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
        
         function savePeriodConfig() {
-            var mLabel = document.getElementById('cfgMonthLabel').value; var tWeeks = document.getElementById('cfgTotalWeeks').value; var pStatus = document.getElementById('periodStatus');
+            var mLabel = document.getElementById('cfgMonthLabel').value.trim(); 
+            var tWeeks = document.getElementById('cfgTotalWeeks').value; 
+            var pStatus = document.getElementById('periodStatus');
+            
             if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
             
+            var btn = document.getElementById('btnSaveConfig');
+            btn.innerText = "Saving..."; btn.disabled = true;
+
+            // BOMBARDIS PENAMAAN AGAR TIDAK MUNCUL UNDEFINED DI API
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "savePeriodSettings", mLabel: mLabel, tWeeks: tWeeks, username: loggedInUser })
+                body: JSON.stringify({ 
+                    action: "savePeriodSettings", 
+                    mLabel: mLabel, 
+                    monthLabel: mLabel, 
+                    month: mLabel, 
+                    tWeeks: tWeeks, 
+                    totalWeeks: tWeeks, 
+                    week: tWeeks,
+                    username: loggedInUser 
+                })
             })
             .then(r => r.json())
             .then(res => {
-                if (res.status === 'success' || res.success) { closePeriodModal(); initPeriodConfig(); } 
-                else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; }
+                if (res.status === 'success' || res.success) { 
+                    closePeriodModal(); 
+                    initPeriodConfig(); 
+                } else { 
+                    pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; 
+                }
+                btn.innerText = "Save Config"; btn.disabled = false;
+            })
+            .catch(err => {
+                pStatus.innerText = "Connection Error!"; pStatus.style.color = "red"; pStatus.style.display = "block";
+                btn.innerText = "Save Config"; btn.disabled = false;
             });
         }
 
@@ -930,11 +959,12 @@
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
-                attended: parseInt(document.getElementById('adjAttended').value) || 0, 
-                absences: parseInt(document.getElementById('adjAbsences').value) || 0, 
-                excused: parseInt(document.getElementById('adjExcused').value) || 0, 
-                replacements: parseInt(document.getElementById('adjReplacements').value) || 0, 
-                freeClass: parseInt(document.getElementById('adjFreeClass').value) || 0, 
+                // Math.max & parseInt untuk Anti-Error (Kosong -> 0)
+                attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), 
+                absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
+                excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), 
+                replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
+                freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
                 formStatus: document.getElementById('adjFormStatus').value, 
                 lrLate: document.getElementById('adjLrLate').checked, 
                 loaStart: document.getElementById('adjLoaStart').value, 
@@ -946,7 +976,9 @@
                 lockSync: document.getElementById('adjLockSync').checked 
             };
             
-            var btn = document.getElementById('btnSaveAct'); btn.innerText = "Saving..."; btn.disabled = true;
+            var btn = document.getElementById('btnSaveAct'); 
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
             fetch(API_URL, {
@@ -974,9 +1006,15 @@
         function saveSummariesAdjustment() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
-            var payload = { status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, lrLate: act.lrLate, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: parseInt(document.getElementById('adjSumCount').value) || 0, sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked };
+            var payload = { 
+                status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, lrLate: act.lrLate, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, 
+                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), 
+                sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked 
+            };
             
-            var btn = document.getElementById('btnSaveSum'); btn.innerText = "Saving..."; btn.disabled = true;
+            var btn = document.getElementById('btnSaveSum'); 
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
             fetch(API_URL, {
@@ -1025,6 +1063,9 @@
             btn.innerHTML = "⏳ Sending...";
             btn.disabled = true;
 
+            // BUNDLE NOTES KE USERNAME AGAR API TIDAK BINGUNG
+            var safeUsername = loggedInUser + "|||" + notes;
+
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
@@ -1032,8 +1073,7 @@
                     month: month, 
                     week: week, 
                     roomName: currentReportRoom, 
-                    username: loggedInUser,
-                    notes: notes // Field baru untuk mengirim catatan
+                    username: safeUsername 
                 })
             })
             .then(r => r.json())
