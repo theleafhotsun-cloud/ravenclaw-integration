@@ -117,6 +117,8 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--shellstone); padding-top: 10px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
+        
+        .rep-info { background: #e8eaf6; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; color: var(--royal-blue); border-left: 4px solid var(--sapphire); }
     </style>
 </head>
 <body>
@@ -358,7 +360,7 @@
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAdjustModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveActivityAdjustment()">Save Activity</button>
+                <button class="btn-submit" onclick="saveActivityAdjustment()" id="btnSaveAct">Save Activity</button>
             </div>
         </div>
     </div>
@@ -417,7 +419,29 @@
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveSummariesAdjustment()">Save Summaries</button>
+                <button class="btn-submit" onclick="saveSummariesAdjustment()" id="btnSaveSum">Save Summaries</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SUBMIT REPORT (BARU) -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-box" style="width: 450px;">
+            <h3>📤 Submit Room Report</h3>
+            <div class="rep-info">
+                <b>Room:</b> <span id="repRoomName"></span><br>
+                <b>Period:</b> <span id="repPeriod"></span>
+            </div>
+            
+            <div class="form-group">
+                <label>Additional Notes / Report Summary (Optional)</label>
+                <textarea id="repNotes" rows="4" placeholder="Type any important notes, excused/izin details, issues, or highlights for this week here..."></textarea>
+                <span style="font-size: 10px; color: gray; display: block; margin-top: 5px;">This note will be included in the email sent to Prefect/Headhouse.</span>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeReportModal()">Cancel</button>
+                <button class="btn-submit" style="background-color: var(--success);" onclick="executeSendReport()" id="btnConfirmReport">Send Report</button>
             </div>
         </div>
     </div>
@@ -440,8 +464,9 @@
         var currentEditIdx = -1;
         var currentUserRoom = "";
         var isPrivilegedUser = false;
-        // VARIABEL UNTUK MELACAK PERIOD SEBELUMNYA
+        
         var previousPeriod = { month: "", week: "" };
+        var currentReportRoom = ""; // Variable untuk melacak Room mana yang sedang disubmit
 
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
@@ -560,7 +585,6 @@
             var week = document.getElementById('weekSelector').value;
             if(!month) return;
            
-            // KUNCI: Bersihkan Data & Raw Data Jika Period Berubah
             if (previousPeriod.month !== month || previousPeriod.week !== week) {
                 fullDataStore = {};
                 document.getElementById('roomTabs').style.display = 'none';
@@ -573,7 +597,7 @@
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getActiveRoomData", month: month, week: week })
+                body: JSON.stringify({ action: "getActiveRoomData", month: month.trim(), week: week.trim() })
             })
             .then(r => r.json())
             .then(res => {
@@ -587,42 +611,6 @@
             .catch(err => {
                 document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>";
             });
-        }
-
-        function sendReport(roomName) {
-            var month = document.getElementById('monthSelector').value;
-            var week = document.getElementById('weekSelector').value;
-           
-            if(!month || !week) { alert("Please select a month and week first."); return; }
-           
-            if(confirm("Are you sure you want to SUBMIT the activity report for " + roomName + " (" + month + " - " + week + ") to the Prefect, Vice Prefect, and Headhouse?")) {
-                var btn = document.getElementById('btnReport_' + roomName);
-                var originalText = btn.innerHTML;
-                btn.innerHTML = "⏳ Sending...";
-                btn.disabled = true;
-               
-                fetch(API_URL, {
-                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: "sendWeeklyReport", month: month, week: week, roomName: roomName, username: loggedInUser })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if(res.status === 'success' || res.success) {
-                        alert("✅ Report for " + roomName + " successfully sent via email!");
-                        btn.innerHTML = "✅ Report Sent";
-                        btn.style.backgroundColor = "gray";
-                    } else {
-                        alert("❌ Failed to send report: " + res.message);
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }
-                })
-                .catch(err => {
-                    alert("❌ Failed to send report: " + err.message);
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                });
-            }
         }
 
         function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
@@ -646,9 +634,6 @@
 
                     var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
                     
-                    // ==========================================
-                    // AUTO-SORT: VAULT TERKECIL KE TERBESAR
-                    // ==========================================
                     students.sort(function(a, b) {
                         var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 999999;
                         var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 999999;
@@ -708,7 +693,8 @@
                         });
                     }
                    
-                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="sendReport(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
+                    // TOMBOL MEMBUKA JENDELA LAPORAN
+                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
 
                     var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
                         '<th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th>' +
@@ -793,7 +779,6 @@
                         '<div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div>' +
                         '</div><div class="table-container"><table><thead><tr><th>Vault Code</th><th>Username</th><th title="Effective Attended / Mandatory Requirement">Attendance<br>(Att / Req)</th><th>Petty Cash<br>/ Dues</th><th>Fines</th><th>Rewards</th><th title="Detailed calculation breakdown of fines">Fines Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
 
-                    // Tampilkan di web
                     var div = document.createElement('div');
                     div.className = 'tab-content ' + (roomName === activeTab ? 'active' : '');
                     div.id = 'tab-' + roomName;
@@ -806,7 +791,6 @@
                 if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) {
                     actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>';
                 } else {
-                    // SORT RAW DATA BY VAULT CODE (Index 1)
                     var sortedRawAct = fullDataStore.rawActivity.slice().sort(function(a,b) {
                         return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
                     });
@@ -826,7 +810,6 @@
                 if(!fullDataStore.rawSummaries || fullDataStore.rawSummaries.length === 0) {
                     sumHtml = '<tr><td colspan="10" style="text-align:center;">No summaries submitted for this period.</td></tr>';
                 } else {
-                    // SORT RAW SUMMARIES BY VAULT CODE (Index 1)
                     var sortedRawSum = fullDataStore.rawSummaries.slice().sort(function(a,b) {
                         return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
                     });
@@ -858,7 +841,7 @@
                 
                 fetch(API_URL, {
                     method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month, week: week, vault: vault, type: type, val: val.trim() })
+                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: val.trim() })
                 })
                 .then(r => r.json())
                 .then(res => {
@@ -911,7 +894,7 @@
             var btn = document.querySelector('#rotModal .btn-submit');
             btn.innerText = "Saving..."; btn.disabled = true;
             
-            var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value, week: document.getElementById('weekSelector').value, runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
+            var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value.trim(), week: document.getElementById('weekSelector').value.trim(), runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -931,7 +914,7 @@
             document.getElementById('adjustModal').style.display = 'flex'; document.getElementById('modalStatus').style.display = 'none'; document.getElementById('adjVault').innerText = student.vault; document.getElementById('adjUsername').innerText = student.username;
             var act = student.activity; 
             
-            document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended; document.getElementById('adjAbsences').value = act.absences; document.getElementById('adjExcused').value = act.excused; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; document.getElementById('adjLrLate').checked = act.lrLate; 
+            document.getElementById('adjStatus').value = act.status || 'Active'; document.getElementById('adjReqOverride').value = act.reqOverride || ''; document.getElementById('adjMandatory').innerText = student.mandatory; document.getElementById('adjAttended').value = act.attended || 0; document.getElementById('adjAbsences').value = act.absences || 0; document.getElementById('adjExcused').value = act.excused || 0; document.getElementById('adjFreeClass').value = act.freeClass || 0; document.getElementById('adjReplacements').value = act.replacements || 0; document.getElementById('adjLoaStart').value = act.loaStart; document.getElementById('adjLoaEnd').value = act.loaEnd; document.getElementById('adjLoaLink').value = act.loaLink; document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; document.getElementById('adjLrLate').checked = act.lrLate; 
             
             document.getElementById('adjNotes').value = act.notes || '';
             document.getElementById('adjLockSync').checked = act.lockSync || false;
@@ -947,11 +930,11 @@
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
-                attended: document.getElementById('adjAttended').value, 
-                absences: document.getElementById('adjAbsences').value, 
-                excused: document.getElementById('adjExcused').value, 
-                replacements: document.getElementById('adjReplacements').value, 
-                freeClass: document.getElementById('adjFreeClass').value, 
+                attended: parseInt(document.getElementById('adjAttended').value) || 0, 
+                absences: parseInt(document.getElementById('adjAbsences').value) || 0, 
+                excused: parseInt(document.getElementById('adjExcused').value) || 0, 
+                replacements: parseInt(document.getElementById('adjReplacements').value) || 0, 
+                freeClass: parseInt(document.getElementById('adjFreeClass').value) || 0, 
                 formStatus: document.getElementById('adjFormStatus').value, 
                 lrLate: document.getElementById('adjLrLate').checked, 
                 loaStart: document.getElementById('adjLoaStart').value, 
@@ -963,12 +946,12 @@
                 lockSync: document.getElementById('adjLockSync').checked 
             };
             
-            var btn = document.querySelector('#adjustModal .btn-submit'); btn.innerText = "Saving..."; btn.disabled = true;
+            var btn = document.getElementById('btnSaveAct'); btn.innerText = "Saving..."; btn.disabled = true;
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month, week: week, vault: currentEditVault, payload: payload })
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload })
             })
             .then(r => r.json())
             .then(res => {
@@ -982,7 +965,7 @@
             var student = fullDataStore.rooms[roomName][index];
             currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
             document.getElementById('adjustSumModal').style.display = 'flex'; document.getElementById('modalStatusSum').style.display = 'none'; document.getElementById('adjSumVault').innerText = student.vault; document.getElementById('adjSumUsername').innerText = student.username;
-            var act = student.activity; document.getElementById('adjSumCount').value = act.summaries; document.getElementById('adjLockSyncSum').checked = act.lockSync || false;
+            var act = student.activity; document.getElementById('adjSumCount').value = act.summaries || 0; document.getElementById('adjLockSyncSum').checked = act.lockSync || false;
             var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; document.getElementById('adjSumStat3').value = stats[2] || 'Pending'; document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
         }
        
@@ -991,19 +974,89 @@
         function saveSummariesAdjustment() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
-            var payload = { status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, lrLate: act.lrLate, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: document.getElementById('adjSumCount').value, sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked };
-            var btn = document.querySelector('#adjustSumModal .btn-submit'); btn.innerText = "Saving..."; btn.disabled = true;
+            var payload = { status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, lrLate: act.lrLate, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: parseInt(document.getElementById('adjSumCount').value) || 0, sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked };
+            
+            var btn = document.getElementById('btnSaveSum'); btn.innerText = "Saving..."; btn.disabled = true;
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month, week: week, vault: currentEditVault, payload: payload })
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload })
             })
             .then(r => r.json())
             .then(res => {
                 if(res.status === 'success' || res.success) { fullDataStore = res.data; renderAllTabs(); closeAdjustSumModal(); } 
                 else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
                 btn.innerText = "Save Summaries"; btn.disabled = false;
+            });
+        }
+
+        // ==========================================
+        // FUNGSI JENDELA SUBMIT REPORT (BARU)
+        // ==========================================
+        function openReportModal(roomName) {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            if(!month || !week) { 
+                alert("Pilih periode Bulan dan Minggu terlebih dahulu di pojok kanan atas!"); 
+                return; 
+            }
+
+            currentReportRoom = roomName;
+            document.getElementById('repRoomName').innerText = roomName;
+            document.getElementById('repPeriod').innerText = month + " - " + week;
+            document.getElementById('repNotes').value = ""; 
+            
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function executeSendReport() {
+            var month = document.getElementById('monthSelector').value.trim();
+            var week = document.getElementById('weekSelector').value.trim();
+            var notes = document.getElementById('repNotes').value.trim();
+
+            var btn = document.getElementById('btnConfirmReport');
+            var originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ Sending...";
+            btn.disabled = true;
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "sendWeeklyReport", 
+                    month: month, 
+                    week: week, 
+                    roomName: currentReportRoom, 
+                    username: loggedInUser,
+                    notes: notes // Field baru untuk mengirim catatan
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    alert("✅ Report for " + currentReportRoom + " successfully sent via email!");
+                    closeReportModal();
+                    
+                    var mainBtn = document.getElementById('btnReport_' + currentReportRoom);
+                    if(mainBtn) {
+                        mainBtn.innerHTML = "✅ Report Sent";
+                        mainBtn.style.backgroundColor = "gray";
+                    }
+                } else {
+                    alert("❌ Failed to send report: " + res.message);
+                }
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            })
+            .catch(err => {
+                alert("❌ Failed to send report: " + err.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             });
         }
     </script>
