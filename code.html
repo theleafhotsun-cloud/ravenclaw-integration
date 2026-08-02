@@ -1,0 +1,607 @@
+// ==========================================
+// 3_RoomActivity.gs
+// ACTIVE ROOM DATABASE, AUTO-SYNC & PERIOD ARCHIVE
+// ==========================================
+
+var STUDENT_DB_ID = "1HuhVZDeiW57KuD6ulCHUd90DPgBeKwOBx12vlE2yn3Y"; 
+var ACTIVITY_DB_ID = "10F0USDy3F5ZMxOTZaltam_bm71d6MPUdyRA8yNrV_CQ"; 
+
+// FUNGSI PENERJEMAH TANGGAL KEBAL FORMAT (ANTI-INVALID DATE)
+function parseSafeDate(objVal, dispVal) {
+  var ts = new Date(objVal);
+  if (!isNaN(ts.getTime())) return ts;
+  var ts2 = new Date(dispVal);
+  if (!isNaN(ts2.getTime())) return ts2;
+  var str = String(dispVal).trim();
+  var parts = str.split(' ');
+  var dateParts = parts[0].split(/\/|-/);
+  if (dateParts.length === 3) {
+    var day = parseInt(dateParts[0], 10);
+    var month = parseInt(dateParts[1], 10) - 1;
+    var year = parseInt(dateParts[2], 10);
+    if (year < 100) year += 2000;
+    var hr = 0, min = 0, sec = 0;
+    if (parts[1]) {
+      var tp = parts[1].split(':');
+      hr = parseInt(tp[0], 10) || 0;
+      min = parseInt(tp[1], 10) || 0;
+      sec = parseInt(tp[2], 10) || 0;
+    }
+    return new Date(year, month, day, hr, min, sec);
+  }
+  return new Date(NaN);
+}
+
+// FUNGSI PENYERAGAM VAULT CODE
+function sanitizeVault(val) {
+  if (val === null || val === undefined) return "";
+  return String(val).trim().toLowerCase().replace(/\.0+$/, '');
+}
+
+function parseMonthInfo(ml) {
+  var clean = String(ml || '').replace(/'/g, '').trim();
+  var parts = clean.split(' ');
+  var mName = parts[0] || 'July';
+  var yNum = parts[1] ? parseInt(parts[1], 10) : new Date().getFullYear();
+  var mMap = { 'january':0, 'february':1, 'march':2, 'april':3, 'may':4, 'june':5, 'july':6, 'august':7, 'september':8, 'october':9, 'november':10, 'december':11 };
+  return { monthIdx: mMap[mName.toLowerCase()], year: yNum, label: clean };
+}
+
+function checkIfPrivilegedAndGetRoom(username) {
+    var uLower = String(username || '').trim().toLowerCase();
+    var result = { priv: false, room: "" };
+    if(uLower === 'system' || uLower === 'headhouse admin') { result.priv = true; return result; }
+    try {
+        var authSs = SpreadsheetApp.openById("13q3TaiTwiqYPgRZ5npgiM1VuOjJV1J1jo6SoGHnHqUs");
+        var regSheet = authSs.getSheetByName("REGISTER");
+        if(regSheet) {
+            var regData = regSheet.getDataRange().getValues();
+            for (var r = 1; r < regData.length; r++) {
+                if (String(regData[r][0]).trim().toLowerCase() === uLower) {
+                    var pos = String(regData[r][2]).trim().toLowerCase(); 
+                    result.room = String(regData[r][3]).trim(); 
+                    if(pos.includes('headhouse') || pos.includes('prefect') || pos.includes('vice prefect') || pos.includes('vp')) { result.priv = true; }
+                    break;
+                }
+            }
+        }
+    } catch(e) {}
+    return result;
+}
+
+function getPeriodConfig(username) {
+  try {
+    var ssDb = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var s = ssDb.getSheetByName('Room_Period_Settings');
+    var def = 'August 2026';
+    if(!s) { s = ssDb.insertSheet('Room_Period_Settings'); s.appendRow(['MonthLabel','TotalWeeks','IsActive']); s.appendRow([def, 4, true]); }
+    var d = s.getDataRange().getDisplayValues();
+    var uniqueMonths = {};
+    for(var i = 1; i < d.length; i++) {
+      var ml = String(d[i][0]).replace(/'/g, '').trim();
+      if(ml && ml !== 'MonthLabel') {
+        uniqueMonths[ml.toLowerCase()] = { monthLabel: ml, totalWeeks: Number(d[i][1]) || 4, isActive: String(d[i][2]).toLowerCase() === 'true' || String(d[i][2]).toLowerCase() === 'benar' };
+      }
+    }
+    var actMonth = null; var archMonths = [];
+    for (var key in uniqueMonths) { if (uniqueMonths[key].isActive) actMonth = uniqueMonths[key]; else archMonths.push(uniqueMonths[key]); }
+    if(!actMonth) { actMonth = { monthLabel: def, totalWeeks: 4, isActive: true }; }
+    var userInfo = checkIfPrivilegedAndGetRoom(username);
+    return { activeMonth: actMonth, archivedMonths: archMonths, isPrivileged: userInfo.priv, userRoom: userInfo.room };
+  } catch(e) { return { error: "Period Config Error: " + e.toString() }; }
+}
+
+function savePeriodSettings(ml, tw, username) {
+  try {
+    var userInfo = checkIfPrivilegedAndGetRoom(username);
+    if(!userInfo.priv) return { success: false, message: "Permission Denied!" };
+    var ssDb = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var s = ssDb.getSheetByName('Room_Period_Settings');
+    var d = s.getDataRange().getValues();
+    var fr = -1; var cleanMl = String(ml).replace(/'/g, '').trim();
+    for(var i=1; i<d.length; i++) { s.getRange(i+1, 3).setValue(false); if(String(d[i][0]).replace(/'/g, '').trim().toLowerCase() === cleanMl.toLowerCase()) fr = i+1; }
+    if(fr > 0) { s.getRange(fr, 2).setValue(Number(tw)); s.getRange(fr, 3).setValue(true); } else { s.appendRow(["'" + cleanMl, Number(tw), true]); }
+    return { success: true, message: "New month created!" };
+  } catch(e) { return { success: false, message: e.toString() }; }
+}
+
+function saveRotSubjects(ml, wn, runes, comc) {
+  try {
+    var ss = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var s = ss.getSheetByName('Rotating_Subjects');
+    if (!s) { s = ss.insertSheet('Rotating_Subjects'); s.appendRow(['Month', 'Week', 'AncientRunes', 'COMC']); }
+    var dt = s.getDataRange().getValues(); var r = -1;
+    var cleanMl = String(ml).replace(/'/g, '').trim().toLowerCase(); var cleanWn = String(wn).replace(/'/g, '').trim().toLowerCase();
+    for(var i=1; i<dt.length; i++){
+      if(String(dt[i][0]||'').replace(/'/g, '').trim().toLowerCase() === cleanMl && String(dt[i][1]||'').replace(/'/g, '').trim().toLowerCase() === cleanWn){ r = i+1; break; }
+    }
+    if(r>0){ s.getRange(r, 3).setValue(runes); s.getRange(r, 4).setValue(comc); } else { s.appendRow(["'"+String(ml).replace(/'/g, '').trim(), "'"+String(wn).replace(/'/g, '').trim(), runes, comc]); }
+    return { success: true, message: "Assignments saved!" };
+  } catch(e) { return { success: false, message: e.toString() }; }
+}
+
+// ==========================================
+// MENGAMBIL DATA (DITAMPILKAN DI WEBSITE)
+// ==========================================
+function getActiveRoomData(monthLabel, weekNumber) {
+  try {
+    var cleanMonth = String(monthLabel || 'August 2026').replace(/'/g, '').trim();
+    var cleanWeek = String(weekNumber || 'Week 1').replace(/'/g, '').trim();
+    var mInfo = parseMonthInfo(cleanMonth);
+    var targetWeekNum = cleanWeek.replace(/[^0-9]/g, '');
+
+    var pConf = getPeriodConfig('system');
+    var currentMonthConf = pConf.activeMonth.monthLabel === cleanMonth ? pConf.activeMonth : (pConf.archivedMonths.find(function(m){ return m.monthLabel === cleanMonth; }) || {totalWeeks: 4});
+    var isWeekActive = parseInt(targetWeekNum) <= currentMonthConf.totalWeeks; 
+
+    var ssDb = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var rotSh = ssDb.getSheetByName('Rotating_Subjects');
+    var rotRunes = "-"; var rotComc = "-";
+    if (rotSh) {
+        var rotData = rotSh.getDataRange().getValues();
+        for (var r = 1; r < rotData.length; r++) {
+            if (String(rotData[r][0]).trim().toLowerCase() === cleanMonth.toLowerCase() && String(rotData[r][1]).trim().toLowerCase() === cleanWeek.toLowerCase()) {
+                rotRunes = String(rotData[r][2]).trim(); rotComc = String(rotData[r][3]).trim();
+            }
+        }
+    }
+    
+    var ast = getStudentDatabase().filter(function(x){ return !x.isDeactive && !x.isResigned && !x.isDropOut && x.room; });
+    var activitySs = SpreadsheetApp.openById(ACTIVITY_DB_ID); 
+    var fActData = {}; var fSumData = {}; var rAct = []; var rSum = [];
+    
+    try {
+      var aSh = activitySs.getSheetByName('Weekly Activity Data') || activitySs.getSheetByName('Form Responses 1') || activitySs.getSheets()[0];
+      if(aSh) {
+        var adDisp = aSh.getDataRange().getDisplayValues();
+        var adObj = aSh.getDataRange().getValues();
+        var hA = adDisp[0].map(function(x){return String(x).toLowerCase().trim()});
+        
+        var tc = hA.indexOf('timestamp'); 
+        var vc = hA.findIndex(function(x){ return x.indexOf('vault') > -1; });
+        var ac = hA.findIndex(function(x){ return x.indexOf('attended') > -1; });
+        var ab = hA.findIndex(function(x){ return x.indexOf('absences') > -1 && x.indexOf('excused') === -1; });
+        var ec = hA.findIndex(function(x){ return x.indexOf('excused') > -1; });
+        var rc = hA.findIndex(function(x){ return x.indexOf('replacement') > -1; });
+        var sc = hA.findIndex(function(x){ return x.indexOf('summaries') > -1; });
+        var wc = hA.findIndex(function(x){ return x.indexOf('week') > -1 || x.indexOf('pekan') > -1; });
+        var loaC = hA.findIndex(function(x){ return x.indexOf('leave of absence') > -1; });
+
+        for(var i=1; i<adDisp.length; i++){
+          var rawV = String(adDisp[i][vc]).trim(); 
+          var v = sanitizeVault(rawV);
+          if(!v) continue;
+          
+          var tsDate = parseSafeDate(adObj[i][tc], adDisp[i][tc]);
+          if(isNaN(tsDate.getTime())) continue; // PROTEKSI TANGGAL INVALID
+
+          var rowMonth = tsDate.getMonth();
+          var rowYear = tsDate.getFullYear();
+          var rowWeek = (wc !== -1) ? String(adDisp[i][wc]).replace(/[^0-9]/g, '') : '';
+          
+          if(rowYear === 2026 && rowMonth === 6 && tsDate.getDate() >= 26) { rowMonth = 7; rowWeek = "1"; }
+
+          if(!isNaN(tsDate.getTime()) && mInfo.monthIdx !== undefined) { if(rowMonth !== mInfo.monthIdx || rowYear !== mInfo.year) continue; }
+          if(rowWeek !== targetWeekNum && rowWeek !== "") continue;
+          
+          rAct.push([ adDisp[i][0]||'-', rawV||'-', adDisp[i][2]||'-', adDisp[i][3]||'-', adDisp[i][4]||'-', adDisp[i][ac]||'0', adDisp[i][ab]||'0', adDisp[i][ec]||'0', adDisp[i][rc]||'0', adDisp[i][sc]||'0', adDisp[i][loaC]||'-' ]);
+          
+          var dy = tsDate.getDay(); var hr = tsDate.getHours();
+          var late = (dy > 0 || (dy === 0 && hr >= 18));
+          var isLoaForm = false;
+          if(loaC!==-1) { 
+            var lStr = String(adDisp[i][loaC]).toLowerCase().trim(); 
+            if(lStr==='yes'||lStr==='true'||lStr==='y'||lStr==='ya'||lStr.includes('leave')) isLoaForm = true; 
+          }
+          
+          var excTextRaw = adDisp[i][ec] || '0'; var excNum = 0;
+          if (!isNaN(Number(excTextRaw)) && String(excTextRaw).trim() !== '') { excNum = Number(excTextRaw); } 
+          else if (typeof excTextRaw === 'string' && excTextRaw.trim() !== '' && excTextRaw.trim() !== '-') {
+              excNum = excTextRaw.split(/\r?\n/).filter(function(x){ return x.trim().length > 0; }).length;
+              if (excNum === 0) excNum = 1;
+          }
+
+          fActData[v] = { att: Number(adDisp[i][ac])||0, abs: Number(adDisp[i][ab])||0, exc: excNum, excText: excTextRaw, rep: Number(adDisp[i][rc])||0, sum: Number(adDisp[i][sc])||0, fs: late?'Late':'On Time', isLoa: isLoaForm };
+        }
+      }
+
+      var sSh = activitySs.getSheetByName('Summaries') || activitySs.getSheetByName('Form Responses 2') || activitySs.getSheets()[1];
+      if(sSh) {
+        var sdDisp = sSh.getDataRange().getDisplayValues();
+        var sdObj = sSh.getDataRange().getValues();
+        var hS = sdDisp[0].map(function(x){return String(x).toLowerCase().trim()});
+        
+        var vcS = hS.findIndex(function(x){ return x.indexOf('vault') > -1; });
+        var wcS = hS.findIndex(function(x){ return x.indexOf('week') > -1 || x.indexOf('pekan') > -1; });
+        var auC = hS.findIndex(function(x){ return x.indexOf('auror') > -1; });
+        var minC = hS.findIndex(function(x){ return x.indexOf('ministry') > -1; });
+        var exC = hS.findIndex(function(x){ return x.indexOf('extracurricular') > -1; });
+        
+        var linkCols = []; var statCols = [];
+        for(var k=0; k<hS.length; k++){ 
+            if(hS[k].indexOf('link') > -1 || hS[k].indexOf('pranala') > -1) linkCols.push(k); 
+            if(hS[k].indexOf('status') > -1 || hS[k].indexOf('approved') > -1) statCols.push(k);
+        }
+
+        for(var j=1; j<sdDisp.length; j++){
+          var rawVs = String(sdDisp[j][vcS]).trim();
+          var vS = sanitizeVault(rawVs);
+          if(!vS) continue;
+
+          var tsDate2 = parseSafeDate(sdObj[j][0], sdDisp[j][0]);
+          if(isNaN(tsDate2.getTime())) continue;
+
+          var rowMonth2 = tsDate2.getMonth();
+          var rowYear2 = tsDate2.getFullYear();
+          var rowWeek2 = (wcS !== -1) ? String(sdDisp[j][wcS]).replace(/[^0-9]/g, '') : '';
+          
+          if(rowYear2 === 2026 && rowMonth2 === 6 && tsDate2.getDate() >= 26) { rowMonth2 = 7; rowWeek2 = "1"; }
+          if(!isNaN(tsDate2.getTime()) && mInfo.monthIdx !== undefined) { if(rowMonth2 !== mInfo.monthIdx || rowYear2 !== mInfo.year) continue; }
+          if(rowWeek2 !== targetWeekNum && rowWeek2 !== "") continue;
+          
+          var l1 = linkCols[0] !== undefined ? sdDisp[j][linkCols[0]] : '';
+          var l2 = linkCols[1] !== undefined ? sdDisp[j][linkCols[1]] : '';
+          var l3 = linkCols[2] !== undefined ? sdDisp[j][linkCols[2]] : '';
+          var l4 = linkCols[3] !== undefined ? sdDisp[j][linkCols[3]] : '';
+          var s1 = statCols[0] !== undefined ? sdDisp[j][statCols[0]] : null;
+          
+          rSum.push([sdDisp[j][0]||'-', rawVs||'-', sdDisp[j][2]||'-', sdDisp[j][auC]||'-', sdDisp[j][minC]||'-', sdDisp[j][exC]||'-', l1, l2, l3, l4]);
+          fSumData[vS] = { auror: sdDisp[j][auC]||'-', ministry: sdDisp[j][minC]||'-', extra: sdDisp[j][exC]||'-', links: [l1, l2, l3, l4], formStatObj: s1 };
+        }
+      }
+    } catch(err){ }
+
+    var sOv = ssDb.getSheetByName('Room_Activity_Overrides');
+    if(!sOv) {
+      sOv = ssDb.insertSheet('Room_Activity_Overrides');
+      sOv.appendRow(['Month','Week','Vault','Status','Attended','Absences','Excused','Replacements','Summaries','LoA Start','LoA End','LoA Link','Notes','Form Status','LR Late','Custom Kas','Custom Denda','Req Override','Summary Statuses','Is Manual Sync', 'Free Class']);
+    }
+    
+    var od = sOv.getDataRange().getValues();
+    var mwo = {}; var loaH = {};
+    
+    for(var x=1; x<od.length; x++) {
+      var vO = String(od[x][2] || '').trim();
+      if(!vO) continue;
+
+      var isLrLate = (String(od[x][14]).toLowerCase() === 'true' || String(od[x][14]).toLowerCase() === 'benar');
+      var isLockSync = (String(od[x][19]).toLowerCase() === 'true' || String(od[x][19]).toLowerCase() === 'benar');
+
+      var rawStart = od[x][9]; var rawEnd = od[x][10];
+      
+      // PERBAIKAN: ANTI-CRASH INVALID DATE PADA OVERRIDE GET DATA
+      var strStart = "";
+      if (rawStart instanceof Date && !isNaN(rawStart.getTime())) {
+          strStart = Utilities.formatDate(rawStart, Session.getScriptTimeZone(), "yyyy-MM-dd");
+      } else { strStart = String(rawStart || '').trim(); }
+
+      var strEnd = "";
+      if (rawEnd instanceof Date && !isNaN(rawEnd.getTime())) {
+          strEnd = Utilities.formatDate(rawEnd, Session.getScriptTimeZone(), "yyyy-MM-dd");
+      } else { strEnd = String(rawEnd || '').trim(); }
+
+      var rec = {
+        status: String(od[x][3] || '').trim(), 
+        att: Number(od[x][4])||0, abs: Number(od[x][5])||0, exc: Number(od[x][6])||0, rep: Number(od[x][7])||0, sum: Number(od[x][8])||0,
+        loaStart: strStart, loaEnd: strEnd, loaLink: od[x][11]||'', notes: od[x][12]||'', formStatus: od[x][13]||'Pending', 
+        lrLate: isLrLate,
+        kasOverride: (od[x][15]!==undefined && od[x][15]!=='') ? Number(od[x][15]) : '', dendaOverride: (od[x][16]!==undefined && od[x][16]!=='') ? Number(od[x][16]) : '',
+        reqOverride: (od[x][17]!==undefined && od[x][17]!=='') ? Number(od[x][17]) : '', sumStat: od[x][18]||'Pending,Pending,Pending,Pending',
+        isManual: isLockSync, freeClass: Number(od[x][20])||0
+      };
+      
+      var keyMonth = String(od[x][0] || '').replace(/'/g,'').trim().toLowerCase();
+      var keyWeek = String(od[x][1] || '').replace(/'/g,'').trim().toLowerCase();
+      var keyVault = sanitizeVault(vO);
+      var key = keyMonth + "_" + keyWeek + "_" + keyVault;
+      
+      mwo[key] = rec;
+      if(rec.status === 'Leave of Absence') loaH[sanitizeVault(vO)] = rec;
+    }
+
+    var rms = {"Eternclaw":[], "Ravelynx":[], "Ravenion":[], "Ravenrow":[], "Velaclaw":[]};
+    var validRooms = Object.keys(rms);
+    
+    ast.forEach(function(s) {
+      var rawVsDb = String(s.vault || '').trim();
+      var vStr = sanitizeVault(rawVsDb);
+      if (!vStr) return;
+
+      var gr = String(s.grade || '').toUpperCase();
+      var rName = String(s.room || '').trim();
+      var matchedRoom = validRooms.find(function(vr){ return vr.toLowerCase() === rName.toLowerCase(); });
+      if (!matchedRoom) return; 
+
+      var wlTags = [];
+      if(s.wlClass) wlTags.push("Class"); if(s.wlInactive) wlTags.push("Inactive"); if(s.wlHiatus) wlTags.push("Hiatus"); if(s.wlConflict) wlTags.push("Conflict");
+      var wlString = wlTags.length > 0 ? wlTags.join(", ") : "";
+
+      var reqKey = cleanMonth.toLowerCase() + "_" + cleanWeek.toLowerCase() + "_" + vStr;
+      
+      var fA = fActData[vStr]; 
+      var fS = fSumData[vStr]; 
+      var o = mwo[reqKey];
+      var hl = loaH[vStr];
+
+      var isManual = o ? o.isManual : false;
+      var statBase = (fA && fA.isLoa) ? 'Leave of Absence' : ((hl && hl.status==='Leave of Absence') ? 'Leave of Absence' : 'Active');
+      
+      var defaultSumStat = 'Pending,Pending,Pending,Pending';
+      if(fS && fS.formStatObj) {
+         var autoS = String(fS.formStatObj).trim();
+         if(autoS==='Approved'||autoS==='Pending') defaultSumStat = [autoS,autoS,autoS,autoS].join(',');
+      }
+
+      var finalExcText = '0';
+      if (fA && fA.excText && fA.excText !== '0') finalExcText = fA.excText;
+      else if (isManual) finalExcText = String(o.exc);
+
+      var act = {
+        status: isManual ? o.status : (o ? o.status : statBase),
+        attended: isManual ? o.att : (fA ? fA.att : 0),
+        absences: isManual ? o.abs : (fA ? fA.abs : 0),
+        excused: isManual ? o.exc : (fA ? fA.exc : 0),
+        excusedText: finalExcText,
+        replacements: isManual ? o.rep : (fA ? fA.rep : 0),
+        freeClass: isManual ? o.freeClass : (o ? o.freeClass : 0),
+        summaries: isManual ? o.sum : (fA ? fA.sum : 0),
+        formStatus: isManual ? o.formStatus : (fA ? fA.fs : 'Pending'),
+        loaStart: o ? o.loaStart : (hl?hl.loaStart:''), loaEnd: o ? o.loaEnd : (hl?hl.loaEnd:''), loaLink: o ? o.loaLink : (hl?hl.loaLink:''),
+        notes: o ? o.notes : '', lrLate: o ? o.lrLate : false, kasOverride: o ? o.kasOverride : '', dendaOverride: o ? o.dendaOverride : '',
+        reqOverride: o ? o.reqOverride : '', sumStat: o ? o.sumStat : defaultSumStat,
+        sumAuror: fS ? fS.auror : '-', sumMinistry: fS ? fS.ministry : '-', sumExtra: fS ? fS.extra : '-',
+        sumLinks: fS ? fS.links : ['','','',''], lockSync: isManual
+      };
+
+      var loaWarning = false; var loaDaysText = "";
+      if (act.status === 'Leave of Absence' && act.loaEnd) {
+          var eDate = new Date(act.loaEnd); var tDate = new Date();
+          eDate.setHours(0,0,0,0); tDate.setHours(0,0,0,0); 
+          var diffDays = Math.ceil((eDate.getTime() - tDate.getTime()) / (1000 * 3600 * 24));
+          if (diffDays <= 3 && diffDays >= 0) { loaWarning = true; loaDaysText = diffDays === 0 ? "Today!" : diffDays + " Days"; } 
+          else if (diffDays < 0) { loaWarning = true; loaDaysText = "Overdue!"; }
+      }
+      act.loaWarning = loaWarning; act.loaDaysText = loaDaysText;
+
+      var baseMandatory = 3; 
+      if (s.electives && String(s.electives).trim().length > 0 && String(s.electives).trim() !== '-') { baseMandatory = 4; }
+      if (gr === 'G7') { baseMandatory = 0; }
+
+      var finalMandatory = baseMandatory;
+      if (act.reqOverride !== '' && act.reqOverride !== null && gr !== 'G7') {
+          var oVal = Number(act.reqOverride);
+          if (oVal !== 3 && oVal !== 4) { finalMandatory = oVal; }
+      }
+
+      var rd=0; var kas=0;
+      if(gr==='NEWIZZY' || gr==='G1' || gr==='G2') { rd=20; kas=50; } 
+      else if(gr==='G3'||gr==='G4') { rd=40; kas=100; } 
+      else if(gr==='G5'||gr==='G6') { rd=50; kas=150; } 
+      else if(gr==='G7') { rd=0; kas=200; }
+      
+      var denda=0; var cfa=0; var ffa=0; var finesDetail = [];
+      
+      if(!isWeekActive) {
+         finalMandatory=0; denda=0; act.formStatus = 'Not Applicable';
+      } else if(act.status==='Leave of Absence') { 
+         finalMandatory=0; denda=0; 
+      } else {
+         if (act.formStatus !== 'Pending' && act.formStatus !== 'Not Applicable') {
+            var ef = act.attended + act.replacements + act.freeClass;
+            var diff = finalMandatory - ef;
+            if(diff>0) { cfa = diff*rd; denda += cfa; finesDetail.push("Class Shortage (" + diff + "xʛ" + rd + "): <b>ʛ" + cfa + "</b>"); } 
+            if(act.formStatus==='Late') { ffa=50; denda+=ffa; finesDetail.push("Late Form: <b>ʛ50</b>"); } 
+            else if(act.formStatus==='No Submit') { ffa = (gr === 'NEWIZZY') ? 60 : 100; denda += ffa; finesDetail.push("No Submit Form: <b>ʛ" + ffa + "</b>"); }
+         }
+      }
+      
+      if(act.lrLate && act.formStatus !== 'Pending' && act.formStatus !== 'Not Applicable') { denda+=100; ffa+=100; finesDetail.push("LR Late Summary: <b>ʛ100</b>"); }
+      if(act.kasOverride!=='') kas=act.kasOverride;
+      if(act.dendaOverride!=='') { denda=act.dendaOverride; cfa=denda; ffa=0; finesDetail = ["Custom Override: <b>ʛ" + denda + "</b>"]; }
+      
+      var fdStr = finesDetail.length > 0 ? finesDetail.join("<br>") : "-";
+      var rew = isWeekActive ? (act.summaries * 50) : 0; 
+
+      rms[matchedRoom].push({
+        vault:rawVsDb, username:s.username, fullName:s.fullName, room:matchedRoom, grade:s.grade, 
+        major:s.major, electives:s.electives, totalClasses:s.totalClasses, mandatory:finalMandatory, wl: wlString,
+        activity:act, kas:kas, denda:denda, classFinesAmount:cfa, formFinesAmount:ffa, finesDetail: fdStr, reward:rew
+      });
+    });
+
+    return { rooms: rms, rawActivity: rAct, rawSummaries: rSum, isWeekActive: isWeekActive, monthWeeksConfig: currentMonthConf.totalWeeks, rotRunes: rotRunes, rotComc: rotComc };
+  } catch(err) { return { error: "Database Sync Error: " + err.message }; }
+}
+
+function saveRoomActivityOverride(ml, wn, v, d) {
+  try {
+    var s = SpreadsheetApp.openById(STUDENT_DB_ID).getSheetByName('Room_Activity_Overrides');
+    if(s.getMaxColumns() < 21) { s.insertColumnsAfter(s.getMaxColumns(), 21 - s.getMaxColumns()); }
+    var cleanMl = String(ml).replace(/'/g, '').trim().toLowerCase(); var cleanWn = String(wn).replace(/'/g, '').trim().toLowerCase(); var cleanVault = sanitizeVault(v);
+    var dt = s.getDataRange().getValues(); var r = -1; var ek=''; var ed='';
+    for(var i=1; i<dt.length; i++){
+      if(String(dt[i][0] || '').replace(/'/g, '').trim().toLowerCase() === cleanMl && String(dt[i][1] || '').replace(/'/g, '').trim().toLowerCase() === cleanWn && sanitizeVault(dt[i][2]) === cleanVault){
+        r = i+1; ek = dt[i].length > 15 ? dt[i][15] : ''; ed = dt[i].length > 16 ? dt[i][16] : ''; break;
+      }
+    }
+    var fk = d.kasOverride!==undefined ? d.kasOverride : ek; var fd = d.dendaOverride!==undefined ? d.dendaOverride : ed;
+    var row = [
+      "'"+String(ml).replace(/'/g, '').trim(), "'"+String(wn).replace(/'/g, '').trim(), String(v).trim(), String(d.status||'Active'), 
+      Number(d.attended)||0, Number(d.absences)||0, Number(d.excused)||0, Number(d.replacements)||0, Number(d.summaries)||0, 
+      String(d.loaStart||''), String(d.loaEnd||''), String(d.loaLink||''), String(d.notes||''), String(d.formStatus||'Pending'), 
+      d.lrLate?true:false, fk, fd, String(d.reqOverride||''), String(d.sumStat||'Pending,Pending,Pending,Pending'), d.lockSync?true:false, Number(d.freeClass)||0
+    ];
+    if(r>0) s.getRange(r,1,1,21).setValues([row]); else s.appendRow(row);
+    SpreadsheetApp.flush(); Utilities.sleep(2000);
+    return { success: true, message: "Record saved!", freshData: getActiveRoomData(ml, wn) };
+  } catch(e) { return { success: false, message: e.toString() }; }
+}
+
+function saveQuickFinanceOverride(ml, wn, v, ty, am) {
+  try {
+    var s = SpreadsheetApp.openById(STUDENT_DB_ID).getSheetByName('Room_Activity_Overrides');
+    if(s.getMaxColumns() < 21) { s.insertColumnsAfter(s.getMaxColumns(), 21 - s.getMaxColumns()); }
+    var dt = s.getDataRange().getValues(); var r = -1;
+    for(var i=1; i<dt.length; i++){
+      if(String(dt[i][0] || '').replace(/'/g, '').trim().toLowerCase() === String(ml).replace(/'/g,'').trim().toLowerCase() && 
+         String(dt[i][1] || '').replace(/'/g, '').trim().toLowerCase() === String(wn).replace(/'/g,'').trim().toLowerCase() && sanitizeVault(dt[i][2]) === sanitizeVault(v)){
+        r = i+1; break;
+      }
+    }
+    var vl = (am===""||am===null)? "":Number(am);
+    if(r>0){ if(ty==='KAS') s.getRange(r,16).setValue(vl); else s.getRange(r,17).setValue(vl); }
+    else {
+      var row = ["'"+ml.replace(/'/g,''), "'"+wn.replace(/'/g,''), v, 'Active', 0,0,0,0,0,'','','','','Pending',false,'','','','Pending,Pending,Pending,Pending',false,0];
+      if(ty==='KAS') row[15]=vl; else row[16]=vl; s.appendRow(row);
+    }
+    SpreadsheetApp.flush(); Utilities.sleep(2000); 
+    return {success:true, freshData: getActiveRoomData(ml, wn)};
+  } catch(e) { return {success:false, message:e.toString()}; }
+}
+
+function sendWeeklyReport(month, week, roomName, senderUser) {
+  try {
+    var timestamp = new Date().toLocaleString('en-GB');
+    var authSs = SpreadsheetApp.openById("13q3TaiTwiqYPgRZ5npgiM1VuOjJV1J1jo6SoGHnHqUs");
+    var regSheet = authSs.getSheetByName("REGISTER");
+    if (!regSheet) { return { success: false, message: "The 'REGISTER' sheet was not found in the provided link." }; }
+    
+    var regData = regSheet.getDataRange().getValues(); var targetEmails = [];
+    for (var i = 1; i < regData.length; i++) {
+      var pos = String(regData[i][2]).toLowerCase();  var mail = String(regData[i][4]).trim();       
+      if (mail && mail.includes('@')) {
+        if (pos.includes('prefect') || pos.includes('vice prefect') || pos.includes('headhouse')) { if (targetEmails.indexOf(mail) === -1) { targetEmails.push(mail); } }
+      }
+    }
+    
+    if (targetEmails.length === 0) { return { success: false, message: "No valid email addresses found." }; }
+    
+    var emailTo = targetEmails.join(",");
+    var subject = "Weekly Activity Report Submitted: " + roomName + " (" + week + " - " + month + ")";
+    var body = "Hello,\n\nThe weekly activity data and summaries for " + roomName + " have been successfully reviewed and submitted by the Lead Room (" + senderUser + ") on " + timestamp + ".\n\nPlease check the database dashboard to view the detailed records.\n\nBest regards,\nAutomated System Ravenclaw";
+    MailApp.sendEmail(emailTo, subject, body);
+    return { success: true, message: "Report sent successfully." };
+  } catch (error) { return { success: false, message: error.toString() }; }
+}
+
+// ==========================================
+// EXTERNAL SYNC DENGAN FITUR AUTO-HEAL
+// ==========================================
+function syncExternalActivity(monthLabel, weekNumber) {
+  try {
+    var extSs = SpreadsheetApp.openById(ACTIVITY_DB_ID);
+    var aSh = extSs.getSheetByName('Weekly Activity Data') || extSs.getSheetByName('Form Responses 1') || extSs.getSheets()[0];
+    if(!aSh) return {success:false, message:"The 'Weekly Activity Data' sheet was not found in your form spreadsheet."};
+    
+    var dObj = aSh.getDataRange().getValues(); 
+    var dDisp = aSh.getDataRange().getDisplayValues();
+    if(dObj.length<2) return {success:false, message:"The form is still empty."};
+    
+    var h = dDisp[0].map(function(x){return String(x).toLowerCase().trim()});
+    var tc = h.indexOf('timestamp'); 
+    var vc = h.findIndex(function(x){ return x.indexOf('vault') > -1; });
+    var ac = h.findIndex(function(x){return x.indexOf('attended')>-1;});
+    var ab = h.findIndex(function(x){return x.indexOf('absences')>-1 && x.indexOf('excused')===-1;});
+    var ec = h.findIndex(function(x){return x.indexOf('excused')>-1;});
+    var rc = h.findIndex(function(x){return x.indexOf('replacement')>-1;});
+    var sc = h.findIndex(function(x){return x.indexOf('summaries')>-1;});
+    var wc = h.findIndex(function(x){ return x.indexOf('week') > -1 || x.indexOf('pekan') > -1; }); 
+    var loaC = h.findIndex(function(x){return x.indexOf('leave of absence')>-1;});
+
+    if(tc===-1 || vc===-1) return {success:false, message:"Failed! Timestamp or Vault Code not found."};
+
+    var mInfo = typeof parseMonthInfo === 'function' ? parseMonthInfo(monthLabel) : { monthIdx: 7, year: 2026 }; 
+    var twn = String(weekNumber).toLowerCase().replace(/[^0-9]/g,'');
+    var pd = {}; var rm = 0;
+
+    for(var i=1; i<dObj.length; i++) {
+      var ts = parseSafeDate(dObj[i][tc], dDisp[i][tc]);
+      if(isNaN(ts.getTime())) continue; // PROTEKSI TANGGAL INVALID
+
+      var vRaw = String(dDisp[i][vc]).trim();
+      var v = sanitizeVault(vRaw);
+      if(!v) continue;
+
+      var rowMonth = ts.getMonth(); var rowYear = ts.getFullYear();
+      var rw = wc!==-1 ? String(dDisp[i][wc]).replace(/[^0-9]/g,'') : "";
+      
+      if(rowYear === 2026 && rowMonth === 6 && ts.getDate() >= 26) { rowMonth = 7; rw = "1"; }
+      if(mInfo.monthIdx !== undefined) { if(rowMonth !== mInfo.monthIdx || rowYear !== mInfo.year) continue; }
+      if(rw !== "" && rw !== twn) continue;
+      rm++;
+
+      var late = false; var dy = ts.getDay(); var hr = ts.getHours();
+      if(dy>0 || (dy===0 && hr>=18)) late = true; 
+
+      var isLoaForm = false;
+      if (loaC !== -1) {
+         var loaStr = String(dDisp[i][loaC]).toLowerCase().trim();
+         if (loaStr === 'yes' || loaStr === 'true' || loaStr === 'y' || loaStr === 'ya' || loaStr.includes('leave')) { isLoaForm = true; }
+      }
+
+      var excTextRaw = dDisp[i][ec] || '0'; var excNum = 0;
+      if (!isNaN(Number(excTextRaw)) && String(excTextRaw).trim() !== '') { excNum = Number(excTextRaw); } 
+      else if (typeof excTextRaw === 'string' && excTextRaw.trim() !== '' && excTextRaw.trim() !== '-') {
+          excNum = excTextRaw.split(/\r?\n/).filter(function(x){return x.trim().length>0}).length;
+          if (excNum === 0) excNum = 1;
+      }
+
+      pd[v] = { 
+          att: ac!==-1?(Number(dDisp[i][ac])||0):0, 
+          abs: ab!==-1?(Number(dDisp[i][ab])||0):0, 
+          exc: excNum, 
+          rep: rc!==-1?(Number(dDisp[i][rc])||0):0, 
+          sum: sc!==-1?(Number(dDisp[i][sc])||0):0, 
+          fs: late?'Late':'On Time',
+          isLoa: isLoaForm
+      };
+    }
+    
+    if(rm===0) return {success:false, message:"No students submitted the form for Week " + twn + " this month!"};
+
+    var sDb = SpreadsheetApp.openById(STUDENT_DB_ID);
+    var sOv = sDb.getSheetByName('Room_Activity_Overrides');
+    if(!sOv) { sOv = sDb.insertSheet('Room_Activity_Overrides'); sOv.appendRow(['Month','Week','Vault','Status','Attended','Absences','Excused','Replacements','Summaries','LoA Start','LoA End','LoA Link','Notes','Form Status','LR Late','Custom Kas','Custom Denda','Req Override','Summary Statuses','Is Manual Sync', 'Free Class']); }
+    
+    if(sOv.getMaxColumns() < 21) { sOv.insertColumnsAfter(sOv.getMaxColumns(), 21 - sOv.getMaxColumns()); }
+    if(sOv.getLastColumn() < 21) {
+        var headers = ['Month','Week','Vault','Status','Attended','Absences','Excused','Replacements','Summaries','LoA Start','LoA End','LoA Link','Notes','Form Status','LR Late','Custom Kas','Custom Denda','Req Override','Summary Statuses','Is Manual Sync', 'Free Class'];
+        sOv.getRange(1, 1, 1, headers.length).setValues([headers]);
+    }
+    
+    var ed = sOv.getDataRange().getDisplayValues(); var uc=0;
+
+    for(var x in pd) {
+      var d = pd[x]; var r = -1;
+      var es='Active'; var ls=''; var le=''; var ll=''; var nt=''; 
+      var lrl=false; var ko=''; var do_val=''; var reqOv=''; var sumStat='Pending,Pending,Pending,Pending'; var isMan=false; var freeCl=0;
+
+      for(var j=1; j<ed.length; j++){
+        if(String(ed[j][0]).replace(/'/g,'').trim()===monthLabel.replace(/'/g,'').trim() && String(ed[j][1]).replace(/'/g,'').trim()===weekNumber.replace(/'/g,'').trim() && sanitizeVault(ed[j][2])===x){
+          r=j+1; es=ed[j][3]; ls=ed[j][9]; le=ed[j][10]; ll=ed[j][11]; nt=ed[j][12]; 
+          lrl=(ed[j][14]==='TRUE'||ed[j][14]==='true'); ko=ed[j][15]!==undefined?ed[j][15]:''; do_val=ed[j][16]!==undefined?ed[j][16]:''; reqOv=ed[j][17]!==undefined?ed[j][17]:''; sumStat=ed[j][18]!==undefined&&ed[j][18]!==''?ed[j][18]:'Pending,Pending,Pending,Pending'; isMan=(ed[j][19]==='TRUE'||ed[j][19]==='true'); freeCl=ed[j][20]!==undefined?(Number(ed[j][20])||0):0;
+          
+          if (isMan) {
+             if (Number(ed[j][4]) === 0 && Number(ed[j][5]) === 0 && Number(ed[j][8]) === 0 && (d.att > 0 || d.abs > 0 || d.sum > 0)) {
+                 isMan = false;
+             }
+          }
+          break;
+        }
+      }
+      
+      if (d.isLoa) es = 'Leave of Absence';
+      if (isMan) continue; 
+
+      var row = [
+          "'"+monthLabel.replace(/'/g,''), "'"+weekNumber.replace(/'/g,''), x, es, d.att, d.abs, d.exc, d.rep, d.sum, 
+          ls, le, ll, nt, d.fs, lrl, ko, do_val, reqOv, sumStat, isMan, freeCl
+      ];
+      
+      if(r>0) sOv.getRange(r,1,1,21).setValues([row]); else sOv.appendRow(row);
+      uc++;
+    }
+    
+    SpreadsheetApp.flush(); return {success:true, message:"Success! Synchronization completed. " + uc + " student data updated."};
+  } catch(e) { return {success:false, message:"Error Sync: " + e.toString()}; }
+}
