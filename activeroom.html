@@ -632,7 +632,7 @@
             .then(r => r.json())
             .then(res => {
                 if(res.status === 'success') {
-                    fullDataStore = res.data; 
+                    fullDataStore = res.data || res.freshData; 
                     renderAllTabs();
                 } else {
                     document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
@@ -876,7 +876,7 @@
                 })
                 .then(r => r.json())
                 .then(res => {
-                    if(res.status === 'success') { fullDataStore = res.data; renderAllTabs(); }
+                    if(res.status === 'success' || res.success) { fullDataStore = res.data || res.freshData; renderAllTabs(); }
                     else alert("Failed to save: " + res.message);
                 });
             }
@@ -1019,7 +1019,7 @@
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success' || res.success) { fullDataStore = res.data; renderAllTabs(); closeAdjustModal(); } 
+                if(res.status === 'success' || res.success) { fullDataStore = res.data || res.freshData; renderAllTabs(); closeAdjustModal(); } 
                 else { var statusBox = document.getElementById('modalStatus'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
                 btn.innerText = "Save Activity"; btn.disabled = false;
             });
@@ -1055,7 +1055,7 @@
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success' || res.success) { fullDataStore = res.data; renderAllTabs(); closeAdjustSumModal(); } 
+                if(res.status === 'success' || res.success) { fullDataStore = res.data || res.freshData; renderAllTabs(); closeAdjustSumModal(); } 
                 else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
                 btn.innerText = "Save Summaries"; btn.disabled = false;
             });
