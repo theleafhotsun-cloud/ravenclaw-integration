@@ -477,7 +477,10 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbweHtntWYKnQgVKfk2Xdm8KFzDcvoiVc1Or46mbhauDKd3D6XmY1qVwnVCCkVJqRE8/exec"; 
+        // ==========================================
+        // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec"; 
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -1150,26 +1153,23 @@
                 var s = bpCurrentStudents[i];
                 var act = s.activity;
 
-                var penaltyAmount = 0;
-                var currentDenda = parseInt(act.dendaOverride) || 0; 
-                var needsUpdate = false;
+                var currentCustomDenda = parseInt(act.dendaOverride, 10) || 0; 
+                var newCustomDenda = currentCustomDenda;
 
                 if (method === 'split') {
-                    penaltyAmount = currentDenda + 100;
-                    needsUpdate = true;
+                    newCustomDenda += 100;
                 } else if (method === 'single') {
                     if (s.vault === targetVault) {
-                        penaltyAmount = currentDenda + totalPenalty;
-                        needsUpdate = true;
+                        newCustomDenda += totalPenalty;
                     }
                 }
 
-                if (!needsUpdate) continue;
+                if (newCustomDenda === currentCustomDenda) continue;
 
                 document.getElementById('loadingMsg').innerText = "Applying penalty: Updating vault " + s.vault + "...";
 
                 try {
-                    var valStr = penaltyAmount.toString(); 
+                    var valStr = newCustomDenda.toString(); 
                     await fetch(API_URL, {
                         method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                         body: JSON.stringify({ 
