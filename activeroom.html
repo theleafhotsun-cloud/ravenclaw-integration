@@ -6,112 +6,629 @@
     <title>Active Room Database - Ravenclaw</title>
     <style>
         :root {
-            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
-            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
-            --success: #2e7d32; --danger: #c62828; --warning: #f57f17;
+            --sapphire: #3C507D; 
+            --royal-blue: #112250; 
+            --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; 
+            --shellstone: #D9CBC2;
+            --success: #2e7d32; 
+            --danger: #c62828; 
+            --warning: #f57f17;
         }
 
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--swan-wing); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
 
-        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
-        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
-        .sidebar-header img { width: 80px; margin-bottom: 10px; }
-        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
-        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
-        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
-        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
-        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        .sidebar { 
+            width: 250px; 
+            background-color: var(--royal-blue); 
+            color: var(--swan-wing); 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); 
+            z-index: 10;
+        }
+        .sidebar-header { 
+            padding: 20px; 
+            text-align: center; 
+            border-bottom: 1px solid var(--sapphire); 
+        }
+        .sidebar-header img { 
+            width: 80px; 
+            margin-bottom: 10px; 
+        }
+        .sidebar-header h2 { 
+            font-size: 16px; 
+            margin: 0; 
+            color: var(--quicksand); 
+            text-transform: uppercase; 
+        }
+        .nav-links { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+        }
+        .nav-links li { 
+            border-bottom: 1px solid rgba(60, 80, 125, 0.3); 
+        }
+        .nav-links a { 
+            display: block; 
+            padding: 15px 20px; 
+            color: var(--swan-wing); 
+            text-decoration: none; 
+            font-size: 14px; 
+            transition: all 0.3s; 
+        }
+        .nav-links a:hover, .nav-links a.active { 
+            background-color: var(--sapphire); 
+            color: var(--quicksand); 
+            border-left: 4px solid var(--quicksand); 
+        }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
-        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
-        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize;}
-        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
-        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .main-content { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #ffffff; 
+            position: relative; 
+        }
+        .topbar { 
+            height: 60px; 
+            background-color: var(--swan-wing); 
+            border-bottom: 1px solid var(--shellstone); 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center; 
+            padding: 0 30px; 
+            flex-shrink: 0;
+        }
+        .user-profile { 
+            font-weight: 600; 
+            color: var(--royal-blue); 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        .user-profile span { 
+            background-color: var(--sapphire); 
+            color: var(--swan-wing); 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            text-transform: capitalize;
+        }
+        .btn-logout { 
+            background-color: var(--shellstone); 
+            color: var(--royal-blue); 
+            border: 1px solid var(--sapphire); 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            text-transform: uppercase; 
+        }
+        .btn-logout:hover { 
+            background-color: var(--danger); 
+            color: white; 
+            border-color: var(--danger); 
+        }
 
-        .content-area { padding: 25px 25px 80px 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        .content-area { 
+            padding: 25px 25px 80px 25px; 
+            display: block; 
+            height: calc(100vh - 60px); 
+            overflow-y: auto; 
+            box-sizing: border-box;
+        }
         
-        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
-        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        .header-actions { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid var(--quicksand); 
+            padding-bottom: 12px; 
+            margin-bottom: 15px;
+        }
+        .page-title { 
+            color: var(--royal-blue); 
+            margin: 0; 
+            font-size: 22px;
+        }
         
-        .btn-manage { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; transition: background 0.3s;}
-        .btn-manage:hover { background-color: var(--sapphire); }
+        .btn-manage { 
+            background-color: var(--royal-blue); 
+            color: var(--swan-wing); 
+            border: none; 
+            padding: 8px 14px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            font-size: 11px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: background 0.3s;
+        }
+        .btn-manage:hover { 
+            background-color: var(--sapphire); 
+        }
 
-        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;}
-        .period-controller label { font-size: 13px; font-weight: bold; margin-right: 10px; color: var(--quicksand);}
-        .filter-group { display: flex; gap: 10px; align-items: center; }
-        .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
+        .period-controller { 
+            background-color: var(--royal-blue); 
+            color: white; 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px;
+        }
+        .period-controller label { 
+            font-size: 13px; 
+            font-weight: bold; 
+            margin-right: 10px; 
+            color: var(--quicksand);
+        }
+        .filter-group { 
+            display: flex; 
+            gap: 10px; 
+            align-items: center; 
+        }
+        .selector-box { 
+            padding: 7px 12px; 
+            border-radius: 6px; 
+            border: 1px solid var(--shellstone); 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: var(--royal-blue); 
+            background-color: white; 
+            cursor: pointer;
+        }
         
-        .room-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
-        .tab-btn { background-color: #f0f0f0; border: none; padding: 10px 18px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
-        .tab-btn.active { background-color: #e65100; color: white; border-bottom: 2px solid #bf360c;}
-        .tab-btn:hover:not(.active) { background-color: #ffe0b2; color: #e65100; }
-        .tab-raw { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; border-bottom: none; }
-        .tab-raw.active { background-color: #1565c0; color: white; border-bottom: 2px solid #0d47a1; }
-        .tab-content { display: none; flex-direction: column; flex-grow: 1; }
-        .tab-content.active { display: flex; }
+        .room-tabs { 
+            display: flex; 
+            gap: 5px; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid var(--shellstone); 
+            flex-wrap: wrap;
+        }
+        .tab-btn { 
+            background-color: #f0f0f0; 
+            border: none; 
+            padding: 10px 18px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: gray; 
+            cursor: pointer; 
+            border-radius: 6px 6px 0 0; 
+            transition: all 0.3s;
+        }
+        .tab-btn.active { 
+            background-color: #e65100; 
+            color: white; 
+            border-bottom: 2px solid #bf360c;
+        }
+        .tab-btn:hover:not(.active) { 
+            background-color: #ffe0b2; 
+            color: #e65100; 
+        }
+        .tab-raw { 
+            background-color: #e3f2fd; 
+            color: #1565c0; 
+            border: 1px solid #bbdefb; 
+            border-bottom: none; 
+        }
+        .tab-raw.active { 
+            background-color: #1565c0; 
+            color: white; 
+            border-bottom: 2px solid #0d47a1; 
+        }
+        .tab-content { 
+            display: none; 
+            flex-direction: column; 
+            flex-grow: 1; 
+        }
+        .tab-content.active { 
+            display: flex; 
+        }
 
-        .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
-        .box-section h4 { margin: 0 0 15px 0; color: var(--sapphire); border-bottom: 2px solid var(--quicksand); padding-bottom: 8px; font-size: 14px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;}
+        .box-section { 
+            background: #fafafa; 
+            border: 1px solid var(--shellstone); 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .box-section h4 { 
+            margin: 0 0 15px 0; 
+            color: var(--sapphire); 
+            border-bottom: 2px solid var(--quicksand); 
+            padding-bottom: 8px; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
         
-        .room-schedule-banner { background-color: #fff9c4; border-left: 4px solid var(--warning); padding: 10px 15px; margin-bottom: 15px; font-size: 12px; color: #f57f17; border-radius: 4px; line-height:1.5;}
-        .sop-banner { background-color: #e8eaf6; border-left: 4px solid var(--sapphire); padding: 12px 15px; margin-bottom: 15px; font-size: 11px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6; display: flex; gap: 20px;}
-        .sop-col { flex: 1; }
+        .room-schedule-banner { 
+            background-color: #fff9c4; 
+            border-left: 4px solid var(--warning); 
+            padding: 10px 15px; 
+            margin-bottom: 15px; 
+            font-size: 12px; 
+            color: #f57f17; 
+            border-radius: 4px; 
+            line-height:1.5;
+        }
+        .sop-banner { 
+            background-color: #e8eaf6; 
+            border-left: 4px solid var(--sapphire); 
+            padding: 12px 15px; 
+            margin-bottom: 15px; 
+            font-size: 11px; 
+            color: var(--royal-blue); 
+            border-radius: 4px; 
+            line-height: 1.6; 
+            display: flex; 
+            gap: 20px;
+        }
+        .sop-col { 
+            flex: 1; 
+        }
 
-        .dashboard-cards { display: flex; gap: 15px; margin-bottom: 15px; }
-        .card { background-color: white; border: 1px solid var(--shellstone); padding: 15px; border-radius: 8px; flex: 1; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-        .card h5 { margin: 0 0 5px 0; font-size: 11px; color: var(--sapphire); text-transform: uppercase; }
-        .card .amount { font-size: 20px; font-weight: bold; color: var(--royal-blue); }
+        .dashboard-cards { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 15px; 
+        }
+        .card { 
+            background-color: white; 
+            border: 1px solid var(--shellstone); 
+            padding: 15px; 
+            border-radius: 8px; 
+            flex: 1; 
+            text-align: center; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .card h5 { 
+            margin: 0 0 5px 0; 
+            font-size: 11px; 
+            color: var(--sapphire); 
+            text-transform: uppercase; 
+        }
+        .card .amount { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: var(--royal-blue); 
+        }
 
-        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 30px;}
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        thead { position: sticky; top: 0; z-index: 1;}
-        th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 11px; vertical-align: middle;}
-        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 10px; text-transform: uppercase; }
-        tr:hover { background-color: var(--swan-wing); }
+        .table-container { 
+            overflow-x: auto; 
+            background-color: white; 
+            border-radius: 8px; 
+            border: 1px solid var(--shellstone); 
+            margin-bottom: 30px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            white-space: nowrap; 
+        }
+        thead { 
+            position: sticky; 
+            top: 0; 
+            z-index: 1;
+        }
+        th, td { 
+            padding: 8px 10px; 
+            text-align: left; 
+            border-bottom: 1px solid var(--shellstone); 
+            font-size: 11px; 
+            vertical-align: middle;
+        }
+        th { 
+            background-color: var(--royal-blue); 
+            color: var(--swan-wing); 
+            font-size: 10px; 
+            text-transform: uppercase; 
+        }
+        tr:hover { 
+            background-color: var(--swan-wing); 
+        }
         
-        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 13px;}
-        .num-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: #e0e0e0; font-weight: bold; font-size: 10px;}
-        .money { font-family: monospace; font-weight: bold; font-size: 12px;}
+        .vault-tag { 
+            font-weight: bold; 
+            color: var(--royal-blue); 
+            font-family: monospace; 
+            font-size: 13px;
+        }
+        .num-badge { 
+            display: inline-block; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            background: #e0e0e0; 
+            font-weight: bold; 
+            font-size: 10px;
+        }
+        .money { 
+            font-family: monospace; 
+            font-weight: bold; 
+            font-size: 12px;
+        }
         .plus { color: var(--success); }
         .minus { color: var(--danger); }
 
-        .direct-input { width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: bold; text-align: center; background-color: #fffde7; transition: 0.3s; }
-        .direct-input:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
-        .direct-input.minus-input { color: var(--danger); background-color: #ffebee; border-color: #ef9a9a; }
-        .direct-input.minus-input:focus { background-color: white; border-color: var(--danger); box-shadow: 0 0 4px rgba(198,40,40,0.3); }
+        .direct-input { 
+            width: 60px; 
+            padding: 4px 6px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            font-size: 12px; 
+            font-weight: bold; 
+            text-align: center; 
+            background-color: #fffde7; 
+            transition: 0.3s; 
+        }
+        .direct-input:focus { 
+            outline: none; 
+            border-color: var(--sapphire); 
+            background-color: white; 
+            box-shadow: 0 0 4px rgba(60,80,125,0.3); 
+        }
+        .direct-input.minus-input { 
+            color: var(--danger); 
+            background-color: #ffebee; 
+            border-color: #ef9a9a; 
+        }
+        .direct-input.minus-input:focus { 
+            background-color: white; 
+            border-color: var(--danger); 
+            box-shadow: 0 0 4px rgba(198,40,40,0.3); 
+        }
         
-        .status-loa { background-color: #fff3e0; color: #e65100; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #ffe0b2;}
-        .status-active { background-color: #e8f5e9; color: var(--success); padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #c8e6c9;}
-        .status-pending { background-color: #f5f5f5; color: #616161; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #e0e0e0;}
+        .status-loa { 
+            background-color: #fff3e0; 
+            color: #e65100; 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            border: 1px solid #ffe0b2;
+        }
+        .status-active { 
+            background-color: #e8f5e9; 
+            color: var(--success); 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            border: 1px solid #c8e6c9;
+        }
+        .status-pending { 
+            background-color: #f5f5f5; 
+            color: #616161; 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            border: 1px solid #e0e0e0;
+        }
         
-        .wl-badge { background-color: #d32f2f; color: white; padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: bold; margin-left: 5px;}
-        .badge-pending { color: #f57f17; font-size: 9px; border: 1px solid #f57f17; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
-        .badge-approved { color: var(--success); font-size: 9px; border: 1px solid var(--success); padding: 1px 4px; border-radius: 3px; font-weight: bold;}
+        .wl-badge { 
+            background-color: #d32f2f; 
+            color: white; 
+            padding: 2px 6px; 
+            border-radius: 10px; 
+            font-size: 9px; 
+            font-weight: bold; 
+            margin-left: 5px;
+        }
+        .badge-pending { 
+            color: #f57f17; 
+            font-size: 9px; 
+            border: 1px solid #f57f17; 
+            padding: 1px 4px; 
+            border-radius: 3px; 
+            font-weight: bold;
+        }
+        .badge-approved { 
+            color: var(--success); 
+            font-size: 9px; 
+            border: 1px solid var(--success); 
+            padding: 1px 4px; 
+            border-radius: 3px; 
+            font-weight: bold;
+        }
         
-        .btn-edit { background-color: var(--sapphire); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
-        .btn-edit:hover { background-color: var(--royal-blue); }
-        .btn-adjust-sum { background-color: #6a1b9a; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
-        .btn-adjust-sum:hover { background-color: #4a148c; }
-        .link-icon { text-decoration: none; font-weight: bold; font-size: 10px; padding: 3px 8px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; display: inline-block; margin: 2px;}
-        .link-icon:hover { background-color: var(--sapphire); color: white; }
+        .btn-edit { 
+            background-color: var(--sapphire); 
+            color: white; 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: 0.2s;
+        }
+        .btn-edit:hover { 
+            background-color: var(--royal-blue); 
+        }
+        .btn-adjust-sum { 
+            background-color: #6a1b9a; 
+            color: white; 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: 0.2s;
+        }
+        .btn-adjust-sum:hover { 
+            background-color: #4a148c; 
+        }
+        .link-icon { 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 10px; 
+            padding: 3px 8px; 
+            background-color: #e8eaf6; 
+            color: var(--sapphire); 
+            border-radius: 4px; 
+            display: inline-block; 
+            margin: 2px;
+        }
+        .link-icon:hover { 
+            background-color: var(--sapphire); 
+            color: white; 
+        }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
-        .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 16px;}
-        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 12px 0 8px 0; }
-        .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 4px; text-transform: uppercase; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 12px;}
-        .loa-section { background-color: #fff3e0; padding: 10px; border-radius: 6px; border: 1px solid #ffe0b2; margin-top: 10px; display: none;}
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--shellstone); padding-top: 10px;}
-        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
-        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
-        .rep-info { background: #e8eaf6; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; color: var(--royal-blue); border-left: 4px solid var(--sapphire); }
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: rgba(17, 34, 80, 0.7); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000; 
+            padding: 10px;
+        }
+        .modal-box { 
+            background-color: var(--swan-wing); 
+            padding: 20px; 
+            border-radius: 8px; 
+            width: 550px; 
+            max-width: 95%; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            border: 2px solid var(--quicksand); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+        }
+        .modal-box h3 { 
+            margin-top: 0; 
+            color: var(--royal-blue); 
+            border-bottom: 1px solid var(--shellstone); 
+            padding-bottom: 8px; 
+            margin-bottom: 12px; 
+            font-size: 16px;
+        }
+        .section-header { 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: var(--sapphire); 
+            text-transform: uppercase; 
+            border-bottom: 1px dashed var(--shellstone); 
+            padding-bottom: 4px; 
+            margin: 12px 0 8px 0; 
+        }
+        .form-row { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 10px; 
+        }
+        .form-row .form-group { 
+            flex: 1; 
+            margin-bottom: 0; 
+        }
+        .form-group { 
+            margin-bottom: 10px; 
+        }
+        .form-group label { 
+            display: block; 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: var(--sapphire); 
+            margin-bottom: 4px; 
+            text-transform: uppercase; 
+        }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 6px 8px; 
+            border: 1px solid var(--shellstone); 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            background-color: #fff; 
+            color: var(--royal-blue); 
+            font-family: inherit; 
+            font-size: 12px;
+        }
+        .loa-section { 
+            background-color: #fff3e0; 
+            padding: 10px; 
+            border-radius: 6px; 
+            border: 1px solid #ffe0b2; 
+            margin-top: 10px; 
+            display: none;
+        }
+        .modal-actions { 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px; 
+            margin-top: 15px; 
+            border-top: 1px solid var(--shellstone); 
+            padding-top: 10px;
+        }
+        .btn-cancel { 
+            background-color: var(--shellstone); 
+            border: none; 
+            padding: 8px 14px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            color: var(--royal-blue); 
+            font-size: 11px;
+        }
+        .btn-submit { 
+            background-color: var(--royal-blue); 
+            border: none; 
+            padding: 8px 14px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            color: var(--swan-wing); 
+            font-size: 11px;
+        }
+        .rep-info { 
+            background: #e8eaf6; 
+            padding: 10px; 
+            border-radius: 6px; 
+            margin-bottom: 15px; 
+            font-size: 12px; 
+            color: var(--royal-blue); 
+            border-left: 4px solid var(--sapphire); 
+        }
 
-        #saveSnack { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 12px; display: none; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        #saveSnack { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: var(--success); 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 12px; 
+            display: none; 
+            z-index: 9999; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
+        }
     </style>
 </head>
 <body>
@@ -135,6 +652,7 @@
         </ul>
     </div>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -174,8 +692,12 @@
             <div class="period-controller">
                 <div style="display:flex; align-items:center; gap:20px;">
                     <div style="background:var(--sapphire); padding:5px 10px; border-radius:6px; display:flex; gap:10px;">
-                        <label style="margin:0; cursor:pointer;"><input type="radio" name="modeArchive" value="active" checked onchange="toggleArchiveMode()"> Active Month</label>
-                        <label style="margin:0; cursor:pointer;"><input type="radio" name="modeArchive" value="archive" onchange="toggleArchiveMode()"> Archive</label>
+                        <label style="margin:0; cursor:pointer;">
+                            <input type="radio" name="modeArchive" value="active" checked onchange="toggleArchiveMode()"> Active Month
+                        </label>
+                        <label style="margin:0; cursor:pointer;">
+                            <input type="radio" name="modeArchive" value="archive" onchange="toggleArchiveMode()"> Archive
+                        </label>
                     </div>
                     <div class="filter-group">
                         <select id="monthSelector" class="selector-box" onchange="onMonthChange()"></select>
@@ -205,61 +727,150 @@
         </div>
     </div>
 
+    <!-- NOTIFIKASI SIMPAN OTOMATIS -->
     <div id="saveSnack">✅ Data Berhasil Disimpan!</div>
 
+    <!-- MODAL ASSIGN ROTATING SUBJECTS -->
     <div class="modal-overlay" id="rotModal">
         <div class="modal-box" style="width: 400px;">
             <h3>🔄 Assign Rotating Subjects</h3>
             <div id="rotStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
             <p style="font-size:11px; color:gray; margin-top:-10px;">For: <span id="rotPeriodLabel" style="font-weight:bold; color:var(--royal-blue);"></span></p>
-            <div class="form-group"><label>Ancient Runes Room</label><select id="rotRunes"><option value="-">-- Select Room --</option><option value="Eternclaw">Eternclaw</option><option value="Ravelynx">Ravelynx</option><option value="Ravenion">Ravenion</option><option value="Ravenrow">Ravenrow</option><option value="Velaclaw">Velaclaw</option></select></div>
-            <div class="form-group"><label>Care Of Magical Creatures Room</label><select id="rotComc"><option value="-">-- Select Room --</option><option value="Eternclaw">Eternclaw</option><option value="Ravelynx">Ravelynx</option><option value="Ravenion">Ravenion</option><option value="Ravenrow">Ravenrow</option><option value="Velaclaw">Velaclaw</option></select></div>
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeRotModal()">Cancel</button><button class="btn-submit" onclick="saveRotSubjects()" id="btnSaveRot">Save Assignment</button></div>
+
+            <div class="form-group">
+                <label>Ancient Runes Room</label>
+                <select id="rotRunes">
+                    <option value="-">-- Select Room --</option>
+                    <option value="Eternclaw">Eternclaw</option>
+                    <option value="Ravelynx">Ravelynx</option>
+                    <option value="Ravenion">Ravenion</option>
+                    <option value="Ravenrow">Ravenrow</option>
+                    <option value="Velaclaw">Velaclaw</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Care Of Magical Creatures Room</label>
+                <select id="rotComc">
+                    <option value="-">-- Select Room --</option>
+                    <option value="Eternclaw">Eternclaw</option>
+                    <option value="Ravelynx">Ravelynx</option>
+                    <option value="Ravenion">Ravenion</option>
+                    <option value="Ravenrow">Ravenrow</option>
+                    <option value="Velaclaw">Velaclaw</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeRotModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveRotSubjects()" id="btnSaveRot">Save Assignment</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL SET MONTH CONFIG -->
     <div class="modal-overlay" id="periodModal">
         <div class="modal-box" style="width: 450px;">
             <h3>⚙️ Configure Month Config</h3>
             <p style="font-size:11px; color:gray; margin-top:-10px;">Previous months will be automatically moved to the Archive.</p>
             <div id="periodStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
-            <div class="form-group"><label>Month & Year Label</label><input type="text" id="cfgMonthLabel" placeholder="e.g. August 2026"></div>
-            <div class="form-group"><label>Total Weeks for Activity Form (3 or 4)</label><select id="cfgTotalWeeks"><option value="3">3 Weeks</option><option value="4" selected>4 Weeks</option></select></div>
-            <div class="modal-actions"><button class="btn-cancel" onclick="closePeriodModal()">Cancel</button><button class="btn-submit" onclick="savePeriodConfig()" id="btnSaveConfig">Save Config</button></div>
+           
+            <div class="form-group">
+                <label>Month & Year Label</label>
+                <input type="text" id="cfgMonthLabel" placeholder="e.g. August 2026">
+            </div>
+            <div class="form-group">
+                <label>Total Weeks for Activity Form (3 or 4)</label>
+                <select id="cfgTotalWeeks">
+                    <option value="3">3 Weeks</option>
+                    <option value="4" selected>4 Weeks</option>
+                </select>
+            </div>
+           
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePeriodModal()">Cancel</button>
+                <button class="btn-submit" onclick="savePeriodConfig()" id="btnSaveConfig">Save Config</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL ADJUST WEEKLY ACTIVITY -->
     <div class="modal-overlay" id="adjustModal">
         <div class="modal-box">
             <h3 id="modalTitle">Adjust Weekly Activity</h3>
             <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+           
             <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
-                <div><b>Student:</b> <span id="adjVault"></span> - <span id="adjUsername"></span><br><b>Default Required Classes:</b> <span id="adjMandatory"></span></div>
+                <div>
+                    <b>Student:</b> <span id="adjVault"></span> - <span id="adjUsername"></span><br>
+                    <b>Default Required Classes:</b> <span id="adjMandatory"></span>
+                </div>
+                <label style="color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;" title="Lock this data to prevent Auto-Sync overrides">
+                    <input type="checkbox" id="adjLockSync"> 🔒 Lock Sync
+                </label>
             </div>
 
             <div class="section-header">Basic Status & Override</div>
             <div class="form-row">
-                <div class="form-group"><label>Student Status</label><select id="adjStatus" onchange="toggleLoaFields()"><option value="Active">Active</option><option value="Leave of Absence">Leave of Absence (LoA)</option></select></div>
-                <div class="form-group"><label title="Leave blank to use default. Useful for mid-week LOA.">Req. Class Override</label><input type="number" id="adjReqOverride" placeholder="e.g. 2"></div>
+                <div class="form-group">
+                    <label>Student Status</label>
+                    <select id="adjStatus" onchange="toggleLoaFields()">
+                        <option value="Active">Active</option>
+                        <option value="Leave of Absence">Leave of Absence (LoA)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label title="Leave blank to use default. Useful for mid-week LOA.">Req. Class Override</label>
+                    <input type="number" id="adjReqOverride" placeholder="e.g. 2">
+                </div>
             </div>
 
             <div class="loa-section" id="loaSection">
-                <div class="form-row"><div class="form-group"><label>LoA Start Date</label><input type="date" id="adjLoaStart"></div><div class="form-group"><label>LoA End Date</label><input type="date" id="adjLoaEnd"></div></div>
-                <div class="form-group"><label>LoA Letter Link</label><input type="text" id="adjLoaLink" placeholder="https://..."></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>LoA Start Date</label>
+                        <input type="date" id="adjLoaStart">
+                    </div>
+                    <div class="form-group">
+                        <label>LoA End Date</label>
+                        <input type="date" id="adjLoaEnd">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>LoA Letter Link</label>
+                    <input type="text" id="adjLoaLink" placeholder="https://...">
+                </div>
             </div>
 
             <div class="section-header">Weekly Attendance</div>
             <div class="form-row">
-                <div class="form-group"><label>Classes Attended</label><input type="number" id="adjAttended" value="0"></div>
-                <div class="form-group"><label>Class Absences</label><input type="number" id="adjAbsences" value="0"></div>
+                <div class="form-group">
+                    <label>Classes Attended</label>
+                    <input type="number" id="adjAttended" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Class Absences</label>
+                    <input type="number" id="adjAbsences" value="0">
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Excused Absences</label><input type="number" id="adjExcused" value="0"></div>
-                <div class="form-group"><label>Replacement Assignments</label><input type="number" id="adjReplacements" value="0"></div>
+                <div class="form-group">
+                    <label>Excused Absences</label>
+                    <input type="number" id="adjExcused" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Replacement Assignments</label>
+                    <input type="number" id="adjReplacements" value="0">
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label title="Canceled class without replacement.">Free Class (Exemption)</label><input type="number" id="adjFreeClass" value="0"></div>
-                <div class="form-group"><label></label><div></div></div>
+                <div class="form-group">
+                    <label title="Canceled class without replacement.">Free Class (Exemption)</label>
+                    <input type="number" id="adjFreeClass" value="0">
+                </div>
+                <div class="form-group">
+                    <label></label>
+                    <div></div>
+                </div>
             </div>
 
             <div class="section-header">Penalties & Submissions</div>
@@ -274,59 +885,116 @@
                         <option value="No Submit">No Submit (+ʛ100 / Newizzy: +ʛ60)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label style="color:gray;">Manual Denda (Edit Directly in Table)</label>
-                    <input type="number" id="adjCustomDenda" value="0" disabled style="background:#eee;">
-                </div>
+                <!-- Manual Denda dari tabel dicabut agar hanya dari tabel utama saja -->
             </div>
 
             <div class="section-header">Additional Information</div>
-            <div class="form-group"><label>Notes</label><textarea id="adjNotes" rows="2" placeholder="Special notes from Lead Room..."></textarea></div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="adjNotes" rows="2" placeholder="Special notes from Lead Room..."></textarea>
+            </div>
 
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeAdjustModal()">Cancel</button><button class="btn-submit" onclick="saveActivityAdjustment()" id="btnSaveAct">Save Activity</button></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAdjustModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveActivityAdjustment()" id="btnSaveAct">Save Activity</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL ADJUST SUMMARIES -->
     <div class="modal-overlay" id="adjustSumModal">
         <div class="modal-box" style="width: 500px;">
             <h3 id="modalTitleSum">Adjust Summaries & Approvals</h3>
             <div id="modalStatusSum" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
+           
             <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
                 <div><b>Student:</b> <span id="adjSumVault"></span> - <span id="adjSumUsername"></span></div>
+                <label style="color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;" title="Lock this data to prevent Auto-Sync overrides">
+                    <input type="checkbox" id="adjLockSyncSum"> 🔒 Lock Sync
+                </label>
             </div>
+
             <div class="section-header">Total Summaries Count</div>
-            <div class="form-row"><div class="form-group"><label>Total Valid Summaries</label><input type="number" id="adjSumCount" value="0"></div></div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Valid Summaries</label>
+                    <input type="number" id="adjSumCount" value="0">
+                </div>
+            </div>
+
             <div class="section-header">Link Approvals</div>
             <div class="form-row">
-                <div class="form-group"><label>Link 1 Status</label><select id="adjSumStat1"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
-                <div class="form-group"><label>Link 2 Status</label><select id="adjSumStat2"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
+                <div class="form-group">
+                    <label>Link 1 Status</label>
+                    <select id="adjSumStat1">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Link 2 Status</label>
+                    <select id="adjSumStat2">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Link 3 Status</label><select id="adjSumStat3"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
-                <div class="form-group"><label>Link 4 Status</label><select id="adjSumStat4"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
+                <div class="form-group">
+                    <label>Link 3 Status</label>
+                    <select id="adjSumStat3">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Link 4 Status</label>
+                    <select id="adjSumStat4">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                    </select>
+                </div>
             </div>
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button><button class="btn-submit" onclick="saveSummariesAdjustment()" id="btnSaveSum">Save Summaries</button></div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveSummariesAdjustment()" id="btnSaveSum">Save Summaries</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL SUBMIT REPORT -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal-box" style="width: 450px;">
             <h3>📤 Submit Room Report</h3>
-            <div class="rep-info"><b>Room:</b> <span id="repRoomName"></span><br><b>Period:</b> <span id="repPeriod"></span></div>
-            <div class="form-group"><label>Additional Notes / Report Summary (Optional)</label><textarea id="repNotes" rows="4" placeholder="Type any important notes, excused/izin details, issues, or highlights for this week here..."></textarea><span style="font-size: 10px; color: gray; display: block; margin-top: 5px;">This note will be included in the email sent to Prefect/Headhouse.</span></div>
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeReportModal()">Cancel</button><button class="btn-submit" style="background-color: var(--success);" onclick="executeSendReport()" id="btnConfirmReport">Send Report</button></div>
+            <div class="rep-info">
+                <b>Room:</b> <span id="repRoomName"></span><br>
+                <b>Period:</b> <span id="repPeriod"></span>
+            </div>
+            
+            <div class="form-group">
+                <label>Additional Notes / Report Summary (Optional)</label>
+                <textarea id="repNotes" rows="4" placeholder="Type any important notes, excused/izin details, issues, or highlights for this week here..."></textarea>
+                <span style="font-size: 10px; color: gray; display: block; margin-top: 5px;">This note will be included in the email sent to Prefect/Headhouse.</span>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeReportModal()">Cancel</button>
+                <button class="btn-submit" style="background-color: var(--success);" onclick="executeSendReport()" id="btnConfirmReport">Send Report</button>
+            </div>
         </div>
     </div>
 
     <!-- SCRIPT AREA -->
     <script>
         // ==========================================
-        // GANTI API_URL DENGAN URL DEPLOYMENT KAMU
+        // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
         // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec"; 
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
+        
         if (!loggedInUser) window.location.href = "index.html";
 
         var fullDataStore = {};
@@ -337,6 +1005,7 @@
         var currentEditIdx = -1;
         var currentUserRoom = "";
         var isPrivilegedUser = false;
+        
         var previousPeriod = { month: "", week: "" };
         var currentReportRoom = ""; 
 
@@ -356,7 +1025,10 @@
 
         function resetBtn(btnId, originalText) {
             var btn = document.getElementById(btnId);
-            if(btn) { btn.innerText = originalText; btn.disabled = false; }
+            if(btn) { 
+                btn.innerText = originalText; 
+                btn.disabled = false; 
+            }
         }
 
         function showSnack(msg, isError=false) {
@@ -372,6 +1044,7 @@
             var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
             var isLeadroom = windowUserRole.includes('leadroom');
             var isEditor = windowUserRole.includes('editor');
+
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
 
@@ -380,10 +1053,24 @@
             if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
             if (tmMenu) tmMenu.style.display = 'block';
 
-            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            else if (isPrefect) ['menu-salary', 'menu-workreport', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            if (isHH) {
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            }
+            else if (isPrefect) {
+                ['menu-salary', 'menu-workreport', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { 
+                    let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; 
+                });
+            }
+            else if (isLeadroom) {
+                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { 
+                    let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; 
+                });
+            }
+            else if (isEditor) {
+                ['menu-birthdays'].forEach(c => { 
+                    let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; 
+                });
+            }
         }
 
         function navigateHome() {
@@ -394,12 +1081,18 @@
             else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
             window.location.href = targetPage + "-dashboard.html";
         }
-        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
+        function navigate(targetPage) { 
+            window.location.href = targetPage + ".html"; 
+        }
+        function logout() { 
+            localStorage.clear(); window.location.href = "index.html"; 
+        }
 
         function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('loadingMsg').innerText = "Connecting to database...";
+
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
@@ -408,29 +1101,50 @@
             .then(res => {
                 if(res.status === 'success') {
                     periodConfigStore = res.data;
-                    isPrivilegedUser = res.data.isPrivileged; currentUserRoom = res.data.userRoom;     
+                    isPrivilegedUser = res.data.isPrivileged; 
+                    currentUserRoom = res.data.userRoom;     
+                   
                     if (isPrivilegedUser) {
                         document.getElementById('btnManagePeriod').style.display = 'inline-block';
                         document.getElementById('btnAssignRot').style.display = 'inline-block';
-                    } else { if (currentUserRoom) activeTab = currentUserRoom; }
+                    } else {
+                        if (currentUserRoom) activeTab = currentUserRoom;
+                    }
                     toggleArchiveMode();
-                } else { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + res.message + "</span>"; }
-            }).catch(err => { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + err.message + "</span>"; });
+                } else {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + res.message + "</span>";
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + err.message + "</span>";
+            });
         }
 
         function toggleArchiveMode() {
             var mode = document.querySelector('input[name="modeArchive"]:checked').value;
-            var monthSel = document.getElementById('monthSelector'); monthSel.innerHTML = '';
+            var monthSel = document.getElementById('monthSelector');
+            monthSel.innerHTML = '';
+           
             if(mode === 'active') {
                 var m = periodConfigStore.activeMonth;
-                var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Active)"; opt.selected = true; monthSel.appendChild(opt);
+                var opt = document.createElement('option'); 
+                opt.value = m.monthLabel; 
+                opt.innerText = m.monthLabel + " (Active)"; 
+                opt.selected = true;
+                monthSel.appendChild(opt);
             } else {
                 var archs = periodConfigStore.archivedMonths || [];
                 if(archs.length === 0) {
-                    var opt = document.createElement('option'); opt.value = ""; opt.innerText = "-- No Archives --"; monthSel.appendChild(opt);
+                    var opt = document.createElement('option'); 
+                    opt.value = ""; 
+                    opt.innerText = "-- No Archives --"; 
+                    monthSel.appendChild(opt);
                 } else {
                     archs.forEach(function(m) {
-                        var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel; monthSel.appendChild(opt);
+                        var opt = document.createElement('option'); 
+                        opt.value = m.monthLabel; 
+                        opt.innerText = m.monthLabel;
+                        monthSel.appendChild(opt);
                     });
                 }
             }
@@ -440,8 +1154,15 @@
         function onMonthChange() {
             var selectedMonth = document.getElementById('monthSelector').value;
             if(!selectedMonth) { document.getElementById('weekSelector').innerHTML = ''; return; }
-            var weekSel = document.getElementById('weekSelector'); weekSel.innerHTML = '';
-            for (var i = 1; i <= 4; i++) { var opt = document.createElement('option'); opt.value = "Week " + i; opt.innerText = "Period: Week " + i; weekSel.appendChild(opt); }
+           
+            var weekSel = document.getElementById('weekSelector'); 
+            weekSel.innerHTML = '';
+            for (var i = 1; i <= 4; i++) {
+                var opt = document.createElement('option'); 
+                opt.value = "Week " + i; 
+                opt.innerText = "Period: Week " + i;
+                weekSel.appendChild(opt);
+            }
             fetchRoomData();
         }
 
@@ -451,23 +1172,40 @@
             if(!month) return;
            
             if (previousPeriod.month !== month || previousPeriod.week !== week) {
-                fullDataStore = {}; document.getElementById('roomTabs').style.display = 'none'; document.getElementById('tabContainer').innerHTML = ''; previousPeriod = { month: month, week: week };
+                fullDataStore = {};
+                document.getElementById('roomTabs').style.display = 'none';
+                document.getElementById('tabContainer').innerHTML = '';
+                previousPeriod = { month: month, week: week };
             }
 
-            document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Auto-Syncing with Google Spreadsheet...";
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Auto-Syncing with Google Spreadsheet...";
+
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getActiveRoomData", month: month.trim(), week: week.trim() })
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success') { fullDataStore = res.data || res.freshData || res; renderAllTabs(); } 
-                else { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>"; }
-            }).catch(err => { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>"; });
+                if(res.status === 'success') {
+                    fullDataStore = res.data || res.freshData || res; 
+                    renderAllTabs();
+                } else {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>";
+            });
         }
 
-        function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
+        function formatMoney(num) { 
+            return Number(num).toLocaleString('id-ID'); 
+        }
 
+        // ==========================================
+        // FUNGSI SIMPAN OTOMATIS & HITUNG TOTAL OTOMATIS
+        // ==========================================
         function autoSaveFinance(vault, type, inputElement, baseAutoDenda, totalElementId, roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
@@ -477,20 +1215,36 @@
                 var customVal = parseInt(val) || 0;
                 var totalNew = baseAutoDenda + customVal;
                 var totalEl = document.getElementById(totalElementId);
-                if(totalNew > 0) { totalEl.innerHTML = "-ʛ" + formatMoney(totalNew); totalEl.className = "money minus total-fines-td"; } 
-                else { totalEl.innerHTML = "-"; totalEl.className = "money total-fines-td"; }
+                
+                if(totalNew > 0) {
+                    totalEl.innerHTML = "-ʛ" + formatMoney(totalNew);
+                    totalEl.className = "money minus total-fines-td";
+                } else {
+                    totalEl.innerHTML = "-";
+                    totalEl.className = "money total-fines-td";
+                }
                 updateTotalFinesCard(roomName);
             }
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: val, amount: val, am: val })
+                body: JSON.stringify({ 
+                    action: "saveQuickFinanceOverride", 
+                    month: month.trim(), week: week.trim(), vault: vault, type: type, 
+                    val: val.toString(), amount: val.toString(), am: val.toString()
+                })
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success' || res.success) { showSnack("✅ " + (type === 'KAS' ? "Kas" : "Denda") + " Vault " + vault + " Tersimpan!"); } 
-                else { showSnack("❌ Gagal Simpan!", true); }
-            }).catch(err => { showSnack("❌ Connection Error!", true); });
+                if(res.status === 'success' || res.success) { 
+                    showSnack("✅ " + (type === 'KAS' ? "Kas" : "Denda") + " Vault " + vault + " Tersimpan!");
+                } else { 
+                    showSnack("❌ Gagal Simpan!", true); 
+                }
+            })
+            .catch(err => {
+                showSnack("❌ Connection Error!", true);
+            });
         }
 
         function updateTotalFinesCard(roomName) {
@@ -500,7 +1254,8 @@
             var totalCells = document.querySelectorAll('#tab-' + roomName + ' .total-fines-td');
             totalCells.forEach(function(td) {
                 var txt = td.innerText.replace(/[^0-9]/g, '');
-                var num = parseInt(txt) || 0; totalSum += num;
+                var num = parseInt(txt) || 0;
+                totalSum += num;
             });
             cardEl.innerText = "ʛ" + formatMoney(totalSum);
         }
@@ -509,54 +1264,98 @@
             try {
                 document.getElementById('loadingMsg').style.display = 'none';
                 document.getElementById('roomTabs').style.display = 'flex';
-                var container = document.getElementById('tabContainer'); container.innerHTML = '';
+                var container = document.getElementById('tabContainer');
+                container.innerHTML = '';
+               
                 var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
                 var isWeekActive = fullDataStore.isWeekActive;
                
                 rooms.forEach(function(roomName) {
                     if (!isPrivilegedUser && currentUserRoom && roomName.toLowerCase() !== currentUserRoom.toLowerCase()) {
                         var btn = Array.from(document.querySelectorAll('.tab-btn')).find(function(el) { return el.innerText.toLowerCase().includes(roomName.toLowerCase()); });
-                        if (btn) btn.style.display = 'none'; return;
+                        if (btn) btn.style.display = 'none';
+                        return;
                     }
-                    var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
-                    students.sort(function(a, b) { return (parseInt(String(a.vault).replace(/\D/g, '')) || 999999) - (parseInt(String(b.vault).replace(/\D/g, '')) || 999999); });
 
-                    var rSched = roomSchedules[roomName]; var extraRot = "";
-                    if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes"; if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
+                    var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
+                    
+                    students.sort(function(a, b) {
+                        var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 999999;
+                        var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 999999;
+                        return vaultA - vaultB;
+                    });
+
+                    var rSched = roomSchedules[roomName];
+                    var extraRot = "";
+                    if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes";
+                    if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
                     var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
                     // --- BOX 1: ACTIVITY ---
                     var roomActHtml = '';
-                    if (!isWeekActive) { roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>'; } 
-                    else if (students.length === 0) { roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray;">No active students found in this room.</td></tr>'; } 
-                    else {
+                    if (!isWeekActive) {
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
+                    } else if (students.length === 0) {
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                    } else {
                         students.forEach(function(s, idx) {
                             var act = s.activity;
                             var isPending = (act.formStatus === 'Pending' && !act.lockSync);
+                           
                             var loaLabel = '<span class="status-loa">HIATUS / LOA</span>';
                             if (act.status === 'Leave of Absence') {
-                                var sDate = act.loaStart ? act.loaStart : '...'; var eDate = act.loaEnd ? act.loaEnd : '...';
+                                var sDate = act.loaStart ? act.loaStart : '...';
+                                var eDate = act.loaEnd ? act.loaEnd : '...';
                                 loaLabel = '<div style="display:flex; flex-direction:column; gap:3px;"><span class="status-loa" style="text-align:center;">HIATUS / LOA</span><span style="font-size:9px; color:gray; font-weight:bold; text-align:center;">' + sDate + ' to ' + eDate + '</span></div>';
                                 if (act.loaWarning) { loaLabel += '<span class="status-loa" style="background:#ffebee; color:#c62828; border-color:#ef9a9a; margin-top:2px; text-align:center;">⚠️ Return: ' + act.loaDaysText + '</span>'; }
                             }
                             var loaText = act.status === 'Leave of Absence' ? loaLabel : (isPending ? '<span class="status-pending">Pending Data</span>' : '<span class="status-active">Active</span>');
+                           
                             var wlBadge = s.wl ? '<span class="wl-badge" title="Warning Letter">WL: ' + s.wl + '</span>' : '';
                             var excTextDisp = act.excusedText;
-                            if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) { excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>'; } else { excTextDisp = ''; }
+                            if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) {
+                                excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>';
+                            } else { 
+                                excTextDisp = ''; 
+                            }
+
                             var notesDisp = act.notes ? '<div style="font-size:9px; color:#112250; font-style:italic; max-width:120px; white-space:normal;">' + act.notes.replace(/\n/g, '<br>') + '</div>' : '<span style="color:#ccc;">-</span>';
 
-                            roomActHtml += '<tr><td class="vault-tag">' + s.vault + '</td><td><b>' + s.username + '</b> ' + wlBadge + '</td><td><span style="font-weight:bold; color:var(--sapphire);">' + (s.grade || '-') + '</span></td><td>' + loaText + '</td><td><span class="num-badge">' + s.totalClasses + '</span></td><td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td><td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + (isPending?0:act.attended) + '</span></td><td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + (isPending?0:act.absences) + '</span></td><td><span class="num-badge" style="background:#fff3e0; color:#e65100;">' + (isPending?0:act.excused) + '</span>' + excTextDisp + '</td><td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td><td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td><td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td><td>' + notesDisp + '</td><td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td></tr>';
+                            roomActHtml += '<tr>' +
+                                '<td class="vault-tag">' + s.vault + '</td>' +
+                                '<td><b>' + s.username + '</b> ' + wlBadge + '</td>' +
+                                '<td><span style="font-weight:bold; color:var(--sapphire);">' + (s.grade || '-') + '</span></td>' +
+                                '<td>' + loaText + '</td>' +
+                                '<td><span class="num-badge">' + s.totalClasses + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + (isPending?0:act.attended) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + (isPending?0:act.absences) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#fff3e0; color:#e65100;">' + (isPending?0:act.excused) + '</span>' + excTextDisp + '</td>' +
+                                '<td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td>' +
+                                '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
+                                '<td>' + notesDisp + '</td>' +
+                                '<td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td>' +
+                                '</tr>';
                         });
                     }
                    
-                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
-                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
+                    var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;">' +
+                        '<button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
+
+                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
+                        '<th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th>' +
+                        '<th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th>' +
+                        '<th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th>' +
+                        '</tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
                     // --- BOX 2: ROOM SUMMARIES ---
                     var roomSumHtml = '';
-                    if (!isWeekActive) { roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>'; } 
-                    else if (students.length === 0) { roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray;">No active students found in this room.</td></tr>'; } 
-                    else {
+                    if (!isWeekActive) {
+                        roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
+                    } else if (students.length === 0) {
+                        roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                    } else {
                         students.forEach(function(s, idx) {
                             var act = s.activity;
                             var isPending = (act.formStatus === 'Pending' && !act.lockSync);
@@ -564,106 +1363,274 @@
 
                             var linkCols = '';
                             for(var j=0; j<4; j++) {
-                                var lnk = act.sumLinks[j]; var stat = sumStatuses[j] || 'Pending'; var badgeClass = stat === 'Approved' ? 'badge-approved' : 'badge-pending';
-                                if(lnk && lnk.toString().trim().length > 4) { var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk; linkCols += '<td><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>'; } 
-                                else { linkCols += '<td>-</td>'; }
+                                var lnk = act.sumLinks[j];
+                                var stat = sumStatuses[j] || 'Pending';
+                                var badgeClass = stat === 'Approved' ? 'badge-approved' : 'badge-pending';
+                               
+                                if(lnk && lnk.toString().trim().length > 4) {
+                                    var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk;
+                                    linkCols += '<td><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>';
+                                } else {
+                                    linkCols += '<td>-</td>';
+                                }
                             }
-                            roomSumHtml += '<tr><td class="vault-tag">' + s.vault + '</td><td><b>' + s.username + '</b></td><td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td><td>' + act.sumAuror + '</td><td>' + act.sumMinistry + '</td><td>' + act.sumExtra + '</td>' + linkCols + '<td><button class="btn-adjust-sum" onclick="openAdjustSumModal(\'' + roomName + '\', ' + idx + ')">Adjust</button></td></tr>';
+                            roomSumHtml += '<tr>' +
+                                '<td class="vault-tag">' + s.vault + '</td>' +
+                                '<td><b>' + s.username + '</b></td>' +
+                                '<td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td>' +
+                                '<td>' + act.sumAuror + '</td>' +
+                                '<td>' + act.sumMinistry + '</td>' +
+                                '<td>' + act.sumExtra + '</td>' +
+                                linkCols +
+                                '<td><button class="btn-adjust-sum" onclick="openAdjustSumModal(\'' + roomName + '\', ' + idx + ')">Adjust</button></td>' +
+                                '</tr>';
                         });
                     }
-                    var boxSum = '<div class="box-section"><h4>2. Summaries Collection</h4>' + scheduleBanner + '<div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th></tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
+                    var boxSum = '<div class="box-section"><h4>2. Summaries Collection</h4>' + scheduleBanner + '<div class="table-container"><table><thead><tr>' +
+                        '<th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th>' +
+                        '</tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
 
                     // --- BOX 3: FINANCE (PETTY CASH & DIRECT EDIT) ---
-                    var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
-                    if (students.length === 0) { finHtml = '<tr><td colspan="8" style="text-align:center; color:gray;">No active students found in this room.</td></tr>'; } 
-                    else {
+                    var totalKas = 0; 
+                    var totalDenda = 0; 
+                    var totalReward = 0; 
+                    var finHtml = '';
+                    
+                    if (students.length === 0) {
+                        finHtml = '<tr><td colspan="8" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                    } else {
                         students.forEach(function(s) {
-                            totalKas += s.kas; totalDenda += s.denda; totalReward += s.reward;
+                            totalKas += s.kas; 
+                            totalDenda += s.denda; 
+                            totalReward += s.reward;
                             var act = s.activity;
                             
                             var autoFines = s.classFinesAmount + s.formFinesAmount; 
                             var customDenda = parseInt(act.dendaOverride) || 0; 
                             var finalDenda = autoFines + customDenda;
+                            
                             var kasVal = act.kasOverride !== '' ? act.kasOverride : '';
                             
-                            var cellKasStr = isPrivilegedUser ? `<td><input type="number" class="direct-input" value="${kasVal}" placeholder="Auto" onchange="autoSaveFinance('${s.vault}', 'KAS', this, 0, null, '${roomName}')"></td>` : `<td class="money">ʛ${formatMoney(s.kas)}</td>`;
-                            var cellCustomDendaStr = isPrivilegedUser ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}', '${roomName}')"></td>` : `<td class="money ${customDenda > 0 ? 'minus' : ''}">${customDenda > 0 ? '-ʛ' + formatMoney(customDenda) : '-'}</td>`;
+                            var cellKasStr = isPrivilegedUser 
+                                ? `<td><input type="number" class="direct-input" value="${kasVal}" placeholder="Auto" onchange="autoSaveFinance('${s.vault}', 'KAS', this, 0, null, '${roomName}')"></td>` 
+                                : `<td class="money">ʛ${formatMoney(s.kas)}</td>`;
+                            
+                            var cellCustomDendaStr = isPrivilegedUser 
+                                ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}', '${roomName}')"></td>` 
+                                : `<td class="money ${customDenda > 0 ? 'minus' : ''}">${customDenda > 0 ? '-ʛ' + formatMoney(customDenda) : '-'}</td>`;
 
-                            finHtml += '<tr><td class="vault-tag">' + s.vault + '</td><td><b>' + s.username + '</b></td>' + cellKasStr + '<td class="money ' + (autoFines > 0 ? 'minus' : '') + '">' + (autoFines > 0 ? '-ʛ' + formatMoney(autoFines) : '-') + '</td>' + cellCustomDendaStr + '<td class="money total-fines-td ' + (finalDenda > 0 ? 'minus' : '') + '" id="td-' + s.vault + '">' + (finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-') + '</td><td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td><td><div style="font-size:10px; color:gray; line-height:1.4;">' + s.finesDetail + '</div></td></tr>';
+                            finHtml += '<tr>' +
+                                '<td class="vault-tag">' + s.vault + '</td>' +
+                                '<td><b>' + s.username + '</b></td>' +
+                                cellKasStr + 
+                                '<td class="money ' + (autoFines > 0 ? 'minus' : '') + '">' + (autoFines > 0 ? '-ʛ' + formatMoney(autoFines) : '-') + '</td>' +
+                                cellCustomDendaStr + 
+                                '<td class="money total-fines-td ' + (finalDenda > 0 ? 'minus' : '') + '" id="td-' + s.vault + '">' + (finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-') + '</td>' +
+                                '<td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td>' +
+                                '<td><div style="font-size:10px; color:gray; line-height:1.4;">' + s.finesDetail + '</div></td>' +
+                                '</tr>';
                         });
                     }
-                    var boxFin = '<div class="box-section"><h4>3. Room Finance & Penalties</h4><div class="dashboard-cards"><div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div><div class="card"><h5>Total Fines</h5><div class="amount minus" id="card-total-fines-' + roomName + '">ʛ' + formatMoney(totalDenda) + '</div></div><div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div></div><div class="table-container"><table id="table-fin-' + roomName + '"><thead><tr><th>Vault</th><th>Username</th><th>Edit Kas</th><th>Auto Fines</th><th>Manual Edit Fines</th><th>Total Fines</th><th>Rewards</th><th>Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
+                    var boxFin = '<div class="box-section"><h4>3. Room Finance & Penalties</h4><div class="dashboard-cards">' +
+                        '<div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div>' +
+                        '<div class="card"><h5>Total Fines</h5><div class="amount minus" id="card-total-fines-' + roomName + '">ʛ' + formatMoney(totalDenda) + '</div></div>' +
+                        '<div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div>' +
+                        '</div><div class="table-container"><table id="table-fin-' + roomName + '"><thead><tr><th>Vault</th><th>Username</th><th>Edit Kas</th><th>Auto Fines</th><th>Manual Edit Fines</th><th>Total Fines</th><th>Rewards</th><th>Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
 
-                    var div = document.createElement('div'); div.className = 'tab-content ' + (roomName === activeTab ? 'active' : ''); div.id = 'tab-' + roomName; div.innerHTML = boxAct + boxSum + boxFin; container.appendChild(div);
+                    var div = document.createElement('div');
+                    div.className = 'tab-content ' + (roomName === activeTab ? 'active' : '');
+                    div.id = 'tab-' + roomName;
+                    div.innerHTML = boxAct + boxSum + boxFin;
+                    container.appendChild(div);
                 });
 
                 // --- BOX RAW (AUDIT TRAIL) ---
                 var actHtml = '';
-                if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) { actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>'; } 
-                else {
-                    var sortedRawAct = fullDataStore.rawActivity.slice().sort(function(a,b) { return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999); });
-                    sortedRawAct.forEach(function(row) { actHtml += '<tr>'; for(var i=0; i<11; i++) { actHtml += '<td>' + (row[i] || '-') + '</td>'; } actHtml += '</tr>'; });
+                if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) {
+                    actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>';
+                } else {
+                    var sortedRawAct = fullDataStore.rawActivity.slice().sort(function(a,b) {
+                        return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
+                    });
+                    sortedRawAct.forEach(function(row) {
+                        actHtml += '<tr>';
+                        for(var i=0; i<11; i++) { 
+                            actHtml += '<td>' + (row[i] || '-') + '</td>'; 
+                        }
+                        actHtml += '</tr>';
+                    });
                 }
-                var divRawAct = document.createElement('div'); divRawAct.className = 'tab-content ' + (activeTab === 'RawActivity' ? 'active' : ''); divRawAct.id = 'tab-RawActivity'; divRawAct.innerHTML = '<div class="box-section"><h4>Raw: Weekly Activity Data (Audit Trail)</h4><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Vault Code</th><th>Room</th><th>Grade</th><th>Class Category</th><th>Classes Attended</th><th>Class Absences</th><th>Excused Absences</th><th>Replacement Assignments</th><th>Summaries</th><th>Leave of Absence</th></tr></thead><tbody>' + actHtml + '</tbody></table></div></div>'; container.appendChild(divRawAct);
+                var divRawAct = document.createElement('div');
+                divRawAct.className = 'tab-content ' + (activeTab === 'RawActivity' ? 'active' : '');
+                divRawAct.id = 'tab-RawActivity';
+                divRawAct.innerHTML = '<div class="box-section"><h4>Raw: Weekly Activity Data (Audit Trail)</h4><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Vault Code</th><th>Room</th><th>Grade</th><th>Class Category</th><th>Classes Attended</th><th>Class Absences</th><th>Excused Absences</th><th>Replacement Assignments</th><th>Summaries</th><th>Leave of Absence</th></tr></thead><tbody>' + actHtml + '</tbody></table></div></div>';
+                container.appendChild(divRawAct);
 
                 var sumHtml = '';
-                if(!fullDataStore.rawSummaries || fullDataStore.rawSummaries.length === 0) { sumHtml = '<tr><td colspan="10" style="text-align:center;">No summaries submitted for this period.</td></tr>'; } 
-                else {
-                    var sortedRawSum = fullDataStore.rawSummaries.slice().sort(function(a,b) { return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999); });
+                if(!fullDataStore.rawSummaries || fullDataStore.rawSummaries.length === 0) {
+                    sumHtml = '<tr><td colspan="10" style="text-align:center;">No summaries submitted for this period.</td></tr>';
+                } else {
+                    var sortedRawSum = fullDataStore.rawSummaries.slice().sort(function(a,b) {
+                        return (parseInt(String(a[1]).replace(/\D/g, '')) || 999999) - (parseInt(String(b[1]).replace(/\D/g, '')) || 999999);
+                    });
                     sortedRawSum.forEach(function(row) {
                         sumHtml += '<tr>';
-                        for(var i=0; i<10; i++) { if(i>=6 && row[i].toString().trim().length>4) sumHtml += '<td><a href="'+(row[i].toString().indexOf('http')===0?row[i]:'https://'+row[i])+'" target="_blank" class="link-icon">Link</a></td>'; else sumHtml += '<td>' + (row[i] || '-') + '</td>'; }
+                        for(var i=0; i<10; i++) {
+                            if(i>=6 && row[i].toString().trim().length>4) {
+                                sumHtml += '<td><a href="'+(row[i].toString().indexOf('http')===0?row[i]:'https://'+row[i])+'" target="_blank" class="link-icon">Link</a></td>';
+                            } else {
+                                sumHtml += '<td>' + (row[i] || '-') + '</td>';
+                            }
+                        }
                         sumHtml += '</tr>';
                     });
                 }
-                var divRawSum = document.createElement('div'); divRawSum.className = 'tab-content ' + (activeTab === 'RawSummaries' ? 'active' : ''); divRawSum.id = 'tab-RawSummaries'; divRawSum.innerHTML = '<div class="box-section"><h4>Raw: Summaries (Audit Trail)</h4><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Vault Code</th><th>Room</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th></tr></thead><tbody>' + sumHtml + '</tbody></table></div></div>'; container.appendChild(divRawSum);
+                var divRawSum = document.createElement('div');
+                divRawSum.className = 'tab-content ' + (activeTab === 'RawSummaries' ? 'active' : '');
+                divRawSum.id = 'tab-RawSummaries';
+                divRawSum.innerHTML = '<div class="box-section"><h4>Raw: Summaries (Audit Trail)</h4><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Vault Code</th><th>Room</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th></tr></thead><tbody>' + sumHtml + '</tbody></table></div></div>';
+                container.appendChild(divRawSum);
 
-            } catch (err) { alert("Render Error: " + err.message); }
+            } catch (err) { 
+                alert("Render Error: " + err.message); 
+            }
         }
 
         function openTab(tabName) {
             activeTab = tabName;
-            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); }); document.querySelectorAll('.tab-content').forEach(function(tab) { tab.classList.remove('active'); });
-            var btn = Array.from(document.querySelectorAll('.tab-btn')).find(function(el) { return el.getAttribute('onclick').indexOf(tabName) !== -1; }); if(btn) btn.classList.add('active');
-            var targetContent = document.getElementById('tab-' + tabName); if(targetContent) targetContent.classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { 
+                btn.classList.remove('active'); 
+            });
+            document.querySelectorAll('.tab-content').forEach(function(tab) { 
+                tab.classList.remove('active'); 
+            });
+            var btn = Array.from(document.querySelectorAll('.tab-btn')).find(function(el) { 
+                return el.getAttribute('onclick').indexOf(tabName) !== -1; 
+            });
+            if(btn) btn.classList.add('active');
+            var targetContent = document.getElementById('tab-' + tabName);
+            if(targetContent) targetContent.classList.add('active');
         }
 
-        function openPeriodModal() { document.getElementById('periodModal').style.display = 'flex'; document.getElementById('periodStatus').style.display = 'none'; document.getElementById('cfgMonthLabel').value = ''; }
-        function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
+        function openPeriodModal() { 
+            document.getElementById('periodModal').style.display = 'flex'; 
+            document.getElementById('periodStatus').style.display = 'none'; 
+            document.getElementById('cfgMonthLabel').value = ''; 
+        }
+
+        function closePeriodModal() { 
+            document.getElementById('periodModal').style.display = 'none'; 
+        }
        
         function savePeriodConfig() {
-            var mLabel = document.getElementById('cfgMonthLabel').value.trim(); var tWeeks = document.getElementById('cfgTotalWeeks').value; var pStatus = document.getElementById('periodStatus');
-            if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
-            var btn = document.getElementById('btnSaveConfig'); btn.innerText = "Saving..."; btn.disabled = true;
+            var mLabel = document.getElementById('cfgMonthLabel').value.trim(); 
+            var tWeeks = document.getElementById('cfgTotalWeeks').value; 
+            var pStatus = document.getElementById('periodStatus');
+            
+            if (!mLabel) { 
+                pStatus.innerText = "Month label is required!"; 
+                pStatus.style.color = "red"; 
+                pStatus.style.display = "block"; 
+                return; 
+            }
+            
+            var btn = document.getElementById('btnSaveConfig');
+            btn.innerText = "Saving..."; 
+            btn.disabled = true;
 
-            fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "savePeriodSettings", mLabel: mLabel, monthLabel: mLabel, month: mLabel, tWeeks: tWeeks, totalWeeks: tWeeks, week: tWeeks, username: loggedInUser }) })
-            .then(r => r.json()).then(res => {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "savePeriodSettings", 
+                    mLabel: mLabel, 
+                    monthLabel: mLabel, 
+                    month: mLabel, 
+                    tWeeks: tWeeks, 
+                    totalWeeks: tWeeks, 
+                    week: tWeeks, 
+                    username: loggedInUser 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
                 resetBtn('btnSaveConfig', 'Save Config');
-                if (res.status === 'success' || res.success) { closePeriodModal(); initPeriodConfig(); } else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; }
-            }).catch(err => { resetBtn('btnSaveConfig', 'Save Config'); pStatus.innerText = "Connection Error!"; pStatus.style.color = "red"; pStatus.style.display = "block"; });
+                if (res.status === 'success' || res.success) { 
+                    closePeriodModal(); 
+                    initPeriodConfig(); 
+                } else { 
+                    pStatus.innerText = res.message; 
+                    pStatus.style.color = "red"; 
+                    pStatus.style.display = "block"; 
+                }
+            })
+            .catch(err => {
+                resetBtn('btnSaveConfig', 'Save Config');
+                pStatus.innerText = "Connection Error!"; 
+                pStatus.style.color = "red"; 
+                pStatus.style.display = "block";
+            });
         }
 
         function openRotModal() {
-            document.getElementById('rotModal').style.display = 'flex'; document.getElementById('rotStatus').style.display = 'none';
+            document.getElementById('rotModal').style.display = 'flex';
+            document.getElementById('rotStatus').style.display = 'none';
             document.getElementById('rotPeriodLabel').innerText = document.getElementById('monthSelector').value + " - " + document.getElementById('weekSelector').value;
-            document.getElementById('rotRunes').value = fullDataStore.rotRunes && fullDataStore.rotRunes !== '-' ? fullDataStore.rotRunes : '-'; document.getElementById('rotComc').value = fullDataStore.rotComc && fullDataStore.rotComc !== '-' ? fullDataStore.rotComc : '-';
+            
+            document.getElementById('rotRunes').value = fullDataStore.rotRunes && fullDataStore.rotRunes !== '-' ? fullDataStore.rotRunes : '-';
+            document.getElementById('rotComc').value = fullDataStore.rotComc && fullDataStore.rotComc !== '-' ? fullDataStore.rotComc : '-';
         }
-        function closeRotModal() { document.getElementById('rotModal').style.display = 'none'; }
+        
+        function closeRotModal() { 
+            document.getElementById('rotModal').style.display = 'none'; 
+        }
         
         function saveRotSubjects() {
-            var btn = document.getElementById('btnSaveRot'); if(btn) { btn.innerText = "Saving..."; btn.disabled = true; }
-            var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value.trim(), week: document.getElementById('weekSelector').value.trim(), runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
-            fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-            .then(r => r.json()).then(res => {
+            var btn = document.getElementById('btnSaveRot');
+            if(btn) { 
+                btn.innerText = "Saving..."; 
+                btn.disabled = true; 
+            }
+            
+            var payload = { 
+                action: "saveRotSubjects", 
+                month: document.getElementById('monthSelector').value.trim(), 
+                week: document.getElementById('weekSelector').value.trim(), 
+                runes: document.getElementById('rotRunes').value, 
+                comc: document.getElementById('rotComc').value 
+            };
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(res => {
                 resetBtn('btnSaveRot', 'Save Assignment');
-                if(res.status === 'success') { closeRotModal(); fetchRoomData(); } else { document.getElementById('rotStatus').innerText = res.message; document.getElementById('rotStatus').style.color = "red"; document.getElementById('rotStatus').style.display = "block"; }
-            }).catch(err => { resetBtn('btnSaveRot', 'Save Assignment'); alert("Error: " + err.message); });
+                if(res.status === 'success') { 
+                    closeRotModal(); 
+                    fetchRoomData(); 
+                } 
+                else { 
+                    document.getElementById('rotStatus').innerText = res.message; 
+                    document.getElementById('rotStatus').style.color = "red"; 
+                    document.getElementById('rotStatus').style.display = "block"; 
+                }
+            })
+            .catch(err => {
+                resetBtn('btnSaveRot', 'Save Assignment');
+                alert("Error: " + err.message);
+            });
         }
 
         function openAdjustModal(roomName, index) {
             var student = fullDataStore.rooms[roomName][index];
-            currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
-            document.getElementById('adjustModal').style.display = 'flex'; document.getElementById('modalStatus').style.display = 'none'; document.getElementById('adjVault').innerText = student.vault; document.getElementById('adjUsername').innerText = student.username;
+            currentEditVault = student.vault; 
+            currentEditRoom = roomName; 
+            currentEditIdx = index;
+            document.getElementById('adjustModal').style.display = 'flex'; 
+            document.getElementById('modalStatus').style.display = 'none'; 
+            document.getElementById('adjVault').innerText = student.vault; 
+            document.getElementById('adjUsername').innerText = student.username;
             var act = student.activity; 
             
             document.getElementById('adjStatus').value = act.status || 'Active'; 
@@ -678,89 +1645,220 @@
             document.getElementById('adjLoaEnd').value = act.loaEnd; 
             document.getElementById('adjLoaLink').value = act.loaLink; 
             document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
-            document.getElementById('adjCustomDenda').value = act.dendaOverride || 0;
+            
+            // adjCustomDenda dihilangkan dari tampilan modal, jadi tidak diset valuenya
             document.getElementById('adjNotes').value = act.notes || '';
+            document.getElementById('adjLockSync').checked = act.lockSync || false;
+            
             toggleLoaFields();
         }
        
-        function toggleLoaFields() { var status = document.getElementById('adjStatus').value; document.getElementById('loaSection').style.display = status === 'Leave of Absence' ? 'block' : 'none'; }
-        function closeAdjustModal() { document.getElementById('adjustModal').style.display = 'none'; }
+        function toggleLoaFields() { 
+            var status = document.getElementById('adjStatus').value; 
+            document.getElementById('loaSection').style.display = status === 'Leave of Absence' ? 'block' : 'none'; 
+        }
+
+        function closeAdjustModal() { 
+            document.getElementById('adjustModal').style.display = 'none'; 
+        }
        
         function saveActivityAdjustment() {
-            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
+            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
+            var act = s.activity;
             var payload = { 
-                status: document.getElementById('adjStatus').value, reqOverride: document.getElementById('adjReqOverride').value, 
-                attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
-                excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
-                freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), formStatus: document.getElementById('adjFormStatus').value, 
-                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0,
-                loaStart: document.getElementById('adjLoaStart').value, loaEnd: document.getElementById('adjLoaEnd').value, loaLink: document.getElementById('adjLoaLink').value, 
-                summaries: act.summaries, sumStat: act.sumStat, notes: document.getElementById('adjNotes').value, lockSync: true // PAKSA LOCK SYNC AGAR PERMANEN
+                status: document.getElementById('adjStatus').value, 
+                reqOverride: document.getElementById('adjReqOverride').value, 
+                attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), 
+                absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
+                excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), 
+                replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
+                freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
+                formStatus: document.getElementById('adjFormStatus').value, 
+                dendaOverride: act.dendaOverride, // Tetap menggunakan denda yang ada di database agar tidak menimpa jadi 0
+                loaStart: document.getElementById('adjLoaStart').value, 
+                loaEnd: document.getElementById('adjLoaEnd').value, 
+                loaLink: document.getElementById('adjLoaLink').value, 
+                summaries: act.summaries, 
+                sumStat: act.sumStat, 
+                notes: document.getElementById('adjNotes').value, 
+                lockSync: document.getElementById('adjLockSync').checked 
             };
             
-            var btn = document.getElementById('btnSaveAct'); btn.innerText = "Saving..."; btn.disabled = true;
-            var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
+            var btn = document.getElementById('btnSaveAct'); 
+            btn.innerText = "Saving..."; 
+            btn.disabled = true;
             
-            fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload }) })
-            .then(r => r.json()).then(res => {
+            var month = document.getElementById('monthSelector').value; 
+            var week = document.getElementById('weekSelector').value;
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload })
+            })
+            .then(r => r.json())
+            .then(res => {
                 resetBtn('btnSaveAct', 'Save Activity');
                 if(res.status === 'success' || res.success) { 
-                    closeAdjustModal(); showSnack("✅ Perubahan Status & Kelas Tersimpan!"); fetchRoomData();
-                } else { var statusBox = document.getElementById('modalStatus'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
-            }).catch(err => { resetBtn('btnSaveAct', 'Save Activity'); alert("Error: " + err.message); });
+                    closeAdjustModal();
+                    document.getElementById('loadingMsg').style.display = 'block';
+                    document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
+                    setTimeout(function() { fetchRoomData(); }, 1500);
+                } 
+                else { 
+                    var statusBox = document.getElementById('modalStatus'); 
+                    statusBox.innerText = res.message; 
+                    statusBox.style.color = "red"; 
+                    statusBox.style.display = "block"; 
+                } 
+            })
+            .catch(err => {
+                resetBtn('btnSaveAct', 'Save Activity');
+                alert("Error: " + err.message);
+            });
         }
 
         function openAdjustSumModal(roomName, index) {
             var student = fullDataStore.rooms[roomName][index];
-            currentEditVault = student.vault; currentEditRoom = roomName; currentEditIdx = index;
-            document.getElementById('adjustSumModal').style.display = 'flex'; document.getElementById('modalStatusSum').style.display = 'none'; document.getElementById('adjSumVault').innerText = student.vault; document.getElementById('adjSumUsername').innerText = student.username;
-            var act = student.activity; document.getElementById('adjSumCount').value = act.summaries || 0; 
-            var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; document.getElementById('adjSumStat3').value = stats[2] || 'Pending'; document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
+            currentEditVault = student.vault; 
+            currentEditRoom = roomName; 
+            currentEditIdx = index;
+            document.getElementById('adjustSumModal').style.display = 'flex'; 
+            document.getElementById('modalStatusSum').style.display = 'none'; 
+            document.getElementById('adjSumVault').innerText = student.vault; 
+            document.getElementById('adjSumUsername').innerText = student.username;
+            var act = student.activity; 
+            document.getElementById('adjSumCount').value = act.summaries || 0; 
+            document.getElementById('adjLockSyncSum').checked = act.lockSync || false;
+            var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); 
+            document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; 
+            document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; 
+            document.getElementById('adjSumStat3').value = stats[2] || 'Pending'; 
+            document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
         }
        
-        function closeAdjustSumModal() { document.getElementById('adjustSumModal').style.display = 'none'; }
+        function closeAdjustSumModal() { 
+            document.getElementById('adjustSumModal').style.display = 'none'; 
+        }
        
         function saveSummariesAdjustment() {
-            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
+            var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
+            var act = s.activity;
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
             var payload = { 
-                status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, 
-                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), sumStat: sStat, lockSync: true // PAKSA LOCK SYNC AGAR PERMANEN
+                status: act.status, 
+                reqOverride: act.reqOverride, 
+                attended: act.attended, 
+                absences: act.absences, 
+                excused: act.excused, 
+                replacements: act.replacements, 
+                freeClass: act.freeClass, 
+                formStatus: act.formStatus, 
+                dendaOverride: act.dendaOverride, 
+                loaStart: act.loaStart, 
+                loaEnd: act.loaEnd, 
+                loaLink: act.loaLink, 
+                notes: act.notes, 
+                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), 
+                sumStat: sStat, 
+                lockSync: document.getElementById('adjLockSyncSum').checked 
             };
             
-            var btn = document.getElementById('btnSaveSum'); btn.innerText = "Saving..."; btn.disabled = true;
-            var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
+            var btn = document.getElementById('btnSaveSum'); 
+            btn.innerText = "Saving..."; 
+            btn.disabled = true;
             
-            fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload }) })
-            .then(r => r.json()).then(res => {
+            var month = document.getElementById('monthSelector').value; 
+            var week = document.getElementById('weekSelector').value;
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload })
+            })
+            .then(r => r.json())
+            .then(res => {
                 resetBtn('btnSaveSum', 'Save Summaries');
-                if(res.status === 'success' || res.success) { closeAdjustSumModal(); showSnack("✅ Perubahan Summaries Tersimpan!"); fetchRoomData(); } 
-                else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
-            }).catch(err => { resetBtn('btnSaveSum', 'Save Summaries'); alert("Error: " + err.message); });
+                if(res.status === 'success' || res.success) { 
+                    closeAdjustSumModal();
+                    document.getElementById('loadingMsg').style.display = 'block';
+                    document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
+                    setTimeout(function() { fetchRoomData(); }, 1500);
+                } 
+                else { 
+                    var statusBox = document.getElementById('modalStatusSum'); 
+                    statusBox.innerText = res.message; 
+                    statusBox.style.color = "red"; 
+                    statusBox.style.display = "block"; 
+                } 
+            })
+            .catch(err => {
+                resetBtn('btnSaveSum', 'Save Summaries');
+                alert("Error: " + err.message);
+            });
         }
 
         function openReportModal(roomName) {
-            var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
-            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
-            currentReportRoom = roomName; document.getElementById('repRoomName').innerText = roomName; document.getElementById('repPeriod').innerText = month + " - " + week; document.getElementById('repNotes').value = ""; document.getElementById('reportModal').style.display = 'flex';
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            if(!month || !week) { 
+                alert("Please select the Month and Week period in the top right corner first!"); 
+                return; 
+            }
+
+            currentReportRoom = roomName;
+            document.getElementById('repRoomName').innerText = roomName;
+            document.getElementById('repPeriod').innerText = month + " - " + week;
+            document.getElementById('repNotes').value = ""; 
+            
+            document.getElementById('reportModal').style.display = 'flex';
         }
 
-        function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; }
+        function closeReportModal() { 
+            document.getElementById('reportModal').style.display = 'none'; 
+        }
 
         function executeSendReport() {
-            var month = document.getElementById('monthSelector').value.trim(); var week = document.getElementById('weekSelector').value.trim(); var notes = document.getElementById('repNotes').value.trim();
-            var btn = document.getElementById('btnConfirmReport'); var originalText = btn.innerHTML; btn.innerHTML = "⏳ Sending..."; btn.disabled = true;
+            var month = document.getElementById('monthSelector').value.trim();
+            var week = document.getElementById('weekSelector').value.trim();
+            var notes = document.getElementById('repNotes').value.trim();
+
+            var btn = document.getElementById('btnConfirmReport');
+            var originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ Sending..."; 
+            btn.disabled = true;
+
             var safeUsername = loggedInUser + "|||" + notes;
 
-            fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "sendWeeklyReport", month: month, week: week, roomName: currentReportRoom, username: safeUsername }) })
-            .then(r => r.json()).then(res => {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "sendWeeklyReport", 
+                    month: month, 
+                    week: week, 
+                    roomName: currentReportRoom, 
+                    username: safeUsername 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
                 resetBtn('btnConfirmReport', originalText);
                 if(res.status === 'success' || res.success) {
-                    alert("✅ Report for " + currentReportRoom + " successfully sent via email!"); closeReportModal();
-                    var mainBtn = document.getElementById('btnReport_' + currentReportRoom); if(mainBtn) { mainBtn.innerHTML = "✅ Report Sent"; mainBtn.style.backgroundColor = "gray"; }
-                } else { alert("❌ Failed to send report: " + res.message); }
-            }).catch(err => { resetBtn('btnConfirmReport', originalText); alert("❌ Failed to send report: " + err.message); });
+                    alert("✅ Report for " + currentReportRoom + " successfully sent via email!");
+                    closeReportModal();
+                    
+                    var mainBtn = document.getElementById('btnReport_' + currentReportRoom);
+                    if(mainBtn) {
+                        mainBtn.innerHTML = "✅ Report Sent";
+                        mainBtn.style.backgroundColor = "gray";
+                    }
+                } else {
+                    alert("❌ Failed to send report: " + res.message);
+                }
+            })
+            .catch(err => {
+                resetBtn('btnConfirmReport', originalText);
+                alert("❌ Failed to send report: " + err.message);
+            });
         }
     </script>
 </body>
