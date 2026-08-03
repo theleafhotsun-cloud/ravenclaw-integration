@@ -250,7 +250,7 @@
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeRotModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveRotSubjects()">Save Assignment</button>
+                <button class="btn-submit" onclick="saveRotSubjects()" id="btnSaveRot">Save Assignment</button>
             </div>
         </div>
     </div>
@@ -514,6 +514,12 @@
             setupDynamicSidebar();
             initPeriodConfig();
         };
+
+        // --- Helper untuk mengembalikan tombol yang disabled ---
+        function resetBtn(btnId, originalText) {
+            var btn = document.getElementById(btnId);
+            if(btn) { btn.innerText = originalText; btn.disabled = false; }
+        }
 
         function setupDynamicSidebar() {
             var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
@@ -876,12 +882,16 @@
                 var valStr = val.trim();
                 fetch(API_URL, {
                     method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: valStr, amount: valStr, am: valStr })
+                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: valStr })
                 })
                 .then(r => r.json())
                 .then(res => {
-                    if(res.status === 'success' || res.success) { setTimeout(function() { fetchRoomData(); }, 1500); }
-                    else alert("Failed to save: " + res.message);
+                    if(res.status === 'success' || res.success) { 
+                        setTimeout(function() { fetchRoomData(); }, 1500); 
+                    } else { alert("Failed to save: " + res.message); }
+                })
+                .catch(err => {
+                    alert("Error: " + err.message);
                 });
             }
         }
@@ -929,17 +939,17 @@
             })
             .then(r => r.json())
             .then(res => {
+                resetBtn('btnSaveConfig', 'Save Config');
                 if (res.status === 'success' || res.success) { 
                     closePeriodModal(); 
                     initPeriodConfig(); 
                 } else { 
                     pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; 
                 }
-                btn.innerText = "Save Config"; btn.disabled = false;
             })
             .catch(err => {
+                resetBtn('btnSaveConfig', 'Save Config');
                 pStatus.innerText = "Connection Error!"; pStatus.style.color = "red"; pStatus.style.display = "block";
-                btn.innerText = "Save Config"; btn.disabled = false;
             });
         }
 
@@ -955,8 +965,8 @@
         function closeRotModal() { document.getElementById('rotModal').style.display = 'none'; }
         
         function saveRotSubjects() {
-            var btn = document.querySelector('#rotModal .btn-submit');
-            btn.innerText = "Saving..."; btn.disabled = true;
+            var btn = document.getElementById('btnSaveRot');
+            if(btn) { btn.innerText = "Saving..."; btn.disabled = true; }
             
             var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value.trim(), week: document.getElementById('weekSelector').value.trim(), runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
             
@@ -966,9 +976,13 @@
             })
             .then(r => r.json())
             .then(res => {
+                resetBtn('btnSaveRot', 'Save Assignment');
                 if(res.status === 'success') { closeRotModal(); fetchRoomData(); } 
                 else { document.getElementById('rotStatus').innerText = res.message; document.getElementById('rotStatus').style.color = "red"; document.getElementById('rotStatus').style.display = "block"; }
-                btn.innerText = "Save Assignment"; btn.disabled = false;
+            })
+            .catch(err => {
+                resetBtn('btnSaveRot', 'Save Assignment');
+                alert("Error: " + err.message);
             });
         }
 
@@ -1034,6 +1048,7 @@
             })
             .then(r => r.json())
             .then(res => {
+                resetBtn('btnSaveAct', 'Save Activity');
                 if(res.status === 'success' || res.success) { 
                     closeAdjustModal();
                     document.getElementById('loadingMsg').style.display = 'block';
@@ -1042,12 +1057,12 @@
                 } 
                 else { 
                     var statusBox = document.getElementById('modalStatus'); 
-                    statusBox.innerText = res.message; 
-                    statusBox.style.color = "red"; 
-                    statusBox.style.display = "block"; 
-                    btn.innerText = "Save Activity"; 
-                    btn.disabled = false;
+                    statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
                 } 
+            })
+            .catch(err => {
+                resetBtn('btnSaveAct', 'Save Activity');
+                alert("Error: " + err.message);
             });
         }
 
@@ -1083,13 +1098,20 @@
             })
             .then(r => r.json())
             .then(res => {
+                resetBtn('btnSaveSum', 'Save Summaries');
                 if(res.status === 'success' || res.success) { 
                     closeAdjustSumModal();
                     document.getElementById('loadingMsg').style.display = 'block';
                     document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
                     setTimeout(function() { fetchRoomData(); }, 1500);
                 } 
-                else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; btn.innerText = "Save Summaries"; btn.disabled = false; } 
+                else { 
+                    var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
+                } 
+            })
+            .catch(err => {
+                resetBtn('btnSaveSum', 'Save Summaries');
+                alert("Error: " + err.message);
             });
         }
 
@@ -1118,9 +1140,6 @@
             document.getElementById('bpMethod').value = "split";
             toggleBpTarget();
 
-            document.getElementById('btnApplyPenalty').innerText = "Apply Penalty";
-            document.getElementById('btnApplyPenalty').disabled = false;
-
             document.getElementById('bulkPenaltyModal').style.display = 'flex';
         }
 
@@ -1141,10 +1160,11 @@
             var totalCount = bpCurrentStudents.length;
             var totalPenalty = totalCount * 100;
 
-            if(!confirm("Are you sure you want to save this late penalty? Make sure the penalty bearer selection is correct!")) return;
+            if(!confirm("Are you sure you want to save this penalty?")) return;
 
-            document.getElementById('btnApplyPenalty').innerText = "Processing...";
-            document.getElementById('btnApplyPenalty').disabled = true;
+            var btn = document.getElementById('btnApplyPenalty');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
             document.getElementById('loadingMsg').style.display = 'block';
 
             var successCount = 0;
@@ -1174,13 +1194,8 @@
                         method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                         body: JSON.stringify({ 
                             action: "saveQuickFinanceOverride", 
-                            month: month.trim(), 
-                            week: week.trim(), 
-                            vault: s.vault, 
-                            type: 'DENDA', 
-                            val: valStr, 
-                            amount: valStr, 
-                            am: valStr 
+                            month: month.trim(), week: week.trim(), vault: s.vault, 
+                            type: 'DENDA', val: valStr 
                         })
                     });
                     successCount++;
@@ -1190,9 +1205,11 @@
             }
 
             closeBulkPenaltyModal();
-            alert("✅ Late Files Penalty successfully applied to " + successCount + " member(s) of " + bpCurrentRoom + "!");
+            alert("✅ Late Files Penalty successfully applied to " + successCount + " member(s)!");
             document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-            fetchRoomData();
+            resetBtn('btnApplyPenalty', 'Apply Penalty');
+            
+            setTimeout(function() { fetchRoomData(); }, 1500);
         }
 
         function openReportModal(roomName) {
@@ -1232,14 +1249,12 @@
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
                     action: "sendWeeklyReport", 
-                    month: month, 
-                    week: week, 
-                    roomName: currentReportRoom, 
-                    username: safeUsername 
+                    month: month, week: week, roomName: currentReportRoom, username: safeUsername 
                 })
             })
             .then(r => r.json())
             .then(res => {
+                resetBtn('btnConfirmReport', originalText);
                 if(res.status === 'success' || res.success) {
                     alert("✅ Report for " + currentReportRoom + " successfully sent via email!");
                     closeReportModal();
@@ -1252,13 +1267,10 @@
                 } else {
                     alert("❌ Failed to send report: " + res.message);
                 }
-                btn.innerHTML = originalText;
-                btn.disabled = false;
             })
             .catch(err => {
+                resetBtn('btnConfirmReport', originalText);
                 alert("❌ Failed to send report: " + err.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
             });
         }
     </script>
