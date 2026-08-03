@@ -480,7 +480,7 @@
         // ==========================================
         // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec"; 
+        const API_URL = "URL_KAMU_DISINI"; 
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -515,7 +515,6 @@
             initPeriodConfig();
         };
 
-        // --- Helper untuk mengembalikan tombol yang disabled ---
         function resetBtn(btnId, originalText) {
             var btn = document.getElementById(btnId);
             if(btn) { btn.innerText = originalText; btn.disabled = false; }
@@ -928,13 +927,7 @@
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
                     action: "savePeriodSettings", 
-                    mLabel: mLabel, 
-                    monthLabel: mLabel, 
-                    month: mLabel, 
-                    tWeeks: tWeeks, 
-                    totalWeeks: tWeeks, 
-                    week: tWeeks,
-                    username: loggedInUser 
+                    mLabel: mLabel, monthLabel: mLabel, month: mLabel, tWeeks: tWeeks, totalWeeks: tWeeks, week: tWeeks, username: loggedInUser 
                 })
             })
             .then(r => r.json())
@@ -1030,10 +1023,7 @@
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
                 loaLink: document.getElementById('adjLoaLink').value, 
-                summaries: act.summaries, 
-                sumStat: act.sumStat, 
-                notes: document.getElementById('adjNotes').value, 
-                lockSync: document.getElementById('adjLockSync').checked 
+                summaries: act.summaries, sumStat: act.sumStat, notes: document.getElementById('adjNotes').value, lockSync: document.getElementById('adjLockSync').checked 
             };
             
             var btn = document.getElementById('btnSaveAct'); 
@@ -1081,10 +1071,8 @@
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
             var payload = { 
                 status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                dendaOverride: act.dendaOverride, 
-                loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, 
-                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), 
-                sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked 
+                dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, 
+                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked 
             };
             
             var btn = document.getElementById('btnSaveSum'); 
@@ -1143,14 +1131,8 @@
             document.getElementById('bulkPenaltyModal').style.display = 'flex';
         }
 
-        function closeBulkPenaltyModal() {
-            document.getElementById('bulkPenaltyModal').style.display = 'none';
-        }
-
-        function toggleBpTarget() {
-            var method = document.getElementById('bpMethod').value;
-            document.getElementById('bpTargetGroup').style.display = method === 'single' ? 'block' : 'none';
-        }
+        function closeBulkPenaltyModal() { document.getElementById('bulkPenaltyModal').style.display = 'none'; }
+        function toggleBpTarget() { var method = document.getElementById('bpMethod').value; document.getElementById('bpTargetGroup').style.display = method === 'single' ? 'block' : 'none'; }
 
         async function executeBulkPenalty() {
             var month = document.getElementById('monthSelector').value;
@@ -1163,8 +1145,7 @@
             if(!confirm("Are you sure you want to save this penalty?")) return;
 
             var btn = document.getElementById('btnApplyPenalty');
-            btn.innerText = "Processing...";
-            btn.disabled = true;
+            btn.innerText = "Processing..."; btn.disabled = true;
             document.getElementById('loadingMsg').style.display = 'block';
 
             var successCount = 0;
@@ -1179,9 +1160,7 @@
                 if (method === 'split') {
                     newCustomDenda += 100;
                 } else if (method === 'single') {
-                    if (s.vault === targetVault) {
-                        newCustomDenda += totalPenalty;
-                    }
+                    if (s.vault === targetVault) newCustomDenda += totalPenalty;
                 }
 
                 if (newCustomDenda === currentCustomDenda) continue;
@@ -1193,9 +1172,7 @@
                     await fetch(API_URL, {
                         method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                         body: JSON.stringify({ 
-                            action: "saveQuickFinanceOverride", 
-                            month: month.trim(), week: week.trim(), vault: s.vault, 
-                            type: 'DENDA', val: valStr 
+                            action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: s.vault, type: 'DENDA', val: valStr 
                         })
                     });
                     successCount++;
@@ -1216,10 +1193,7 @@
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
             
-            if(!month || !week) { 
-                alert("Please select the Month and Week period in the top right corner first!"); 
-                return; 
-            }
+            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
 
             currentReportRoom = roomName;
             document.getElementById('repRoomName').innerText = roomName;
@@ -1229,9 +1203,7 @@
             document.getElementById('reportModal').style.display = 'flex';
         }
 
-        function closeReportModal() {
-            document.getElementById('reportModal').style.display = 'none';
-        }
+        function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; }
 
         function executeSendReport() {
             var month = document.getElementById('monthSelector').value.trim();
@@ -1240,16 +1212,14 @@
 
             var btn = document.getElementById('btnConfirmReport');
             var originalText = btn.innerHTML;
-            btn.innerHTML = "⏳ Sending...";
-            btn.disabled = true;
+            btn.innerHTML = "⏳ Sending..."; btn.disabled = true;
 
             var safeUsername = loggedInUser + "|||" + notes;
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
-                    action: "sendWeeklyReport", 
-                    month: month, week: week, roomName: currentReportRoom, username: safeUsername 
+                    action: "sendWeeklyReport", month: month, week: week, roomName: currentReportRoom, username: safeUsername 
                 })
             })
             .then(r => r.json())
