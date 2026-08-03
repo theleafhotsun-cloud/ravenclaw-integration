@@ -132,7 +132,6 @@
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -150,12 +149,11 @@
                 <h1 class="page-title">Room Activity Database</h1>
             </div>
 
-            <!-- SOP BANNER -->
             <div class="sop-banner">
                 <div class="sop-col">
                     <b style="color:var(--danger);">📌 WEEKLY FORM DEADLINE:</b><br>
                     • On-Time deadline: <b>Sunday 15:00 UTC+7</b>.<br>
-                    • Late submission: <b>Sunday 15:01 - 18:00 UTC+7</b> (+ʛ50 fine | <b>Newizzy W1: Free</b>).<br>
+                    • Late submission: <b>Sunday 15:01 - 18:00 UTC+7</b> (+ʛ50 fine).<br>
                     • Excused: <b>Must confirm before 18:00</b>.<br>
                     • No submission (>18:00): <b>No Submit</b> (+ʛ100 fine | <b>Newizzy</b>: +ʛ60).<br>
                     • LR Report Submission: <b>Sunday 19:00 UTC+7 Max</b> (Unless excused).
@@ -174,7 +172,6 @@
                 </div>
             </div>
 
-            <!-- PERIOD CONTROLLER -->
             <div class="period-controller">
                 <div style="display:flex; align-items:center; gap:20px;">
                     <div style="background:var(--sapphire); padding:5px 10px; border-radius:6px; display:flex; gap:10px;">
@@ -194,7 +191,6 @@
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Initializing database...</div>
            
-            <!-- TABS -->
             <div class="room-tabs" id="roomTabs" style="display: none;">
                 <button class="tab-btn active" onclick="openTab('Eternclaw')">🏠 Eternclaw</button>
                 <button class="tab-btn" onclick="openTab('Ravelynx')">🏠 Ravelynx</button>
@@ -206,12 +202,10 @@
                 <button class="tab-btn tab-raw" onclick="openTab('RawSummaries')">🔍 Raw: Summaries</button>
             </div>
 
-            <!-- TAB DATA CONTAINER -->
             <div id="tabContainer"></div>
         </div>
     </div>
 
-    <!-- NOTIFIKASI SIMPAN OTOMATIS -->
     <div id="saveSnack">✅ Data Berhasil Disimpan!</div>
 
     <!-- MODAL ASSIGN ROTATING SUBJECTS -->
@@ -220,7 +214,6 @@
             <h3>🔄 Assign Rotating Subjects</h3>
             <div id="rotStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
             <p style="font-size:11px; color:gray; margin-top:-10px;">For: <span id="rotPeriodLabel" style="font-weight:bold; color:var(--royal-blue);"></span></p>
-
             <div class="form-group">
                 <label>Ancient Runes Room</label>
                 <select id="rotRunes">
@@ -243,7 +236,6 @@
                     <option value="Velaclaw">Velaclaw</option>
                 </select>
             </div>
-
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeRotModal()">Cancel</button>
                 <button class="btn-submit" onclick="saveRotSubjects()" id="btnSaveRot">Save Assignment</button>
@@ -257,7 +249,6 @@
             <h3>⚙️ Configure Month Config</h3>
             <p style="font-size:11px; color:gray; margin-top:-10px;">Previous months will be automatically moved to the Archive.</p>
             <div id="periodStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
-           
             <div class="form-group">
                 <label>Month & Year Label</label>
                 <input type="text" id="cfgMonthLabel" placeholder="e.g. August 2026">
@@ -269,7 +260,6 @@
                     <option value="4" selected>4 Weeks</option>
                 </select>
             </div>
-           
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePeriodModal()">Cancel</button>
                 <button class="btn-submit" onclick="savePeriodConfig()" id="btnSaveConfig">Save Config</button>
@@ -282,7 +272,6 @@
         <div class="modal-box">
             <h3 id="modalTitle">Adjust Weekly Activity</h3>
             <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
-           
             <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
                 <div>
                     <b>Student:</b> <span id="adjVault"></span> - <span id="adjUsername"></span><br>
@@ -366,19 +355,16 @@
         <div class="modal-box" style="width: 500px;">
             <h3 id="modalTitleSum">Adjust Summaries & Approvals</h3>
             <div id="modalStatusSum" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
-           
             <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
                 <div><b>Student:</b> <span id="adjSumVault"></span> - <span id="adjSumUsername"></span></div>
                 <label style="color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;" title="Lock this data to prevent Auto-Sync overrides">
                     <input type="checkbox" id="adjLockSyncSum"> 🔒 Lock Sync
                 </label>
             </div>
-
             <div class="section-header">Total Summaries Count</div>
             <div class="form-row">
                 <div class="form-group"><label>Total Valid Summaries</label><input type="number" id="adjSumCount" value="0"></div>
             </div>
-
             <div class="section-header">Link Approvals</div>
             <div class="form-row">
                 <div class="form-group">
@@ -412,7 +398,6 @@
                     </select>
                 </div>
             </div>
-
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button>
                 <button class="btn-submit" onclick="saveSummariesAdjustment()" id="btnSaveSum">Save Summaries</button>
@@ -428,13 +413,11 @@
                 <b>Room:</b> <span id="repRoomName"></span><br>
                 <b>Period:</b> <span id="repPeriod"></span>
             </div>
-            
             <div class="form-group">
                 <label>Additional Notes / Report Summary (Optional)</label>
                 <textarea id="repNotes" rows="4" placeholder="Type any important notes, excused/izin details, issues, or highlights for this week here..."></textarea>
                 <span style="font-size: 10px; color: gray; display: block; margin-top: 5px;">This note will be included in the email sent to Prefect/Headhouse.</span>
             </div>
-            
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeReportModal()">Cancel</button>
                 <button class="btn-submit" style="background-color: var(--success);" onclick="executeSendReport()" id="btnConfirmReport">Send Report</button>
@@ -447,11 +430,10 @@
         // ==========================================
         // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec"; 
+        const API_URL = "URL_KAMU_DISINI"; 
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
-        
         if (!loggedInUser) window.location.href = "index.html";
 
         var fullDataStore = {};
@@ -462,7 +444,6 @@
         var currentEditIdx = -1;
         var currentUserRoom = "";
         var isPrivilegedUser = false;
-        
         var previousPeriod = { month: "", week: "" };
         var currentReportRoom = ""; 
 
@@ -539,7 +520,6 @@
                     periodConfigStore = res.data;
                     isPrivilegedUser = res.data.isPrivileged; 
                     currentUserRoom = res.data.userRoom;     
-                   
                     if (isPrivilegedUser) {
                         document.getElementById('btnManagePeriod').style.display = 'inline-block';
                         document.getElementById('btnAssignRot').style.display = 'inline-block';
@@ -547,20 +527,15 @@
                         if (currentUserRoom) activeTab = currentUserRoom;
                     }
                     toggleArchiveMode();
-                } else {
-                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + res.message + "</span>";
-                }
+                } else { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + res.message + "</span>"; }
             })
-            .catch(err => {
-                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + err.message + "</span>";
-            });
+            .catch(err => { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + err.message + "</span>"; });
         }
 
         function toggleArchiveMode() {
             var mode = document.querySelector('input[name="modeArchive"]:checked').value;
             var monthSel = document.getElementById('monthSelector');
             monthSel.innerHTML = '';
-           
             if(mode === 'active') {
                 var m = periodConfigStore.activeMonth;
                 var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Active)"; opt.selected = true;
@@ -582,7 +557,6 @@
         function onMonthChange() {
             var selectedMonth = document.getElementById('monthSelector').value;
             if(!selectedMonth) { document.getElementById('weekSelector').innerHTML = ''; return; }
-           
             var weekSel = document.getElementById('weekSelector'); weekSel.innerHTML = '';
             for (var i = 1; i <= 4; i++) {
                 var opt = document.createElement('option'); opt.value = "Week " + i; opt.innerText = "Period: Week " + i;
@@ -612,16 +586,10 @@
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success') {
-                    fullDataStore = res.data || res.freshData || res; 
-                    renderAllTabs();
-                } else {
-                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
-                }
+                if(res.status === 'success') { fullDataStore = res.data || res.freshData || res; renderAllTabs(); } 
+                else { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>"; }
             })
-            .catch(err => {
-                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>";
-            });
+            .catch(err => { document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Connection Error: " + err.message + "</span>"; });
         }
 
         function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
@@ -649,11 +617,13 @@
                 updateTotalFinesCard(roomName);
             }
 
+            // PAYLOAD EXTRA LENGKAP: Mengirim val, amount, am, agar tidak meleset di backend 1_Main.gs
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
                     action: "saveQuickFinanceOverride", 
-                    month: month.trim(), week: week.trim(), vault: vault, type: type, val: val, amount: val, am: val
+                    month: month.trim(), week: week.trim(), vault: vault, type: type, 
+                    val: val.toString(), amount: val.toString(), am: val.toString()
                 })
             })
             .then(r => r.json())
@@ -664,9 +634,7 @@
                     showSnack("❌ Gagal Simpan!", true); 
                 }
             })
-            .catch(err => {
-                showSnack("❌ Connection Error!", true);
-            });
+            .catch(err => { showSnack("❌ Connection Error!", true); });
         }
 
         function updateTotalFinesCard(roomName) {
@@ -700,11 +668,7 @@
                     }
 
                     var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
-                    students.sort(function(a, b) {
-                        var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 999999;
-                        var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 999999;
-                        return vaultA - vaultB;
-                    });
+                    students.sort(function(a, b) { return (parseInt(String(a.vault).replace(/\D/g, '')) || 999) - (parseInt(String(b.vault).replace(/\D/g, '')) || 999); });
 
                     var rSched = roomSchedules[roomName];
                     var extraRot = "";
@@ -737,7 +701,6 @@
                             if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) {
                                 excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>';
                             } else { excTextDisp = ''; }
-
                             var notesDisp = act.notes ? '<div style="font-size:9px; color:#112250; font-style:italic; max-width:120px; white-space:normal;">' + act.notes.replace(/\n/g, '<br>') + '</div>' : '<span style="color:#ccc;">-</span>';
 
                             roomActHtml += '<tr>' +
@@ -789,9 +752,7 @@
                                 if(lnk && lnk.toString().trim().length > 4) {
                                     var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk;
                                     linkCols += '<td><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>';
-                                } else {
-                                    linkCols += '<td>-</td>';
-                                }
+                                } else { linkCols += '<td>-</td>'; }
                             }
                             roomSumHtml += '<tr>' +
                                 '<td class="vault-tag">' + s.vault + '</td>' +
@@ -924,7 +885,6 @@
             var mLabel = document.getElementById('cfgMonthLabel').value.trim(); 
             var tWeeks = document.getElementById('cfgTotalWeeks').value; 
             var pStatus = document.getElementById('periodStatus');
-            
             if (!mLabel) { pStatus.innerText = "Month label is required!"; pStatus.style.color = "red"; pStatus.style.display = "block"; return; }
             
             var btn = document.getElementById('btnSaveConfig');
@@ -933,43 +893,31 @@
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
-                    action: "savePeriodSettings", 
-                    mLabel: mLabel, monthLabel: mLabel, month: mLabel, tWeeks: tWeeks, totalWeeks: tWeeks, week: tWeeks, username: loggedInUser 
+                    action: "savePeriodSettings", mLabel: mLabel, monthLabel: mLabel, month: mLabel, tWeeks: tWeeks, totalWeeks: tWeeks, week: tWeeks, username: loggedInUser 
                 })
             })
             .then(r => r.json())
             .then(res => {
                 resetBtn('btnSaveConfig', 'Save Config');
-                if (res.status === 'success' || res.success) { 
-                    closePeriodModal(); 
-                    initPeriodConfig(); 
-                } else { 
-                    pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; 
-                }
+                if (res.status === 'success' || res.success) { closePeriodModal(); initPeriodConfig(); } 
+                else { pStatus.innerText = res.message; pStatus.style.color = "red"; pStatus.style.display = "block"; }
             })
-            .catch(err => {
-                resetBtn('btnSaveConfig', 'Save Config');
-                pStatus.innerText = "Connection Error!"; pStatus.style.color = "red"; pStatus.style.display = "block";
-            });
+            .catch(err => { resetBtn('btnSaveConfig', 'Save Config'); pStatus.innerText = "Connection Error!"; pStatus.style.color = "red"; pStatus.style.display = "block"; });
         }
 
         function openRotModal() {
             document.getElementById('rotModal').style.display = 'flex';
             document.getElementById('rotStatus').style.display = 'none';
             document.getElementById('rotPeriodLabel').innerText = document.getElementById('monthSelector').value + " - " + document.getElementById('weekSelector').value;
-            
             document.getElementById('rotRunes').value = fullDataStore.rotRunes && fullDataStore.rotRunes !== '-' ? fullDataStore.rotRunes : '-';
             document.getElementById('rotComc').value = fullDataStore.rotComc && fullDataStore.rotComc !== '-' ? fullDataStore.rotComc : '-';
         }
-        
         function closeRotModal() { document.getElementById('rotModal').style.display = 'none'; }
         
         function saveRotSubjects() {
             var btn = document.getElementById('btnSaveRot');
             if(btn) { btn.innerText = "Saving..."; btn.disabled = true; }
-            
             var payload = { action: "saveRotSubjects", month: document.getElementById('monthSelector').value.trim(), week: document.getElementById('weekSelector').value.trim(), runes: document.getElementById('rotRunes').value, comc: document.getElementById('rotComc').value };
-            
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
@@ -980,10 +928,7 @@
                 if(res.status === 'success') { closeRotModal(); fetchRoomData(); } 
                 else { document.getElementById('rotStatus').innerText = res.message; document.getElementById('rotStatus').style.color = "red"; document.getElementById('rotStatus').style.display = "block"; }
             })
-            .catch(err => {
-                resetBtn('btnSaveRot', 'Save Assignment');
-                alert("Error: " + err.message);
-            });
+            .catch(err => { resetBtn('btnSaveRot', 'Save Assignment'); alert("Error: " + err.message); });
         }
 
         function openAdjustModal(roomName, index) {
@@ -1004,7 +949,6 @@
             document.getElementById('adjLoaEnd').value = act.loaEnd; 
             document.getElementById('adjLoaLink').value = act.loaLink; 
             document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
-            
             document.getElementById('adjCustomDenda').value = act.dendaOverride || 0;
             document.getElementById('adjNotes').value = act.notes || '';
             document.getElementById('adjLockSync').checked = act.lockSync || false;
@@ -1018,26 +962,19 @@
         function saveActivityAdjustment() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; var act = s.activity;
             var payload = { 
-                status: document.getElementById('adjStatus').value, 
-                reqOverride: document.getElementById('adjReqOverride').value, 
-                attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), 
-                absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
-                excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), 
-                replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
-                freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
-                formStatus: document.getElementById('adjFormStatus').value, 
+                status: document.getElementById('adjStatus').value, reqOverride: document.getElementById('adjReqOverride').value, 
+                attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
+                excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
+                freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), formStatus: document.getElementById('adjFormStatus').value, 
                 dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0,
-                loaStart: document.getElementById('adjLoaStart').value, 
-                loaEnd: document.getElementById('adjLoaEnd').value, 
-                loaLink: document.getElementById('adjLoaLink').value, 
+                loaStart: document.getElementById('adjLoaStart').value, loaEnd: document.getElementById('adjLoaEnd').value, loaLink: document.getElementById('adjLoaLink').value, 
                 summaries: act.summaries, sumStat: act.sumStat, notes: document.getElementById('adjNotes').value, lockSync: document.getElementById('adjLockSync').checked 
             };
             
             var btn = document.getElementById('btnSaveAct'); 
             btn.innerText = "Saving..."; btn.disabled = true;
             
-            var month = document.getElementById('monthSelector').value; 
-            var week = document.getElementById('weekSelector').value;
+            var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1051,16 +988,9 @@
                     document.getElementById('loadingMsg').style.display = 'block';
                     document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
                     setTimeout(function() { fetchRoomData(); }, 1500);
-                } 
-                else { 
-                    var statusBox = document.getElementById('modalStatus'); 
-                    statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
-                } 
+                } else { var statusBox = document.getElementById('modalStatus'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
             })
-            .catch(err => {
-                resetBtn('btnSaveAct', 'Save Activity');
-                alert("Error: " + err.message);
-            });
+            .catch(err => { resetBtn('btnSaveAct', 'Save Activity'); alert("Error: " + err.message); });
         }
 
         function openAdjustSumModal(roomName, index) {
@@ -1082,9 +1012,7 @@
                 summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), sumStat: sStat, lockSync: document.getElementById('adjLockSyncSum').checked 
             };
             
-            var btn = document.getElementById('btnSaveSum'); 
-            btn.innerText = "Saving..."; btn.disabled = true;
-            
+            var btn = document.getElementById('btnSaveSum'); btn.innerText = "Saving..."; btn.disabled = true;
             var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
             
             fetch(API_URL, {
@@ -1095,32 +1023,20 @@
             .then(res => {
                 resetBtn('btnSaveSum', 'Save Summaries');
                 if(res.status === 'success' || res.success) { 
-                    closeAdjustSumModal();
-                    document.getElementById('loadingMsg').style.display = 'block';
-                    document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
+                    closeAdjustSumModal(); document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
                     setTimeout(function() { fetchRoomData(); }, 1500);
-                } 
-                else { 
-                    var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
-                } 
+                } else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; } 
             })
-            .catch(err => {
-                resetBtn('btnSaveSum', 'Save Summaries');
-                alert("Error: " + err.message);
-            });
+            .catch(err => { resetBtn('btnSaveSum', 'Save Summaries'); alert("Error: " + err.message); });
         }
 
         function openReportModal(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
-            
             if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
 
             currentReportRoom = roomName;
-            document.getElementById('repRoomName').innerText = roomName;
-            document.getElementById('repPeriod').innerText = month + " - " + week;
-            document.getElementById('repNotes').value = ""; 
-            
+            document.getElementById('repRoomName').innerText = roomName; document.getElementById('repPeriod').innerText = month + " - " + week; document.getElementById('repNotes').value = ""; 
             document.getElementById('reportModal').style.display = 'flex';
         }
 
@@ -1139,9 +1055,7 @@
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ 
-                    action: "sendWeeklyReport", month: month, week: week, roomName: currentReportRoom, username: safeUsername 
-                })
+                body: JSON.stringify({ action: "sendWeeklyReport", month: month, week: week, roomName: currentReportRoom, username: safeUsername })
             })
             .then(r => r.json())
             .then(res => {
@@ -1149,20 +1063,11 @@
                 if(res.status === 'success' || res.success) {
                     alert("✅ Report for " + currentReportRoom + " successfully sent via email!");
                     closeReportModal();
-                    
                     var mainBtn = document.getElementById('btnReport_' + currentReportRoom);
-                    if(mainBtn) {
-                        mainBtn.innerHTML = "✅ Report Sent";
-                        mainBtn.style.backgroundColor = "gray";
-                    }
-                } else {
-                    alert("❌ Failed to send report: " + res.message);
-                }
+                    if(mainBtn) { mainBtn.innerHTML = "✅ Report Sent"; mainBtn.style.backgroundColor = "gray"; }
+                } else { alert("❌ Failed to send report: " + res.message); }
             })
-            .catch(err => {
-                resetBtn('btnConfirmReport', originalText);
-                alert("❌ Failed to send report: " + err.message);
-            });
+            .catch(err => { resetBtn('btnConfirmReport', originalText); alert("❌ Failed to send report: " + err.message); });
         }
     </script>
 </body>
