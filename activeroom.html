@@ -870,9 +870,10 @@
                 document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Saving custom amount...";
                 var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
                 
+                var valStr = val.trim();
                 fetch(API_URL, {
                     method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: val.trim() })
+                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: valStr, amount: valStr, am: valStr })
                 })
                 .then(r => r.json())
                 .then(res => {
@@ -1142,35 +1143,33 @@
             document.getElementById('btnApplyPenalty').innerText = "Processing...";
             document.getElementById('btnApplyPenalty').disabled = true;
             document.getElementById('loadingMsg').style.display = 'block';
-            
+
             var successCount = 0;
 
             for (var i = 0; i < totalCount; i++) {
                 var s = bpCurrentStudents[i];
                 var act = s.activity;
-                
+
                 var penaltyAmount = 0;
-                var currentDenda = parseInt(act.dendaOverride) || 0; // Ambil denda lama jika sudah ada
+                var currentDenda = parseInt(act.dendaOverride) || 0; 
                 var needsUpdate = false;
 
                 if (method === 'split') {
-                    penaltyAmount = currentDenda + 100; // Ditambahkan +100 dari denda sebelumnya
+                    penaltyAmount = currentDenda + 100;
                     needsUpdate = true;
                 } else if (method === 'single') {
                     if (s.vault === targetVault) {
-                        penaltyAmount = currentDenda + totalPenalty; // Ditambahkan totalPenalty
+                        penaltyAmount = currentDenda + totalPenalty;
                         needsUpdate = true;
                     }
                 }
 
-                // Skip update API call jika anak tersebut tidak mengalami perubahan denda
-                // Bikin loading jadi jaauuhhhh lebih cepat
                 if (!needsUpdate) continue;
-                
+
                 document.getElementById('loadingMsg').innerText = "Applying penalty: Updating vault " + s.vault + "...";
-                
+
                 try {
-                    // Pakai saveQuickFinanceOverride agar tidak mengganggu kolom data / lockSync lain!
+                    var valStr = penaltyAmount.toString(); 
                     await fetch(API_URL, {
                         method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                         body: JSON.stringify({ 
@@ -1178,8 +1177,10 @@
                             month: month.trim(), 
                             week: week.trim(), 
                             vault: s.vault, 
-                            type: 'DENDA',
-                            val: penaltyAmount 
+                            type: 'DENDA', 
+                            val: valStr, 
+                            amount: valStr, 
+                            am: valStr 
                         })
                     });
                     successCount++;
@@ -1187,7 +1188,7 @@
                     console.error("Failed to update vault " + s.vault, err);
                 }
             }
-            
+
             closeBulkPenaltyModal();
             alert("✅ Late Files Penalty successfully applied to " + successCount + " member(s) of " + bpCurrentRoom + "!");
             document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
