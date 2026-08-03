@@ -13,7 +13,6 @@
 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -23,7 +22,6 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
 
-        /* Main Content */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
         .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
@@ -44,33 +42,27 @@
         .filter-group { display: flex; gap: 10px; align-items: center; }
         .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
         
-        /* TABS */
         .room-tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
         .tab-btn { background-color: #f0f0f0; border: none; padding: 10px 18px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
         .tab-btn.active { background-color: #e65100; color: white; border-bottom: 2px solid #bf360c;}
         .tab-btn:hover:not(.active) { background-color: #ffe0b2; color: #e65100; }
-        
         .tab-raw { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; border-bottom: none; }
         .tab-raw.active { background-color: #1565c0; color: white; border-bottom: 2px solid #0d47a1; }
         .tab-content { display: none; flex-direction: column; flex-grow: 1; }
         .tab-content.active { display: flex; }
 
-        /* BOX SECTIONS */
         .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         .box-section h4 { margin: 0 0 15px 0; color: var(--sapphire); border-bottom: 2px solid var(--quicksand); padding-bottom: 8px; font-size: 14px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;}
         
-        /* BANNERS */
         .room-schedule-banner { background-color: #fff9c4; border-left: 4px solid var(--warning); padding: 10px 15px; margin-bottom: 15px; font-size: 12px; color: #f57f17; border-radius: 4px; line-height:1.5;}
         .sop-banner { background-color: #e8eaf6; border-left: 4px solid var(--sapphire); padding: 12px 15px; margin-bottom: 15px; font-size: 11px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6; display: flex; gap: 20px;}
         .sop-col { flex: 1; }
 
-        /* DASHBOARD CARDS */
         .dashboard-cards { display: flex; gap: 15px; margin-bottom: 15px; }
         .card { background-color: white; border: 1px solid var(--shellstone); padding: 15px; border-radius: 8px; flex: 1; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
         .card h5 { margin: 0 0 5px 0; font-size: 11px; color: var(--sapphire); text-transform: uppercase; }
         .card .amount { font-size: 20px; font-weight: bold; color: var(--royal-blue); }
 
-        /* TABLES */
         .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 30px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead { position: sticky; top: 0; z-index: 1;}
@@ -84,7 +76,6 @@
         .plus { color: var(--success); }
         .minus { color: var(--danger); }
 
-        /* DIRECT EDIT INPUT STYLES */
         .direct-input { width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: bold; text-align: center; background-color: #fffde7; transition: 0.3s; }
         .direct-input:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
         .direct-input.minus-input { color: var(--danger); background-color: #ffebee; border-color: #ef9a9a; }
@@ -98,18 +89,13 @@
         .badge-pending { color: #f57f17; font-size: 9px; border: 1px solid #f57f17; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
         .badge-approved { color: var(--success); font-size: 9px; border: 1px solid var(--success); padding: 1px 4px; border-radius: 3px; font-weight: bold;}
         
-        /* BUTTONS & LINKS */
         .btn-edit { background-color: var(--sapphire); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
         .btn-edit:hover { background-color: var(--royal-blue); }
         .btn-adjust-sum { background-color: #6a1b9a; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
         .btn-adjust-sum:hover { background-color: #4a148c; }
-        
-        .editable-cell { cursor: pointer; border-bottom: 1.5px dashed #999; padding-bottom: 1px; transition: background 0.2s; }
-        .editable-cell:hover { background-color: #fff9c4; border-bottom: 1.5px solid var(--royal-blue); }
         .link-icon { text-decoration: none; font-weight: bold; font-size: 10px; padding: 3px 8px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; display: inline-block; margin: 2px;}
         .link-icon:hover { background-color: var(--sapphire); color: white; }
         
-        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 16px;}
@@ -123,10 +109,8 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--shellstone); padding-top: 10px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
-        
         .rep-info { background: #e8eaf6; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; color: var(--royal-blue); border-left: 4px solid var(--sapphire); }
 
-        /* SNACKBAR NOTIFICATION */
         #saveSnack { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 12px; display: none; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
     </style>
 </head>
@@ -436,35 +420,6 @@
         </div>
     </div>
 
-    <!-- MODAL APPLY BULK PENALTY -->
-    <div class="modal-overlay" id="bulkPenaltyModal">
-        <div class="modal-box" style="width: 450px;">
-            <h3>🚨 Apply Bulk Late Penalty</h3>
-            <p style="font-size:12px; color:var(--royal-blue); background:#e8eaf6; padding:10px; border-left:4px solid var(--sapphire);">
-                Room <b id="bpRoomName"></b> has <b id="bpCount"></b> members. <br>
-                Total Late Files Penalty (Without Permission): <b>ʛ<span id="bpTotal"></span></b>
-            </p>
-            
-            <div class="form-group">
-                <label>Penalty Bearing Method</label>
-                <select id="bpMethod" onchange="toggleBpTarget()">
-                    <option value="split">Split evenly among all members (ʛ100 / student)</option>
-                    <option value="single">Borne entirely by 1 person / Specific Member</option>
-                </select>
-            </div>
-            
-            <div class="form-group" id="bpTargetGroup" style="display:none;">
-                <label>Select the Member Bearing the Penalty</label>
-                <select id="bpTargetVault"></select>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeBulkPenaltyModal()">Cancel</button>
-                <button class="btn-submit" style="background-color: var(--danger);" onclick="executeBulkPenalty()" id="btnApplyPenalty">Apply Penalty</button>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL SUBMIT REPORT -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal-box" style="width: 450px;">
@@ -510,8 +465,6 @@
         
         var previousPeriod = { month: "", week: "" };
         var currentReportRoom = ""; 
-        var bpCurrentRoom = "";
-        var bpCurrentStudents = [];
 
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
@@ -674,9 +627,9 @@
         function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
 
         // ==========================================
-        // FUNGSI SIMPAN OTOMATIS DARI INPUT BOX!
+        // FUNGSI SIMPAN OTOMATIS & HITUNG TOTAL OTOMATIS
         // ==========================================
-        function autoSaveFinance(vault, type, inputElement, baseAutoDenda, totalElementId) {
+        function autoSaveFinance(vault, type, inputElement, baseAutoDenda, totalElementId, roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
             var val = inputElement.value.trim();
@@ -688,18 +641,19 @@
                 
                 if(totalNew > 0) {
                     totalEl.innerHTML = "-ʛ" + formatMoney(totalNew);
-                    totalEl.className = "money minus";
+                    totalEl.className = "money minus total-fines-td";
                 } else {
                     totalEl.innerHTML = "-";
-                    totalEl.className = "money";
+                    totalEl.className = "money total-fines-td";
                 }
+                updateTotalFinesCard(roomName);
             }
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
                     action: "saveQuickFinanceOverride", 
-                    month: month.trim(), week: week.trim(), vault: vault, type: type, val: val 
+                    month: month.trim(), week: week.trim(), vault: vault, type: type, val: val, amount: val, am: val
                 })
             })
             .then(r => r.json())
@@ -709,7 +663,23 @@
                 } else { 
                     showSnack("❌ Gagal Simpan!", true); 
                 }
+            })
+            .catch(err => {
+                showSnack("❌ Connection Error!", true);
             });
+        }
+
+        function updateTotalFinesCard(roomName) {
+            var cardEl = document.getElementById('card-total-fines-' + roomName);
+            if (!cardEl) return;
+            var totalSum = 0;
+            var totalCells = document.querySelectorAll('#tab-' + roomName + ' .total-fines-td');
+            totalCells.forEach(function(td) {
+                var txt = td.innerText.replace(/[^0-9]/g, '');
+                var num = parseInt(txt) || 0;
+                totalSum += num;
+            });
+            cardEl.innerText = "ʛ" + formatMoney(totalSum);
         }
 
         function renderAllTabs() {
@@ -730,7 +700,6 @@
                     }
 
                     var students = (fullDataStore.rooms && fullDataStore.rooms[roomName]) ? fullDataStore.rooms[roomName] : [];
-                    
                     students.sort(function(a, b) {
                         var vaultA = parseInt(String(a.vault).replace(/\D/g, '')) || 999999;
                         var vaultB = parseInt(String(b.vault).replace(/\D/g, '')) || 999999;
@@ -791,7 +760,6 @@
                     }
                    
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;">' +
-                        '<button class="btn-manage" style="background-color: var(--danger); font-size:12px; padding:10px 18px;" onclick="openBulkPenaltyModal(\'' + roomName + '\')">🚨 Apply Late Penalty (All Members)</button>' +
                         '<button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
 
                     var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr>' +
@@ -841,10 +809,10 @@
                         '<th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th>' +
                         '</tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
 
-                    // --- BOX 3: FINANCE (DENGAN INPUT BOX LANGSUNG) ---
+                    // --- BOX 3: FINANCE (PETTY CASH & DIRECT EDIT) ---
                     var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
                     if (students.length === 0) {
-                        finHtml = '<tr><td colspan="7" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
+                        finHtml = '<tr><td colspan="8" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
                     } else {
                         students.forEach(function(s) {
                             totalKas += s.kas; totalDenda += s.denda; totalReward += s.reward;
@@ -857,11 +825,11 @@
                             var kasVal = act.kasOverride !== '' ? act.kasOverride : '';
                             
                             var cellKasStr = isPrivilegedUser 
-                                ? `<td><input type="number" class="direct-input" value="${kasVal}" placeholder="Auto" onchange="autoSaveFinance('${s.vault}', 'KAS', this, 0, null)"></td>` 
+                                ? `<td><input type="number" class="direct-input" value="${kasVal}" placeholder="Auto" onchange="autoSaveFinance('${s.vault}', 'KAS', this, 0, null, '${roomName}')"></td>` 
                                 : `<td class="money">ʛ${formatMoney(s.kas)}</td>`;
                             
                             var cellCustomDendaStr = isPrivilegedUser 
-                                ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}')"></td>` 
+                                ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}', '${roomName}')"></td>` 
                                 : `<td class="money ${customDenda > 0 ? 'minus' : ''}">${customDenda > 0 ? '-ʛ' + formatMoney(customDenda) : '-'}</td>`;
 
                             finHtml += '<tr>' +
@@ -870,7 +838,7 @@
                                 cellKasStr + 
                                 '<td class="money ' + (autoFines > 0 ? 'minus' : '') + '">' + (autoFines > 0 ? '-ʛ' + formatMoney(autoFines) : '-') + '</td>' +
                                 cellCustomDendaStr + 
-                                '<td class="money ' + (finalDenda > 0 ? 'minus' : '') + '" id="td-' + s.vault + '">' + (finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-') + '</td>' +
+                                '<td class="money total-fines-td ' + (finalDenda > 0 ? 'minus' : '') + '" id="td-' + s.vault + '">' + (finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-') + '</td>' +
                                 '<td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td>' +
                                 '<td><div style="font-size:10px; color:gray; line-height:1.4;">' + s.finesDetail + '</div></td>' +
                                 '</tr>';
@@ -878,9 +846,9 @@
                     }
                     var boxFin = '<div class="box-section"><h4>3. Room Finance & Penalties</h4><div class="dashboard-cards">' +
                         '<div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div>' +
-                        '<div class="card"><h5>Total Fines</h5><div class="amount minus">ʛ' + formatMoney(totalDenda) + '</div></div>' +
+                        '<div class="card"><h5>Total Fines</h5><div class="amount minus" id="card-total-fines-' + roomName + '">ʛ' + formatMoney(totalDenda) + '</div></div>' +
                         '<div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div>' +
-                        '</div><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Edit Kas</th><th>Auto Fines</th><th>Manual Edit Fines</th><th>Total Fines</th><th>Rewards</th><th>Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
+                        '</div><div class="table-container"><table id="table-fin-' + roomName + '"><thead><tr><th>Vault</th><th>Username</th><th>Edit Kas</th><th>Auto Fines</th><th>Manual Edit Fines</th><th>Total Fines</th><th>Rewards</th><th>Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
 
                     var div = document.createElement('div');
                     div.className = 'tab-content ' + (roomName === activeTab ? 'active' : '');
@@ -1082,7 +1050,7 @@
                     closeAdjustModal();
                     document.getElementById('loadingMsg').style.display = 'block';
                     document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-                    setTimeout(function() { fetchRoomData(); }, 2000);
+                    setTimeout(function() { fetchRoomData(); }, 1500);
                 } 
                 else { 
                     var statusBox = document.getElementById('modalStatus'); 
@@ -1130,7 +1098,7 @@
                     closeAdjustSumModal();
                     document.getElementById('loadingMsg').style.display = 'block';
                     document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-                    setTimeout(function() { fetchRoomData(); }, 2000);
+                    setTimeout(function() { fetchRoomData(); }, 1500);
                 } 
                 else { 
                     var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
@@ -1142,99 +1110,11 @@
             });
         }
 
-        function openBulkPenaltyModal(roomName) {
-            var month = document.getElementById('monthSelector').value;
-            var week = document.getElementById('weekSelector').value;
-            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
-
-            bpCurrentRoom = roomName;
-            bpCurrentStudents = fullDataStore.rooms[roomName];
-            
-            var totalCount = bpCurrentStudents.length;
-            var totalPenalty = totalCount * 100;
-
-            document.getElementById('bpRoomName').innerText = roomName;
-            document.getElementById('bpCount').innerText = totalCount;
-            document.getElementById('bpTotal').innerText = totalPenalty;
-
-            var targetSelect = document.getElementById('bpTargetVault');
-            targetSelect.innerHTML = "";
-            bpCurrentStudents.forEach(function(s) {
-                targetSelect.innerHTML += `<option value="${s.vault}">${s.vault} - ${s.username}</option>`;
-            });
-
-            document.getElementById('bpMethod').value = "split";
-            toggleBpTarget();
-
-            document.getElementById('bulkPenaltyModal').style.display = 'flex';
-        }
-
-        function closeBulkPenaltyModal() { document.getElementById('bulkPenaltyModal').style.display = 'none'; }
-        function toggleBpTarget() { var method = document.getElementById('bpMethod').value; document.getElementById('bpTargetGroup').style.display = method === 'single' ? 'block' : 'none'; }
-
-        async function executeBulkPenalty() {
-            var month = document.getElementById('monthSelector').value;
-            var week = document.getElementById('weekSelector').value;
-            var method = document.getElementById('bpMethod').value;
-            var targetVault = document.getElementById('bpTargetVault').value;
-            var totalCount = bpCurrentStudents.length;
-            var totalPenalty = totalCount * 100;
-
-            if(!confirm("Are you sure you want to save this penalty?")) return;
-
-            var btn = document.getElementById('btnApplyPenalty');
-            btn.innerText = "Processing..."; btn.disabled = true;
-            document.getElementById('loadingMsg').style.display = 'block';
-
-            var successCount = 0;
-
-            for (var i = 0; i < totalCount; i++) {
-                var s = bpCurrentStudents[i];
-                var act = s.activity;
-
-                var currentCustomDenda = parseInt(act.dendaOverride, 10) || 0; 
-                var newCustomDenda = currentCustomDenda;
-
-                if (method === 'split') {
-                    newCustomDenda += 100;
-                } else if (method === 'single') {
-                    if (s.vault === targetVault) newCustomDenda += totalPenalty;
-                }
-
-                if (newCustomDenda === currentCustomDenda) continue;
-
-                document.getElementById('loadingMsg').innerText = "Applying penalty: Updating vault " + s.vault + "...";
-
-                try {
-                    var valStr = newCustomDenda.toString(); 
-                    await fetch(API_URL, {
-                        method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                        body: JSON.stringify({ 
-                            action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: s.vault, type: 'DENDA', val: valStr 
-                        })
-                    });
-                    successCount++;
-                } catch (err) {
-                    console.error("Failed to update vault " + s.vault, err);
-                }
-            }
-
-            closeBulkPenaltyModal();
-            resetBtn('btnApplyPenalty', 'Apply Penalty');
-            showSnack("✅ Late Files Penalty applied to " + successCount + " member(s)!");
-            document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-            
-            setTimeout(function() { fetchRoomData(); }, 2000);
-        }
-
         function openReportModal(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
             
-            if(!month || !week) { 
-                alert("Please select the Month and Week period in the top right corner first!"); 
-                return; 
-            }
+            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
 
             currentReportRoom = roomName;
             document.getElementById('repRoomName').innerText = roomName;
