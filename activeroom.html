@@ -143,6 +143,7 @@
         </ul>
     </div>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -212,6 +213,7 @@
                 <button class="tab-btn tab-raw" onclick="openTab('RawSummaries')">🔍 Raw: Summaries</button>
             </div>
 
+            <!-- TAB DATA CONTAINER -->
             <div id="tabContainer"></div>
         </div>
     </div>
@@ -345,7 +347,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label title="Akan masuk ke Kolom Q (Custom Denda)">Additional Fine (ʛ)</label>
+                    <label title="Masukkan angka mutlak. Akan menambah total denda anak ini.">Additional Penalty (ʛ)</label>
                     <input type="number" id="adjCustomDenda" value="0" step="100">
                 </div>
             </div>
@@ -428,7 +430,7 @@
             <h3>🚨 Apply Bulk Late Penalty</h3>
             <p style="font-size:12px; color:var(--royal-blue); background:#e8eaf6; padding:10px; border-left:4px solid var(--sapphire);">
                 Room <b id="bpRoomName"></b> has <b id="bpCount"></b> members. <br>
-                Total Late Files Penalty (Without Permission): <b>机制<span id="bpTotal"></span></b>
+                Total Late Files Penalty (Without Permission): <b>ʛ<span id="bpTotal"></span></b>
             </p>
             
             <div class="form-group">
@@ -446,7 +448,7 @@
             
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeBulkPenaltyModal()">Cancel</button>
-                <button class="btn-submit" style="background-color: var(--danger);" onclick="executeBulkPenalty()">Apply Penalty</button>
+                <button class="btn-submit" style="background-color: var(--danger);" onclick="executeBulkPenalty()" id="btnApplyPenalty">Apply Penalty</button>
             </div>
         </div>
     </div>
@@ -630,7 +632,7 @@
             .then(r => r.json())
             .then(res => {
                 if(res.status === 'success') {
-                    fullDataStore = res.data; 
+                    fullDataStore = res.data || res.freshData || res; 
                     renderAllTabs();
                 } else {
                     document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + res.message + "</span>";
@@ -731,7 +733,7 @@
                         '<th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th>' +
                         '</tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
-                    // --- BOX 2: ROOM SUMMARIES (KEMBALI LENGKAP!) ---
+                    // --- BOX 2: ROOM SUMMARIES ---
                     var roomSumHtml = '';
                     if (!isWeekActive) {
                         roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>';
@@ -786,7 +788,7 @@
                             var denVal = act.dendaOverride !== '' ? act.dendaOverride : '';
                            
                             var kasDisplay = act.kasOverride !== '' ? '<span style="border-bottom:1px dashed green; cursor:help;">ʛ' + formatMoney(s.kas) + '</span>' : 'ʛ' + formatMoney(s.kas);
-                            var dendaDisplay = act.dendaOverride !== '' ? '<span style="border-bottom:1px dashed red; cursor:help;">ʛ' + formatMoney(s.denda) + '</span>' : 'ʛ' + formatMoney(s.denda);
+                            var dendaDisplay = act.dendaOverride !== '' && act.dendaOverride > 0 ? '<span style="border-bottom:1px dashed red; cursor:help;">ʛ' + formatMoney(s.denda) + '</span>' : 'ʛ' + formatMoney(s.denda);
                             var efektifHadir = (!isWeekActive || isPending) ? 0 : (act.attended + act.replacements + act.freeClass);
                            
                             var cellKasStr = isPrivilegedUser ? '<td class="money editable-cell" onclick="quickEditFinance(\'' + s.vault + '\', \'KAS\', \'' + kasVal + '\')">' + kasDisplay + '</td>' : '<td class="money">' + kasDisplay + '</td>';
@@ -815,7 +817,7 @@
                     container.appendChild(div);
                 });
 
-                // --- BOX RAW (AUDIT TRAIL KEMBALI LENGKAP) ---
+                // --- BOX RAW (AUDIT TRAIL) ---
                 var actHtml = '';
                 if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) {
                     actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>';
@@ -874,7 +876,7 @@
                 })
                 .then(r => r.json())
                 .then(res => {
-                    if(res.status === 'success' || res.success) { setTimeout(function() { fetchRoomData(); }, 1000); }
+                    if(res.status === 'success' || res.success) { setTimeout(function() { fetchRoomData(); }, 1500); }
                     else alert("Failed to save: " + res.message);
                 });
             }
@@ -1006,7 +1008,7 @@
                 replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
                 freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
                 formStatus: document.getElementById('adjFormStatus').value, 
-                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0, // SIMPAN DENDA KE KOLOM Q
+                dendaOverride: parseInt(document.getElementById('adjCustomDenda').value) || 0,
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
                 loaLink: document.getElementById('adjLoaLink').value, 
@@ -1030,9 +1032,18 @@
             .then(res => {
                 if(res.status === 'success' || res.success) { 
                     closeAdjustModal();
-                    setTimeout(function() { fetchRoomData(); }, 1000);
+                    document.getElementById('loadingMsg').style.display = 'block';
+                    document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
+                    setTimeout(function() { fetchRoomData(); }, 1500);
                 } 
-                else { var statusBox = document.getElementById('modalStatus'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; btn.innerText = "Save Activity"; btn.disabled = false; } 
+                else { 
+                    var statusBox = document.getElementById('modalStatus'); 
+                    statusBox.innerText = res.message; 
+                    statusBox.style.color = "red"; 
+                    statusBox.style.display = "block"; 
+                    btn.innerText = "Save Activity"; 
+                    btn.disabled = false;
+                } 
             });
         }
 
@@ -1070,7 +1081,9 @@
             .then(res => {
                 if(res.status === 'success' || res.success) { 
                     closeAdjustSumModal();
-                    setTimeout(function() { fetchRoomData(); }, 1000);
+                    document.getElementById('loadingMsg').style.display = 'block';
+                    document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
+                    setTimeout(function() { fetchRoomData(); }, 1500);
                 } 
                 else { var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; btn.innerText = "Save Summaries"; btn.disabled = false; } 
             });
@@ -1101,6 +1114,9 @@
             document.getElementById('bpMethod').value = "split";
             toggleBpTarget();
 
+            document.getElementById('btnApplyPenalty').innerText = "Apply Penalty";
+            document.getElementById('btnApplyPenalty').disabled = false;
+
             document.getElementById('bulkPenaltyModal').style.display = 'flex';
         }
 
@@ -1123,7 +1139,8 @@
 
             if(!confirm("Are you sure you want to save this late penalty? Make sure the penalty bearer selection is correct!")) return;
 
-            closeBulkPenaltyModal();
+            document.getElementById('btnApplyPenalty').innerText = "Processing...";
+            document.getElementById('btnApplyPenalty').disabled = true;
             document.getElementById('loadingMsg').style.display = 'block';
             
             var successCount = 0;
@@ -1142,7 +1159,7 @@
 
                 var payload = { 
                     status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                    dendaOverride: penaltyAmount, // MENAMBAH KE KOLOM Q
+                    dendaOverride: penaltyAmount, 
                     loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, summaries: act.summaries, sumStat: act.sumStat, notes: act.notes, lockSync: true 
                 };
                 
@@ -1159,8 +1176,10 @@
                 }
             }
             
+            closeBulkPenaltyModal();
             alert("✅ Late Files Penalty successfully applied to " + successCount + " members of " + bpCurrentRoom + "!");
-            setTimeout(function() { fetchRoomData(); }, 1200);
+            document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
+            setTimeout(function() { fetchRoomData(); }, 1500);
         }
 
         function openReportModal(roomName) {
