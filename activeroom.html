@@ -83,6 +83,12 @@
         .money { font-family: monospace; font-weight: bold; font-size: 12px;}
         .plus { color: var(--success); }
         .minus { color: var(--danger); }
+
+        /* DIRECT EDIT INPUT STYLES */
+        .direct-input { width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: bold; text-align: center; background-color: #fffde7; transition: 0.3s; }
+        .direct-input:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
+        .direct-input.minus-input { color: var(--danger); background-color: #ffebee; border-color: #ef9a9a; }
+        .direct-input.minus-input:focus { background-color: white; border-color: var(--danger); box-shadow: 0 0 4px rgba(198,40,40,0.3); }
         
         .status-loa { background-color: #fff3e0; color: #e65100; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #ffe0b2;}
         .status-active { background-color: #e8f5e9; color: var(--success); padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #c8e6c9;}
@@ -119,6 +125,9 @@
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
         
         .rep-info { background: #e8eaf6; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; color: var(--royal-blue); border-left: 4px solid var(--sapphire); }
+
+        /* SNACKBAR NOTIFICATION */
+        #saveSnack { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 12px; display: none; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -217,6 +226,9 @@
             <div id="tabContainer"></div>
         </div>
     </div>
+
+    <!-- NOTIFIKASI SIMPAN OTOMATIS -->
+    <div id="saveSnack">✅ Data Berhasil Disimpan!</div>
 
     <!-- MODAL ASSIGN ROTATING SUBJECTS -->
     <div class="modal-overlay" id="rotModal">
@@ -347,8 +359,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label title="Masukkan angka mutlak. Akan menambah total denda anak ini.">Additional Penalty (ʛ)</label>
-                    <input type="number" id="adjCustomDenda" value="0" step="100">
+                    <label style="color:gray;">Manual Denda (Edit Directly in Table)</label>
+                    <input type="number" id="adjCustomDenda" value="0" disabled style="background:#eee;">
                 </div>
             </div>
 
@@ -442,7 +454,7 @@
             </div>
             
             <div class="form-group" id="bpTargetGroup" style="display:none;">
-                <label>Select the Member Bearing the Penalty (Total: ʛ<span id="bpTotal2"></span>)</label>
+                <label>Select the Member Bearing the Penalty</label>
                 <select id="bpTargetVault"></select>
             </div>
             
@@ -518,6 +530,14 @@
         function resetBtn(btnId, originalText) {
             var btn = document.getElementById(btnId);
             if(btn) { btn.innerText = originalText; btn.disabled = false; }
+        }
+
+        function showSnack(msg, isError=false) {
+            var s = document.getElementById('saveSnack');
+            s.innerText = msg;
+            s.style.background = isError ? "var(--danger)" : "var(--success)";
+            s.style.display = "block";
+            setTimeout(function() { s.style.display = "none"; }, 3000);
         }
 
         function setupDynamicSidebar() {
@@ -653,6 +673,45 @@
 
         function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
 
+        // ==========================================
+        // FUNGSI SIMPAN OTOMATIS DARI INPUT BOX!
+        // ==========================================
+        function autoSaveFinance(vault, type, inputElement, baseAutoDenda, totalElementId) {
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            var val = inputElement.value.trim();
+
+            if(type === 'DENDA') {
+                var customVal = parseInt(val) || 0;
+                var totalNew = baseAutoDenda + customVal;
+                var totalEl = document.getElementById(totalElementId);
+                
+                if(totalNew > 0) {
+                    totalEl.innerHTML = "-ʛ" + formatMoney(totalNew);
+                    totalEl.className = "money minus";
+                } else {
+                    totalEl.innerHTML = "-";
+                    totalEl.className = "money";
+                }
+            }
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "saveQuickFinanceOverride", 
+                    month: month.trim(), week: week.trim(), vault: vault, type: type, val: val 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) { 
+                    showSnack("✅ " + (type === 'KAS' ? "Kas" : "Denda") + " Vault " + vault + " Tersimpan!");
+                } else { 
+                    showSnack("❌ Gagal Simpan!", true); 
+                }
+            });
+        }
+
         function renderAllTabs() {
             try {
                 document.getElementById('loadingMsg').style.display = 'none';
@@ -782,7 +841,7 @@
                         '<th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th>' +
                         '</tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
 
-                    // --- BOX 3: FINANCE (PETTY CASH) ---
+                    // --- BOX 3: FINANCE (DENGAN INPUT BOX LANGSUNG) ---
                     var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
                     if (students.length === 0) {
                         finHtml = '<tr><td colspan="7" style="text-align:center; color:gray;">No active students found in this room.</td></tr>';
@@ -790,33 +849,38 @@
                         students.forEach(function(s) {
                             totalKas += s.kas; totalDenda += s.denda; totalReward += s.reward;
                             var act = s.activity;
-                            var isPending = (act.formStatus === 'Pending' && !act.lockSync);
-                           
+                            
+                            var autoFines = s.classFinesAmount + s.formFinesAmount; 
+                            var customDenda = parseInt(act.dendaOverride) || 0; 
+                            var finalDenda = autoFines + customDenda;
+                            
                             var kasVal = act.kasOverride !== '' ? act.kasOverride : '';
-                            var denVal = act.dendaOverride !== '' ? act.dendaOverride : '';
-                           
-                            var kasDisplay = act.kasOverride !== '' ? '<span style="border-bottom:1px dashed green; cursor:help;">ʛ' + formatMoney(s.kas) + '</span>' : 'ʛ' + formatMoney(s.kas);
-                            var dendaDisplay = act.dendaOverride !== '' && act.dendaOverride > 0 ? '<span style="border-bottom:1px dashed red; cursor:help;">ʛ' + formatMoney(s.denda) + '</span>' : 'ʛ' + formatMoney(s.denda);
-                            var efektifHadir = (!isWeekActive || isPending) ? 0 : (act.attended + act.replacements + act.freeClass);
-                           
-                            var cellKasStr = isPrivilegedUser ? '<td class="money editable-cell" onclick="quickEditFinance(\'' + s.vault + '\', \'KAS\', \'' + kasVal + '\')">' + kasDisplay + '</td>' : '<td class="money">' + kasDisplay + '</td>';
-                            var cellDendaStr = isPrivilegedUser ? '<td class="money editable-cell ' + (s.denda > 0 ? 'minus' : '') + '" onclick="quickEditFinance(\'' + s.vault + '\', \'DENDA\', \'' + denVal + '\')">' + (s.denda > 0 ? '-' + dendaDisplay : '-') + '</td>' : '<td class="money ' + (s.denda > 0 ? 'minus' : '') + '">' + (s.denda > 0 ? '-' + dendaDisplay : '-') + '</td>';
-                           
+                            
+                            var cellKasStr = isPrivilegedUser 
+                                ? `<td><input type="number" class="direct-input" value="${kasVal}" placeholder="Auto" onchange="autoSaveFinance('${s.vault}', 'KAS', this, 0, null)"></td>` 
+                                : `<td class="money">ʛ${formatMoney(s.kas)}</td>`;
+                            
+                            var cellCustomDendaStr = isPrivilegedUser 
+                                ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}')"></td>` 
+                                : `<td class="money ${customDenda > 0 ? 'minus' : ''}">${customDenda > 0 ? '-ʛ' + formatMoney(customDenda) : '-'}</td>`;
+
                             finHtml += '<tr>' +
                                 '<td class="vault-tag">' + s.vault + '</td>' +
                                 '<td><b>' + s.username + '</b></td>' +
-                                '<td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + efektifHadir + '</span> / <span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td>' +
-                                cellKasStr + cellDendaStr +
+                                cellKasStr + 
+                                '<td class="money ' + (autoFines > 0 ? 'minus' : '') + '">' + (autoFines > 0 ? '-ʛ' + formatMoney(autoFines) : '-') + '</td>' +
+                                cellCustomDendaStr + 
+                                '<td class="money ' + (finalDenda > 0 ? 'minus' : '') + '" id="td-' + s.vault + '">' + (finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-') + '</td>' +
                                 '<td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td>' +
-                                '<td><div style="font-size:10px; color:var(--danger); line-height:1.4;">' + s.finesDetail + '</div></td>' +
+                                '<td><div style="font-size:10px; color:gray; line-height:1.4;">' + s.finesDetail + '</div></td>' +
                                 '</tr>';
                         });
                     }
-                    var boxFin = '<div class="box-section"><h4>3. Petty Cash (Room Dues & Fines)</h4><div class="dashboard-cards">' +
+                    var boxFin = '<div class="box-section"><h4>3. Room Finance & Penalties</h4><div class="dashboard-cards">' +
                         '<div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div>' +
                         '<div class="card"><h5>Total Fines</h5><div class="amount minus">ʛ' + formatMoney(totalDenda) + '</div></div>' +
                         '<div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div>' +
-                        '</div><div class="table-container"><table><thead><tr><th>Vault Code</th><th>Username</th><th title="Effective Attended / Mandatory Requirement">Attendance<br>(Att / Req)</th><th>Petty Cash<br>/ Dues</th><th>Fines</th><th>Rewards</th><th title="Detailed calculation breakdown of fines">Fines Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
+                        '</div><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Edit Kas</th><th>Auto Fines</th><th>Manual Edit Fines</th><th>Total Fines</th><th>Rewards</th><th>Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
 
                     var div = document.createElement('div');
                     div.className = 'tab-content ' + (roomName === activeTab ? 'active' : '');
@@ -868,31 +932,6 @@
                 container.appendChild(divRawSum);
 
             } catch (err) { alert("Render Error: " + err.message); }
-        }
-
-        function quickEditFinance(vault, type, currentVal) {
-            if (!isPrivilegedUser) return;
-            var label = type === 'KAS' ? 'Room Dues (Kas)' : 'Fines (Denda)';
-            var val = prompt("Edit " + label + " for Vault " + vault + ":\n\n(Leave blank to reset to Auto-Calculate)", currentVal);
-            if (val !== null) {
-                document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Saving custom amount...";
-                var month = document.getElementById('monthSelector').value; var week = document.getElementById('weekSelector').value;
-                
-                var valStr = val.trim();
-                fetch(API_URL, {
-                    method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: "saveQuickFinanceOverride", month: month.trim(), week: week.trim(), vault: vault, type: type, val: valStr })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if(res.status === 'success' || res.success) { 
-                        setTimeout(function() { fetchRoomData(); }, 1500); 
-                    } else { alert("Failed to save: " + res.message); }
-                })
-                .catch(err => {
-                    alert("Error: " + err.message);
-                });
-            }
         }
 
         function openTab(tabName) {
@@ -1043,7 +1082,7 @@
                     closeAdjustModal();
                     document.getElementById('loadingMsg').style.display = 'block';
                     document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-                    setTimeout(function() { fetchRoomData(); }, 1500);
+                    setTimeout(function() { fetchRoomData(); }, 2000);
                 } 
                 else { 
                     var statusBox = document.getElementById('modalStatus'); 
@@ -1091,7 +1130,7 @@
                     closeAdjustSumModal();
                     document.getElementById('loadingMsg').style.display = 'block';
                     document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-                    setTimeout(function() { fetchRoomData(); }, 1500);
+                    setTimeout(function() { fetchRoomData(); }, 2000);
                 } 
                 else { 
                     var statusBox = document.getElementById('modalStatusSum'); statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
@@ -1117,7 +1156,6 @@
             document.getElementById('bpRoomName').innerText = roomName;
             document.getElementById('bpCount').innerText = totalCount;
             document.getElementById('bpTotal').innerText = totalPenalty;
-            document.getElementById('bpTotal2').innerText = totalPenalty;
 
             var targetSelect = document.getElementById('bpTargetVault');
             targetSelect.innerHTML = "";
@@ -1182,18 +1220,21 @@
             }
 
             closeBulkPenaltyModal();
-            alert("✅ Late Files Penalty successfully applied to " + successCount + " member(s)!");
-            document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
             resetBtn('btnApplyPenalty', 'Apply Penalty');
+            showSnack("✅ Late Files Penalty applied to " + successCount + " member(s)!");
+            document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
             
-            setTimeout(function() { fetchRoomData(); }, 1500);
+            setTimeout(function() { fetchRoomData(); }, 2000);
         }
 
         function openReportModal(roomName) {
             var month = document.getElementById('monthSelector').value;
             var week = document.getElementById('weekSelector').value;
             
-            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
+            if(!month || !week) { 
+                alert("Please select the Month and Week period in the top right corner first!"); 
+                return; 
+            }
 
             currentReportRoom = roomName;
             document.getElementById('repRoomName').innerText = roomName;
