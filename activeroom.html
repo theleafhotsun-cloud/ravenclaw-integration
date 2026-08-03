@@ -1150,25 +1150,37 @@
                 var act = s.activity;
                 
                 var penaltyAmount = 0;
+                var currentDenda = parseInt(act.dendaOverride) || 0; // Ambil denda lama jika sudah ada
+                var needsUpdate = false;
+
                 if (method === 'split') {
-                    penaltyAmount = (parseInt(act.dendaOverride) || 0) + 100; 
+                    penaltyAmount = currentDenda + 100; // Ditambahkan +100 dari denda sebelumnya
+                    needsUpdate = true;
                 } else if (method === 'single') {
-                    if (s.vault === targetVault) penaltyAmount = (parseInt(act.dendaOverride) || 0) + totalPenalty; 
-                    else penaltyAmount = parseInt(act.dendaOverride) || 0; 
+                    if (s.vault === targetVault) {
+                        penaltyAmount = currentDenda + totalPenalty; // Ditambahkan totalPenalty
+                        needsUpdate = true;
+                    }
                 }
 
-                var payload = { 
-                    status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, 
-                    dendaOverride: penaltyAmount, 
-                    loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, summaries: act.summaries, sumStat: act.sumStat, notes: act.notes, lockSync: true 
-                };
+                // Skip update API call jika anak tersebut tidak mengalami perubahan denda
+                // Bikin loading jadi jaauuhhhh lebih cepat
+                if (!needsUpdate) continue;
                 
-                document.getElementById('loadingMsg').innerText = "Applying penalty: " + (i + 1) + " of " + totalCount + " students...";
+                document.getElementById('loadingMsg').innerText = "Applying penalty: Updating vault " + s.vault + "...";
                 
                 try {
+                    // Pakai saveQuickFinanceOverride agar tidak mengganggu kolom data / lockSync lain!
                     await fetch(API_URL, {
                         method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                        body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: s.vault, payload: payload })
+                        body: JSON.stringify({ 
+                            action: "saveQuickFinanceOverride", 
+                            month: month.trim(), 
+                            week: week.trim(), 
+                            vault: s.vault, 
+                            type: 'DENDA',
+                            val: penaltyAmount 
+                        })
                     });
                     successCount++;
                 } catch (err) {
@@ -1177,9 +1189,9 @@
             }
             
             closeBulkPenaltyModal();
-            alert("✅ Late Files Penalty successfully applied to " + successCount + " members of " + bpCurrentRoom + "!");
+            alert("✅ Late Files Penalty successfully applied to " + successCount + " member(s) of " + bpCurrentRoom + "!");
             document.getElementById('loadingMsg').innerText = "Syncing applied changes...";
-            setTimeout(function() { fetchRoomData(); }, 1500);
+            fetchRoomData();
         }
 
         function openReportModal(roomName) {
