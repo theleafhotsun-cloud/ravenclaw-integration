@@ -283,6 +283,9 @@
 
     <!-- SCRIPT AREA -->
     <script>
+        // ==========================================
+        // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
+        // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -324,7 +327,7 @@
         }
 
         function navigateHome(element) {
-            element.innerText = "Loading...";
+            if(element) element.innerText = "Loading...";
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -373,34 +376,41 @@
             }
 
             data.forEach((student, index) => {
+                let reasons = [];
+                if(student.wlClass) reasons.push("Class"); 
+                if(student.wlInactive) reasons.push("Inactive"); 
+                if(student.wlHiatus) reasons.push("Hiatus"); 
+                if(student.wlConflict) reasons.push("Conflict");
+
                 let wlBadges = '';
-                if(student.wlClass) wlBadges += `<span class="wl-badge">CLASS</span>`;
-                if(student.wlInactive) wlBadges += `<span class="wl-badge">INACTIVE</span>`;
-                if(student.wlHiatus) wlBadges += `<span class="wl-badge">HIATUS</span>`;
-                if(student.wlConflict) wlBadges += `<span class="wl-badge">CONFLICT</span>`;
+                reasons.forEach(r => { wlBadges += `<span class="wl-badge">${r.toUpperCase()}</span>`; });
 
                 let statusBadges = '';
                 if(student.isDeactive) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
                 if(student.isResigned) statusBadges += `<span class="status-badge status-resigned">RESIGNED</span> `;
                 if(student.isDropOut) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
                 
-                // Cek Re-Registration
                 if(student.isReReg) statusBadges += `<span class="status-badge status-rereg">RE-REGISTERED</span> `;
 
-                // MENYARING TAUTAN PALSU "FALSE" ATAU "TRUE"
                 let link1 = String(student.wl1Link).trim();
                 let link2 = String(student.wl2Link).trim();
-                let linkHtml = '';
+                let wlNotes = '';
                 
-                if(link1 && link1.toUpperCase() !== 'FALSE' && link1.toUpperCase() !== 'TRUE' && link1 !== '-') {
-                    linkHtml += `<a href="${link1}" target="_blank" class="link-icon">🔗 WL1</a>`;
+                // MENCETAK ALASAN WL SECARA EKSPLISIT KE KOLOM NOTES
+                if (reasons[0] || (link1 && link1 !== '-' && link1.toUpperCase() !== 'FALSE' && link1.toUpperCase() !== 'TRUE')) {
+                    let rText = reasons[0] ? ` - ${reasons[0].toUpperCase()}` : '';
+                    let lText = (link1 && link1 !== '-' && link1.toUpperCase() !== 'FALSE' && link1.toUpperCase() !== 'TRUE') ? ` <a href="${link1}" target="_blank" class="link-icon" style="margin-left:5px;">🔗 View Letter</a>` : '';
+                    wlNotes += `<div style="font-size:10px; color:var(--danger); font-weight:bold; margin-top:4px;">🚨 WL 1${rText}${lText}</div>`;
                 }
-                if(link2 && link2.toUpperCase() !== 'FALSE' && link2.toUpperCase() !== 'TRUE' && link2 !== '-') {
-                    linkHtml += `<a href="${link2}" target="_blank" class="link-icon">🔗 WL2</a>`;
+                
+                if (reasons[1] || (link2 && link2 !== '-' && link2.toUpperCase() !== 'FALSE' && link2.toUpperCase() !== 'TRUE')) {
+                    let rText = reasons[1] ? ` - ${reasons[1].toUpperCase()}` : '';
+                    let lText = (link2 && link2 !== '-' && link2.toUpperCase() !== 'FALSE' && link2.toUpperCase() !== 'TRUE') ? ` <a href="${link2}" target="_blank" class="link-icon" style="margin-left:5px;">🔗 View Letter</a>` : '';
+                    wlNotes += `<div style="font-size:10px; color:var(--danger); font-weight:bold; margin-top:2px;">🚨 WL 2${rText}${lText}</div>`;
                 }
                 
                 let lastEditHtml = '';
-                if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:4px;">Last Edit: ${student.lastUpdate}</div>`;
+                if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:6px;">Last Edit: ${student.lastUpdate}</div>`;
 
                 let cleanNotes = student.notesEtc || '-';
                 if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') { cleanNotes = '-'; }
@@ -435,7 +445,7 @@
                     </td>
                     <td>
                         <div>${cleanNotes}</div>
-                        <div style="margin-top:4px;">${linkHtml}</div>
+                        ${wlNotes}
                         ${lastEditHtml}
                     </td>
                     <td>
@@ -523,7 +533,6 @@
             document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${base + countElectives} (Major: ${base} + Electives: ${countElectives})`;
         }
 
-        // PERBAIKAN PEMBACAAN TANGGAL LAHIR (KEBAL FORMAT)
         function formatDOBForPicker(dateString) {
             if (!dateString || dateString === '-') return "";
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString; 
@@ -544,7 +553,6 @@
                 'desember':'12', 'december':'12', 'des':'12', 'dec':'12'
             };
             
-            // Format tulisan "12 Mei 2005"
             let matchStr = ds.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
             if(matchStr) {
                 let d = matchStr[1].padStart(2, '0');
@@ -554,7 +562,6 @@
                 return `${y}-${m}-${d}`;
             }
 
-            // Format "12/05/2005" atau "12-05-2005"
             if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(ds)) {
                 let parts = ds.split(/[\/\-\.]/);
                 return `${parts[2]}-${String(parts[1]).padStart(2, '0')}-${String(parts[0]).padStart(2, '0')}`;
@@ -572,7 +579,6 @@
             const modal = document.getElementById('studentModal');
             const statusBox = document.getElementById('modalStatus');
             
-            // RESET TOMBOL SAVE AGAR TIDAK NGE-FREEZE
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
             btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
@@ -609,7 +615,6 @@
                 document.getElementById('studFullName').value = s.fullName !== '-' ? s.fullName : '';
                 document.getElementById('studNickname').value = s.nickname !== '-' ? s.nickname : '';
                 
-                // MENGISI TANGGAL LAHIR
                 document.getElementById('studDOB').value = formatDOBForPicker(s.dob);
                 document.getElementById('studFaceClaim').value = s.faceClaim !== '-' ? s.faceClaim : '';
 
