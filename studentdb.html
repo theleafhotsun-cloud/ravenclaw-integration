@@ -64,7 +64,7 @@
         .status-dropout { background-color: #424242; color: #ffffff; border: 1px solid #212121;}
         .status-rereg { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;}
         
-        .link-icon { text-decoration: none; font-weight: bold; font-size: 11px; padding: 2px 6px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; margin-right: 3px;}
+        .link-icon { text-decoration: none; font-weight: bold; font-size: 11px; padding: 2px 6px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; margin-left: 5px;}
         .link-icon:hover { background-color: var(--sapphire); color: white; }
 
         .select-room { padding: 4px 8px; border-radius: 4px; border: 1px solid var(--shellstone); font-size: 11px; font-weight: bold; color: var(--royal-blue); background-color: #fbfbfb; cursor: pointer; transition: background-color 0.3s;}
@@ -283,7 +283,10 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
+        // ==========================================
+        // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
+        // ==========================================
+        const API_URL = "URL_KAMU_DISINI";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -308,6 +311,19 @@
             return val === true || String(val).toLowerCase() === 'true';
         }
 
+        // Helper untuk mengurai string gabungan (Alasan|||Link)
+        function parseWlLink(rawLink) {
+            if (!rawLink || rawLink === '-' || String(rawLink).toUpperCase() === 'FALSE' || String(rawLink).toUpperCase() === 'TRUE') {
+                return { reason: '', link: '' };
+            }
+            let str = String(rawLink).trim();
+            if (str.includes('|||')) {
+                let p = str.split('|||');
+                return { reason: p[0], link: p[1] };
+            }
+            return { reason: '', link: str };
+        }
+
         // ==========================================
         // LOGIKA SIDEBAR & NAVIGASI
         // ==========================================
@@ -329,7 +345,7 @@
         }
 
         function navigateHome(element) {
-            element.innerText = "Loading...";
+            if(element) element.innerText = "Loading...";
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -379,31 +395,40 @@
 
             data.forEach((student, index) => {
                 
-                // MENGUMPULKAN FLAGS BOOLEAN YANG AMAN
-                let reasons = [];
-                if(isTrue(student.wlClass)) reasons.push("Class"); 
-                if(isTrue(student.wlInactive)) reasons.push("Inactive"); 
-                if(isTrue(student.wlHiatus)) reasons.push("Hiatus"); 
-                if(isTrue(student.wlConflict)) reasons.push("Conflict");
-
+                // MENGURAI ALASAN DAN LINK WL DARI DELIMITER
+                let parsedWl1 = parseWlLink(student.wl1Link);
+                let parsedWl2 = parseWlLink(student.wl2Link);
                 let wlDisplay = '';
-                let link1 = String(student.wl1Link).trim();
-                let link2 = String(student.wl2Link).trim();
-                
-                let l1Valid = (link1 && link1 !== '-' && link1.toUpperCase() !== 'FALSE' && link1.toUpperCase() !== 'TRUE');
-                let l2Valid = (link2 && link2 !== '-' && link2.toUpperCase() !== 'FALSE' && link2.toUpperCase() !== 'TRUE');
 
-                // MENGGABUNGKAN WL REASON DAN LINK KE DALAM KOLOM WL & FLAGS
-                if (reasons[0]) {
-                    let lHtml = l1Valid ? `<a href="${link1}" target="_blank" class="link-icon" style="margin-left:4px;">🔗</a>` : '';
-                    wlDisplay += `<div style="margin-bottom:4px;"><span class="wl-badge">${reasons[0].toUpperCase()}</span>${lHtml}</div>`;
+                // Memastikan kompatibilitas data lama (yang tidak menggunakan delimiter)
+                let deducedR1 = parsedWl1.reason;
+                let deducedR2 = parsedWl2.reason;
+
+                if (!deducedR1 && !deducedR2) {
+                    let oldReasons = [];
+                    if(isTrue(student.wlClass)) oldReasons.push("Class");
+                    if(isTrue(student.wlInactive)) oldReasons.push("Inactive");
+                    if(isTrue(student.wlHiatus)) oldReasons.push("Hiatus");
+                    if(isTrue(student.wlConflict)) oldReasons.push("Conflict");
+                    
+                    if (oldReasons[0]) deducedR1 = oldReasons[0];
+                    if (oldReasons[1]) deducedR2 = oldReasons[1];
                 }
-                if (reasons[1]) {
-                    let lHtml = l2Valid ? `<a href="${link2}" target="_blank" class="link-icon" style="margin-left:4px;">🔗</a>` : '';
-                    wlDisplay += `<div><span class="wl-badge">${reasons[1].toUpperCase()}</span>${lHtml}</div>`;
+
+                // MERENDER WL1 DAN WL2 KE DALAM KOLOM WL & FLAGS
+                if (deducedR1 || parsedWl1.link) {
+                    let text = deducedR1 ? `WL 1: ${deducedR1.toUpperCase()}` : 'WL 1';
+                    let badge = `<span class="wl-badge">${text}</span>`;
+                    let linkHtml = parsedWl1.link ? `<a href="${parsedWl1.link}" target="_blank" class="link-icon">🔗</a>` : '';
+                    wlDisplay += `<div style="margin-bottom:4px; display:flex; align-items:center;">${badge}${linkHtml}</div>`;
                 }
-                
-                if (!wlDisplay) wlDisplay = '<span style="color:gray;">-</span>';
+
+                if (deducedR2 || parsedWl2.link) {
+                    let text = deducedR2 ? `WL 2: ${deducedR2.toUpperCase()}` : 'WL 2';
+                    let badge = `<span class="wl-badge">${text}</span>`;
+                    let linkHtml = parsedWl2.link ? `<a href="${parsedWl2.link}" target="_blank" class="link-icon">🔗</a>` : '';
+                    wlDisplay += `<div style="margin-bottom:4px; display:flex; align-items:center;">${badge}${linkHtml}</div>`;
+                }
 
                 let statusBadges = '';
                 if(isTrue(student.isDeactive)) statusBadges += `<span class="status-badge status-deactive">DEACTIVE</span> `;
@@ -411,12 +436,14 @@
                 if(isTrue(student.isDropOut)) statusBadges += `<span class="status-badge status-dropout">DROP OUT</span> `;
                 if(isTrue(student.isReReg)) statusBadges += `<span class="status-badge status-rereg">RE-REGISTERED</span> `;
                 
-                let lastEditHtml = '';
-                if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:6px;">Last Edit: ${student.lastUpdate}</div>`;
+                if (!wlDisplay) wlDisplay = '<span style="color:gray;">-</span>';
 
-                // NOTES SAJA
+                // KOLOM NOTES: MURNI HANYA MENAMPILKAN NOTES & LAST UPDATE
                 let cleanNotes = student.notesEtc || '-';
                 if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') { cleanNotes = '-'; }
+
+                let lastEditHtml = '';
+                if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:6px;">Last Edit: ${student.lastUpdate}</div>`;
 
                 const isInactiveStatus = isTrue(student.isDeactive) || isTrue(student.isResigned) || isTrue(student.isDropOut);
                 const rowClass = isInactiveStatus ? 'row-dimmed' : '';
@@ -535,7 +562,6 @@
             document.getElementById('classCounterDisplay').innerText = `📊 Calculated Total Classes: ${base + countElectives} (Major: ${base} + Electives: ${countElectives})`;
         }
 
-        // PERBAIKAN PEMBACAAN TANGGAL LAHIR (KEBAL FORMAT)
         function formatDOBForPicker(dateString) {
             if (!dateString || dateString === '-') return "";
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString; 
@@ -556,7 +582,6 @@
                 'desember':'12', 'december':'12', 'des':'12', 'dec':'12'
             };
             
-            // Format tulisan "12 Mei 2005"
             let matchStr = ds.match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/);
             if(matchStr) {
                 let d = matchStr[1].padStart(2, '0');
@@ -566,7 +591,6 @@
                 return `${y}-${m}-${d}`;
             }
 
-            // Format "12/05/2005" atau "12-05-2005"
             if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(ds)) {
                 let parts = ds.split(/[\/\-\.]/);
                 return `${parts[2]}-${String(parts[1]).padStart(2, '0')}-${String(parts[0]).padStart(2, '0')}`;
@@ -584,7 +608,6 @@
             const modal = document.getElementById('studentModal');
             const statusBox = document.getElementById('modalStatus');
             
-            // RESET TOMBOL SAVE AGAR TIDAK NGE-FREEZE
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
             btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
@@ -620,24 +643,27 @@
 
                 document.getElementById('studFullName').value = s.fullName !== '-' ? s.fullName : '';
                 document.getElementById('studNickname').value = s.nickname !== '-' ? s.nickname : '';
-                
-                // MENGISI TANGGAL LAHIR
                 document.getElementById('studDOB').value = formatDOBForPicker(s.dob);
                 document.getElementById('studFaceClaim').value = s.faceClaim !== '-' ? s.faceClaim : '';
 
-                // BACA BOOLEAN WL YANG AMAN DARI "FALSE" TEXT
-                let reasons = [];
-                if(isTrue(s.wlClass)) reasons.push("Class"); 
-                if(isTrue(s.wlInactive)) reasons.push("Inactive"); 
-                if(isTrue(s.wlHiatus)) reasons.push("Hiatus"); 
-                if(isTrue(s.wlConflict)) reasons.push("Conflict");
+                // BACA ALASAN DAN LINK WL SECARA AKURAT
+                let p1 = parseWlLink(s.wl1Link);
+                let p2 = parseWlLink(s.wl2Link);
 
-                document.getElementById('wl1Reason').value = reasons[0] || ""; 
-                document.getElementById('wl2Reason').value = reasons[1] || "";
-                
-                let link1 = String(s.wl1Link).trim(); let link2 = String(s.wl2Link).trim();
-                document.getElementById('studWl1Link').value = (link1.toUpperCase() === 'FALSE' || link1.toUpperCase() === 'TRUE' || link1 === '-') ? '' : link1;
-                document.getElementById('studWl2Link').value = (link2.toUpperCase() === 'FALSE' || link2.toUpperCase() === 'TRUE' || link2 === '-') ? '' : link2;
+                // Deduksi alasan dari boolean lama (untuk backward compatibility)
+                let oldReasons = [];
+                if(isTrue(s.wlClass)) oldReasons.push("Class");
+                if(isTrue(s.wlInactive)) oldReasons.push("Inactive");
+                if(isTrue(s.wlHiatus)) oldReasons.push("Hiatus");
+                if(isTrue(s.wlConflict)) oldReasons.push("Conflict");
+
+                let r1 = p1.reason || (oldReasons[0] ? oldReasons[0] : "");
+                let r2 = p2.reason || (oldReasons[1] ? oldReasons[1] : "");
+
+                document.getElementById('wl1Reason').value = r1;
+                document.getElementById('studWl1Link').value = p1.link;
+                document.getElementById('wl2Reason').value = r2;
+                document.getElementById('studWl2Link').value = p2.link;
                 
                 let cleanNotes = s.notesEtc || '';
                 if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') cleanNotes = '';
@@ -667,19 +693,26 @@
             let rawDob = document.getElementById('studDOB').value; let formattedDob = rawDob;
             if(rawDob) { let d = new Date(rawDob); if(!isNaN(d.getTime())) { let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; formattedDob = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear(); } }
 
-            let r1 = document.getElementById('wl1Reason').value; let r2 = document.getElementById('wl2Reason').value;
+            let r1 = document.getElementById('wl1Reason').value; 
+            let l1 = document.getElementById('studWl1Link').value.trim();
+            let wl1Save = (r1 || l1) ? (r1 + "|||" + l1) : ""; // Menggabungkan Alasan dan Link
+
+            let r2 = document.getElementById('wl2Reason').value; 
+            let l2 = document.getElementById('studWl2Link').value.trim();
+            let wl2Save = (r2 || l2) ? (r2 + "|||" + l2) : ""; // Menggabungkan Alasan dan Link
+
             let currentTime = new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 
             const payload = {
                 rowIdx: document.getElementById('studRowIdx').value, vault: document.getElementById('studVault').value, username: document.getElementById('studUsername').value, grade: document.getElementById('studGrade').value, major: majorValue, electives: electivesValue, fullName: document.getElementById('studFullName').value, nickname: document.getElementById('studNickname').value, dob: formattedDob, faceClaim: document.getElementById('studFaceClaim').value, room: document.getElementById('studRoomHidden').value, 
                 
-                // MENGUBAH JADI BOOLEAN MURNI
                 wlClass: (r1 === 'Class' || r2 === 'Class') ? true : false, 
                 wlInactive: (r1 === 'Inactive' || r2 === 'Inactive') ? true : false, 
                 wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus') ? true : false, 
                 wlConflict: (r1 === 'Conflict' || r2 === 'Conflict') ? true : false,
                 
-                wl1Link: document.getElementById('studWl1Link').value, wl2Link: document.getElementById('studWl2Link').value,
+                wl1Link: wl1Save, // Menyimpan format gabungan
+                wl2Link: wl2Save, // Menyimpan format gabungan
                 isReReg: document.getElementById('chkReReg').checked, isDeactive: document.getElementById('chkDeactive').checked, isResigned: document.getElementById('chkResigned').checked, isDropOut: document.getElementById('chkDropOut').checked, notesEtc: document.getElementById('studNotesEtc').value, lastUpdate: currentTime
             };
 
