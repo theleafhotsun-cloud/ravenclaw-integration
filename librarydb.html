@@ -70,8 +70,8 @@
 
         .badge-date { background-color: var(--quicksand); color: var(--royal-blue); font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; display: inline-block;}
 
-        .direct-input { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; box-sizing: border-box; }
-        .direct-select { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .direct-input { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; box-sizing: border-box; }
+        .direct-select { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; font-weight: bold; background: white; cursor: pointer;}
         
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding:10px;}
@@ -128,8 +128,8 @@
             <div class="sop-banner">
                 <b>📌 HOW IT WORKS:</b><br>
                 1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
-                2. Click <b>"Assign Subject"</b> to map the link to a specific subject via the Pop-Up.<br>
-                3. Grand Summary & Materials Tabs are separated into distinct tables.
+                2. Click <b>"Assign Subject"</b> to map the link to a specific subject.<br>
+                3. Grand Summary dapat diisi 1x dalam sebulan. Persetujuan (ACC) hanya dapat dilakukan oleh Headhouse/Prefect/VP.
             </div>
 
             <div class="period-controller">
@@ -208,7 +208,7 @@
     <!-- SCRIPT AREA -->
     <script>
         // GANTI API URL DENGAN URL DEPLOYMENT KAMU
-        const API_URL = "URL_KAMU_DISINI";
+        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
@@ -231,8 +231,12 @@
         };
 
         const staticGrandSummaryList = [
-            ...subjsAuror, ...subjsMinistry, "Extracurricular"
+            "Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic",
+            "Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology",
+            "Extracurricular"
         ];
+
+        const finalSummaryList = ["Ministry", "Auror"];
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
@@ -335,7 +339,11 @@
                     renderTabs();
                 } else {
                     showToast("Error loading data: " + res.message, "error");
+                    document.getElementById('tabContainer').innerHTML = `<div style="padding: 20px; font-weight:bold; color:var(--danger);">❌ System Error: ${res.message}</div>`;
                 }
+            })
+            .catch(e => {
+                showToast("Connection Error!", "error");
             });
         }
 
@@ -376,25 +384,89 @@
         // ==========================================
         // AUTO-SAVE FUNGSI UNTUK TAB MATERI & GRAND SUMMARY
         // ==========================================
-        function autoSaveMaterial(inputEl, rowIdx, subject, tipe, fieldType) {
+        function autoSaveGrandSummary(inputEl, subject, type) {
             var val = inputEl.value;
             var month = document.getElementById('monthSelector').value;
+            
+            if (type === 'status') {
+                if (val === 'ACC') {
+                    inputEl.style.backgroundColor = '#c8e6c9';
+                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "approveGrandSummary", month: month, week: "", subject: subject, user: loggedInUser }) })
+                        .then(r => r.json()).then(res => { if(res.success) showToast("✅ ACC Saved!", "success"); });
+                } else if (val === 'Revisi') {
+                    inputEl.style.backgroundColor = '#ffcdd2';
+                    var notes = prompt("Tulis catatan revisi untuk " + subject + ":");
+                    if (notes === null) { inputEl.value = 'Pending'; inputEl.style.backgroundColor = 'white'; return; }
+                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "declineGrandSummary", month: month, week: "", subject: subject, notes: notes }) })
+                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Revisi Saved!", "success"); fetchLibraryData(); } });
+                } else {
+                    inputEl.style.backgroundColor = 'white';
+                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "declineGrandSummary", month: month, week: "", subject: subject, notes: "PENDING_RESET" }) })
+                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Reset to Pending", "success"); fetchLibraryData(); } });
+                }
+            } else if (type === 'link') {
+                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveGrandSummary", month: month, week: "", subject: subject, link: val }) })
+                    .then(r => r.json()).then(res => { if(res.success) showToast("✅ Link Saved!", "success"); });
+            }
+        }
+
+        function autoSaveFinalSummary(inputEl, category, type) {
+            var val = inputEl.value;
+            var month = document.getElementById('monthSelector').value;
+
+            if (type === 'status') {
+                if (val === 'ACC') {
+                    inputEl.style.backgroundColor = '#c8e6c9';
+                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: "STATUS_UPDATE|||ACC|||" }) })
+                        .then(r => r.json()).then(res => { if(res.success) showToast("✅ ACC Saved!", "success"); });
+                } else if (val === 'Revisi') {
+                    inputEl.style.backgroundColor = '#ffcdd2';
+                    var notes = prompt("Tulis catatan revisi untuk " + category + ":");
+                    if (notes === null) { inputEl.value = 'Pending'; inputEl.style.backgroundColor = 'white'; return; }
+                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: "STATUS_UPDATE|||Revisi|||" + notes }) })
+                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Revisi Saved!", "success"); fetchLibraryData(); } });
+                } else {
+                    inputEl.style.backgroundColor = 'white';
+                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: "STATUS_UPDATE|||Pending|||" }) })
+                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Reset to Pending", "success"); fetchLibraryData(); } });
+                }
+            } else if (type === 'link') {
+                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: val }) })
+                    .then(r => r.json()).then(res => { if(res.success) showToast("✅ Final Link Saved!", "success"); });
+            }
+        }
+
+        function autoSaveMaterialRow(btnEl, idx) {
+            var tr = btnEl.closest('tr');
+            var subjLevel = tr.querySelector('.mat-subj').value;
+            var inputs = tr.querySelectorAll('.mat-link');
+            var linksArray = Array.from(inputs).map(inp => inp.value.trim());
+
+            if (!subjLevel) return showToast("⚠️ Subject Name is required!", "error");
+            
+            var month = document.getElementById('monthSelector').value;
+            var fullArr = [subjLevel].concat(linksArray);
+            
+            btnEl.innerText = "Saving...";
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
-                    action: "saveLibraryMaterial", month: month, subject: subject, tipe: tipe, 
-                    val: val, fieldType: fieldType, rowIdx: rowIdx 
+                    action: "saveManualLibraryEntry", month: month, week: "", 
+                    classDate: "SAVE_MATERI", subject: "row_" + idx, link: JSON.stringify(fullArr) 
                 })
             })
             .then(r => r.json())
             .then(res => {
+                btnEl.innerText = "💾 Save Row";
                 if(res.status === 'success' || res.success) { 
-                    inputEl.setAttribute('data-rowidx', res.newRowIdx); 
-                    showToast("✅ Saved!", "success"); 
+                    showToast("✅ Row Saved!", "success"); 
                 } 
                 else showToast("❌ Failed to save!", "error");
-            }).catch(e => showToast("❌ Error Connection", "error"));
+            }).catch(e => {
+                btnEl.innerText = "💾 Save Row";
+                showToast("❌ Error Connection", "error");
+            });
         }
 
         // ==========================================
@@ -458,8 +530,8 @@
                             savedEntries.forEach(item => {
                                 let safeL = safeLink(item.link);
                                 let encL = encodeURIComponent(item.link); 
-                                let actionBtns = (item.rowIdx === -1) 
-                                    ? `<span style="color:gray; font-size:11px;">🔄 Syncing...</span>`
+                                let actionBtns = (item.isManual) 
+                                    ? `<span style="color:gray; font-size:11px;">Manual Entry</span>`
                                     : `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${catPrefix}', '${subj}', '${fullSubjName}')">✏️ Edit</button>`;
 
                                 tbodyHtml += `
@@ -497,84 +569,63 @@
             renderLevelTable('Beginner', 'tab-Beginner');
             renderLevelTable('Advanced', 'tab-Advanced');
 
-            // 3. RENDER MATERI TAMBAHAN
+            // 3. RENDER MATERI TAMBAHAN (26 SLOT PENGASJAR & QNA)
             let matTbody = '';
-            let matCount = 0;
-            // Materi bisa ada 25 per level (Kita buat slot input yang dinamis dan fleksibel dari backend)
-            // Di sini kita render berdasarkan `libraryDataStore.materials`
             let matData = libraryDataStore.materials || [];
-            if(matData.length === 0) {
-                // Beri beberapa slot kosong
-                for(let i=1; i<=10; i++) {
-                    matTbody += `
-                        <tr>
-                            <td><span style="font-weight:bold; color:gray;">${i}</span></td>
-                            <td><input type="text" class="direct-input" placeholder="e.g. QNA Herbology" onchange="autoSaveMaterial(this, -1, this.value, 'Materi', 'subject')"></td>
-                            <td><input type="text" class="direct-input" placeholder="URL Link..." onchange="autoSaveMaterial(this, -1, this.parentElement.previousElementSibling.querySelector('input').value, 'Materi', 'link')"></td>
-                        </tr>
-                    `;
+            
+            for(let i=0; i<26; i++) {
+                let m = matData[i] || { subj: '', links: ['','','','','','','',''] };
+                let linkInputsHtml = '';
+                
+                for(let j=0; j<8; j++) {
+                    let ph = (j < 4) ? `Materi ${j+1} Link...` : `QnA ${j-3} Link...`;
+                    linkInputsHtml += `<input type="text" class="direct-input mat-link" style="margin-bottom:4px;" value="${m.links[j]}" placeholder="${ph}">`;
                 }
-            } else {
-                matData.forEach((m, i) => {
-                    matTbody += `
-                        <tr>
-                            <td><span style="font-weight:bold; color:gray;">${i+1}</span></td>
-                            <td><input type="text" class="direct-input" value="${m.subject}" placeholder="Subject / Title" onchange="autoSaveMaterial(this, ${m.rowIdx}, this.value, 'Materi', 'subject')"></td>
-                            <td><input type="text" class="direct-input" value="${m.link}" placeholder="URL Link..." onchange="autoSaveMaterial(this, ${m.rowIdx}, this.parentElement.previousElementSibling.querySelector('input').value, 'Materi', 'link')"></td>
-                        </tr>
-                    `;
-                });
-                // Slot Kosong Tambahan
-                for(let i=matData.length+1; i<=matData.length+3; i++) {
-                    matTbody += `
-                        <tr>
-                            <td><span style="font-weight:bold; color:gray;">${i}</span></td>
-                            <td><input type="text" class="direct-input" placeholder="New Subject / Title" onchange="autoSaveMaterial(this, -1, this.value, 'Materi', 'subject')"></td>
-                            <td><input type="text" class="direct-input" placeholder="URL Link..." onchange="autoSaveMaterial(this, -1, this.parentElement.previousElementSibling.querySelector('input').value, 'Materi', 'link')"></td>
-                        </tr>
-                    `;
-                }
+
+                matTbody += `
+                    <tr>
+                        <td><span style="font-weight:bold; color:gray;">${i+1}</span></td>
+                        <td style="vertical-align: top;"><input type="text" class="direct-input mat-subj" value="${m.subj}" placeholder="E.g. Beg. Potion Teacher" style="font-weight:bold; font-size:12px; color:var(--royal-blue);"></td>
+                        <td>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                                ${linkInputsHtml}
+                            </div>
+                        </td>
+                        <td style="text-align:center; vertical-align: top;">
+                            <button class="btn-manage" style="background-color: var(--success); color: white;" onclick="autoSaveMaterialRow(this, ${i})">💾 Save Row</button>
+                        </td>
+                    </tr>
+                `;
             }
             
             var divMat = document.createElement('div');
             divMat.className = 'tab-content';
             divMat.id = 'tab-Materi';
-            divMat.innerHTML = `<div class="box-section"><h4>📚 Materials & QnA (Add URL)</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th style="width:300px;">Material Title / Subject</th><th>Link URL</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
+            divMat.innerHTML = `<div class="box-section"><h4>📚 Materials & QnA (26 Slots)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Materi & QnA Links (Up to 8)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
             container.appendChild(divMat);
 
-            // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra)
+            // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra) & FINAL SUMMARY
             let gsTbody = '';
-            let gsData = libraryDataStore.grandSummary || [];
+            let gsData = libraryDataStore.grandSummaries || {};
             
             staticGrandSummaryList.forEach((subj, i) => {
-                let m = gsData.find(x => x.subject === subj) || { rowIdx: -1, link: '', status: 'Pending', catatan: '', finalSummary: '' };
+                let m = gsData[subj] || { link: '', status: 'Pending', notes: '' };
                 
-                let linkHtml = `<input type="text" class="direct-input" value="${m.link}" placeholder="Paste URL here..." onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'link')">`;
-                let catHtml = `<input type="text" class="direct-input" value="${m.catatan}" placeholder="Catatan revisi..." onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'catatan')">`;
-                
+                let linkHtml = `<input type="text" class="direct-input" value="${m.link}" placeholder="Paste URL here..." onchange="autoSaveGrandSummary(this, '${subj}', 'link')">`;
                 let statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">${m.status}</span>`;
-                let finalHtml = `<span style="color:gray;">-</span>`;
 
                 if (canApproveGrandSummary) {
+                    let bgStatus = (m.status === 'ACC') ? '#c8e6c9' : (m.status === 'Revisi' ? '#ffcdd2' : 'white');
                     statusHtml = `
-                        <select class="direct-select" onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'status')">
+                        <select class="direct-select" style="background-color:${bgStatus};" onchange="autoSaveGrandSummary(this, '${subj}', 'status')">
                             <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
                             <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
                             <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
                         </select>
                     `;
-                    finalHtml = `
-                        <select class="direct-select" onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'final')">
-                            <option value="" ${!m.finalSummary?'selected':''}>- TBD -</option>
-                            <option value="Ministry" ${m.finalSummary==='Ministry'?'selected':''}>Ministry</option>
-                            <option value="Auror" ${m.finalSummary==='Auror'?'selected':''}>Auror</option>
-                        </select>
-                    `;
                 } else {
                     if (m.status === 'ACC') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">ACC</span>`;
                     else if (m.status === 'Revisi') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revisi</span>`;
-                    
-                    if (m.finalSummary) finalHtml = `<span style="font-weight:bold; color:var(--sapphire);">${m.finalSummary}</span>`;
                 }
 
                 gsTbody += `
@@ -583,8 +634,41 @@
                         <td><span style="font-weight:bold; color:var(--royal-blue);">${subj}</span></td>
                         <td>${linkHtml}</td>
                         <td style="text-align:center;">${statusHtml}</td>
-                        <td>${catHtml}</td>
-                        <td style="text-align:center;">${finalHtml}</td>
+                        <td><span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span></td>
+                    </tr>
+                `;
+            });
+
+            // FINAL SUMMARY RENDERING
+            let fsTbody = '';
+            let fsData = libraryDataStore.finalSummaries || {};
+
+            finalSummaryList.forEach((cat, i) => {
+                let m = fsData[cat] || { link: '', status: 'Pending', notes: '' };
+                let linkHtml = `<input type="text" class="direct-input" value="${m.link}" placeholder="Paste Final Summary URL here..." onchange="autoSaveFinalSummary(this, '${cat}', 'link')">`;
+                let statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">${m.status}</span>`;
+
+                if (canApproveGrandSummary) {
+                    let bgStatus = (m.status === 'ACC') ? '#c8e6c9' : (m.status === 'Revisi' ? '#ffcdd2' : 'white');
+                    statusHtml = `
+                        <select class="direct-select" style="background-color:${bgStatus};" onchange="autoSaveFinalSummary(this, '${cat}', 'status')">
+                            <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
+                            <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
+                            <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
+                        </select>
+                    `;
+                } else {
+                    if (m.status === 'ACC') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">ACC</span>`;
+                    else if (m.status === 'Revisi') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revisi</span>`;
+                }
+
+                fsTbody += `
+                    <tr>
+                        <td><span style="font-weight:bold; color:gray;">${i+1}</span></td>
+                        <td><span style="font-weight:bold; color:var(--royal-blue); font-size:14px;">FINAL SUMMARY - ${cat.toUpperCase()}</span></td>
+                        <td>${linkHtml}</td>
+                        <td style="text-align:center;">${statusHtml}</td>
+                        <td><span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span></td>
                     </tr>
                 `;
             });
@@ -592,7 +676,14 @@
             var divGs = document.createElement('div');
             divGs.className = 'tab-content';
             divGs.id = 'tab-GrandSummary';
-            divGs.innerHTML = `<div class="box-section"><h4>🏆 Grand Summary (Monthly Compilation)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th><th style="text-align:center; width:120px;">Final Tag</th></tr></thead><tbody>${gsTbody}</tbody></table></div></div>`;
+            divGs.innerHTML = `
+                <div class="box-section"><h4>🏆 Grand Summary (Monthly Compilation)</h4>
+                    <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
+                </div>
+                <div class="box-section" style="border: 2px solid var(--warning); background-color:#fff9c4;"><h4>🏛️ Final Summary</h4>
+                    <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
+                </div>
+            `;
             container.appendChild(divGs);
 
             openTab(activeTab); 
@@ -709,7 +800,7 @@
                 if (unIndex > -1) libraryDataStore.unassigned.splice(unIndex, 1);
                 
                 if (!libraryDataStore.categorized[fullSubject]) libraryDataStore.categorized[fullSubject] = [];
-                let newItem = { classDate: cDate, title: "", link: link, rowIdx: -1 };
+                let newItem = { classDate: cDate, title: "", link: link, rowIdx: -1, isManual: false };
                 libraryDataStore.categorized[fullSubject].push(newItem);
 
                 activeTab = cat.split(' ')[0]; renderTabs();
