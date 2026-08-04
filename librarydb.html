@@ -129,9 +129,9 @@
             <div class="sop-banner">
                 <b>📌 HOW IT WORKS:</b><br>
                 1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
-                2. Grand Summary & Final Summary can only be filled once a month.<br>
-                3. If Approved, LR cannot edit the link (Locked). Headhouse/Prefect/VP have full access.<br>
-                4. URLs must start with <b>http://</b> or <b>https://</b>.
+                2. Grand Summary & Materials are viewed <b>Monthly</b> (Same content for all 4 weeks).<br>
+                3. URLs must start with <b>http://</b> or <b>https://</b>. When saved, the input will be Locked.<br>
+                4. Headhouse/Prefect/VP has the sole right to <b>Approve (ACC)</b> Grand Summaries.
             </div>
 
             <div class="period-controller">
@@ -161,7 +161,7 @@
             </div>
 
             <div id="tabContainer">
-                <div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Scanning Data from Spreadsheet...</div>
+                <div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Collecting Data from Server... Please wait.</div>
             </div>
         </div>
     </div>
@@ -342,7 +342,7 @@
             if(!month || !week) return;
 
             document.getElementById('categoryTabs').style.display = 'none';
-            document.getElementById('tabContainer').innerHTML = '<div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Scanning Data from Spreadsheet...</div>';
+            document.getElementById('tabContainer').innerHTML = '<div style="padding: 20px; font-weight:bold; color:var(--sapphire);">⏳ Collecting Data from Server... Please wait.</div>';
             
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
