@@ -70,15 +70,14 @@
 
         .badge-date { background-color: var(--quicksand); color: var(--royal-blue); font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; display: inline-block;}
 
+        .direct-input { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; box-sizing: border-box; }
+        .direct-select { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding:10px;}
         .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; max-width:95%; max-height:85vh; overflow-y:auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px; font-size: 16px;}
         
-        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 15px 0 10px 0; }
-
-        .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 13px;}
@@ -110,7 +109,6 @@
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')" class="active">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -131,7 +129,7 @@
                 <b>📌 HOW IT WORKS:</b><br>
                 1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
                 2. Click <b>"Assign Subject"</b> to map the link to a specific subject via the Pop-Up.<br>
-                3. Once saved, you can edit or unassign the mapping by clicking the <b>"✏️ Edit"</b> button.
+                3. Grand Summary & Materials Tabs are separated into distinct tables.
             </div>
 
             <div class="period-controller">
@@ -150,19 +148,13 @@
                         </select>
                     </div>
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-primary" onclick="openManualModal()">+ Add Manual Entry</button>
-                    <button id="btnManagePeriod" class="btn-manage" style="display:none;" onclick="openPeriodModal()">⚙️ Set Month Config</button>
-                </div>
             </div>
             
             <div class="room-tabs" id="categoryTabs" style="display: none;">
                 <button class="tab-btn tab-warning active" data-target="Pending Mapping" onclick="openTab('Pending Mapping')">⚠️ Pending Mapping (<span id="unassignedCount">0</span>)</button>
-                <button class="tab-btn" data-target="Beginner Ministry" onclick="openTab('Beginner Ministry')">Beginner Ministry</button>
-                <button class="tab-btn" data-target="Beginner Auror" onclick="openTab('Beginner Auror')">Beginner Auror</button>
-                <button class="tab-btn" data-target="Advanced Ministry" onclick="openTab('Advanced Ministry')">Advanced Ministry</button>
-                <button class="tab-btn" data-target="Advanced Auror" onclick="openTab('Advanced Auror')">Advanced Auror</button>
-                <button class="tab-btn" data-target="Quidditch" onclick="openTab('Quidditch')">Quidditch</button>
+                <button class="tab-btn" data-target="Beginner" onclick="openTab('Beginner')">Beginner Level</button>
+                <button class="tab-btn" data-target="Advanced" onclick="openTab('Advanced')">Advanced Level</button>
+                <button class="tab-btn" data-target="Materi" onclick="openTab('Materi')" style="background-color:#4caf50; color:#fff;">📚 Materials & QA</button>
                 <button class="tab-btn" data-target="Grand Summary" onclick="openTab('Grand Summary')" style="background-color:#d4af37; color:#fff;">🏆 Grand Summary</button>
             </div>
 
@@ -204,9 +196,7 @@
                 </select>
             </div>
             <div class="modal-actions" style="justify-content: space-between;">
-                <!-- TOMBOL UNASSIGN (HANYA MUNCUL SAAT EDIT) -->
                 <button class="btn-cancel" style="background-color: var(--danger); color: white; display: none;" id="btnUnassign" onclick="unassignMapping()">🗑️ Unassign</button>
-                
                 <div style="display:flex; gap:10px;">
                     <button class="btn-cancel" onclick="closeMappingModal()">Cancel</button>
                     <button class="btn-submit" onclick="saveMappingFromModal()" id="btnSaveMapping">Save Mapping</button>
@@ -215,53 +205,13 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ADD MANUAL ENTRY -->
-    <div class="modal-overlay" id="manualModal">
-        <div class="modal-box">
-            <h3>📝 Add Manual Entry</h3>
-            <div class="form-group">
-                <label>Date of Class / Event</label>
-                <input type="date" id="manClassDate">
-            </div>
-            <div class="form-group">
-                <label>Level / Division</label>
-                <select id="manCategory" onchange="updateManualModalSubjects()">
-                    <option value="">-- Select Level & Division --</option>
-                    <option value="Beginner Ministry">Beginner Ministry</option>
-                    <option value="Beginner Auror">Beginner Auror</option>
-                    <option value="Advanced Ministry">Advanced Ministry</option>
-                    <option value="Advanced Auror">Advanced Auror</option>
-                    <option value="Quidditch">Quidditch</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Subject</label>
-                <select id="manSubjectItem">
-                    <option value="">-- Select Level First --</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Title / Description</label>
-                <input type="text" id="manTitle" placeholder="e.g. Ravenclaw vs Hufflepuff Match">
-            </div>
-            <div class="form-group">
-                <label>Summary Document Link</label>
-                <input type="text" id="manLink" placeholder="https://...">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeManualModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveManualEntry()" id="btnSaveMan">Save Entry</button>
-            </div>
-        </div>
-    </div>
-
     <!-- SCRIPT AREA -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
+        // GANTI API URL DENGAN URL DEPLOYMENT KAMU
+        const API_URL = "URL_KAMU_DISINI";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-        
         if (!loggedInUser) window.location.href = "index.html";
 
         var activeTab = "Pending Mapping"; 
@@ -269,13 +219,20 @@
         var periodConfigStore = null;
         var canApproveGrandSummary = false;
 
+        const subjsMinistry = ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"];
+        const subjsAuror = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
+        
         const catMap = {
-            "Beginner Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
-            "Beginner Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
-            "Advanced Ministry": ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"],
-            "Advanced Auror": ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"],
+            "Beginner Ministry": subjsMinistry,
+            "Beginner Auror": subjsAuror,
+            "Advanced Ministry": subjsMinistry,
+            "Advanced Auror": subjsAuror,
             "Quidditch": ["Quidditch"]
         };
+
+        const staticGrandSummaryList = [
+            ...subjsAuror, ...subjsMinistry, "Extracurricular"
+        ];
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
@@ -289,14 +246,13 @@
             if(type === "error") toast.style.backgroundColor = "#c62828";
             else if(type === "success") toast.style.backgroundColor = "#2e7d32";
             else toast.style.backgroundColor = "#3C507D";
-            
             toast.style.display = 'block';
             setTimeout(function() { toast.style.display = 'none'; }, 3000);
         }
 
         function setupDynamicSidebar() {
             canApproveGrandSummary = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
-            // Sama dengan sebelumnya
+            
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
@@ -383,7 +339,10 @@
             });
         }
 
-        function safeLink(link) { return link.indexOf('http') === 0 ? link : 'https://' + link; }
+        function safeLink(link) { 
+            if(!link) return '';
+            return link.indexOf('http') === 0 ? link : 'https://' + link; 
+        }
         
         function formatDateForInput(dateStr) {
             if (!dateStr) return "";
@@ -401,97 +360,6 @@
             return !isNaN(d.getTime()) ? d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : dateStr;
         }
 
-        function renderTabs() {
-            document.getElementById('categoryTabs').style.display = 'flex';
-            var container = document.getElementById('tabContainer');
-            container.innerHTML = '';
-
-            var unList = libraryDataStore.unassigned || [];
-            document.getElementById('unassignedCount').innerText = unList.length;
-            var unHtml = '';
-            
-            if(unList.length === 0) {
-                unHtml = '<tr><td colspan="4" style="text-align:center; color:gray; padding: 25px;">All Approved Summaries have been successfully mapped! 🎉</td></tr>';
-            } else {
-                unList.forEach(function(item, idx) {
-                    var safeL = safeLink(item.link);
-                    var encL = encodeURIComponent(item.link); 
-                    var roomName = item.room || "Unknown Room"; 
-                    
-                    unHtml += `
-                        <tr>
-                            <td><span style="font-weight:bold; color:gray;">${idx + 1}</span></td>
-                            <td><span style="font-weight:bold; color:var(--royal-blue); background:#e8eaf6; padding:3px 8px; border-radius:4px; font-size:11px;">🏠 ${roomName}</span></td>
-                            <td><a href="${safeL}" target="_blank" class="link-icon">📄 Open File Link</a></td>
-                            <td style="text-align:center;">
-                                <button class="btn-primary" data-link="${encL}" onclick="openMappingModal(this)">🔗 Assign Subject</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-            
-            var divUn = document.createElement('div');
-            divUn.className = 'tab-content';
-            divUn.id = 'tab-PendingMapping';
-            divUn.innerHTML = `<div class="box-section"><h4>⚠️ Needs Subject Mapping</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th style="width:150px;">Origin Room</th><th>Summary Link</th><th style="text-align:center; width:150px;">Action</th></tr></thead><tbody>${unHtml}</tbody></table></div></div>`;
-            container.appendChild(divUn);
-
-            var mapped = libraryDataStore.categorized || {};
-
-            for (let cat in catMap) {
-                let tbodyHtml = '';
-                let count = 0;
-                
-                catMap[cat].forEach(function(subjName) {
-                    count++;
-                    let fullSubjName = cat + ' - ' + subjName;
-                    let savedEntries = mapped[fullSubjName] || [];
-
-                    if(savedEntries.length > 0) {
-                        savedEntries.forEach(function(item) {
-                            var safeL = safeLink(item.link);
-                            var encL = encodeURIComponent(item.link); 
-                            
-                            let actionBtns = (item.rowIdx === -1) 
-                                ? `<span style="color:gray; font-size:11px;">🔄 Syncing...</span>`
-                                : `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${cat}', '${subjName}', '${fullSubjName}')">✏️ Edit</button>`;
-
-                            tbodyHtml += `
-                                <tr>
-                                    <td><span style="font-weight:bold; color:gray;">${count}</span></td>
-                                    <td><span class="badge-date">📅 ${formatDateDisplay(item.classDate)}</span></td>
-                                    <td><span style="font-weight:bold; color:var(--sapphire);">${subjName}</span></td>
-                                    <td><a href="${safeL}" target="_blank" class="link-icon">🔗 Read File</a></td>
-                                    <td style="text-align:center;">${actionBtns}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        tbodyHtml += `
-                            <tr style="background-color: #fafafa;">
-                                <td><span style="font-weight:bold; color:gray;">${count}</span></td>
-                                <td><span style="color:#aaa;">-</span></td>
-                                <td><span style="font-weight:bold; color:gray;">${subjName}</span></td>
-                                <td><span style="color:#e65100; font-size:11px; font-style:italic;">Not Mapped Yet</span></td>
-                                <td style="text-align:center;">-</td>
-                            </tr>
-                        `;
-                    }
-                });
-
-                var divCat = document.createElement('div');
-                divCat.className = 'tab-content';
-                divCat.id = 'tab-' + cat.replace(/\s+/g, '');
-                divCat.innerHTML = `<div class="box-section"><h4>📚 ${cat} Subjects</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th>Class Date</th><th>Subject Name</th><th>Document Link</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${tbodyHtml}</tbody></table></div></div>`;
-                container.appendChild(divCat);
-            }
-
-            // (Grand Summary section remains the same)
-            // ...
-            openTab(activeTab); 
-        }
-
         function openTab(tabName) {
             activeTab = tabName; 
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -505,6 +373,231 @@
             if(targetContent) targetContent.classList.add('active');
         }
 
+        // ==========================================
+        // AUTO-SAVE FUNGSI UNTUK TAB MATERI & GRAND SUMMARY
+        // ==========================================
+        function autoSaveMaterial(inputEl, rowIdx, subject, tipe, fieldType) {
+            var val = inputEl.value;
+            var month = document.getElementById('monthSelector').value;
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "saveLibraryMaterial", month: month, subject: subject, tipe: tipe, 
+                    val: val, fieldType: fieldType, rowIdx: rowIdx 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) { 
+                    inputEl.setAttribute('data-rowidx', res.newRowIdx); 
+                    showToast("✅ Saved!", "success"); 
+                } 
+                else showToast("❌ Failed to save!", "error");
+            }).catch(e => showToast("❌ Error Connection", "error"));
+        }
+
+        // ==========================================
+        // RENDER TABS UTAMA
+        // ==========================================
+        function renderTabs() {
+            document.getElementById('categoryTabs').style.display = 'flex';
+            var container = document.getElementById('tabContainer');
+            container.innerHTML = '';
+
+            // 1. TAB PENDING MAPPING
+            var unList = libraryDataStore.unassigned || [];
+            document.getElementById('unassignedCount').innerText = unList.length;
+            var unHtml = '';
+            if(unList.length === 0) {
+                unHtml = '<tr><td colspan="4" style="text-align:center; color:gray; padding: 25px;">All Approved Summaries have been successfully mapped! 🎉</td></tr>';
+            } else {
+                unList.forEach(function(item, idx) {
+                    var safeL = safeLink(item.link);
+                    var encL = encodeURIComponent(item.link); 
+                    var roomName = item.room || "Unknown Room"; 
+                    unHtml += `
+                        <tr>
+                            <td><span style="font-weight:bold; color:gray;">${idx + 1}</span></td>
+                            <td><span style="font-weight:bold; color:var(--royal-blue); background:#e8eaf6; padding:3px 8px; border-radius:4px; font-size:11px;">🏠 ${roomName}</span></td>
+                            <td><a href="${safeL}" target="_blank" class="link-icon">📄 Open File Link</a></td>
+                            <td style="text-align:center;">
+                                <button class="btn-primary" data-link="${encL}" onclick="openMappingModal(this)">🔗 Assign Subject</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            var divUn = document.createElement('div');
+            divUn.className = 'tab-content';
+            divUn.id = 'tab-PendingMapping';
+            divUn.innerHTML = `<div class="box-section"><h4>⚠️ Needs Subject Mapping</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th style="width:150px;">Origin Room</th><th>Summary Link</th><th style="text-align:center; width:150px;">Action</th></tr></thead><tbody>${unHtml}</tbody></table></div></div>`;
+            container.appendChild(divUn);
+
+            var mapped = libraryDataStore.categorized || {};
+
+            // HELPER: Merender Tabel per Level
+            function renderLevelTable(levelName, divId) {
+                let tbodyHtml = '';
+                let count = 0;
+                let groups = [
+                    { name: 'Ministry', subjects: subjsMinistry },
+                    { name: 'Auror', subjects: subjsAuror }
+                ];
+                if (levelName === 'Advanced') groups.push({ name: 'Quidditch', subjects: ['Quidditch'] });
+
+                groups.forEach(g => {
+                    tbodyHtml += `<tr style="background:#e8eaf6;"><td colspan="5" style="font-weight:bold; color:var(--royal-blue); text-transform:uppercase;">${g.name} DIVISION</td></tr>`;
+                    g.subjects.forEach(subj => {
+                        count++;
+                        let catPrefix = (g.name === 'Quidditch') ? 'Quidditch' : (levelName + ' ' + g.name);
+                        let fullSubjName = catPrefix + ' - ' + subj;
+                        let savedEntries = mapped[fullSubjName] || [];
+
+                        if(savedEntries.length > 0) {
+                            savedEntries.forEach(item => {
+                                let safeL = safeLink(item.link);
+                                let encL = encodeURIComponent(item.link); 
+                                let actionBtns = (item.rowIdx === -1) 
+                                    ? `<span style="color:gray; font-size:11px;">🔄 Syncing...</span>`
+                                    : `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${catPrefix}', '${subj}', '${fullSubjName}')">✏️ Edit</button>`;
+
+                                tbodyHtml += `
+                                    <tr>
+                                        <td><span style="font-weight:bold; color:gray;">${count}</span></td>
+                                        <td><span class="badge-date">📅 ${formatDateDisplay(item.classDate)}</span></td>
+                                        <td><span style="font-weight:bold; color:var(--sapphire);">${subj}</span></td>
+                                        <td><a href="${safeL}" target="_blank" class="link-icon">🔗 Read File</a></td>
+                                        <td style="text-align:center;">${actionBtns}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            tbodyHtml += `
+                                <tr style="background-color: #fafafa;">
+                                    <td><span style="font-weight:bold; color:gray;">${count}</span></td>
+                                    <td><span style="color:#aaa;">-</span></td>
+                                    <td><span style="font-weight:bold; color:gray;">${subj}</span></td>
+                                    <td><span style="color:#e65100; font-size:11px; font-style:italic;">Not Mapped Yet</span></td>
+                                    <td style="text-align:center;">-</td>
+                                </tr>
+                            `;
+                        }
+                    });
+                });
+
+                var divLevel = document.createElement('div');
+                divLevel.className = 'tab-content';
+                divLevel.id = divId;
+                divLevel.innerHTML = `<div class="box-section"><h4>📚 ${levelName} Level Mapped Summaries</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th>Class Date</th><th>Subject Name</th><th>Document Link</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${tbodyHtml}</tbody></table></div></div>`;
+                container.appendChild(divLevel);
+            }
+
+            // 2. RENDER LEVEL BEGINNER & ADVANCED
+            renderLevelTable('Beginner', 'tab-Beginner');
+            renderLevelTable('Advanced', 'tab-Advanced');
+
+            // 3. RENDER MATERI TAMBAHAN
+            let matTbody = '';
+            let matCount = 0;
+            // Materi bisa ada 25 per level (Kita buat slot input yang dinamis dan fleksibel dari backend)
+            // Di sini kita render berdasarkan `libraryDataStore.materials`
+            let matData = libraryDataStore.materials || [];
+            if(matData.length === 0) {
+                // Beri beberapa slot kosong
+                for(let i=1; i<=10; i++) {
+                    matTbody += `
+                        <tr>
+                            <td><span style="font-weight:bold; color:gray;">${i}</span></td>
+                            <td><input type="text" class="direct-input" placeholder="e.g. QNA Herbology" onchange="autoSaveMaterial(this, -1, this.value, 'Materi', 'subject')"></td>
+                            <td><input type="text" class="direct-input" placeholder="URL Link..." onchange="autoSaveMaterial(this, -1, this.parentElement.previousElementSibling.querySelector('input').value, 'Materi', 'link')"></td>
+                        </tr>
+                    `;
+                }
+            } else {
+                matData.forEach((m, i) => {
+                    matTbody += `
+                        <tr>
+                            <td><span style="font-weight:bold; color:gray;">${i+1}</span></td>
+                            <td><input type="text" class="direct-input" value="${m.subject}" placeholder="Subject / Title" onchange="autoSaveMaterial(this, ${m.rowIdx}, this.value, 'Materi', 'subject')"></td>
+                            <td><input type="text" class="direct-input" value="${m.link}" placeholder="URL Link..." onchange="autoSaveMaterial(this, ${m.rowIdx}, this.parentElement.previousElementSibling.querySelector('input').value, 'Materi', 'link')"></td>
+                        </tr>
+                    `;
+                });
+                // Slot Kosong Tambahan
+                for(let i=matData.length+1; i<=matData.length+3; i++) {
+                    matTbody += `
+                        <tr>
+                            <td><span style="font-weight:bold; color:gray;">${i}</span></td>
+                            <td><input type="text" class="direct-input" placeholder="New Subject / Title" onchange="autoSaveMaterial(this, -1, this.value, 'Materi', 'subject')"></td>
+                            <td><input type="text" class="direct-input" placeholder="URL Link..." onchange="autoSaveMaterial(this, -1, this.parentElement.previousElementSibling.querySelector('input').value, 'Materi', 'link')"></td>
+                        </tr>
+                    `;
+                }
+            }
+            
+            var divMat = document.createElement('div');
+            divMat.className = 'tab-content';
+            divMat.id = 'tab-Materi';
+            divMat.innerHTML = `<div class="box-section"><h4>📚 Materials & QnA (Add URL)</h4><div class="table-container"><table><thead><tr><th style="width:50px;">No.</th><th style="width:300px;">Material Title / Subject</th><th>Link URL</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
+            container.appendChild(divMat);
+
+            // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra)
+            let gsTbody = '';
+            let gsData = libraryDataStore.grandSummary || [];
+            
+            staticGrandSummaryList.forEach((subj, i) => {
+                let m = gsData.find(x => x.subject === subj) || { rowIdx: -1, link: '', status: 'Pending', catatan: '', finalSummary: '' };
+                
+                let linkHtml = `<input type="text" class="direct-input" value="${m.link}" placeholder="Paste URL here..." onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'link')">`;
+                let catHtml = `<input type="text" class="direct-input" value="${m.catatan}" placeholder="Catatan revisi..." onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'catatan')">`;
+                
+                let statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">${m.status}</span>`;
+                let finalHtml = `<span style="color:gray;">-</span>`;
+
+                if (canApproveGrandSummary) {
+                    statusHtml = `
+                        <select class="direct-select" onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'status')">
+                            <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
+                            <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
+                            <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
+                        </select>
+                    `;
+                    finalHtml = `
+                        <select class="direct-select" onchange="autoSaveMaterial(this, ${m.rowIdx}, '${subj}', 'GrandSummary', 'final')">
+                            <option value="" ${!m.finalSummary?'selected':''}>- TBD -</option>
+                            <option value="Ministry" ${m.finalSummary==='Ministry'?'selected':''}>Ministry</option>
+                            <option value="Auror" ${m.finalSummary==='Auror'?'selected':''}>Auror</option>
+                        </select>
+                    `;
+                } else {
+                    if (m.status === 'ACC') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">ACC</span>`;
+                    else if (m.status === 'Revisi') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revisi</span>`;
+                    
+                    if (m.finalSummary) finalHtml = `<span style="font-weight:bold; color:var(--sapphire);">${m.finalSummary}</span>`;
+                }
+
+                gsTbody += `
+                    <tr>
+                        <td><span style="font-weight:bold; color:gray;">${i+1}</span></td>
+                        <td><span style="font-weight:bold; color:var(--royal-blue);">${subj}</span></td>
+                        <td>${linkHtml}</td>
+                        <td style="text-align:center;">${statusHtml}</td>
+                        <td>${catHtml}</td>
+                        <td style="text-align:center;">${finalHtml}</td>
+                    </tr>
+                `;
+            });
+
+            var divGs = document.createElement('div');
+            divGs.className = 'tab-content';
+            divGs.id = 'tab-GrandSummary';
+            divGs.innerHTML = `<div class="box-section"><h4>🏆 Grand Summary (Monthly Compilation)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th><th style="text-align:center; width:120px;">Final Tag</th></tr></thead><tbody>${gsTbody}</tbody></table></div></div>`;
+            container.appendChild(divGs);
+
+            openTab(activeTab); 
+        }
+
         // ===============================================
         // MAPPING MODALS & UNASSIGN LOGIC
         // ===============================================
@@ -516,10 +609,7 @@
             document.getElementById('mapClassDate').value = '';
             document.getElementById('mapCategory').selectedIndex = 0;
             document.getElementById('mapSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>'; 
-            
-            // Sembunyikan tombol Unassign saat mapping baru
             document.getElementById('btnUnassign').style.display = 'none';
-            
             document.getElementById('mappingModal').style.display = 'flex';
         }
 
@@ -533,10 +623,7 @@
             document.getElementById('mapCategory').value = catName;
             updateModalSubjects(); 
             document.getElementById('mapSubjectItem').value = subjName;
-            
-            // Munculkan tombol Unassign saat sedang Edit
             document.getElementById('btnUnassign').style.display = 'inline-block';
-            
             document.getElementById('mappingModal').style.display = 'flex';
         }
 
@@ -549,13 +636,10 @@
             if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
         }
 
-        // FUNGSI BARU: UNASSIGN MAPPING
         function unassignMapping() {
             var rowIdx = document.getElementById('editRowIdx').value; 
             if (!rowIdx) return;
-
-            var confirmDelete = confirm("Are you sure you want to Unassign this subject?\nThe link will return to the 'Pending Mapping' tab.");
-            if (!confirmDelete) return;
+            if (!confirm("Are you sure you want to Unassign this subject?\nThe link will return to the 'Pending Mapping' tab.")) return;
 
             var oldCat = document.getElementById('editOldCat').value;
             var link = document.getElementById('mapLinkDisplay').value;
@@ -563,27 +647,21 @@
             closeMappingModal();
             showToast("Unassigning subject...");
 
-            // 1. Hapus dari visual (Frontend) agar langsung terlihat
             if (oldCat && libraryDataStore.categorized[oldCat]) {
                 let idx = libraryDataStore.categorized[oldCat].findIndex(x => x.rowIdx === parseInt(rowIdx, 10));
                 if (idx > -1) libraryDataStore.categorized[oldCat].splice(idx, 1);
             }
-            // Kembalikan ke Pending Mapping
             libraryDataStore.unassigned.push({ link: link, room: "Recovered Link" });
             renderTabs();
 
-            // 2. Minta API menghapus data (Backend)
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "deleteLibraryMapping", rowIdx: rowIdx })
             })
             .then(r => r.json())
             .then(res => {
-                if(res.status === 'success' || res.success) { 
-                    showToast("Successfully Unassigned!", "success"); 
-                } else { 
-                    showToast("Failed to unassign: " + res.message, "error"); 
-                }
+                if(res.status === 'success' || res.success) showToast("Successfully Unassigned!", "success"); 
+                else showToast("Failed to unassign: " + res.message, "error"); 
             });
         }
 
@@ -613,7 +691,7 @@
                 if (!libraryDataStore.categorized[fullSubject]) libraryDataStore.categorized[fullSubject] = [];
                 libraryDataStore.categorized[fullSubject].push({ classDate: cDate, title: "", link: link, rowIdx: rowIdx });
                 
-                activeTab = cat; renderTabs();
+                activeTab = cat.split(' ')[0]; renderTabs();
                 showToast("Updating changes...");
 
                 fetch(API_URL, {
@@ -622,8 +700,8 @@
                 })
                 .then(r => r.json())
                 .then(res => {
-                    if(res.status === 'success' || res.success) { showToast("Mapping Updated!", "success"); } 
-                    else { showToast("Failed to update: " + res.message, "error"); }
+                    if(res.status === 'success' || res.success) showToast("Mapping Updated!", "success"); 
+                    else showToast("Failed to update: " + res.message, "error");
                 });
             } 
             else {
@@ -634,7 +712,7 @@
                 let newItem = { classDate: cDate, title: "", link: link, rowIdx: -1 };
                 libraryDataStore.categorized[fullSubject].push(newItem);
 
-                activeTab = cat; renderTabs();
+                activeTab = cat.split(' ')[0]; renderTabs();
                 showToast("Saving new mapping...");
 
                 fetch(API_URL, {
@@ -650,62 +728,6 @@
                     } else showToast("Failed to save: " + res.message, "error");
                 });
             }
-        }
-        
-        // ==========================================
-        // SISA FUNGSI MANUAL ENTRY (TETAP SAMA)
-        // ==========================================
-        function openManualModal() {
-            document.getElementById('manualModal').style.display = 'flex';
-            document.getElementById('manClassDate').value = '';
-            document.getElementById('manTitle').value = '';
-            document.getElementById('manLink').value = '';
-            document.getElementById('manCategory').selectedIndex = 0;
-            document.getElementById('manSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>';
-        }
-
-        function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
-
-        function updateManualModalSubjects() {
-            var cat = document.getElementById('manCategory').value;
-            var subjSelect = document.getElementById('manSubjectItem');
-            subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
-        }
-
-        function saveManualEntry() {
-            var cDate = document.getElementById('manClassDate').value;
-            var title = document.getElementById('manTitle').value;
-            var link = document.getElementById('manLink').value;
-            var cat = document.getElementById('manCategory').value;
-            var subjItem = document.getElementById('manSubjectItem').value;
-            var month = document.getElementById('monthSelector').value;
-            var week = document.getElementById('weekSelector').value;
-
-            if(!cDate || !link || !cat || !subjItem) return showToast("Please fill all fields!", "error");
-            
-            var fullSubject = cat + ' - ' + subjItem;
-            closeManualModal();
-
-            if (!libraryDataStore.categorized[fullSubject]) libraryDataStore.categorized[fullSubject] = [];
-            let newItem = { classDate: cDate, title: title, link: link, rowIdx: -1 };
-            libraryDataStore.categorized[fullSubject].push(newItem);
-
-            activeTab = cat; renderTabs();
-            showToast("Saving Entry...");
-
-            fetch(API_URL, {
-                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: week, classDate: cDate, title: title, link: link, subject: fullSubject })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' || res.success) {
-                    newItem.rowIdx = res.newRowIdx;
-                    renderTabs();
-                    showToast("Entry saved!", "success");
-                } else showToast("Failed to save: " + res.message, "error");
-            });
         }
     </script>
 </body>
