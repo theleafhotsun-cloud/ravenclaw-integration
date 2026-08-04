@@ -70,8 +70,9 @@
 
         .badge-date { background-color: var(--quicksand); color: var(--royal-blue); font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; display: inline-block;}
 
-        .direct-input { width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; box-sizing: border-box; }
-        .direct-select { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; font-weight: bold; background: white; cursor: pointer;}
+        .direct-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; box-sizing: border-box; }
+        .direct-input:disabled { background-color: #eeeeee; cursor: not-allowed; color: gray; border: 1px dashed #ccc;}
+        .direct-select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; font-weight: bold; background: white; cursor: pointer;}
         
         /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding:10px;}
@@ -128,8 +129,8 @@
             <div class="sop-banner">
                 <b>📌 HOW IT WORKS:</b><br>
                 1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
-                2. Click <b>"Assign Subject"</b> to map the link to a specific subject.<br>
-                3. Grand Summary dapat diisi 1x dalam sebulan. Persetujuan (ACC) hanya dapat dilakukan oleh Headhouse/Prefect/VP.
+                2. Grand Summary & Final Summary hanya dapat diisi 1x dalam sebulan.<br>
+                3. Jika status Grand Summary / Final Summary sudah <b>ACC</b>, maka LR tidak bisa mengedit Link-nya lagi (Terkunci). Headhouse/Prefect memiliki akses penuh.
             </div>
 
             <div class="period-controller">
@@ -237,6 +238,14 @@
         ];
 
         const finalSummaryList = ["Ministry", "Auror"];
+
+        const staticMateriList = [
+            "Beginner Astronomy", "Beginner Divination", "Beginner Care Of Magical Creatures", "Beginner Ancient Runes", "Beginner Muggle Studies", "Beginner History Of Magic",
+            "Beginner Charm", "Beginner Potion", "Beginner Arithmancy", "Beginner Transfiguration", "Beginner Defence Against The Dark Arts", "Beginner Herbology",
+            "Advanced Astronomy", "Advanced Divination", "Advanced Care Of Magical Creatures", "Advanced Ancient Runes", "Advanced Muggle Studies", "Advanced History Of Magic",
+            "Advanced Charm", "Advanced Potion", "Advanced Arithmancy", "Advanced Transfiguration", "Advanced Defence Against The Dark Arts", "Advanced Herbology",
+            "Extracurricular", "Quidditch"
+        ]; // Exactly 26 Subjects
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
@@ -384,84 +393,100 @@
         // ==========================================
         // AUTO-SAVE FUNGSI UNTUK TAB MATERI & GRAND SUMMARY
         // ==========================================
-        function autoSaveGrandSummary(inputEl, subject, type) {
-            var val = inputEl.value;
-            var month = document.getElementById('monthSelector').value;
+        function saveGrandSummaryRow(btnEl, subject, rowIdx) {
+            var tr = btnEl.closest('tr');
+            var link = tr.querySelector('.gs-link').value.trim();
+            var status = tr.querySelector('.gs-status').value;
+            var catatan = tr.querySelector('.gs-catatan').value.trim();
+            var finalSumm = tr.querySelector('.gs-final').value;
             
-            if (type === 'status') {
-                if (val === 'ACC') {
-                    inputEl.style.backgroundColor = '#c8e6c9';
-                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "approveGrandSummary", month: month, week: "", subject: subject, user: loggedInUser }) })
-                        .then(r => r.json()).then(res => { if(res.success) showToast("✅ ACC Saved!", "success"); });
-                } else if (val === 'Revisi') {
-                    inputEl.style.backgroundColor = '#ffcdd2';
-                    var notes = prompt("Tulis catatan revisi untuk " + subject + ":");
-                    if (notes === null) { inputEl.value = 'Pending'; inputEl.style.backgroundColor = 'white'; return; }
-                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "declineGrandSummary", month: month, week: "", subject: subject, notes: notes }) })
-                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Revisi Saved!", "success"); fetchLibraryData(); } });
-                } else {
-                    inputEl.style.backgroundColor = 'white';
-                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "declineGrandSummary", month: month, week: "", subject: subject, notes: "PENDING_RESET" }) })
-                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Reset to Pending", "success"); fetchLibraryData(); } });
-                }
-            } else if (type === 'link') {
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveGrandSummary", month: month, week: "", subject: subject, link: val }) })
-                    .then(r => r.json()).then(res => { if(res.success) showToast("✅ Link Saved!", "success"); });
-            }
+            var month = document.getElementById('monthSelector').value;
+            btnEl.innerText = "Saving...";
+            
+            var payload = JSON.stringify({link: link, status: status, catatan: catatan, finalSumm: finalSumm, rowIdx: rowIdx});
+
+            // HIJACK PAYLOAD
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "saveGrandSummary", month: month, week: "V2", subject: subject, link: payload 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                btnEl.innerText = "💾 Save";
+                if(res.status === 'success' || res.success) { 
+                    btnEl.setAttribute('onclick', `saveGrandSummaryRow(this, '${subject}', ${res.newRowIdx})`);
+                    showToast("✅ Grand Summary Saved!", "success"); 
+                    if(canApproveGrandSummary) {
+                        let statSelect = tr.querySelector('.gs-status');
+                        if(status === 'ACC') statSelect.style.backgroundColor = '#c8e6c9';
+                        else if(status === 'Revisi') statSelect.style.backgroundColor = '#ffcdd2';
+                        else statSelect.style.backgroundColor = 'white';
+                    }
+                } 
+                else showToast("❌ Failed to save!", "error");
+            }).catch(e => { btnEl.innerText = "💾 Save"; showToast("❌ Error Connection", "error"); });
         }
 
-        function autoSaveFinalSummary(inputEl, category, type) {
-            var val = inputEl.value;
+        function saveFinalSummaryRow(btnEl, category, rowIdx) {
+            var tr = btnEl.closest('tr');
+            var link = tr.querySelector('.fs-link').value.trim();
+            var status = tr.querySelector('.fs-status').value;
+            var catatan = tr.querySelector('.fs-catatan').value.trim();
+            
             var month = document.getElementById('monthSelector').value;
+            btnEl.innerText = "Saving...";
+            
+            var payload = JSON.stringify({link: link, status: status, catatan: catatan, rowIdx: rowIdx});
 
-            if (type === 'status') {
-                if (val === 'ACC') {
-                    inputEl.style.backgroundColor = '#c8e6c9';
-                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: "STATUS_UPDATE|||ACC|||" }) })
-                        .then(r => r.json()).then(res => { if(res.success) showToast("✅ ACC Saved!", "success"); });
-                } else if (val === 'Revisi') {
-                    inputEl.style.backgroundColor = '#ffcdd2';
-                    var notes = prompt("Tulis catatan revisi untuk " + category + ":");
-                    if (notes === null) { inputEl.value = 'Pending'; inputEl.style.backgroundColor = 'white'; return; }
-                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: "STATUS_UPDATE|||Revisi|||" + notes }) })
-                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Revisi Saved!", "success"); fetchLibraryData(); } });
-                } else {
-                    inputEl.style.backgroundColor = 'white';
-                    fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: "STATUS_UPDATE|||Pending|||" }) })
-                        .then(r => r.json()).then(res => { if(res.success) { showToast("✅ Reset to Pending", "success"); fetchLibraryData(); } });
-                }
-            } else if (type === 'link') {
-                fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveFinalSummary", month: month, week: "", category: category, link: val }) })
-                    .then(r => r.json()).then(res => { if(res.success) showToast("✅ Final Link Saved!", "success"); });
-            }
+            // HIJACK PAYLOAD
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ 
+                    action: "saveFinalSummary", month: month, week: "V2", category: category, link: payload 
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                btnEl.innerText = "💾 Save";
+                if(res.status === 'success' || res.success) { 
+                    btnEl.setAttribute('onclick', `saveFinalSummaryRow(this, '${category}', ${res.newRowIdx})`);
+                    showToast("✅ Final Summary Saved!", "success"); 
+                    if(canApproveGrandSummary) {
+                        let statSelect = tr.querySelector('.fs-status');
+                        if(status === 'ACC') statSelect.style.backgroundColor = '#c8e6c9';
+                        else if(status === 'Revisi') statSelect.style.backgroundColor = '#ffcdd2';
+                        else statSelect.style.backgroundColor = 'white';
+                    }
+                } 
+                else showToast("❌ Failed to save!", "error");
+            }).catch(e => { btnEl.innerText = "💾 Save"; showToast("❌ Error Connection", "error"); });
         }
 
         function autoSaveMaterialRow(btnEl, idx) {
             var tr = btnEl.closest('tr');
-            var subjLevel = tr.querySelector('.mat-subj').value;
+            var subjLevel = tr.querySelector('.mat-subj').innerText;
             var inputs = tr.querySelectorAll('.mat-link');
             var linksArray = Array.from(inputs).map(inp => inp.value.trim());
-
-            if (!subjLevel) return showToast("⚠️ Subject Name is required!", "error");
             
             var month = document.getElementById('monthSelector').value;
-            var fullArr = [subjLevel].concat(linksArray);
+            var payload = [subjLevel].concat(linksArray);
             
             btnEl.innerText = "Saving...";
             
+            // HIJACK PAYLOAD
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
-                    action: "saveManualLibraryEntry", month: month, week: "", 
-                    classDate: "SAVE_MATERI", subject: "row_" + idx, link: JSON.stringify(fullArr) 
+                    action: "saveManualLibraryEntry", month: month, week: "", classDate: "SAVE_MATERI_V2", 
+                    subject: "row_" + idx, link: JSON.stringify(payload), title: ""
                 })
             })
             .then(r => r.json())
             .then(res => {
                 btnEl.innerText = "💾 Save Row";
-                if(res.status === 'success' || res.success) { 
-                    showToast("✅ Row Saved!", "success"); 
-                } 
+                if(res.status === 'success' || res.success) { showToast("✅ Row Saved!", "success"); } 
                 else showToast("❌ Failed to save!", "error");
             }).catch(e => {
                 btnEl.innerText = "💾 Save Row";
@@ -569,14 +594,15 @@
             renderLevelTable('Beginner', 'tab-Beginner');
             renderLevelTable('Advanced', 'tab-Advanced');
 
-            // 3. RENDER MATERI TAMBAHAN (26 SLOT PENGASJAR & QNA)
+            // 3. RENDER MATERI TAMBAHAN (26 SLOT PENGASJAR & QNA OTOMATIS)
             let matTbody = '';
             let matData = libraryDataStore.materials || [];
             
             for(let i=0; i<26; i++) {
-                let m = matData[i] || { subj: '', links: ['','','','','','','',''] };
-                let linkInputsHtml = '';
+                let defaultSubj = staticMateriList[i];
+                let m = matData[i] || { subj: defaultSubj, links: ['','','','','','','',''] };
                 
+                let linkInputsHtml = '';
                 for(let j=0; j<8; j++) {
                     let ph = (j < 4) ? `Materi ${j+1} Link...` : `QnA ${j-3} Link...`;
                     linkInputsHtml += `<input type="text" class="direct-input mat-link" style="margin-bottom:4px;" value="${m.links[j]}" placeholder="${ph}">`;
@@ -585,7 +611,7 @@
                 matTbody += `
                     <tr>
                         <td><span style="font-weight:bold; color:gray;">${i+1}</span></td>
-                        <td style="vertical-align: top;"><input type="text" class="direct-input mat-subj" value="${m.subj}" placeholder="E.g. Beg. Potion Teacher" style="font-weight:bold; font-size:12px; color:var(--royal-blue);"></td>
+                        <td style="vertical-align: top;"><span class="mat-subj" style="font-weight:bold; font-size:12px; color:var(--royal-blue);">${defaultSubj}</span></td>
                         <td>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
                                 ${linkInputsHtml}
@@ -601,7 +627,7 @@
             var divMat = document.createElement('div');
             divMat.className = 'tab-content';
             divMat.id = 'tab-Materi';
-            divMat.innerHTML = `<div class="box-section"><h4>📚 Materials & QnA (26 Slots)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Materi & QnA Links (Up to 8)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
+            divMat.innerHTML = `<div class="box-section"><h4>📚 Materials & QnA (26 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Materi & QnA Links (Up to 8)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
             container.appendChild(divMat);
 
             // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra) & FINAL SUMMARY
@@ -609,24 +635,38 @@
             let gsData = libraryDataStore.grandSummaries || {};
             
             staticGrandSummaryList.forEach((subj, i) => {
-                let m = gsData[subj] || { link: '', status: 'Pending', notes: '' };
+                let m = gsData[subj] || { rowIdx: -1, link: '', status: 'Pending', catatan: '', finalSummary: '' };
+                let isLockedForLR = (m.status === 'ACC' && !canApproveGrandSummary);
                 
-                let linkHtml = `<input type="text" class="direct-input" value="${m.link}" placeholder="Paste URL here..." onchange="autoSaveGrandSummary(this, '${subj}', 'link')">`;
-                let statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">${m.status}</span>`;
+                let linkHtml = `<input type="text" class="direct-input gs-link" value="${m.link}" placeholder="Paste URL here..." ${isLockedForLR ? 'disabled' : ''}>`;
+                
+                let catHtml = ''; let statusHtml = ''; let finalHtml = '';
 
                 if (canApproveGrandSummary) {
                     let bgStatus = (m.status === 'ACC') ? '#c8e6c9' : (m.status === 'Revisi' ? '#ffcdd2' : 'white');
-                    statusHtml = `
-                        <select class="direct-select" style="background-color:${bgStatus};" onchange="autoSaveGrandSummary(this, '${subj}', 'status')">
-                            <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
-                            <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
-                            <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
-                        </select>
-                    `;
+                    statusHtml = `<select class="direct-select gs-status" style="background-color:${bgStatus};">
+                                    <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
+                                    <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
+                                    <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
+                                  </select>`;
+                    catHtml = `<input type="text" class="direct-input gs-catatan" value="${m.catatan}" placeholder="Catatan revisi...">`;
+                    finalHtml = `<select class="direct-select gs-final">
+                                    <option value="" ${!m.finalSummary?'selected':''}>- TBD -</option>
+                                    <option value="Ministry" ${m.finalSummary==='Ministry'?'selected':''}>Ministry</option>
+                                    <option value="Auror" ${m.finalSummary==='Auror'?'selected':''}>Auror</option>
+                                 </select>`;
                 } else {
                     if (m.status === 'ACC') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">ACC</span>`;
                     else if (m.status === 'Revisi') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revisi</span>`;
+                    else statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">Pending</span>`;
+
+                    statusHtml += `<input type="hidden" class="gs-status" value="${m.status}">`;
+                    catHtml = `<span style="font-size:11px; color:var(--danger);">${m.catatan || '-'}</span><input type="hidden" class="gs-catatan" value="${m.catatan}">`;
+                    finalHtml = `<span style="font-weight:bold; color:var(--sapphire);">${m.finalSummary || '-'}</span><input type="hidden" class="gs-final" value="${m.finalSummary}">`;
                 }
+
+                let actionHtml = `<button class="btn-manage" style="background-color: var(--success); color: white;" onclick="saveGrandSummaryRow(this, '${subj}', ${m.rowIdx})">💾 Save</button>`;
+                if (isLockedForLR) actionHtml = `<span style="color:var(--success); font-weight:bold; font-size:11px;">🔒 Locked</span>`;
 
                 gsTbody += `
                     <tr>
@@ -634,7 +674,9 @@
                         <td><span style="font-weight:bold; color:var(--royal-blue);">${subj}</span></td>
                         <td>${linkHtml}</td>
                         <td style="text-align:center;">${statusHtml}</td>
-                        <td><span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span></td>
+                        <td>${catHtml}</td>
+                        <td style="text-align:center;">${finalHtml}</td>
+                        <td style="text-align:center;">${actionHtml}</td>
                     </tr>
                 `;
             });
@@ -644,23 +686,32 @@
             let fsData = libraryDataStore.finalSummaries || {};
 
             finalSummaryList.forEach((cat, i) => {
-                let m = fsData[cat] || { link: '', status: 'Pending', notes: '' };
-                let linkHtml = `<input type="text" class="direct-input" value="${m.link}" placeholder="Paste Final Summary URL here..." onchange="autoSaveFinalSummary(this, '${cat}', 'link')">`;
-                let statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">${m.status}</span>`;
+                let m = fsData[cat] || { rowIdx: -1, link: '', status: 'Pending', notes: '' };
+                let isLockedForLR = (m.status === 'ACC' && !canApproveGrandSummary);
+
+                let linkHtml = `<input type="text" class="direct-input fs-link" value="${m.link}" placeholder="Paste Final Summary URL here..." ${isLockedForLR ? 'disabled' : ''}>`;
+                
+                let catHtml = ''; let statusHtml = '';
 
                 if (canApproveGrandSummary) {
                     let bgStatus = (m.status === 'ACC') ? '#c8e6c9' : (m.status === 'Revisi' ? '#ffcdd2' : 'white');
-                    statusHtml = `
-                        <select class="direct-select" style="background-color:${bgStatus};" onchange="autoSaveFinalSummary(this, '${cat}', 'status')">
-                            <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
-                            <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
-                            <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
-                        </select>
-                    `;
+                    statusHtml = `<select class="direct-select fs-status" style="background-color:${bgStatus};">
+                                    <option value="Pending" ${m.status==='Pending'?'selected':''}>Pending</option>
+                                    <option value="Revisi" ${m.status==='Revisi'?'selected':''}>Revisi</option>
+                                    <option value="ACC" ${m.status==='ACC'?'selected':''}>ACC</option>
+                                  </select>`;
+                    catHtml = `<input type="text" class="direct-input fs-catatan" value="${m.notes}" placeholder="Catatan revisi...">`;
                 } else {
                     if (m.status === 'ACC') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">ACC</span>`;
                     else if (m.status === 'Revisi') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revisi</span>`;
+                    else statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">Pending</span>`;
+
+                    statusHtml += `<input type="hidden" class="fs-status" value="${m.status}">`;
+                    catHtml = `<span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span><input type="hidden" class="fs-catatan" value="${m.notes}">`;
                 }
+
+                let actionHtml = `<button class="btn-manage" style="background-color: var(--success); color: white;" onclick="saveFinalSummaryRow(this, '${cat}', ${m.rowIdx})">💾 Save</button>`;
+                if (isLockedForLR) actionHtml = `<span style="color:var(--success); font-weight:bold; font-size:11px;">🔒 Locked</span>`;
 
                 fsTbody += `
                     <tr>
@@ -668,7 +719,8 @@
                         <td><span style="font-weight:bold; color:var(--royal-blue); font-size:14px;">FINAL SUMMARY - ${cat.toUpperCase()}</span></td>
                         <td>${linkHtml}</td>
                         <td style="text-align:center;">${statusHtml}</td>
-                        <td><span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span></td>
+                        <td>${catHtml}</td>
+                        <td style="text-align:center;">${actionHtml}</td>
                     </tr>
                 `;
             });
@@ -678,10 +730,10 @@
             divGs.id = 'tab-GrandSummary';
             divGs.innerHTML = `
                 <div class="box-section"><h4>🏆 Grand Summary (Monthly Compilation)</h4>
-                    <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
+                    <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th><th style="text-align:center; width:120px;">Final Tag</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
                 </div>
                 <div class="box-section" style="border: 2px solid var(--warning); background-color:#fff9c4;"><h4>🏛️ Final Summary</h4>
-                    <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
+                    <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">ACC Status</th><th>Revisi Notes</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
                 </div>
             `;
             container.appendChild(divGs);
