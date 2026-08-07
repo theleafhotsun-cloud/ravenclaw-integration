@@ -209,6 +209,7 @@
 
     <!-- SCRIPT AREA -->
     <script>
+        // GANTI API URL DENGAN URL DEPLOYMENT KAMU
         const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -445,6 +446,7 @@
             
             var payload = JSON.stringify({link: link, status: status, catatan: catatan, finalSumm: "", rowIdx: rowIdx});
 
+            // MENGGUNAKAN NATIVE ROUTES DARI 1_MAIN.GS
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "saveGrandSummaryBackend", month: month, week: "V2", subject: subject, link: payload })
@@ -474,6 +476,7 @@
             
             var payload = JSON.stringify({link: link, status: status, catatan: catatan, rowIdx: rowIdx});
 
+            // MENGGUNAKAN NATIVE ROUTES DARI 1_MAIN.GS
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "saveFinalSummaryBackend", month: month, week: "V2", category: category, link: payload })
@@ -503,6 +506,7 @@
             
             btnEl.innerText = "Saving...";
             
+            // MENGGUNAKAN NATIVE ROUTES DARI 1_MAIN.GS
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: "", classDate: "SAVE_MATERI_V2", subject: "row_" + idx, link: JSON.stringify(payload), title: "" })
@@ -631,11 +635,13 @@
                     
                     let linkInputsHtml = '<div style="font-size:10px; font-weight:bold; color:var(--sapphire); margin-bottom:4px;">📚 MATERIALS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:10px;">';
                     for(let j=0; j<4; j++) {
-                        linkInputsHtml += getLinkHtml(m.links[j], `Material ${j+1} URL...`, "mat-link", false);
+                        let ph = `Material ${j+1} URL...`;
+                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
                     }
                     linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--warning); margin-bottom:4px;">❓ Q&A SESSIONS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">';
                     for(let j=4; j<8; j++) {
-                        linkInputsHtml += getLinkHtml(m.links[j], `Q&A ${j-3} URL...`, "mat-link", false);
+                        let ph = `Q&A ${j-3} URL...`;
+                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
                     }
                     linkInputsHtml += '</div>';
 
