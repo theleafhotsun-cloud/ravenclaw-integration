@@ -150,6 +150,7 @@
                         </select>
                     </div>
                 </div>
+                
                 <div style="display:flex; gap:10px;">
                     <button class="btn-primary" onclick="openManualModal()">+ Add Manual Entry</button>
                 </div>
@@ -210,12 +211,16 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ADD MANUAL ENTRY -->
+    <!-- MODAL 2: ADD MANUAL ENTRY (REGULAR CLASS) -->
     <div class="modal-overlay" id="manualModal">
         <div class="modal-box">
             <h3>📝 Add Manual Entry</h3>
-            <div class="form-group"><label>Date of Class / Event</label><input type="date" id="manClassDate"></div>
-            <div class="form-group"><label>Level / Division</label>
+            <div class="form-group">
+                <label>Date of Class / Event</label>
+                <input type="date" id="manClassDate">
+            </div>
+            <div class="form-group">
+                <label>Level / Division</label>
                 <select id="manCategory" onchange="updateManualModalSubjects()">
                     <option value="">-- Select Level & Division --</option>
                     <option value="Beginner Ministry">Beginner Ministry</option>
@@ -225,10 +230,24 @@
                     <option value="Quidditch">Quidditch</option>
                 </select>
             </div>
-            <div class="form-group"><label>Subject</label><select id="manSubjectItem"><option value="">-- Select Level First --</option></select></div>
-            <div class="form-group"><label>Title / Description</label><input type="text" id="manTitle" placeholder="e.g. Ravenclaw vs Hufflepuff Match"></div>
-            <div class="form-group"><label>Document Link</label><input type="text" id="manLink" placeholder="https://..."></div>
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeManualModal()">Cancel</button><button class="btn-submit" onclick="saveManualEntryRegular()" id="btnSaveMan">Save Entry</button></div>
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="manSubjectItem">
+                    <option value="">-- Select Level First --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Title / Description</label>
+                <input type="text" id="manTitle" placeholder="e.g. Ravenclaw vs Hufflepuff Match">
+            </div>
+            <div class="form-group">
+                <label>Document Link</label>
+                <input type="text" id="manLink" placeholder="https://...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeManualModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveManualEntryRegular()" id="btnSaveMan">Save Entry</button>
+            </div>
         </div>
     </div>
 
@@ -260,7 +279,7 @@
             "Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic",
             "Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology",
             "Quidditch"
-        ]; // Exactly 13 Subjects
+        ];
 
         const finalSummaryList = ["Ministry", "Auror"];
 
@@ -290,7 +309,7 @@
 
         // VALIDASI LINK URL
         function isValidLink(url) {
-            if (!url || url.trim() === "") return true; // Diizinkan kosong untuk dihapus
+            if (!url || url.trim() === "") return true; 
             var clean = url.trim().toLowerCase();
             return clean.startsWith('http://') || clean.startsWith('https://');
         }
@@ -452,149 +471,6 @@
         }
 
         // ==========================================
-        // AUTO-SAVE FUNGSI UNTUK TAB MATERI & GRAND SUMMARY
-        // ==========================================
-        function saveGrandSummaryRow(btnEl, subject, rowIdx) {
-            var tr = btnEl.closest('tr');
-            
-            // Validasi Tautan
-            var linkInput = tr.querySelector('.gs-link');
-            var link = linkInput ? linkInput.value.trim() : '';
-            if (link && !isValidLink(link)) return showToast("⚠️ Must be a valid URL starting with http/https", "error");
-
-            var status = tr.querySelector('.gs-status') ? tr.querySelector('.gs-status').value : 'Pending';
-            var catatan = tr.querySelector('.gs-catatan') ? tr.querySelector('.gs-catatan').value.trim() : '';
-            
-            var month = document.getElementById('monthSelector').value;
-            btnEl.innerText = "Saving...";
-            
-            var payload = JSON.stringify({link: link, status: status, catatan: catatan, finalSumm: "", rowIdx: rowIdx});
-
-            fetch(API_URL, {
-                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveGrandSummaryBackend", month: month, week: "V2", subject: subject, link: payload })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' || res.success) { 
-                    showToast("✅ Grand Summary Saved!", "success"); 
-                    fetchLibraryData(); // REFRESH UI UNTUK MENGUNCI LINK
-                } 
-                else showToast("❌ Failed to save!", "error");
-            }).catch(e => { btnEl.innerText = "💾 Save"; showToast("❌ Error Connection", "error"); });
-        }
-
-        function saveFinalSummaryRow(btnEl, category, rowIdx) {
-            var tr = btnEl.closest('tr');
-            
-            var linkInput = tr.querySelector('.fs-link');
-            var link = linkInput ? linkInput.value.trim() : '';
-            if (link && !isValidLink(link)) return showToast("⚠️ Must be a valid URL starting with http/https", "error");
-
-            var status = tr.querySelector('.fs-status') ? tr.querySelector('.fs-status').value : 'Pending';
-            var catatan = tr.querySelector('.fs-catatan') ? tr.querySelector('.fs-catatan').value.trim() : '';
-            
-            var month = document.getElementById('monthSelector').value;
-            btnEl.innerText = "Saving...";
-            
-            var payload = JSON.stringify({link: link, status: status, catatan: catatan, rowIdx: rowIdx});
-
-            fetch(API_URL, {
-                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveFinalSummaryBackend", month: month, week: "V2", category: category, link: payload })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' || res.success) { 
-                    showToast("✅ Final Summary Saved!", "success"); 
-                    fetchLibraryData(); // REFRESH UI UNTUK MENGUNCI LINK
-                } 
-                else showToast("❌ Failed to save!", "error");
-            }).catch(e => { btnEl.innerText = "💾 Save"; showToast("❌ Error Connection", "error"); });
-        }
-
-        function autoSaveMaterialRow(btnEl, idx) {
-            var tr = btnEl.closest('tr');
-            var subjLevel = tr.querySelector('.mat-subj').innerText;
-            var inputs = tr.querySelectorAll('.mat-link');
-            var linksArray = Array.from(inputs).map(inp => inp.value.trim());
-            
-            for (let l of linksArray) {
-                if (l && !isValidLink(l)) return showToast("⚠️ All inputs must be valid URLs starting with http/https", "error");
-            }
-            
-            var month = document.getElementById('monthSelector').value;
-            var payload = [subjLevel].concat(linksArray);
-            
-            btnEl.innerText = "Saving...";
-            
-            fetch(API_URL, {
-                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: "", classDate: "SAVE_MATERI_V2", subject: "row_" + idx, link: JSON.stringify(payload), title: "" })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' || res.success) { 
-                    showToast("✅ Row Saved!", "success"); 
-                    fetchLibraryData(); // REFRESH UI UNTUK MENGUNCI LINK
-                } 
-                else showToast("❌ Failed to save!", "error");
-            }).catch(e => {
-                btnEl.innerText = "💾 Save Row";
-                showToast("❌ Error Connection", "error");
-            });
-        }
-
-        // ==========================================
-        // MANUAL ENTRY REGULAR (FORM INPUT)
-        // ==========================================
-        function openManualModal() {
-            document.getElementById('manualModal').style.display = 'flex';
-            document.getElementById('manClassDate').value = '';
-            document.getElementById('manTitle').value = '';
-            document.getElementById('manLink').value = '';
-            document.getElementById('manCategory').selectedIndex = 0;
-            document.getElementById('manSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>';
-        }
-        function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
-        
-        function updateManualModalSubjects() {
-            var cat = document.getElementById('manCategory').value;
-            var subjSelect = document.getElementById('manSubjectItem');
-            subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
-        }
-
-        function saveManualEntryRegular() {
-            var cDate = document.getElementById('manClassDate').value;
-            var title = document.getElementById('manTitle').value;
-            var link = document.getElementById('manLink').value;
-            var cat = document.getElementById('manCategory').value;
-            var subjItem = document.getElementById('manSubjectItem').value;
-            var month = document.getElementById('monthSelector').value;
-            var week = document.getElementById('weekSelector').value;
-
-            if(!cDate || !link || !cat || !subjItem) return showToast("⚠️ Please fill all fields!", "error");
-            if (!isValidLink(link)) return showToast("⚠️ Must be a valid URL starting with http/https", "error");
-            
-            var fullSubject = cat + ' - ' + subjItem;
-            closeManualModal();
-            showToast("Saving Entry...");
-
-            fetch(API_URL, {
-                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: week, classDate: cDate, title: title, link: link, subject: fullSubject })
-            })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === 'success' || res.success) {
-                    showToast("✅ Entry saved!", "success");
-                    fetchLibraryData();
-                } else showToast("❌ Failed to save: " + res.message, "error");
-            }).catch(e => { showToast("❌ Connection Error", "error"); });
-        }
-
-        // ==========================================
         // RENDER TABS UTAMA
         // ==========================================
         function renderTabs() {
@@ -656,6 +532,8 @@
                                 savedEntries.forEach(item => {
                                     let safeL = safeLink(item.link);
                                     let encL = encodeURIComponent(item.link); 
+                                    
+                                    // Semua entry, termasuk manual, sekarang BISA diedit secara universal
                                     let actionBtns = `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${catPrefix}', '${subj}', '${fullSubjName}')">✏️ Edit</button>`;
 
                                     tbodyHtml += `
@@ -689,11 +567,10 @@
                     container.appendChild(divLevel);
                 }
 
-                // 2. RENDER LEVEL BEGINNER & ADVANCED
                 renderLevelTable('Beginner', 'tab-Beginner');
                 renderLevelTable('Advanced', 'tab-Advanced');
 
-                // 3. RENDER MATERI TAMBAHAN (25 SLOT PENGASJAR & QNA)
+                // 3. RENDER MATERI TAMBAHAN (25 SLOT)
                 let matTbody = '';
                 let matData = libraryDataStore.materials || [];
                 
@@ -740,11 +617,9 @@
                 staticGrandSummaryList.forEach((subj, i) => {
                     let m = gsData[subj] || { rowIdx: -1, link: '', status: 'Pending', catatan: '' };
                     let mStatus = m.status === 'ACC' ? 'Approved' : (m.status === 'Revisi' ? 'Revision' : m.status);
-
                     let isLockedForLR = (mStatus === 'Approved' && !canApproveGrandSummary);
                     
                     let linkHtml = getLinkHtml(m.link, "Paste URL here...", "gs-link", isLockedForLR);
-                    
                     let catHtml = ''; let statusHtml = '';
 
                     if (canApproveGrandSummary) {
@@ -786,11 +661,9 @@
                 finalSummaryList.forEach((cat, i) => {
                     let m = fsData[cat] || { rowIdx: -1, link: '', status: 'Pending', notes: '' };
                     let mStatus = m.status === 'ACC' ? 'Approved' : (m.status === 'Revisi' ? 'Revision' : m.status);
-
                     let isLockedForLR = (mStatus === 'Approved' && !canApproveGrandSummary);
 
                     let linkHtml = getLinkHtml(m.link, "Paste Final Summary URL here...", "fs-link", isLockedForLR);
-                    
                     let catHtml = ''; let statusHtml = '';
 
                     if (canApproveGrandSummary) {
@@ -975,6 +848,55 @@
                     } else showToast("Failed to save: " + res.message, "error");
                 });
             }
+        }
+
+        // ==========================================
+        // MANUAL ENTRY REGULAR (FORM INPUT)
+        // ==========================================
+        function openManualModal() {
+            document.getElementById('manualModal').style.display = 'flex';
+            document.getElementById('manClassDate').value = '';
+            document.getElementById('manTitle').value = '';
+            document.getElementById('manLink').value = '';
+            document.getElementById('manCategory').selectedIndex = 0;
+            document.getElementById('manSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>';
+        }
+        function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
+        
+        function updateManualModalSubjects() {
+            var cat = document.getElementById('manCategory').value;
+            var subjSelect = document.getElementById('manSubjectItem');
+            subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
+        }
+
+        function saveManualEntryRegular() {
+            var cDate = document.getElementById('manClassDate').value;
+            var title = document.getElementById('manTitle').value;
+            var link = document.getElementById('manLink').value;
+            var cat = document.getElementById('manCategory').value;
+            var subjItem = document.getElementById('manSubjectItem').value;
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+
+            if(!cDate || !link || !cat || !subjItem) return showToast("⚠️ Please fill all fields!", "error");
+            if (!isValidLink(link)) return showToast("⚠️ Must be a valid URL starting with http/https", "error");
+            
+            var fullSubject = cat + ' - ' + subjItem;
+            closeManualModal();
+            showToast("Saving Entry...");
+
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: week, classDate: cDate, title: title, link: link, subject: fullSubject })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    showToast("✅ Entry saved!", "success");
+                    fetchLibraryData();
+                } else showToast("❌ Failed to save: " + res.message, "error");
+            }).catch(e => { showToast("❌ Connection Error", "error"); });
         }
     </script>
 </body>
