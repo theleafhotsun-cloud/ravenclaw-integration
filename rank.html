@@ -91,6 +91,8 @@
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            
+            <!-- MENU RANK PANEL (SUDAH DIMUNCULKAN) -->
             <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')" class="active">Rank Panel</a></li>
         </ul>
     </div>
@@ -110,7 +112,7 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + Additional Pts + (Rank SP/OWL x 15).<br>
+                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + Additional Pts (x1) + (Rank SP/OWL x 15).<br>
                 <i>*Attendance & Summaries are auto-synced from Monthly Room Data. Inactive/Resigned students are kept if they have points.</i>
             </div>
 
@@ -180,8 +182,8 @@
                     <input type="number" id="inpRank" placeholder="Total Rank">
                 </div>
                 <div class="form-group">
-                    <label>Additional Pts (Multiplier x1)</label>
-                    <input type="number" id="inpAdd" placeholder="Direct Points">
+                    <label>Direct Points (Multiplier x1)</label>
+                    <input type="number" id="inpAdd" placeholder="Manual Add/Minus Points">
                 </div>
             </div>
 
@@ -198,6 +200,7 @@
     </div>
 
     <script>
+        // GANTI API URL DENGAN URL DEPLOYMENT KAMU
         const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -231,6 +234,7 @@
         }
 
         function setupDynamicSidebar() {
+            // VIEWER & EDITOR PERMISSIONS
             isRankViewer = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole.includes('editor') || userRole === 'system admin';
             isRankEditor = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole === 'system admin';
 
@@ -292,16 +296,15 @@
             document.getElementById('rankTable').style.display = 'none';
             document.getElementById('tableBody').innerHTML = '';
             
-            // JALUR RAHASIA HIJACK PROTOCOL:
-            // Mengirim request melalui action "savePeriodSettings" agar tidak butuh ganti 1_Main.gs
+            // JALUR RESMI: ACTION "getRankData" (Dari 1_Main.gs)
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "savePeriodSettings", mLabel: month, monthLabel: month, month: month, tWeeks: 0, totalWeeks: 0, week: 0, username: "HIJACK_GET_RANK" })
+                body: JSON.stringify({ action: "getRankData", month: month })
             })
             .then(r => r.json())
             .then(res => {
                 document.getElementById('loadingMsg').style.display = 'none';
-                if(res.success) {
+                if(res.status === 'success' || res.success) {
                     rankDataStore = res.data;
                     renderTable(rankDataStore);
                 } else {
@@ -330,7 +333,7 @@
                 var rClass = s.isInactive ? "row-inactive" : "";
                 var statText = s.isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:10px;">INACTIVE/RESIGNED</span>` : `<span style="color:var(--success); font-weight:bold; font-size:10px;">ACTIVE</span>`;
                 
-                var actBtn = isRankEditor ? `<button class="btn-manage" onclick="openEditModal('${s.vault}')">✏️ EDIT PTS</button>` : `<span style="font-size:10px; color:gray;">View Only</span>`;
+                var actBtn = isRankEditor ? `<button class="btn-manage" onclick="openEditModal('${s.vault}')">✏️ EDIT PTS</button>` : `<span style="font-size:10px; color:gray; font-weight:bold;">View Only</span>`;
 
                 var details = `Att: ${s.att}x | Sum: ${s.sum}x<br><i><small>Gms: ${s.games} | SC: ${s.schc} | Rnk: ${s.rank} | Add: ${s.add}</small></i>`;
                 var rankNum = `<div style="background:var(--sapphire); color:white; width:25px; height:25px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px; margin:auto;">${s.rankNumber}</div>`;
@@ -349,7 +352,10 @@
                         <div style="font-size:10px; color:gray;">${s.username} - ${s.grade}</div>
                     </td>
                     <td>${statText}</td>
-                    <td style="font-family:monospace; font-weight:bold;">${autoPts}</td>
+                    <td style="font-family:monospace; font-weight:bold;">
+                        <span title="Total Attendance & Summaries Points">${autoPts}</span><br>
+                        <span style="font-size:9px; color:gray;">Att: ${s.att} | Sum: ${s.sum}</span>
+                    </td>
                     <td>
                         <div style="font-family:monospace; font-weight:bold;">${manualPts}</div>
                         ${s.notes ? `<div style="font-size:9px; color:var(--info); font-style:italic;">"${s.notes}"</div>` : ''}
@@ -401,20 +407,18 @@
             var btn = document.getElementById('btnSave');
             btn.innerText = "Saving..."; btn.disabled = true;
 
-            // HIJACK PAYLOAD UNTUK SAVE RANK (Melewati fungsi savePeriodSettings)
-            var hijackStr = `HIJACK_SAVE_RANK|||${vault}|||${games}|||${schc}|||${add}|||${rank}|||${notes}`;
-
+            // JALUR RESMI: ACTION "saveManualRank" (Dari 1_Main.gs)
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "savePeriodSettings", mLabel: month, monthLabel: month, month: month, tWeeks: 0, totalWeeks: 0, week: 0, username: hijackStr })
+                body: JSON.stringify({ action: "saveManualRank", month: month, vault: vault, games: games, schc: schc, add: add, rank: rank, notes: notes })
             })
             .then(r => r.json())
             .then(res => {
                 btn.innerText = "Save Points"; btn.disabled = false;
-                if(res.success) {
+                if(res.status === 'success' || res.success) {
                     showToast("✅ Manual Points Saved!", "success");
                     closeEditModal();
-                    fetchRankData();
+                    fetchRankData(); // Minta sistem update ulang urutan peringkatnya
                 } else {
                     showToast("❌ Failed: " + res.message, "error");
                 }
