@@ -104,17 +104,18 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
             <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
             <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
             <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')" class="active">Class Database</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
+            <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
         </ul>
     </div>
 
@@ -213,7 +214,7 @@
         // ==========================================
         // 1. GLOBAL VARIABLES & INIT
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxjzWDIMv8mRx6rLvTkTLP1ke5D1SdWXz2fhsl_gN1bSRPfAqeAPh6HxkUrZMUorT7U/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -256,41 +257,65 @@
         // 3. SIDEBAR & NAVIGATION LOGIC
         // ==========================================
         function setupDynamicSidebar() {
-            var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
-            var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
-            var isLeadroom = windowUserRole.includes('leadroom');
-            var isEditor = windowUserRole.includes('editor');
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            // Set Nama Panel Sesuai Jabatan
             var sidebarTitle = document.getElementById('sidebarTitle');
-            if (sidebarTitle) sidebarTitle.innerText = ((windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole).toUpperCase() + " PANEL";
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
 
-            var dirMenu = document.querySelector('.menu-taskdirectory');
-            var tmMenu = document.querySelector('.menu-taskmaster');
-            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
-            if (tmMenu) tmMenu.style.display = 'block';
+            // Sembunyikan semua menu terlebih dahulu
+            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
-            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            else if (isPrefect) ['menu-salary', 'menu-workreport', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            // Atur Hak Akses Menu Sesuai Permintaan
+            if (isHH) {
+                // Headhouse: Muncul Semua
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                // VP & Prefect: Semua kecuali Salary dan Work Report
+                var allowed = ['menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-sop'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
+            else if (isLeadroom) {
+                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
+                var allowed = ['menu-activeroom', 'menu-classdb', 'menu-librarydb', 'menu-taskmaster', 'menu-sop'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
+            else if (isEditor) {
+                // Editor: SOP, Task Master, Staff & Birthdays, Rank
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
         }
 
         function navigateHome() {
-            var targetPage = 'headhouse';
-            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
-            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
-            else if (windowUserRole.includes('editor')) targetPage = 'editor';
-            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = targetPage + "-dashboard.html";
+            // Mengarahkan user ke Home (Dashboard) mereka masing-masing sesuai role
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+            var targetPage = 'headhouse'; // Default
+
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            
+            window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) {
-            window.location.href = targetPage + ".html";
+        function navigate(targetPage) { 
+            window.location.href = targetPage + ".html"; 
         }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = "index.html";
+        
+        function logout() { 
+            localStorage.clear(); 
+            window.location.href = "index.html"; 
         }
 
         // ==========================================
