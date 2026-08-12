@@ -89,27 +89,13 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
+    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
-        <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
-            <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
-        </ul>
+        <ul class="nav-links" id="sidebarMenu"></ul>
     </div>
 
     <div class="main-content">
@@ -198,7 +184,7 @@
 
     <script>
         // --- 1. SETTING URL API ---
-       const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
@@ -214,7 +200,8 @@
         let missedTasksArray = []; // Penyimpan Data Tugas Terlewat
 
         window.onload = function() {
-            document.getElementById("display-username").innerText = loggedInUser;
+            var displayUsernameEl = document.getElementById("displayUsername");
+            if(displayUsernameEl) displayUsernameEl.innerText = loggedInUser;
             setupDynamicSidebar(); 
             
             let loadMsg = document.getElementById('loadingMsg');
@@ -244,7 +231,8 @@
             });
         };
 
-       function setupDynamicSidebar() {
+        // --- 4. FUNGSI DYNAMIC SIDEBAR NAVIGASI ---
+        function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -258,23 +246,48 @@
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
+            const allMenus = [
+                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
+                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
+                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
+                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
+                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
+            ];
+
+            let allowedMenuIds = [];
 
             if (isHH) {
-                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+                allowedMenuIds = allMenus.map(m => m.id);
             } 
             else if (isPrefect) {
-                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
-                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
             } 
             else if (isLeadroom) {
-                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
-                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
             } 
             else if (isEditor) {
-                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
-                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
             }
+
+            var sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.innerHTML = ''; 
+            
+            allMenus.forEach(menu => {
+                if (allowedMenuIds.includes(menu.id)) {
+                    var li = document.createElement('li');
+                    li.className = menu.id;
+                    li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '">' + menu.label + '</a>';
+                    sidebarMenu.appendChild(li);
+                }
+            });
         }
 
         function navigateHome() {
@@ -297,6 +310,7 @@
             localStorage.clear(); 
             window.location.href = "index.html"; 
         }
+
         // ========================================================
         // LOGIKA PENYIMPANAN AMAN & RENDER TABEL
         // ========================================================
