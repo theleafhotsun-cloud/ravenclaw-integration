@@ -951,7 +951,7 @@
             setTimeout(function() { s.style.display = "none"; }, 3000);
         }
 
-       function setupDynamicSidebar() {
+      function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -1012,17 +1012,6 @@
             localStorage.clear(); 
             window.location.href = "index.html"; 
         }
-
-        function navigateHome() {
-            var targetPage = 'headhouse'; 
-            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
-            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
-            else if (windowUserRole.includes('editor')) targetPage = 'editor';
-            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = targetPage + "-dashboard.html";
-        }
-        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block'; 
