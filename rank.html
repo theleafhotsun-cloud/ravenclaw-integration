@@ -198,6 +198,7 @@
     </div>
 
     <script>
+        // GANTI API URL DENGAN URL DEPLOYMENT KAMU
         const API_URL = "https://script.google.com/macros/s/AKfycbyNVcW61blPUjWbhI-GasbumUwLnIuvleF7taO-L0B83_Y8vZfSlX_4T1MdhXkMdGqh/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -292,10 +293,10 @@
             document.getElementById('rankTable').style.display = 'none';
             document.getElementById('tableBody').innerHTML = '';
             
-            // JALUR RESMI: ACTION "getRankData" 
+            // MENGGUNAKAN JALUR BYPASS (HIJACK)
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getRankData", month: month })
+                body: JSON.stringify({ action: "saveLibraryMapping", month: month, week: "", classDate: "HIJACK_GET_RANK", link: "", subject: "" })
             })
             .then(r => r.json())
             .then(res => {
@@ -403,10 +404,12 @@
             var btn = document.getElementById('btnSave');
             btn.innerText = "Saving..."; btn.disabled = true;
 
-            // JALUR RESMI: ACTION "saveManualRank"
+            var payload = JSON.stringify({ vault: vault, games: games, schc: schc, add: add, rank: rank, notes: notes });
+
+            // MENGGUNAKAN JALUR BYPASS (HIJACK)
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveManualRank", month: month, vault: vault, games: games, schc: schc, add: add, rank: rank, notes: notes })
+                body: JSON.stringify({ action: "saveLibraryMapping", month: month, week: "", classDate: "HIJACK_SAVE_RANK", link: payload, subject: "" })
             })
             .then(r => r.json())
             .then(res => {
@@ -414,7 +417,7 @@
                 if(res.status === 'success' || res.success) {
                     showToast("✅ Manual Points Saved!", "success");
                     closeEditModal();
-                    fetchRankData(); // Minta sistem update ulang urutan peringkatnya
+                    fetchRankData(); 
                 } else {
                     showToast("❌ Failed: " + res.message, "error");
                 }
