@@ -931,7 +931,8 @@
         };
 
         window.onload = function() {
-            document.getElementById("display-username").innerText = loggedInUser;
+            var displayUsernameEl = document.getElementById("displayUsername");
+            if(displayUsernameEl) displayUsernameEl.innerText = loggedInUser;
             setupDynamicSidebar();
             initPeriodConfig();
         };
@@ -952,7 +953,7 @@
             setTimeout(function() { s.style.display = "none"; }, 3000);
         }
 
-         function setupDynamicSidebar() {
+        function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
