@@ -106,17 +106,19 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
+            <!-- Navigasi Sesuai Urutan Baru -->
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
             <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')" class="active">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
             <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
             <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
@@ -284,9 +286,9 @@
     <!-- SCRIPT AREA -->
     <script>
         // ==========================================
-        // MASUKKAN URL DEPLOYMENT BARU KAMU DI SINI
+        // URL API SUDAH SAYA PERBARUI SESUAI INSTRUKSI KAMU
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -306,12 +308,12 @@
             fetchStudents();
         };
 
-        // Helper untuk mengecek boolean (Kebal terhadap text "FALSE")
+        // Helper untuk mengecek boolean
         function isTrue(val) {
             return val === true || String(val).toLowerCase() === 'true';
         }
 
-        // Helper untuk mengurai string gabungan (Alasan|||Link)
+        // Helper untuk mengurai string gabungan WL (Alasan|||Link)
         function parseWlLink(rawLink) {
             if (!rawLink || rawLink === '-' || String(rawLink).toUpperCase() === 'FALSE' || String(rawLink).toUpperCase() === 'TRUE') {
                 return { reason: '', link: '' };
@@ -325,7 +327,7 @@
         }
 
         // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI
+        // LOGIKA SIDEBAR & NAVIGASI (UPDATE ROLE AKSES)
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -336,12 +338,28 @@
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
-            ['menu-sop', 'menu-taskmaster'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
-            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-taskdirectory', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            // Atur Hak Akses Menu Sesuai Permintaan (Terbaru)
+            if (isHH) {
+                // Headhouse: Muncul Semua
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                // VP & Prefect: Semua kecuali Salary dan Work Report
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
+            else if (isLeadroom) {
+                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
+            else if (isEditor) {
+                // Editor: SOP, Task Master, Staff & Birthdays, Rank
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
         }
 
         function navigateHome(element) {
@@ -358,7 +376,7 @@
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
-        // LOGIKA STUDENT DATABASE & FETCH API
+        // LOGIKA STUDENT DATABASE & FETCH API (DISEDERHANAKAN AGAR AKURAT)
         // ==========================================
         function fetchStudents() {
             document.getElementById('loadingMsg').style.display = 'block';
@@ -400,7 +418,7 @@
                 let parsedWl2 = parseWlLink(student.wl2Link);
                 let wlDisplay = '';
 
-                // Memastikan kompatibilitas data lama (yang tidak menggunakan delimiter)
+                // Memastikan kompatibilitas data lama
                 let deducedR1 = parsedWl1.reason;
                 let deducedR2 = parsedWl2.reason;
 
@@ -449,6 +467,11 @@
                 const rowClass = isInactiveStatus ? 'row-dimmed' : '';
                 const deleteWarning = isInactiveStatus ? `<span class="delete-warning">⚠️ Please Delete</span>` : '';
 
+                // Memperbaiki nilai yang terlempar undefined dari array backend yang strukturnya unik
+                let m_totalClasses = student.totalClasses || 0;
+                let m_fullName = student.fullName || '-';
+                if(m_fullName === '-' && student.nickname) m_fullName = student.nickname; // Fail-safe name
+                
                 const tr = document.createElement('tr');
                 tr.className = rowClass;
                 tr.innerHTML = `
@@ -456,19 +479,19 @@
                     <td class="vault-tag">${student.vault}</td>
                     <td><div style="font-weight:bold;">${student.username}</div></td>
                     <td>
-                        <div style="color:var(--sapphire); font-weight:bold;">${student.fullName || '-'}</div>
+                        <div style="color:var(--sapphire); font-weight:bold;">${m_fullName}</div>
                         <div style="font-size:10px; color:gray; font-style:italic;">"${student.nickname || '-'}"</div>
                     </td>
                     <td>
                         <div style="font-size:11px;"><b>DOB:</b> ${student.dob || '-'}</div>
                         <div style="font-size:11px;"><b>FC:</b> ${student.faceClaim || '-'}</div>
                     </td>
-                    <td>${student.grade}</td>
+                    <td>${student.grade || 'Unknown'}</td>
                     <td>
                         <div><b>Major:</b> ${student.major || '-'}</div>
                         <div style="font-size:10px; color:gray;"><b>Electives:</b> ${student.electives || '-'}</div>
                     </td>
-                    <td><span class="class-badge">${student.totalClasses} Classes</span></td>
+                    <td><span class="class-badge">${m_totalClasses} Classes</span></td>
                     <td>
                         <div style="margin-bottom: 6px;">${statusBadges}</div>
                         ${wlDisplay}
@@ -646,11 +669,9 @@
                 document.getElementById('studDOB').value = formatDOBForPicker(s.dob);
                 document.getElementById('studFaceClaim').value = s.faceClaim !== '-' ? s.faceClaim : '';
 
-                // BACA ALASAN DAN LINK WL SECARA AKURAT
                 let p1 = parseWlLink(s.wl1Link);
                 let p2 = parseWlLink(s.wl2Link);
 
-                // Deduksi alasan dari boolean lama (untuk backward compatibility)
                 let oldReasons = [];
                 if(isTrue(s.wlClass)) oldReasons.push("Class");
                 if(isTrue(s.wlInactive)) oldReasons.push("Inactive");
