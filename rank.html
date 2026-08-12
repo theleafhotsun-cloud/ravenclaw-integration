@@ -40,34 +40,40 @@
         .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         .sop-banner { background-color: #fff9c4; border-left: 4px solid var(--warning); padding: 12px 15px; margin-bottom: 15px; font-size: 11px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
 
+        /* INLINE EDIT UI */
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
+        .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 20px; font-size: 12px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
+        .tab-btn.active { background-color: var(--royal-blue); color: white; border-bottom: 2px solid var(--sapphire);}
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom:20px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead { position: sticky; top: 0; z-index: 1;}
-        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 11px; vertical-align: middle;}
-        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 10px; text-transform: uppercase; }
+        th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 11px; vertical-align: middle;}
+        th { background-color: var(--sapphire); color: var(--swan-wing); font-size: 10px; text-transform: uppercase; }
         tr:hover { background-color: var(--swan-wing); }
         .row-inactive td { color: gray; background-color: #f9f9f9; }
 
-        .btn-manage { background-color: var(--quicksand); color: var(--royal-blue); border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; transition: background 0.3s;}
-        .btn-manage:hover { background-color: #d1b67e; }
+        .inline-inp { width: 50px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; text-align: center; background-color: #fffde7; font-weight:bold;}
+        .inline-inp:focus { border-color: var(--royal-blue); background-color: white; outline: none;}
+        .inline-txt { width: 120px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px;}
 
-        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 13px;}
-        .pts-badge { background-color: var(--success); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .btn-save-inline { background-color: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; text-transform: uppercase;}
+        .btn-save-inline:hover { background-color: #1b5e20; }
+        .btn-save-inline:disabled { background-color: gray; cursor: not-allowed;}
 
-        /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding:10px;}
-        .modal-box { background-color: var(--swan-wing); padding: 25px; border-radius: 8px; width: 450px; max-width:95%; max-height:85vh; overflow-y:auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 15px; font-size: 16px;}
-        
-        .form-row { display: flex; gap: 10px; margin-bottom: 12px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
-        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 12px;}
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--shellstone); padding-top: 15px;}
-        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
-        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
-        
+        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 12px;}
+
+        /* LEADERBOARD UI */
+        .leaderboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 10px;}
+        .lb-card { background: white; border: 1px solid var(--shellstone); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .lb-card h5 { margin: 0; padding: 12px; background: var(--royal-blue); color: var(--quicksand); text-transform: uppercase; font-size: 12px; text-align: center; border-bottom: 3px solid var(--sapphire);}
+        .rank-circle { width: 20px; height: 20px; border-radius: 50%; background: var(--quicksand); color: var(--royal-blue); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10px; margin: auto;}
+        .rank-1 { background: #d4af37; color: white; box-shadow: 0 0 5px #d4af37; }
+        .rank-2 { background: #c0c0c0; color: white; }
+        .rank-3 { background: #cd7f32; color: white; }
+
         #toastMsg { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; background: var(--success); color: white; font-weight: bold; font-size: 13px; display: none; z-index: 9999;}
     </style>
 </head>
@@ -113,17 +119,15 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Additional Pts x 10) + (Rank SP/OWL x 15).<br>
-                <i>*Attendance = Attended + Replacement Tasks (auto-synced from Active Room Database).</i><br>
-                <i>*Alpha/Aquilae is determined manually based on the highest score. Max Rank O.W.L / SP input is 10.</i>
+                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Additional Events x 10) + (OWL Score) + (SP Score).<br>
+                <i>*Attendance = Attended + Replacement Tasks (auto-synced).</i><br>
+                <i>*Rank O.W.L & SP Rank limit input is max 10. Nilai Score (Points) added directly to Total.</i>
             </div>
 
             <div class="period-controller">
                 <div class="filter-group">
                     <label>Select Month:</label>
-                    <select id="monthSelector" class="selector-box" onchange="fetchRankData()">
-                        <!-- Dipopulasikan via JS -->
-                    </select>
+                    <select id="monthSelector" class="selector-box" onchange="fetchRankData()"></select>
                 </div>
                 <div class="filter-group">
                     <input type="text" id="searchInput" class="search-box" placeholder="Search Vault or Name..." onkeyup="filterTable()">
@@ -132,72 +136,90 @@
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">⏳ Calculating Points... Please Wait.</div>
             
+            <!-- SECTION EDIT DATA (CATEGORIZED TABS) -->
             <div class="box-section">
-                <h4>Rank Board</h4>
+                <h4>Inline Data Editor</h4>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="openTab('tabGeneral')">General Activity</button>
+                    <button class="tab-btn" onclick="openTab('tabOWL')">Rank O.W.L</button>
+                    <button class="tab-btn" onclick="openTab('tabSP')">Student Point (SP)</button>
+                </div>
+
                 <div class="table-container">
-                    <table id="rankTable" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th style="width: 40px; text-align: center;">Rank</th>
-                                <th>Vault</th>
-                                <th>Name & Username</th>
-                                <th>Status</th>
-                                <th title="Sum x3, Att (Attended + Replacement) x5">Auto Pts (Base)</th>
-                                <th title="Games x10, SC/HC x5, Add x10, Rank x15">Manual Pts</th>
-                                <th>Total Points</th>
-                                <th style="text-align:center;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Injected via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <!-- GENERAL TAB -->
+                    <div id="tabGeneral" class="tab-content active">
+                        <table>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Notes</th><th>Action</th></tr></thead>
+                            <tbody id="genBody"></tbody>
+                        </table>
+                    </div>
 
-    <!-- MODAL EDIT MANUAL POINTS -->
-    <div class="modal-overlay" id="editModal">
-        <div class="modal-box">
-            <h3>✏️ Edit Manual Points</h3>
-            <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 15px; background: #f0f0f0; padding: 8px; border-radius: 4px;">
-                <b>Student:</b> <span id="adjVault"></span> - <span id="adjName"></span>
-            </div>
-            
-            <input type="hidden" id="editVault">
+                    <!-- OWL TAB -->
+                    <div id="tabOWL" class="tab-content">
+                        <table>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="Points directly added to total">O.W.L Score</th><th>Action</th></tr></thead>
+                            <tbody id="owlBody"></tbody>
+                        </table>
+                    </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Games (Multiplier x10)</label>
-                    <input type="number" id="inpGames" placeholder="Total Wins">
-                </div>
-                <div class="form-group">
-                    <label>SC / HC / GC (Multiplier x5)</label>
-                    <input type="number" id="inpSchc" placeholder="Total Entries">
+                    <!-- SP TAB -->
+                    <div id="tabSP" class="tab-content">
+                        <table>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">SP Rank</th><th title="Points directly added to total">SP Score</th><th>Action</th></tr></thead>
+                            <tbody id="spBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Rank SP / OWL (Multiplier x15) [Max 10]</label>
-                    <input type="number" id="inpRank" placeholder="Total Rank (Max 10)" max="10">
-                </div>
-                <div class="form-group">
-                    <label>Additional Points (Multiplier x10)</label>
-                    <input type="number" id="inpAdd" placeholder="Triwizard, Best Room, dll">
+            <!-- SECTION LEADERBOARDS (TOP 10) -->
+            <div class="box-section">
+                <h4>Top 10 Leaderboards</h4>
+                <div class="leaderboard-grid">
+                    
+                    <div class="lb-card">
+                        <h5>🏆 Alpha Aquilae (Overall)</h5>
+                        <table class="lb-table">
+                            <thead><tr><th style="width:30px;">Rank</th><th>Student</th><th>Total Pts</th></tr></thead>
+                            <tbody id="lbAlpha"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="lb-card">
+                        <h5>🛡️ Best Room</h5>
+                        <table class="lb-table">
+                            <thead><tr><th style="width:30px;">Rank</th><th>Room</th><th>Accumulation</th></tr></thead>
+                            <tbody id="lbRoom"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="lb-card">
+                        <h5>📜 Rank O.W.L Ministry</h5>
+                        <table class="lb-table">
+                            <thead><tr><th style="width:30px;">Rank</th><th>Student</th><th>OWL Score</th></tr></thead>
+                            <tbody id="lbMin"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="lb-card">
+                        <h5>⚔️ Rank O.W.L Auror</h5>
+                        <table class="lb-table">
+                            <thead><tr><th style="width:30px;">Rank</th><th>Student</th><th>OWL Score</th></tr></thead>
+                            <tbody id="lbAuror"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="lb-card">
+                        <h5>🌟 Rank Student Point (SP)</h5>
+                        <table class="lb-table">
+                            <thead><tr><th style="width:30px;">Rank</th><th>Student</th><th>SP Score</th></tr></thead>
+                            <tbody id="lbSp"></tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Notes / Explanations</label>
-                <textarea id="inpNotes" rows="2" placeholder="e.g. Winner of internal event..."></textarea>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveManualPoints()" id="btnSave">Save Points</button>
-            </div>
         </div>
     </div>
 
@@ -206,7 +228,6 @@
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-        
         if (!loggedInUser) window.location.href = "index.html";
 
         var isRankViewer = false;
@@ -216,23 +237,16 @@
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
             setupDynamicSidebar();
-            
-            if (!isRankViewer) {
-                alert("Access Denied! You do not have permission to view this page.");
-                navigateHome();
-                return;
-            }
-
+            if (!isRankViewer) { alert("Access Denied!"); navigateHome(); return; }
             initPeriodConfig();
         });
 
         function showToast(msg, type = "info") {
             var toast = document.getElementById('toastMsg');
             toast.innerHTML = msg;
-            if(type === "error") toast.style.backgroundColor = "#c62828";
-            else toast.style.backgroundColor = "#2e7d32";
+            toast.style.backgroundColor = type === "error" ? "#c62828" : "#2e7d32";
             toast.style.display = 'block';
-            setTimeout(function() { toast.style.display = 'none'; }, 3000);
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
         function setupDynamicSidebar() {
@@ -245,57 +259,33 @@
             var isEditor = userRole.includes('editor');
 
             var sidebarTitle = document.getElementById('sidebarTitle');
-            if (sidebarTitle) {
-                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
-                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
-            }
+            if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
             document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
-
-            if (isHH) {
-                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            } 
-            else if (isPrefect) {
-                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
-                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            } 
-            else if (isLeadroom) {
-                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
-                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            } 
-            else if (isEditor) {
-                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
-                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
+            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            else if (isPrefect) ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isLeadroom) ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            else if (isEditor) ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
         }
 
         function navigateHome() {
             var targetPage = 'headhouse';
-
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
             else if (userRole.includes('editor')) targetPage = 'editor';
             else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         function initPeriodConfig() {
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
             })
-            .then(r => r.json())
-            .then(res => {
+            .then(r => r.json()).then(res => {
                 if(res.status === 'success') {
                     var monthSel = document.getElementById('monthSelector'); 
                     if(res.data.activeMonth) {
@@ -303,7 +293,7 @@
                         monthSel.appendChild(opt);
                     }
                     if (res.data.archivedMonths) {
-                        res.data.archivedMonths.forEach(function(m) {
+                        res.data.archivedMonths.forEach(m => {
                             var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel;
                             monthSel.appendChild(opt);
                         });
@@ -318,156 +308,213 @@
             if(!month) return;
 
             document.getElementById('loadingMsg').style.display = 'block';
-            document.getElementById('rankTable').style.display = 'none';
-            document.getElementById('tableBody').innerHTML = '';
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getRankData", month: month })
             })
-            .then(r => r.json())
-            .then(res => {
+            .then(r => r.json()).then(res => {
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
-                    try {
-                        rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : (res.data || JSON.parse(res.message));
-                        renderTable(rankDataStore);
-                    } catch(err) {
-                        showToast("Failed to read server data.", "error");
-                    }
+                    rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+                    renderInputTables(rankDataStore);
+                    renderLeaderboards(rankDataStore);
                 } else {
                     showToast("Error loading data: " + res.message, "error");
                 }
             }).catch(e => {
-                console.error(e);
-                document.getElementById('loadingMsg').innerText = "Connection Error!";
+                document.getElementById('loadingMsg').style.display = 'none';
                 showToast("Connection Error!", "error");
             });
         }
 
-        function renderTable(data) {
-            document.getElementById('rankTable').style.display = 'table';
-            var tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // ==========================================
+        // RENDER INLINE EDIT TABLES
+        // ==========================================
+        function renderInputTables(data) {
+            const genBody = document.getElementById('genBody');
+            const owlBody = document.getElementById('owlBody');
+            const spBody  = document.getElementById('spBody');
+            genBody.innerHTML = ''; owlBody.innerHTML = ''; spBody.innerHTML = '';
 
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No ranking data found for this month.</td></tr>';
+                genBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No data found.</td></tr>';
                 return;
             }
 
-            data.forEach(function(s) {
-                var autoPts = (s.sum * 3) + (s.att * 5);
-                var manualPts = (s.games * 10) + (s.schc * 5) + (s.add * 10) + (s.rank * 15); // Logic Update (Add x10)
+            data.forEach(s => {
+                let rClass = s.isInactive ? "row-inactive" : "";
+                let statText = s.isInactive ? `<span style="color:var(--danger);">INACTIVE</span>` : `<span style="color:var(--success);">ACTIVE</span>`;
+                let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} <span style="font-size:9px;">(${statText})</span></div>
+                                <div style="font-size:10px; color:gray; margin-top:2px;"><b>Jurusan:</b> ${s.major} | <b>Kamar:</b> ${s.room} | <b>Tot. Kelas:</b> ${s.totClass}</div>`;
                 
-                var rClass = s.isInactive ? "row-inactive" : "";
-                var statText = s.isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:10px;">INACTIVE/RESIGNED</span>` : `<span style="color:var(--success); font-weight:bold; font-size:10px;">ACTIVE</span>`;
-                
-                var actBtn = isRankEditor ? `<button class="btn-manage" onclick="openEditModal('${s.vault}')">✏️ EDIT PTS</button>` : `<span style="font-size:10px; color:gray; font-weight:bold;">View Only</span>`;
+                let basePts = (s.sum * 3) + (s.att * 5);
+                let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
-                var rankNum = `<div style="background:var(--sapphire); color:white; width:25px; height:25px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px; margin:auto;">${s.rankNumber}</div>`;
-
-                if (s.rankNumber === 1) rankNum = `<div style="background:#d4af37; color:white; width:25px; height:25px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px; margin:auto; box-shadow:0 0 5px #d4af37;">🥇</div>`;
-                else if (s.rankNumber === 2) rankNum = `<div style="background:#c0c0c0; color:white; width:25px; height:25px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px; margin:auto;">🥈</div>`;
-                else if (s.rankNumber === 3) rankNum = `<div style="background:#cd7f32; color:white; width:25px; height:25px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px; margin:auto;">🥉</div>`;
-
-                var tr = document.createElement('tr');
-                tr.className = rClass;
-                tr.innerHTML = `
-                    <td style="text-align: center;">${rankNum}</td>
-                    <td class="vault-tag">${s.vault}</td>
-                    <td>
-                        <div style="font-weight:bold; color:var(--royal-blue);">${s.name}</div>
-                        <div style="font-size:10px; color:gray;">${s.username} - ${s.grade}</div>
-                    </td>
-                    <td>${statText}</td>
-                    <td style="font-family:monospace; font-weight:bold;">
-                        <span title="Total Attendance & Summaries Points">${autoPts}</span><br>
-                        <span style="font-size:9px; color:gray;">Att: ${s.att} | Sum: ${s.sum}</span>
-                    </td>
-                    <td>
-                        <div style="font-family:monospace; font-weight:bold;">${manualPts}</div>
-                        ${s.notes ? `<div style="font-size:9px; color:var(--info); font-style:italic;">"${s.notes}"</div>` : ''}
-                    </td>
-                    <td><span class="pts-badge">${s.totalPoints} PTS</span></td>
-                    <td style="text-align:center;">${actBtn}</td>
+                // General Tab Row
+                genBody.innerHTML += `
+                    <tr class="${rClass}">
+                        <td class="vault-tag">${s.vault}</td>
+                        <td>${infoHTML}<div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Auto Base Pts: <b>${basePts}</b> <small>(Att:${s.att}, Sum:${s.sum})</small></div></td>
+                        <td><input type="number" id="games_${s.vault}" value="${s.games}" class="inline-inp"></td>
+                        <td><input type="number" id="schc_${s.vault}" value="${s.schc}" class="inline-inp"></td>
+                        <td><input type="number" id="add_${s.vault}" value="${s.add}" class="inline-inp"></td>
+                        <td><input type="text" id="notes_${s.vault}" value="${s.notes}" class="inline-txt" placeholder="Keterangan event..."></td>
+                        <td>${btnHtml}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
+
+                // OWL Tab Row
+                owlBody.innerHTML += `
+                    <tr class="${rClass}">
+                        <td class="vault-tag">${s.vault}</td>
+                        <td>${infoHTML}</td>
+                        <td><input type="number" id="owlRank_${s.vault}" value="${s.owlRank}" class="inline-inp" max="10" placeholder="Rank"></td>
+                        <td><input type="number" id="owlScore_${s.vault}" value="${s.owlScore}" class="inline-inp" placeholder="Nilai"></td>
+                        <td>${btnHtml}</td>
+                    </tr>
+                `;
+
+                // SP Tab Row
+                spBody.innerHTML += `
+                    <tr class="${rClass}">
+                        <td class="vault-tag">${s.vault}</td>
+                        <td>${infoHTML}</td>
+                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" max="10" placeholder="Rank"></td>
+                        <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Nilai"></td>
+                        <td>${btnHtml}</td>
+                    </tr>
+                `;
             });
         }
 
         function filterTable() {
             var q = document.getElementById('searchInput').value.toLowerCase();
-            var filtered = rankDataStore.filter(function(s) {
-                return String(s.vault).toLowerCase().includes(q) || 
-                       String(s.name).toLowerCase().includes(q) || 
-                       String(s.username).toLowerCase().includes(q);
-            });
-            renderTable(filtered);
+            var filtered = rankDataStore.filter(s => 
+                String(s.vault).toLowerCase().includes(q) || 
+                String(s.name).toLowerCase().includes(q) || 
+                String(s.major).toLowerCase().includes(q)
+            );
+            renderInputTables(filtered); // Filter hanya tabel input, leaderboard tetap global!
         }
 
-        function openEditModal(vault) {
-            var s = rankDataStore.find(x => x.vault === vault);
-            if(!s) return;
-            document.getElementById('editVault').value = s.vault;
-            document.getElementById('adjVault').innerText = s.vault;
-            document.getElementById('adjName').innerText = s.name;
+        function saveInline(btn, vault) {
+            let s = rankDataStore.find(x => x.vault === vault);
             
-            document.getElementById('inpGames').value = s.games || 0;
-            document.getElementById('inpSchc').value = s.schc || 0;
-            document.getElementById('inpRank').value = s.rank || 0;
-            document.getElementById('inpAdd').value = s.add || 0;
-            document.getElementById('inpNotes').value = s.notes || "";
+            let elGms = document.getElementById(`games_${vault}`);
+            let elSchc = document.getElementById(`schc_${vault}`);
+            let elAdd = document.getElementById(`add_${vault}`);
+            let elNotes = document.getElementById(`notes_${vault}`);
             
-            document.getElementById('editModal').style.display = 'flex';
-        }
+            let elOwlR = document.getElementById(`owlRank_${vault}`);
+            let elOwlS = document.getElementById(`owlScore_${vault}`);
+            
+            let elSpR = document.getElementById(`spRank_${vault}`);
+            let elSpS = document.getElementById(`spScore_${vault}`);
 
-        function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
-
-        function saveManualPoints() {
-            var vault = document.getElementById('editVault').value;
-            var games = document.getElementById('inpGames').value || 0;
-            var schc = document.getElementById('inpSchc').value || 0;
-            var rank = document.getElementById('inpRank').value || 0;
-            var add = document.getElementById('inpAdd').value || 0;
-            var notes = document.getElementById('inpNotes').value || "";
-            var month = document.getElementById('monthSelector').value;
-            
-            // Validasi Max 10 khusus input Rank SP/OWL
-            if (parseInt(rank) > 10) {
-                alert("Rank SP / OWL points cannot exceed 10!");
-                return;
+            // Cek Max Limit OWL & SP Rank
+            if ((elOwlR && parseInt(elOwlR.value) > 10) || (elSpR && parseInt(elSpR.value) > 10)) {
+                alert("Ranking limit is Maximum 10!"); return;
             }
 
-            var btn = document.getElementById('btnSave');
-            btn.innerText = "Saving..."; btn.disabled = true;
+            let payload = {
+                action: "saveManualRank",
+                month: document.getElementById('monthSelector').value,
+                vault: vault,
+                games: elGms ? elGms.value : s.games,
+                schc: elSchc ? elSchc.value : s.schc,
+                add: elAdd ? elAdd.value : s.add,
+                owlRank: elOwlR ? elOwlR.value : s.owlRank,
+                owlScore: elOwlS ? elOwlS.value : s.owlScore,
+                spRank: elSpR ? elSpR.value : s.spRank,
+                spScore: elSpS ? elSpS.value : s.spScore,
+                notes: elNotes ? elNotes.value : s.notes
+            };
+
+            let oriText = btn.innerText;
+            btn.innerText = "⏳..."; btn.disabled = true;
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ 
-                    action: "saveManualRank", 
-                    month: month, 
-                    vault: vault, 
-                    games: games, 
-                    schc: schc, 
-                    rank: rank, 
-                    add: add, 
-                    notes: notes 
-                })
-            })
-            .then(r => r.json())
-            .then(res => {
-                btn.innerText = "Save Points"; btn.disabled = false;
+                body: JSON.stringify(payload)
+            }).then(r=>r.json()).then(res => {
                 if(res.status === 'success') {
-                    showToast("✅ Manual Points Saved!", "success");
-                    closeEditModal();
-                    fetchRankData(); 
+                    btn.innerText = "✅ SAVED";
+                    setTimeout(() => { btn.innerText = oriText; btn.disabled = false; }, 2000);
+                    showToast(`Data for Vault ${vault} saved!`, "success");
+                    fetchRankData(); // Refetch agar score leaderboard otomatis update!
                 } else {
-                    showToast("❌ Failed: " + res.message, "error");
+                    btn.innerText = "❌ ERROR"; btn.disabled = false;
+                    showToast("Save Failed: " + res.message, "error");
                 }
             }).catch(e => {
-                btn.innerText = "Save Points"; btn.disabled = false;
-                showToast("❌ Error Connection", "error");
+                btn.innerText = "❌ ERROR"; btn.disabled = false;
+                showToast("Connection Error!", "error");
             });
+        }
+
+        // ==========================================
+        // RENDER LEADERBOARDS (BOTTOM)
+        // ==========================================
+        function getRankCircle(rankNum) {
+            if(rankNum === 1) return `<div class="rank-circle rank-1">🥇</div>`;
+            if(rankNum === 2) return `<div class="rank-circle rank-2">🥈</div>`;
+            if(rankNum === 3) return `<div class="rank-circle rank-3">🥉</div>`;
+            return `<div class="rank-circle">${rankNum}</div>`;
+        }
+
+        function renderLeaderboards(data) {
+            // 1. Alpha Aquilae (Highest Total Points)
+            let alphaHtml = '';
+            let topAlpha = [...data].sort((a,b) => b.totalPoints - a.totalPoints).slice(0, 10);
+            topAlpha.forEach((s, idx) => {
+                if(s.totalPoints > 0) alphaHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">${s.vault}</span></td><td style="text-align:right;"><b style="color:var(--success);">${s.totalPoints}</b> Pts</td></tr>`;
+            });
+            document.getElementById('lbAlpha').innerHTML = alphaHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
+
+            // 2. Best Room (Sum Total Points)
+            let rooms = {};
+            data.forEach(s => {
+                let r = s.room;
+                if(r && r !== '-' && r !== '') { rooms[r] = (rooms[r] || 0) + s.totalPoints; }
+            });
+            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k] })).sort((a,b) => b.pts - a.pts).slice(0,10);
+            let roomHtml = '';
+            roomArr.forEach((r, idx) => {
+                if(r.pts > 0) roomHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--sapphire);">${r.room}</b></td><td style="text-align:right;"><b>${r.pts}</b> Pts</td></tr>`;
+            });
+            document.getElementById('lbRoom').innerHTML = roomHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
+
+            // 3. OWL Ministry
+            let minHtml = '';
+            let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
+            topMin.forEach((s, idx) => {
+                minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.owlRank || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b></td></tr>`;
+            });
+            document.getElementById('lbMin').innerHTML = minHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
+
+            // 4. OWL Auror
+            let aurHtml = '';
+            let topAur = [...data].filter(x => x.major.toLowerCase().includes('auror') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
+            topAur.forEach((s, idx) => {
+                aurHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.owlRank || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b></td></tr>`;
+            });
+            document.getElementById('lbAuror').innerHTML = aurHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
+
+            // 5. Student Point
+            let spHtml = '';
+            let topSp = [...data].filter(x => x.spScore > 0).sort((a,b) => b.spScore - a.spScore).slice(0,10);
+            topSp.forEach((s, idx) => {
+                spHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.spRank || '-'}</span></td><td style="text-align:right;"><b>${s.spScore}</b></td></tr>`;
+            });
+            document.getElementById('lbSp').innerHTML = spHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
         }
     </script>
 </body>
