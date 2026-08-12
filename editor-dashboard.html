@@ -112,12 +112,11 @@
         </ul>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
-                Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                Welcome, <span id="displayUsername">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -199,7 +198,7 @@
 
     <script>
         // --- 1. SETTING URL API ---
-        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
+       const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
@@ -253,36 +252,50 @@
             var isLeadroom = userRole.includes('leadroom');
             var isEditor = userRole.includes('editor');
 
-            // Set Nama Panel Sesuai Jabatan
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) {
                 var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            // Sembunyikan semua menu terlebih dahulu
             document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
-            // Atur Hak Akses Menu Sesuai Permintaan
             if (isHH) {
-                // Headhouse: Muncul Semua
                 document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
             } 
             else if (isPrefect) {
-                // VP & Prefect: Semua kecuali Salary dan Work Report
-                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-roster', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank'];
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isLeadroom) {
-                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
                 var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isEditor) {
-                // Editor: SOP, Task Master, Staff & Birthdays, Rank
                 var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             }
+        }
+
+        function navigateHome() {
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+            var targetPage = 'headhouse';
+
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            
+            window.location.href = targetPage + '-dashboard.html';
+        }
+
+        function navigate(targetPage) { 
+            window.location.href = targetPage + ".html"; 
+        }
+        
+        function logout() { 
+            localStorage.clear(); 
+            window.location.href = "index.html"; 
         }
         // ========================================================
         // LOGIKA PENYIMPANAN AMAN & RENDER TABEL
