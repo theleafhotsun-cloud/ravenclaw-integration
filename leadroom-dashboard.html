@@ -96,10 +96,12 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
+            <!-- Navigasi Sesuai Urutan Baru -->
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
             <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()" class="active">Task Master / Home</a></li>
             <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
             <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
@@ -107,7 +109,7 @@
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
             <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
-            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -126,10 +128,9 @@
             <div class="performance-card">
                 <div class="performance-info">
                     <div class="performance-text" id="performanceText">Performance: 0% (0 / 0 Tasks)</div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
+                    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
                 </div>
+                <!-- Action Buttons Terkumpul di Kanan -->
                 <div class="action-buttons">
                     <button class="btn-kpi" onclick="openKpiModal()">Report Monthly KPI</button>
                     <button class="btn-reset" onclick="resetAllCheckboxes()">Reset All Tasks</button>
@@ -196,9 +197,9 @@
     </div>
 
     <script>
-        // --- 1. SETTING URL API ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbxjzWDIMv8mRx6rLvTkTLP1ke5D1SdWXz2fhsl_gN1bSRPfAqeAPh6HxkUrZMUorT7U/exec";
-
+        // --- 1. SETTING URL API BARU ---
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
+        
         // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -210,7 +211,7 @@
         let totalTasks = 0;
         let completedTasks = 0;
         let currentPercentage = 0;
-        let missedTasksArray = []; // Penyimpan Data Tugas Terlewat
+        let missedTasksArray = []; // Array Penyimpan Daftar Tugas yang Terlewat
 
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
@@ -268,12 +269,12 @@
             } 
             else if (isPrefect) {
                 // VP & Prefect: Semua kecuali Salary dan Work Report
-                var allowed = ['menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-sop'];
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isLeadroom) {
                 // Leadroom: Active Room, Class DB, Library, Task Master, SOP
-                var allowed = ['menu-activeroom', 'menu-classdb', 'menu-librarydb', 'menu-taskmaster', 'menu-sop'];
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isEditor) {
@@ -304,6 +305,7 @@
             localStorage.clear(); 
             window.location.href = "index.html"; 
         }
+
         // ========================================================
         // LOGIKA PENYIMPANAN AMAN & RENDER TABEL
         // ========================================================
@@ -431,7 +433,7 @@
         }
 
         // ==========================================
-        // FUNGSI LAPORAN BULANAN (KPI MODAL VIA FETCH)
+        // FUNGSI LAPORAN BULANAN DENGAN MISSED TASKS
         // ==========================================
         function openKpiModal() {
             if(totalTasks === 0) { alert("No tasks available to report!"); return; }
@@ -490,6 +492,7 @@
             btnSubmit.disabled = true; btnCancel.disabled = true;
             status.style.display = 'none';
 
+            // --- FETCH API UNTUK MENGIRIM KPI ---
             fetch(API_URL, {
                 method: "POST",
                 redirect: "follow",
