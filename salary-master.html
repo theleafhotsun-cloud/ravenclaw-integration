@@ -113,18 +113,20 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="#">SOP</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master', this)" class="active">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport', this)">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome(this)">Task Master</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory', this)">Task Directory</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb', this)">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom', this)">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance', this)">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays', this)">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb', this)">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb', this)">Library Database</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster', this)">Student Roster Exporter</a></li>
+            <!-- Navigasi Sesuai Urutan Baru -->
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
+            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
+            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')" class="active">Salary Master</a></li>
+            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
+            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
+            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
+            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
+            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -132,7 +134,7 @@
         <div class="topbar">
             <div class="user-profile">
                 Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -282,9 +284,7 @@
                 </div>
             </div>
             
-            <!-- KERTAS PREVIEW YANG AKAN DIPOTRET HTML2PDF -->
             <div id="pdfPaper" class="paper-container">
-                <!-- Konten disuntikkan dari Javascript -->
             </div>
 
         </div>
@@ -292,7 +292,10 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
+        // ==========================================
+        // URL API SUDAH SAYA PERBARUI SESUAI INSTRUKSI KAMU
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -307,9 +310,6 @@
         const SNAPSHOT_STORAGE_KEY = 'ravenclaw_table_snapshots';
         const PRESET_STORAGE_KEY = 'ravenclaw_pdf_presets';
 
-        // ==========================================
-        // FUNGSI PROPER CASE (HURUF KAPITAL DI AWAL)
-        // ==========================================
         function toProperCase(str) {
             if (!str) return '';
             return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
@@ -333,6 +333,64 @@
             })
             .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
         };
+
+        // ==========================================
+        // LOGIKA SIDEBAR & NAVIGASI ROLE-BASED
+        // ==========================================
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
+
+            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
+
+            // Atur Hak Akses Menu Sesuai Permintaan (Terbaru)
+            if (isHH) {
+                // Headhouse: Muncul Semua
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } else if (isPrefect) {
+                // Prefect & VP: Semua KECUALI Salary Master dan Work Report
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } else if (isLeadroom) {
+                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } else if (isEditor) {
+                // Editor: SOP, Task Master, Staff & Birthdays, Rank
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            }
+        }
+
+        function navigateHome(element) {
+            if(element) element.innerText = "Loading...";
+            var targetPage = 'headhouse'; 
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + "-dashboard.html";
+        }
+
+        function navigate(targetPage, element) { 
+            if(element) element.innerText = "Wait..."; 
+            window.location.href = targetPage + ".html"; 
+        }
+        
+        function logout(btnElement) { 
+            if(btnElement) btnElement.innerText = "Wait..."; 
+            localStorage.clear(); 
+            window.location.href = "index.html"; 
+        }
+
+        // ==========================================
+        // LOGIKA APLIKASI
+        // ==========================================
 
         function getSnapshots() { return JSON.parse(localStorage.getItem(SNAPSHOT_STORAGE_KEY) || '{}'); }
 
@@ -438,7 +496,6 @@
             recalculate();
         }
 
-        // PEMBULATAN ANGKA
         function formatMoney(num) { 
             return Math.round(Number(num)).toLocaleString('id-ID'); 
         }
@@ -488,7 +545,6 @@
                 tr.setAttribute('data-kpi', row.kpi || 0);
                 tr.setAttribute('data-target', row.targetTugas || 0);
 
-                // Menerapkan toProperCase pada data posisi
                 tr.innerHTML = `
                     <td>
                         <input type="text" class="edit-input name-col" id="name_${index}" value="${row.username || ''}" placeholder="Name">
@@ -535,39 +591,6 @@
             document.getElementById('webGrandTotal').innerText = "ʛ" + formatMoney(currentGrandTotal);
             checkAllocation(); 
         }
-
-        function setupDynamicSidebar() {
-            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
-            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
-            var isLeadroom = userRole.includes('leadroom');
-            var isEditor = userRole.includes('editor');
-
-            var sidebarTitle = document.getElementById('sidebarTitle');
-            if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
-
-            var sopMenu = document.querySelector('.menu-sop');
-            var tmMenu = document.querySelector('.menu-taskmaster');
-            if (sopMenu) sopMenu.style.display = 'block';
-            if (tmMenu) tmMenu.style.display = 'block';
-
-            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            else if (isPrefect) ['menu-studentdb', 'menu-activeroom', 'menu-taskdirectory', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isLeadroom) ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isEditor) ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-        }
-
-        function navigateHome(element) {
-            element.innerText = "Loading...";
-            var targetPage = 'headhouse'; 
-            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
-            else if (userRole.includes('prefect')) targetPage = 'prefect';
-            else if (userRole.includes('editor')) targetPage = 'editor';
-            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = targetPage + "-dashboard.html";
-        }
-
-        function navigate(targetPage, element) { element.innerText = "Wait..."; window.location.href = targetPage + ".html"; }
-        function logout(btnElement) { btnElement.innerText = "Wait..."; localStorage.clear(); window.location.href = "index.html"; }
 
         function getPresets() { return JSON.parse(localStorage.getItem(PRESET_STORAGE_KEY) || '{}'); }
 
@@ -715,9 +738,6 @@
         function closePrintSettings() { document.getElementById('printSettingsModal').style.display = 'none'; }
         function closePreviewModal() { document.getElementById('pdfPreviewModal').style.display = 'none'; document.getElementById('printSettingsModal').style.display = 'flex';}
 
-        // =======================================================
-        // SISTEM PREVIEW DOKUMEN DAN DOWNLOAD PDF
-        // =======================================================
         function generatePreview() {
             let currentData = [];
             let sumTotalSalary = 0;
@@ -732,8 +752,6 @@
                 const idx = baseInput.id.split('_')[1];
 
                 const vaultVal = document.getElementById(`vault_${idx}`).value || "-";
-                
-                // Menerapkan toProperCase pada data sebelum dimasukkan ke Array Cetak
                 const pos = toProperCase(document.getElementById(`pos_${idx}`).value);
                 
                 const base = Number(document.getElementById(`base_${idx}`).value) || 0;
@@ -775,7 +793,6 @@
             const srcName4 = document.getElementById('setSrcName4').value;
             const srcAmt4 = document.getElementById('setSrcAmt4').value;
 
-            // Menyusun Tabel
             let tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     <thead>
@@ -813,7 +830,6 @@
             });
             tableHtml += `</tbody></table>`;
 
-            // Suntikkan ke Kertas Preview
             const pdfPaper = document.getElementById('pdfPaper');
             pdfPaper.innerHTML = `
                 <div id="pdfContentToPrint" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: black; font-size: 12px; padding: 0;">
@@ -877,7 +893,6 @@
             document.getElementById('pdfPreviewModal').style.display = 'flex';
         }
 
-        // FUNGSI EKSEKUSI DOWNLOAD PDF
         function downloadActualPDF() {
             const btn = document.getElementById('btnDownloadActual');
             btn.innerText = "⏳ Downloading...";
