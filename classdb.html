@@ -116,6 +116,7 @@
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
             <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -256,7 +257,7 @@
         // ==========================================
         // 3. SIDEBAR & NAVIGATION LOGIC
         // ==========================================
-        function setupDynamicSidebar() {
+      function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -281,12 +282,12 @@
             } 
             else if (isPrefect) {
                 // VP & Prefect: Semua kecuali Salary dan Work Report
-                var allowed = ['menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-sop'];
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-roster', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isLeadroom) {
                 // Leadroom: Active Room, Class DB, Library, Task Master, SOP
-                var allowed = ['menu-activeroom', 'menu-classdb', 'menu-librarydb', 'menu-taskmaster', 'menu-sop'];
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isEditor) {
@@ -294,28 +295,6 @@
                 var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             }
-        }
-
-        function navigateHome() {
-            // Mengarahkan user ke Home (Dashboard) mereka masing-masing sesuai role
-            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-            var targetPage = 'headhouse'; // Default
-
-            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
-            else if (userRole.includes('prefect')) targetPage = 'prefect';
-            else if (userRole.includes('editor')) targetPage = 'editor';
-            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            
-            window.location.href = targetPage + '-dashboard.html';
-        }
-
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
         }
 
         // ==========================================
