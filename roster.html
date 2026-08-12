@@ -64,7 +64,7 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
+    <!-- Sidebar Dinamis yang disamakan dengan Active Room -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -183,7 +183,6 @@
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec"; // SUDAH DIGANTI KE URL BARU
 
         let loggedInUser = localStorage.getItem("session_username");
-        let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
         if (!loggedInUser) window.location.href = "index.html";
 
@@ -206,14 +205,16 @@
         // 3. SIDEBAR & NAVIGATION LOGIC (Role-Based)
         // ==========================================
         function setupDynamicSidebar() {
-            var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
-            var isPrefect = windowUserRole.includes('prefect') || windowUserRole.includes('vp') || windowUserRole.includes('vice');
-            var isLeadroom = windowUserRole.includes('leadroom');
-            var isEditor = windowUserRole.includes('editor');
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
 
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) {
-                var positionName = (windowUserRole === 'system admin') ? 'Headhouse' : windowUserRole;
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
@@ -243,12 +244,15 @@
         }
 
         function navigateHome() {
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
             var targetPage = 'headhouse';
-            if (windowUserRole.includes('vp') || windowUserRole.includes('vice')) targetPage = 'viceprefect';
-            else if (windowUserRole.includes('prefect')) targetPage = 'prefect';
-            else if (windowUserRole.includes('editor')) targetPage = 'editor';
-            else if (windowUserRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = targetPage + "-dashboard.html";
+
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            
+            window.location.href = targetPage + '-dashboard.html';
         }
 
         function navigate(targetPage) {
