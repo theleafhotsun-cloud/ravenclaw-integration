@@ -100,6 +100,7 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
+            <!-- Navigasi Diperbarui & Diurutkan Sesuai Standar Baru -->
             <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
             <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
             <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
@@ -110,8 +111,9 @@
             <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')" class="active">Library Database</a></li>
             <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
+            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
         </ul>
     </div>
 
@@ -237,8 +239,8 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // GANTI API URL DENGAN URL DEPLOYMENT KAMU
-        const API_URL = "https://script.google.com/macros/s/AKfycbxjzWDIMv8mRx6rLvTkTLP1ke5D1SdWXz2fhsl_gN1bSRPfAqeAPh6HxkUrZMUorT7U/exec";
+        // API URL BARU
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
@@ -300,40 +302,33 @@
             var isLeadroom = userRole.includes('leadroom');
             var isEditor = userRole.includes('editor');
 
-            // Set Nama Panel Sesuai Jabatan
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) {
                 var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            // Sembunyikan semua menu terlebih dahulu
             document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
             // Atur Hak Akses Menu Sesuai Permintaan
             if (isHH) {
-                // Headhouse: Muncul Semua
                 document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
             } 
             else if (isPrefect) {
-                // VP & Prefect: Semua kecuali Salary dan Work Report
-                var allowed = ['menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-sop'];
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isLeadroom) {
-                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
-                var allowed = ['menu-activeroom', 'menu-classdb', 'menu-librarydb', 'menu-taskmaster', 'menu-sop'];
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             } 
             else if (isEditor) {
-                // Editor: SOP, Task Master, Staff & Birthdays, Rank
                 var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             }
         }
 
         function navigateHome() {
-            // Mengarahkan user ke Home (Dashboard) mereka masing-masing sesuai role
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
             var targetPage = 'headhouse'; // Default
 
@@ -353,6 +348,25 @@
             localStorage.clear(); 
             window.location.href = "index.html"; 
         }
+
+        function initPeriodConfig() {
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    periodConfigStore = res.data;
+                    
+                    if (userRole.includes('headhouse') || userRole.includes('vp') || userRole.includes('prefect') || userRole.includes('vice') || userRole === 'system admin') {
+                        canApproveGrandSummary = true;
+                    }
+                    toggleArchiveMode();
+                }
+            });
+        }
+
         function toggleArchiveMode() {
             var mode = document.querySelector('input[name="modeArchive"]:checked').value;
             var monthSel = document.getElementById('monthSelector'); 
