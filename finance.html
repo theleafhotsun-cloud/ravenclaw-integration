@@ -84,13 +84,13 @@
 </head>
 <body>
 
+        <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
-            <!-- Navigasi Sesuai Urutan Baru -->
             <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
             <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
             <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
@@ -98,7 +98,7 @@
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')" class="active">House Finance</a></li>
+            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
@@ -110,7 +110,7 @@
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
-                Welcome, <span id="displayUsername">Guest</span>
+                Welcome, <span id="displayUsername">Loading...</span>
                 <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -196,7 +196,7 @@
 
     <script>
         // API URL BARU
-        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec"; 
+      const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
         
         let loggedInUser = localStorage.getItem('session_username') || "Guest";
         let userRole = (localStorage.getItem('session_role') || "unknown").toLowerCase();
@@ -223,30 +223,26 @@
             var isLeadroom = userRole.includes('leadroom');
             var isEditor = userRole.includes('editor');
 
-            // Set Nama Panel Sesuai Jabatan
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) {
                 var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            // Sembunyikan semua menu terlebih dahulu
             document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
-            // Atur Hak Akses Menu Sesuai Permintaan
             if (isHH) {
-                // Headhouse: Muncul Semua
                 document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            } else if (isPrefect) {
-                // VP & Prefect: Semua kecuali Salary dan Work Report
+            } 
+            else if (isPrefect) {
                 var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            } else if (isLeadroom) {
-                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
+            } 
+            else if (isLeadroom) {
                 var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            } else if (isEditor) {
-                // Editor: SOP, Task Master, Staff & Birthdays, Rank
+            } 
+            else if (isEditor) {
                 var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
                 allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             }
@@ -254,7 +250,7 @@
 
         function navigateHome() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-            var targetPage = 'headhouse'; // Default
+            var targetPage = 'headhouse';
 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
