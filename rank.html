@@ -75,7 +75,7 @@
 
     <div id="toastMsg">Action Successful!</div>
 
-    <!-- Sidebar Dinamis yang disamakan dengan Active Room -->
+    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -113,8 +113,9 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + Additional Pts (x1) + (Rank SP/OWL x 15).<br>
-                <i>*Attendance & Summaries are auto-synced from Monthly Room Data. Inactive/Resigned students are kept if they have points.</i>
+                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Additional Pts x 10) + (Rank SP/OWL x 15).<br>
+                <i>*Attendance = Attended + Replacement Tasks (auto-synced from Active Room Database).</i><br>
+                <i>*Alpha/Aquilae is determined manually based on the highest score. Max Rank O.W.L / SP input is 10.</i>
             </div>
 
             <div class="period-controller">
@@ -141,8 +142,8 @@
                                 <th>Vault</th>
                                 <th>Name & Username</th>
                                 <th>Status</th>
-                                <th title="Sum x3, Att x5">Auto Pts (Base)</th>
-                                <th title="Games, SC, Rank, Add">Manual Pts</th>
+                                <th title="Sum x3, Att (Attended + Replacement) x5">Auto Pts (Base)</th>
+                                <th title="Games x10, SC/HC x5, Add x10, Rank x15">Manual Pts</th>
                                 <th>Total Points</th>
                                 <th style="text-align:center;">Action</th>
                             </tr>
@@ -179,12 +180,12 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Rank SP / OWL (Multiplier x15)</label>
-                    <input type="number" id="inpRank" placeholder="Total Rank">
+                    <label>Rank SP / OWL (Multiplier x15) [Max 10]</label>
+                    <input type="number" id="inpRank" placeholder="Total Rank (Max 10)" max="10">
                 </div>
                 <div class="form-group">
-                    <label>Direct Points (Multiplier x1)</label>
-                    <input type="number" id="inpAdd" placeholder="Manual Add/Minus Points">
+                    <label>Additional Points (Multiplier x10)</label>
+                    <input type="number" id="inpAdd" placeholder="Triwizard, Best Room, dll">
                 </div>
             </div>
 
@@ -234,9 +235,6 @@
             setTimeout(function() { toast.style.display = 'none'; }, 3000);
         }
 
-        // ==========================================
-        // ROUTING & SIDEBAR (Selaras dengan Active Room)
-        // ==========================================
         function setupDynamicSidebar() {
             isRankViewer = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole.includes('editor') || userRole === 'system admin';
             isRankEditor = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole === 'system admin';
@@ -291,9 +289,6 @@
             window.location.href = "index.html"; 
         }
 
-        // ==========================================
-        // DATA FETCHING & LOGIC
-        // ==========================================
         function initPeriodConfig() {
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -326,7 +321,6 @@
             document.getElementById('rankTable').style.display = 'none';
             document.getElementById('tableBody').innerHTML = '';
 
-            // Menggunakan Rute Asli Backend ('getRankData') menggantikan sistem Hijack
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: "getRankData", month: month })
@@ -336,7 +330,6 @@
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
                     try {
-                        // Antisipasi jika format data berbentuk string yang di-stringify
                         rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : (res.data || JSON.parse(res.message));
                         renderTable(rankDataStore);
                     } catch(err) {
@@ -364,7 +357,7 @@
 
             data.forEach(function(s) {
                 var autoPts = (s.sum * 3) + (s.att * 5);
-                var manualPts = (s.games * 10) + (s.schc * 5) + s.add + (s.rank * 15);
+                var manualPts = (s.games * 10) + (s.schc * 5) + (s.add * 10) + (s.rank * 15); // Logic Update (Add x10)
                 
                 var rClass = s.isInactive ? "row-inactive" : "";
                 var statText = s.isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:10px;">INACTIVE/RESIGNED</span>` : `<span style="color:var(--success); font-weight:bold; font-size:10px;">ACTIVE</span>`;
@@ -439,10 +432,15 @@
             var notes = document.getElementById('inpNotes').value || "";
             var month = document.getElementById('monthSelector').value;
             
+            // Validasi Max 10 khusus input Rank SP/OWL
+            if (parseInt(rank) > 10) {
+                alert("Rank SP / OWL points cannot exceed 10!");
+                return;
+            }
+
             var btn = document.getElementById('btnSave');
             btn.innerText = "Saving..."; btn.disabled = true;
 
-            // Menggunakan Rute Asli Backend ('saveManualRank')
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
