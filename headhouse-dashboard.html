@@ -138,7 +138,7 @@
     <!-- Script Area -->
     <script>
         // --- 1. SETTING URL API ---
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxjzWDIMv8mRx6rLvTkTLP1ke5D1SdWXz2fhsl_gN1bSRPfAqeAPh6HxkUrZMUorT7U/exec";
         
         // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
@@ -183,62 +183,66 @@
         };
 
         function setupDynamicSidebar() {
-            try {
-                var role = userRole || 'unknown';
-                var isHH = role.includes('headhouse') || role === 'system admin';
-                var isPrefect = role.includes('prefect') || role.includes('vp') || role.includes('vice');
-                var isLeadroom = role.includes('leadroom') || role.includes('lead room');
-                var isEditor = role.includes('editor');
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
-                var sidebarTitle = document.getElementById('sidebarTitle');
-                if (sidebarTitle) {
-                    var positionName = (role === 'system admin') ? 'Headhouse' : role;
-                    sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
-                }
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
 
-                function unhideMenu(className) {
-                    var el = document.querySelector('.' + className);
-                    if (el) el.style.display = 'block';
-                }
+            // Set Nama Panel Sesuai Jabatan
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
 
-                unhideMenu('menu-sop');
-                unhideMenu('menu-taskmaster');
+            // Sembunyikan semua menu terlebih dahulu
+            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
-                if (isHH) {
-                    var allMenus = document.querySelectorAll('#sidebarMenu li');
-                    if(allMenus) allMenus.forEach(el => el.style.display = 'block');
-                }
-                else if (isPrefect) {
-                    ['menu-studentdb', 'menu-taskdirectory', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(unhideMenu);
-                }
-                else if (isLeadroom) {
-                    ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(unhideMenu);
-                }
-                else if (isEditor) {
-                    ['menu-birthdays'].forEach(unhideMenu);
-                }
-            } catch (error) {
-                console.error("Sidebar error: " + error.message);
+            // Atur Hak Akses Menu Sesuai Permintaan
+            if (isHH) {
+                // Headhouse: Muncul Semua
+                document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
+            } 
+            else if (isPrefect) {
+                // VP & Prefect: Semua kecuali Salary dan Work Report
+                var allowed = ['menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-sop'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
+            else if (isLeadroom) {
+                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
+                var allowed = ['menu-activeroom', 'menu-classdb', 'menu-librarydb', 'menu-taskmaster', 'menu-sop'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
+            else if (isEditor) {
+                // Editor: SOP, Task Master, Staff & Birthdays, Rank
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             }
         }
 
-        // --- 4. NAVIGASI BARU ---
-        function navigateHome(element) {
-            element.innerText = "Loading...";
-            window.location.href = "sop.html"; // Mengarah ke SOP
+        function navigateHome() {
+            // Mengarahkan user ke Home (Dashboard) mereka masing-masing sesuai role
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+            var targetPage = 'headhouse'; // Default
+
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            
+            window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage, element) {
-            element.innerText = "Wait..."; 
+        function navigate(targetPage) { 
             window.location.href = targetPage + ".html"; 
         }
-
-        function logout(btnElement) {
-            btnElement.innerText = "Wait...";
-            localStorage.clear();
+        
+        function logout() { 
+            localStorage.clear(); 
             window.location.href = "index.html"; 
         }
-
         // --- FUNGSI TRACKER ---
         function getStorageKey(taskName, weekNum) {
             return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`;
