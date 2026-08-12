@@ -71,16 +71,18 @@
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
         <ul class="nav-links" id="sidebarMenu">
+            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
             <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
+            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
             <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
             <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master</a></li>
             <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
             <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
             <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
             <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
             <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
             <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
+            <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')">Rank Panel</a></li>
             <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')" class="active">Student Roster Exporter</a></li>
         </ul>
     </div>
@@ -178,7 +180,7 @@
         // ==========================================
         // 1. GLOBAL VARIABLES & IDENTITY
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbymBpSZC_ZBXAjx45lXKPykLS6X-3s70DhXJP1LEqYYLZRZuWA1Spyw7y1T0YNGvrE/exec"; // PASTIKAN SUDAH DIGANTI
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec"; // SUDAH DIGANTI KE URL BARU
 
         let loggedInUser = localStorage.getItem("session_username");
         let windowUserRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
@@ -201,7 +203,7 @@
         });
 
         // ==========================================
-        // 3. SIDEBAR & NAVIGATION LOGIC
+        // 3. SIDEBAR & NAVIGATION LOGIC (Role-Based)
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = windowUserRole.includes('headhouse') || windowUserRole === 'system admin';
@@ -215,22 +217,28 @@
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            var dirMenu = document.querySelector('.menu-taskdirectory');
-            var tmMenu = document.querySelector('.menu-taskmaster');
-            if (dirMenu && (isHH || isPrefect)) dirMenu.style.display = 'block';
-            if (tmMenu) tmMenu.style.display = 'block';
+            // Sembunyikan semua menu terlebih dahulu
+            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
 
+            // Atur Hak Akses Menu Sesuai Permintaan
             if (isHH) {
+                // Headhouse: Muncul Semua
                 document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
             } 
             else if (isPrefect) {
-                ['menu-studentdb', 'menu-activeroom', 'menu-roster', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
+                // VP & Prefect: Semua kecuali Salary dan Work Report
+                var allowed = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
             else if (isLeadroom) {
-                ['menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            }
+                // Leadroom: Active Room, Class DB, Library, Task Master, SOP
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            } 
             else if (isEditor) {
-                ['menu-birthdays'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+                // Editor: SOP, Task Master, Staff & Birthdays, Rank
+                var allowed = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowed.forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
             }
         }
 
