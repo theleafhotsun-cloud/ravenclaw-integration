@@ -120,8 +120,8 @@
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
                 Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Additional Events x 10) + (OWL Score) + (SP Score).<br>
-                <i>*Attendance = Attended + Replacement Tasks (auto-synced).</i><br>
-                <i>*Rank O.W.L & SP Rank limit input is max 10. Nilai Score (Points) added directly to Total.</i>
+                <i>*Attendance = Attended + Replacement Tasks (auto-synced from Week 1 to 4).</i><br>
+                <i>*Rank O.W.L & SP Rank limit input is max 10. The score value will be added directly to Total.</i>
             </div>
 
             <div class="period-controller">
@@ -353,7 +353,7 @@
                 let rClass = s.isInactive ? "row-inactive" : "";
                 let statText = s.isInactive ? `<span style="color:var(--danger);">INACTIVE</span>` : `<span style="color:var(--success);">ACTIVE</span>`;
                 let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} <span style="font-size:9px;">(${statText})</span></div>
-                                <div style="font-size:10px; color:gray; margin-top:2px;"><b>Jurusan:</b> ${s.major} | <b>Kamar:</b> ${s.room} | <b>Tot. Kelas:</b> ${s.totClass}</div>`;
+                                <div style="font-size:10px; color:gray; margin-top:2px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Total Class:</b> ${s.totClass}</div>`;
                 
                 let basePts = (s.sum * 3) + (s.att * 5);
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
@@ -362,11 +362,11 @@
                 genBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
-                        <td>${infoHTML}<div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Auto Base Pts: <b>${basePts}</b> <small>(Att:${s.att}, Sum:${s.sum})</small></div></td>
+                        <td>${infoHTML}<div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Auto Base Pts: <b>${basePts}</b> <small>(Att: ${s.att}, Sum: ${s.sum})</small></div></td>
                         <td><input type="number" id="games_${s.vault}" value="${s.games}" class="inline-inp"></td>
                         <td><input type="number" id="schc_${s.vault}" value="${s.schc}" class="inline-inp"></td>
                         <td><input type="number" id="add_${s.vault}" value="${s.add}" class="inline-inp"></td>
-                        <td><input type="text" id="notes_${s.vault}" value="${s.notes}" class="inline-txt" placeholder="Keterangan event..."></td>
+                        <td><input type="text" id="notes_${s.vault}" value="${s.notes}" class="inline-txt" placeholder="Event notes..."></td>
                         <td>${btnHtml}</td>
                     </tr>
                 `;
@@ -377,7 +377,7 @@
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
                         <td><input type="number" id="owlRank_${s.vault}" value="${s.owlRank}" class="inline-inp" max="10" placeholder="Rank"></td>
-                        <td><input type="number" id="owlScore_${s.vault}" value="${s.owlScore}" class="inline-inp" placeholder="Nilai"></td>
+                        <td><input type="number" id="owlScore_${s.vault}" value="${s.owlScore}" class="inline-inp" placeholder="Score"></td>
                         <td>${btnHtml}</td>
                     </tr>
                 `;
@@ -388,7 +388,7 @@
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
                         <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" max="10" placeholder="Rank"></td>
-                        <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Nilai"></td>
+                        <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Score"></td>
                         <td>${btnHtml}</td>
                     </tr>
                 `;
@@ -402,7 +402,7 @@
                 String(s.name).toLowerCase().includes(q) || 
                 String(s.major).toLowerCase().includes(q)
             );
-            renderInputTables(filtered); // Filter hanya tabel input, leaderboard tetap global!
+            renderInputTables(filtered); 
         }
 
         function saveInline(btn, vault) {
@@ -419,7 +419,6 @@
             let elSpR = document.getElementById(`spRank_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
 
-            // Cek Max Limit OWL & SP Rank
             if ((elOwlR && parseInt(elOwlR.value) > 10) || (elSpR && parseInt(elSpR.value) > 10)) {
                 alert("Ranking limit is Maximum 10!"); return;
             }
@@ -449,7 +448,7 @@
                     btn.innerText = "✅ SAVED";
                     setTimeout(() => { btn.innerText = oriText; btn.disabled = false; }, 2000);
                     showToast(`Data for Vault ${vault} saved!`, "success");
-                    fetchRankData(); // Refetch agar score leaderboard otomatis update!
+                    fetchRankData(); 
                 } else {
                     btn.innerText = "❌ ERROR"; btn.disabled = false;
                     showToast("Save Failed: " + res.message, "error");
