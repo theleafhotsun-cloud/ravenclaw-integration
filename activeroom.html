@@ -334,7 +334,7 @@
             text-align: left; 
             border-bottom: 1px solid var(--shellstone); 
             font-size: 11px; 
-            vertical-align: middle;
+            /* Vertical align diganti menjadi top secara dinamis di JS untuk cell text */
         }
         th { 
             background-color: var(--royal-blue); 
@@ -387,7 +387,17 @@
             transition: 0.3s; 
         }
         .inline-inp:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
-        .inline-txt { width: 100px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Inline Txt sekarang diperlebar untuk TEXTAREA notes */
+        .inline-txt { 
+            padding: 6px; 
+            font-size: 11px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-family: inherit;
+        }
+        .inline-txt:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
+        
         .inline-sel { width: 85px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 4px; font-weight:bold; }
         
         .btn-save-inline { 
@@ -647,7 +657,7 @@
         </div>
     </div>
 
-    <!-- MODAL ADVANCED LOA / OVERRIDE (TIDAK LAGI DIPAKAI UNTUK ANGKA HARIAN) -->
+    <!-- MODAL ADVANCED LOA / OVERRIDE (HANYA UNTUK TANGGAL LOA) -->
     <div class="modal-overlay" id="adjustModal">
         <div class="modal-box">
             <h3 id="modalTitle">Advanced Settings (LOA & Override)</h3>
@@ -756,7 +766,10 @@
 
         function resetBtn(btnId, originalText) {
             var btn = document.getElementById(btnId);
-            if(btn) { btn.innerText = originalText; btn.disabled = false; }
+            if(btn) { 
+                btn.innerText = originalText; 
+                btn.disabled = false; 
+            }
         }
 
         function showSnack(msg, isError=false) {
@@ -812,8 +825,14 @@
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+        function navigate(targetPage) { 
+            window.location.href = targetPage + ".html"; 
+        }
+        
+        function logout() { 
+            localStorage.clear(); 
+            window.location.href = "index.html"; 
+        }
         
         function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block'; 
@@ -951,8 +970,13 @@
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ " + (type === 'KAS' ? "Dues" : "Fines") + " Vault " + vault + " Saved!"); 
-                } else { showSnack("❌ Failed to Save!", true); }
-            }).catch(err => { showSnack("❌ Connection Error!", true); });
+                } 
+                else { 
+                    showSnack("❌ Failed to Save!", true); 
+                }
+            }).catch(err => { 
+                showSnack("❌ Connection Error!", true); 
+            });
         }
 
         function updateTotalFinesCard(roomName) {
@@ -969,7 +993,7 @@
         }
 
         // ==========================================
-        // FUNGSI INLINE SAVE YANG BARU (ACTIVITY & SUMMARIES)
+        // FUNGSI INLINE SAVE (TIDAK LAGI REFRESH SELURUH HALAMAN)
         // ==========================================
         function saveInlineActivity(roomName, index) {
             var s = fullDataStore.rooms[roomName][index];
@@ -977,7 +1001,7 @@
             var act = s.activity;
 
             var payload = {
-                status: act.status, // Diambil dari data bawaan atau form advanced
+                status: act.status, 
                 reqOverride: act.reqOverride,
                 attended: Math.max(0, parseInt(document.getElementById('att_'+vault).value) || 0),
                 absences: Math.max(0, parseInt(document.getElementById('abs_'+vault).value) || 0),
@@ -989,10 +1013,10 @@
                 loaStart: act.loaStart,
                 loaEnd: act.loaEnd,
                 loaLink: act.loaLink,
-                summaries: act.summaries, // Tetap menggunakan summary yg sudah ada
+                summaries: act.summaries, 
                 sumStat: act.sumStat,
                 notes: document.getElementById('not_'+vault).value,
-                lockSync: true // Otomatis mengunci dari Auto-Sync form
+                lockSync: true 
             };
 
             var btn = document.getElementById('btnAct_'+vault);
@@ -1009,7 +1033,7 @@
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ Activity Data Saved!"); 
-                    fetchRoomData(); // Reload UI
+                    btn.innerText = ori; btn.disabled = false;
                 } else { 
                     alert(res.message); btn.innerText = ori; btn.disabled = false;
                 } 
@@ -1037,9 +1061,9 @@
                 loaEnd: act.loaEnd,
                 loaLink: act.loaLink,
                 summaries: Math.max(0, parseInt(document.getElementById('sum_'+vault).value) || 0),
-                sumStat: act.sumStat, // Tetap menggunakan status link yg ada
+                sumStat: act.sumStat, 
                 notes: act.notes,
-                lockSync: true // Otomatis mengunci
+                lockSync: true 
             };
 
             var btn = document.getElementById('btnSum_'+vault);
@@ -1056,7 +1080,7 @@
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ Summary Count Saved!"); 
-                    fetchRoomData(); 
+                    btn.innerText = ori; btn.disabled = false;
                 } else { 
                     alert(res.message); btn.innerText = ori; btn.disabled = false;
                 } 
@@ -1118,14 +1142,25 @@
                             var loaText = act.status === 'Leave of Absence' ? loaLabel : (act.formStatus === 'Pending' && !act.lockSync ? '<span class="status-pending">Pending Data</span>' : '<span class="status-active">Active</span>');
                             var wlBadge = s.wl ? '<span class="wl-badge" title="Warning Letter">WL: ' + s.wl + '</span>' : '';
 
-                            // MERENDER INLINE INPUTS JIKA AKTIF, ATAU TEKS BIASA JIKA ARSIP MATI
+                            // Rombak Excused Text: Membatasi width dan mengaktifkan white-space normal agar otomatis turun baris
+                            var excTextDisp = act.excusedText;
+                            if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) { 
+                                excTextDisp = '<div style="font-size:9px; color:gray; min-width:150px; max-width:200px; white-space:normal; margin-top:6px; line-height:1.4; word-wrap:break-word;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>'; 
+                            } else { 
+                                excTextDisp = ''; 
+                            }
+
+                            // Rombak Notes: Memakai <textarea> ketimbang input agar box bisa lebar dan isinya tidak disembunyikan
+                            var notInp = isInactive ? 
+                                `<div style="font-size:10px; color:gray; min-width:120px; white-space:normal;">${act.notes || '-'}</div>` : 
+                                `<textarea id="not_${s.vault}" class="inline-txt" style="width:160px; min-height:45px; resize:vertical; white-space:pre-wrap; font-family:inherit;" placeholder="Add notes...">${act.notes || ''}</textarea>`;
+
                             var attInp = isInactive ? act.attended : `<input type="number" id="att_${s.vault}" value="${act.attended}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9;">`;
                             var absInp = isInactive ? act.absences : `<input type="number" id="abs_${s.vault}" value="${act.absences}" class="inline-inp" style="background:#ffebee; border-color:#ffcdd2;">`;
                             var excInp = isInactive ? act.excused : `<input type="number" id="exc_${s.vault}" value="${act.excused}" class="inline-inp" style="background:#fff3e0; border-color:#ffe0b2;">`;
                             var freeInp = isInactive ? act.freeClass : `<input type="number" id="free_${s.vault}" value="${act.freeClass}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb;">`;
                             var repInp = isInactive ? act.replacements : `<input type="number" id="rep_${s.vault}" value="${act.replacements}" class="inline-inp" style="background:#f3e5f5; border-color:#e1bee7;">`;
-                            var notInp = isInactive ? (act.notes || '-') : `<input type="text" id="not_${s.vault}" value="${act.notes}" class="inline-txt" placeholder="...">`;
-
+                            
                             var fsSelect = isInactive ? act.formStatus : `
                                 <select id="fs_${s.vault}" class="inline-sel">
                                     <option value="Pending" ${act.formStatus==='Pending'?'selected':''}>Pending</option>
@@ -1143,27 +1178,30 @@
                                 </div>
                             `;
 
+                            let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue); margin-bottom:3px;">${s.name} <span style="font-size:9px;">(${s.grade || '-'})</span></div>
+                                            <div style="font-size:10px; color:gray; margin-bottom:3px;"><b>Major:</b> ${s.major}</div>`;
+
+                            // Vertical align top ditambahkan di tr/td agar semuanya rapi dari atas
                             roomActHtml += `<tr class="${trClass}">
-                                <td class="vault-tag">${s.vault}</td>
-                                <td><b>${s.username}</b> ${wlBadge}</td>
-                                <td><span style="font-weight:bold; color:var(--sapphire);">${s.grade || '-'}</span></td>
-                                <td>${loaText}</td>
-                                <td><span class="num-badge">${s.totalClasses}</span></td>
-                                <td><span class="num-badge" style="background:#ffebee; color:#c62828;">${s.mandatory}</span></td>
-                                <td>${attInp}</td>
-                                <td>${absInp}</td>
-                                <td>${excInp} <div style="font-size:9px; color:gray; max-width:80px;">${act.excusedText === '0' ? '' : act.excusedText}</div></td>
-                                <td>${freeInp}</td>
-                                <td>${repInp}</td>
-                                <td>${fsSelect}</td>
-                                <td>${notInp}</td>
-                                <td>${actCol}</td>
+                                <td class="vault-tag" style="vertical-align:top; padding-top:10px;">${s.vault}</td>
+                                <td style="vertical-align:top; padding-top:10px; white-space:normal; min-width:160px;"><b>${s.username}</b> ${wlBadge}<br>${infoHTML}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${loaText}</td>
+                                <td style="vertical-align:top; padding-top:10px; text-align:center;"><span class="num-badge">${s.totalClasses}</span></td>
+                                <td style="vertical-align:top; padding-top:10px; text-align:center;"><span class="num-badge" style="background:#ffebee; color:#c62828;">${s.mandatory}</span></td>
+                                <td style="vertical-align:top; padding-top:10px;">${attInp}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${absInp}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${excInp} ${excTextDisp}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${freeInp}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${repInp}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${fsSelect}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${notInp}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${actCol}</td>
                             </tr>`;
                         });
                     }
                    
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
-                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Form Status">Form Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
+                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>User Info</th><th>Status (LOA)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Form Status">Form Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
                     // --- BOX 2: ROOM SUMMARIES ---
                     var roomSumHtml = '';
@@ -1188,9 +1226,9 @@
                                 var badgeClass = stat === 'Approved' ? 'badge-approved' : 'badge-pending';
                                 if(lnk && lnk.toString().trim().length > 4) { 
                                     var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk; 
-                                    linkCols += '<td><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>'; 
+                                    linkCols += '<td style="vertical-align:top; padding-top:10px;"><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>'; 
                                 } else { 
-                                    linkCols += '<td>-</td>'; 
+                                    linkCols += '<td style="vertical-align:top; padding-top:10px;">-</td>'; 
                                 }
                             }
                             
@@ -1203,14 +1241,14 @@
                             `;
 
                             roomSumHtml += `<tr class="${trClass}">
-                                <td class="vault-tag">${s.vault}</td>
-                                <td><b>${s.username}</b></td>
-                                <td>${sumInp}</td>
-                                <td><div style="font-size:9px;">${act.sumAuror}</div></td>
-                                <td><div style="font-size:9px;">${act.sumMinistry}</div></td>
-                                <td><div style="font-size:9px;">${act.sumExtra}</div></td>
+                                <td class="vault-tag" style="vertical-align:top; padding-top:10px;">${s.vault}</td>
+                                <td style="vertical-align:top; padding-top:10px; white-space:normal; min-width:150px;"><b>${s.username}</b></td>
+                                <td style="vertical-align:top; padding-top:10px;">${sumInp}</td>
+                                <td style="vertical-align:top; padding-top:10px;"><div style="font-size:9px; white-space:normal; min-width:80px;">${act.sumAuror}</div></td>
+                                <td style="vertical-align:top; padding-top:10px;"><div style="font-size:9px; white-space:normal; min-width:80px;">${act.sumMinistry}</div></td>
+                                <td style="vertical-align:top; padding-top:10px;"><div style="font-size:9px; white-space:normal; min-width:80px;">${act.sumExtra}</div></td>
                                 ${linkCols}
-                                <td>${actCol}</td>
+                                <td style="vertical-align:top; padding-top:10px;">${actCol}</td>
                             </tr>`;
                         });
                     }
@@ -1219,7 +1257,7 @@
                     // --- BOX 3: FINANCE (PETTY CASH & DIRECT EDIT) ---
                     var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
                     if (students.length === 0) { 
-                        finHtml = '<tr><td colspan="8" style="text-align:center; color:gray;">No active students found in this room.</td></tr>'; 
+                        finHtml = '<tr><td colspan="8" style="text-align:center; color:gray;">No students found in this room.</td></tr>'; 
                     } 
                     else {
                         students.forEach(function(s) {
@@ -1419,9 +1457,6 @@
             }).catch(err => { resetBtn('btnSaveRot', 'Save Assignment'); alert("Error: " + err.message); });
         }
 
-        // ==========================================
-        // FUNGSI ADVANCED POP UP
-        // ==========================================
         function openAdjustModal(roomName, index) {
             var student = fullDataStore.rooms[roomName][index];
             currentEditVault = student.vault; 
