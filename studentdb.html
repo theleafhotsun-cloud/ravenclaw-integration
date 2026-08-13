@@ -52,7 +52,7 @@
         .row-dimmed { background-color: #f5f5f5 !important; }
         .row-dimmed td { opacity: 0.55; }
         .row-dimmed:hover { background-color: #eeeeee !important; }
-        .delete-warning { color: var(--danger); font-size: 10px; font-weight: bold; margin-top: 5px; display: block; opacity: 1 !important;}
+        .delete-warning { color: var(--warning); font-size: 10px; font-weight: bold; margin-top: 5px; display: block; opacity: 1 !important;}
 
         .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 13px;}
         .class-badge { background-color: var(--quicksand); color: var(--royal-blue); padding: 3px 7px; border-radius: 10px; font-weight: bold; font-size: 11px; }
@@ -99,7 +99,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -146,14 +145,12 @@
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <!-- Data injected by JS -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- ADD / EDIT MODAL -->
     <div class="modal-overlay" id="studentModal">
         <div class="modal-box">
             <h3 id="modalTitle">Add New Student</h3>
@@ -270,9 +267,6 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // ==========================================
-        // URL API SUDAH SAYA PERBARUI SESUAI INSTRUKSI KAMU
-        // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -293,12 +287,10 @@
             fetchStudents();
         };
 
-        // Helper untuk mengecek boolean
         function isTrue(val) {
             return val === true || String(val).toLowerCase() === 'true';
         }
 
-        // Helper untuk mengurai string gabungan WL (Alasan|||Link)
         function parseWlLink(rawLink) {
             if (!rawLink || rawLink === '-' || String(rawLink).toUpperCase() === 'FALSE' || String(rawLink).toUpperCase() === 'TRUE') {
                 return { reason: '', link: '' };
@@ -311,9 +303,6 @@
             return { reason: '', link: str };
         }
 
-        // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI (UPDATE ROLE AKSES)
-        // ==========================================
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
@@ -346,18 +335,10 @@
 
             let allowedMenuIds = [];
 
-            if (isHH) {
-                allowedMenuIds = allMenus.map(m => m.id);
-            } 
-            else if (isPrefect) {
-                allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
-            } 
-            else if (isLeadroom) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
-            } 
-            else if (isEditor) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
-            }
+            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
+            else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+            else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+            else if (isEditor) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
 
             var sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.innerHTML = ''; 
@@ -366,9 +347,7 @@
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
-                    
                     var activeClass = menu.id === 'menu-studentdb' ? ' class="active"' : '';
-                    
                     li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '"' + activeClass + '>' + menu.label + '</a>';
                     sidebarMenu.appendChild(li);
                 }
@@ -388,9 +367,6 @@
         function navigate(targetPage) { window.location.href = targetPage + ".html"; }
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-        // ==========================================
-        // LOGIKA STUDENT DATABASE & FETCH API (DISEDERHANAKAN AGAR AKURAT)
-        // ==========================================
         function fetchStudents() {
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('studentTable').style.display = 'none';
@@ -425,13 +401,10 @@
             }
 
             data.forEach((student, index) => {
-                
-                // MENGURAI ALASAN DAN LINK WL DARI DELIMITER
                 let parsedWl1 = parseWlLink(student.wl1Link);
                 let parsedWl2 = parseWlLink(student.wl2Link);
                 let wlDisplay = '';
 
-                // Memastikan kompatibilitas data lama
                 let deducedR1 = parsedWl1.reason;
                 let deducedR2 = parsedWl2.reason;
 
@@ -446,7 +419,6 @@
                     if (oldReasons[1]) deducedR2 = oldReasons[1];
                 }
 
-                // MERENDER WL1 DAN WL2 KE DALAM KOLOM WL & FLAGS
                 if (deducedR1 || parsedWl1.link) {
                     let text = deducedR1 ? `WL 1: ${deducedR1.toUpperCase()}` : 'WL 1';
                     let badge = `<span class="wl-badge">${text}</span>`;
@@ -469,7 +441,6 @@
                 
                 if (!wlDisplay) wlDisplay = '<span style="color:gray;">-</span>';
 
-                // KOLOM NOTES: MURNI HANYA MENAMPILKAN NOTES & LAST UPDATE
                 let cleanNotes = student.notesEtc || '-';
                 if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') { cleanNotes = '-'; }
 
@@ -478,12 +449,13 @@
 
                 const isInactiveStatus = isTrue(student.isDeactive) || isTrue(student.isResigned) || isTrue(student.isDropOut);
                 const rowClass = isInactiveStatus ? 'row-dimmed' : '';
-                const deleteWarning = isInactiveStatus ? `<span class="delete-warning">⚠️ Please Delete</span>` : '';
+                
+                // MENGUBAH TOMBOL DAN TEKS DELETE MENJADI ARCHIVE
+                const deleteWarning = isInactiveStatus ? `<span class="delete-warning">⚠️ Ready to Archive</span>` : '';
 
-                // Memperbaiki nilai yang terlempar undefined dari array backend yang strukturnya unik
                 let m_totalClasses = student.totalClasses || 0;
                 let m_fullName = student.fullName || '-';
-                if(m_fullName === '-' && student.nickname) m_fullName = student.nickname; // Fail-safe name
+                if(m_fullName === '-' && student.nickname) m_fullName = student.nickname; 
                 
                 const tr = document.createElement('tr');
                 tr.className = rowClass;
@@ -525,7 +497,7 @@
                     </td>
                     <td style="text-align:center;">
                         <button class="btn-icon" title="Edit Record" onclick="openStudentModal(${student.rowIdx})">✏️</button>
-                        <button class="btn-icon" title="Delete Record" onclick="deleteRecord(${student.rowIdx}, '${student.username}')">🗑️</button>
+                        <button class="btn-icon" title="Archive Record" onclick="archiveRecord(${student.rowIdx}, '${student.username}')">📦</button>
                         ${deleteWarning}
                     </td>
                 `;
@@ -729,11 +701,11 @@
 
             let r1 = document.getElementById('wl1Reason').value; 
             let l1 = document.getElementById('studWl1Link').value.trim();
-            let wl1Save = (r1 || l1) ? (r1 + "|||" + l1) : ""; // Menggabungkan Alasan dan Link
+            let wl1Save = (r1 || l1) ? (r1 + "|||" + l1) : ""; 
 
             let r2 = document.getElementById('wl2Reason').value; 
             let l2 = document.getElementById('studWl2Link').value.trim();
-            let wl2Save = (r2 || l2) ? (r2 + "|||" + l2) : ""; // Menggabungkan Alasan dan Link
+            let wl2Save = (r2 || l2) ? (r2 + "|||" + l2) : ""; 
 
             let currentTime = new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
 
@@ -745,8 +717,8 @@
                 wlHiatus: (r1 === 'Hiatus' || r2 === 'Hiatus') ? true : false, 
                 wlConflict: (r1 === 'Conflict' || r2 === 'Conflict') ? true : false,
                 
-                wl1Link: wl1Save, // Menyimpan format gabungan
-                wl2Link: wl2Save, // Menyimpan format gabungan
+                wl1Link: wl1Save, 
+                wl2Link: wl2Save, 
                 isReReg: document.getElementById('chkReReg').checked, isDeactive: document.getElementById('chkDeactive').checked, isResigned: document.getElementById('chkResigned').checked, isDropOut: document.getElementById('chkDropOut').checked, notesEtc: document.getElementById('studNotesEtc').value, lastUpdate: currentTime
             };
 
@@ -765,9 +737,12 @@
             });
         }
 
-        function deleteRecord(rowIdx, username) {
-            if(confirm(`Are you sure you want to completely delete ${username} from the Master Database?`)) {
-                document.getElementById('loadingMsg').style.display = 'block'; document.getElementById('loadingMsg').innerText = "Deleting record..."; document.getElementById('studentTable').style.display = 'none';
+        // MENGUBAH NAMA DAN PESAN KONFIRMASI MENJADI ARCHIVE
+        function archiveRecord(rowIdx, username) {
+            if(confirm(`Are you sure you want to move ${username} to the Archive tab? Their data will be saved in "Archived_Data".`)) {
+                document.getElementById('loadingMsg').style.display = 'block'; 
+                document.getElementById('loadingMsg').innerText = "Archiving record..."; 
+                document.getElementById('studentTable').style.display = 'none';
                 fetch(API_URL, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "deleteStudent", rowIdx: rowIdx }) })
                 .then(res => res.json()).then(() => fetchStudents()).catch(() => fetchStudents());
             }
