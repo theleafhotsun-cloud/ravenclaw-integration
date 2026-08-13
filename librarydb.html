@@ -202,6 +202,7 @@
     </div>
 
     <!-- MODAL 2: ADD MANUAL ENTRY (REGULAR CLASS) -->
+    <!-- Dihapus Title/Description agar tidak bingung -->
     <div class="modal-overlay" id="manualModal">
         <div class="modal-box">
             <h3>📝 Add Manual Entry</h3>
@@ -217,7 +218,6 @@
                 </select>
             </div>
             <div class="form-group"><label>Subject</label><select id="manSubjectItem"><option value="">-- Select Level First --</option></select></div>
-            <div class="form-group"><label>Title / Description</label><input type="text" id="manTitle" placeholder="e.g. Ravenclaw vs Hufflepuff Match"></div>
             <div class="form-group"><label>Document Link</label><input type="text" id="manLink" placeholder="https://..."></div>
             <div class="modal-actions"><button class="btn-cancel" onclick="closeManualModal()">Cancel</button><button class="btn-submit" onclick="saveManualEntryRegular()" id="btnSaveMan">Save Entry</button></div>
         </div>
@@ -225,7 +225,7 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // API URL BARU
+        // API URL (PASTIKAN MENGGUNAKAN DEPLOY BARU)
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -984,7 +984,6 @@
         function openManualModal() {
             document.getElementById('manualModal').style.display = 'flex';
             document.getElementById('manClassDate').value = '';
-            document.getElementById('manTitle').value = '';
             document.getElementById('manLink').value = '';
             document.getElementById('manCategory').selectedIndex = 0;
             document.getElementById('manSubjectItem').innerHTML = '<option value="">-- Select Level First --</option>';
@@ -1000,7 +999,6 @@
 
         function saveManualEntryRegular() {
             var cDate = document.getElementById('manClassDate').value;
-            var title = document.getElementById('manTitle').value;
             var linkInput = document.getElementById('manLink').value.trim();
             var cat = document.getElementById('manCategory').value;
             var subjItem = document.getElementById('manSubjectItem').value;
@@ -1018,7 +1016,7 @@
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: week, classDate: cDate, title: title, link: linkInput, subject: fullSubject })
+                body: JSON.stringify({ action: "saveManualLibraryEntry", month: month, week: week, classDate: cDate, title: "", link: linkInput, subject: fullSubject })
             })
             .then(r => r.json())
             .then(res => {
@@ -1026,7 +1024,7 @@
                     showToast("✅ Entry saved!", "success");
                     fetchLibraryData();
                 } else showToast("❌ Failed to save: " + res.message, "error");
-            }).catch(e => { showToast("❌ Connection Error", "error"); });
+            }).catch(e => { showToast("❌ Connection Error: " + e.message, "error"); });
         }
     </script>
 </body>
