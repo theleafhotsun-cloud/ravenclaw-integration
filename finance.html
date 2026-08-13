@@ -204,7 +204,7 @@
                 <div class="preview-table-container" style="max-height: 50vh;">
                     <table id="rankTable">
                         <thead id="rankThead">
-                            <tr><th>Vault</th><th>Name</th><th>Amount</th><th>Details</th></tr>
+                            <tr><th>Vault</th><th>Amount</th><th>Details</th></tr>
                         </thead>
                         <tbody id="rankTbody"></tbody>
                     </table>
@@ -451,7 +451,6 @@
             let titleStr = type === 'HOF_REWARDS' ? "🏆 Hall of Fame Rewards Preview" : "⚠️ SP Fines Preview";
             document.getElementById('rankModalTitle').innerText = titleStr;
 
-            // Jika cache rankDataStore sudah ada, langsung pakai. Jika tidak, fetch.
             if (rankDataCache.length === 0) {
                 try {
                     const response = await fetch(API_URL, {
@@ -468,7 +467,6 @@
                 }
             }
 
-            // Jika Mode HOF_REWARDS, tampilkan dropdown Best Room
             if (type === 'HOF_REWARDS') {
                 document.getElementById('bestRoomContainer').style.display = 'flex';
                 let sel = document.getElementById('bestRoomVcSelect');
@@ -496,8 +494,8 @@
         function buildRankPreviewTable() {
             rankAggregator = {};
             
-            function addRecord(v, n, amt, desc) {
-                if (!rankAggregator[v]) rankAggregator[v] = { vault: v, name: n, total: 0, details: [] };
+            function addRecord(v, amt, desc) {
+                if (!rankAggregator[v]) rankAggregator[v] = { vault: v, total: 0, details: [] };
                 rankAggregator[v].total += amt;
                 
                 let color = currentRankDownloadType === 'HOF_REWARDS' ? 'var(--success)' : 'var(--danger)';
@@ -516,18 +514,18 @@
                 rankDataCache.forEach(s => {
                     if (s.isInactive) return;
 
-                    if (s.award === 'Alpha') addRecord(s.vault, s.name, 500, 'Alpha of The Month');
-                    if (s.award === 'Aquilae') addRecord(s.vault, s.name, 500, 'Aquilae of The Month');
+                    if (s.award === 'Alpha') addRecord(s.vault, 500, 'Alpha of The Month');
+                    if (s.award === 'Aquilae') addRecord(s.vault, 500, 'Aquilae of The Month');
                     
-                    if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, s.name, 300, `Rank O.W.L (#${s.owlRank})`);
-                    if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, s.name, 300, `Rank SP (#${s.spRank})`);
+                    if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, 300, `Rank O.W.L (#${s.owlRank})`);
+                    if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, 300, `Rank SP (#${s.spRank})`);
                     
                     if (gamers.some(g => g.vault === s.vault)) {
-                        addRecord(s.vault, s.name, gamerReward, 'Gamers of The Month');
+                        addRecord(s.vault, gamerReward, 'Gamers of The Month');
                     }
 
                     if (bestRoomVc && s.vault === bestRoomVc) {
-                        addRecord(s.vault, s.name, 1000, 'Best Room Reward (Leadroom)');
+                        addRecord(s.vault, 1000, 'Best Room Reward (Leadroom)');
                     }
                 });
             } 
@@ -538,23 +536,24 @@
                     let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
                     if (spScore < minSp) {
                         let fine = minSp - spScore;
-                        addRecord(s.vault, s.name, fine, `SP Shortage (${spScore}/${minSp})`);
+                        addRecord(s.vault, fine, `SP Shortage (${spScore}/${minSp})`);
                     }
                 });
             }
 
+            // Render ke Tabel Modal Preview (Tanpa Nama)
             let tbody = document.getElementById('rankTbody');
             let thead = document.getElementById('rankThead');
             tbody.innerHTML = '';
             
             let amountTitle = currentRankDownloadType === 'HOF_REWARDS' ? 'Reward Amount' : 'Fine Amount';
-            thead.innerHTML = `<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>Student Name</th><th>${amountTitle}</th><th>Details</th></tr>`;
+            thead.innerHTML = `<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>${amountTitle}</th><th>Details</th></tr>`;
             
             let sortedVaults = Object.keys(rankAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
             
             if (sortedVaults.length === 0) {
                 let emptyMsg = currentRankDownloadType === 'HOF_REWARDS' ? 'No Hall of Fame rewards assigned yet.' : 'All active students met their Min SP! 🎉';
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray; padding:20px;">${emptyMsg}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:gray; padding:20px;">${emptyMsg}</td></tr>`;
                 return;
             }
 
@@ -570,7 +569,6 @@
                 tr.innerHTML = `
                     <td style="text-align:center;">${counter++}</td>
                     <td style="font-family:monospace; font-weight:bold; font-size:14px;">${data.vault}</td>
-                    <td><b>${data.name}</b></td>
                     <td style="${colorClass} font-weight:bold; font-size:13px;">${sign}ʛ${formatMoney(data.total)}</td>
                     <td style="font-size:10px; line-height:1.6;">${data.details.join('<br>')}</td>
                 `;
@@ -639,7 +637,7 @@
         function closePreview() { document.getElementById('previewModal').style.display = 'none'; }
 
         // ==========================================
-        // ENGINE PEMBUAT PDF
+        // ENGINE PEMBUAT PDF (DUES & SUMMARIES)
         // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
@@ -723,7 +721,7 @@
         }
 
         // ==========================================
-        // ENGINE PEMBUAT PDF RANKING (HOF & SP FINES)
+        // ENGINE PEMBUAT PDF RANKING (HOF & SP FINES) (TANPA NAMA MURID)
         // ==========================================
         function downloadRankPDF() {
             var btn = document.getElementById('btnDownloadRank');
@@ -738,15 +736,15 @@
             var subjectStr = currentRankDownloadType === 'HOF_REWARDS' ? "Hall of Fame Rewards - " + monthLabel : "SP Fines - " + monthLabel;
 
             var tAmount = 0;
+            // Dihilangkan Kolom Student Name
             var tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
                         <tr class="pdf-row">
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">No.</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left;">Student Name</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Amount</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left;">Details</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 10%;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 25%;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 20%;">Amount</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left; width: 45%;">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -769,7 +767,6 @@
                     <tr class="pdf-row" style="${bgColor}">
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size: 13px;">${data.vault}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; font-weight:bold;">${data.name}</td>
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${colorClass} font-weight: bold;">${sign}ʛ${formatMoney(data.total)}</td>
                         <td style="padding: 8px; border: 1px solid #ddd; font-size: 10px;">${data.details.join('<br>')}</td>
                     </tr>
