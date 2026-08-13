@@ -149,7 +149,7 @@
                 </div>
 
                 <div class="table-container">
-                    <!-- GENERAL TAB -->
+                    <!-- GENERAL TAB (Dengan Att dan Sum) -->
                     <div id="tabGeneral" class="tab-content active">
                         <table>
                             <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Can be overridden.">Att (x5)</th><th title="Auto-Synced (x3). Can be overridden.">Sum (x3)</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Manual Award</th><th>Notes</th><th>Action</th></tr></thead>
@@ -157,18 +157,18 @@
                         </table>
                     </div>
 
-                    <!-- OWL TAB -->
+                    <!-- OWL TAB (Hanya OWL Rank, Mark, Score) -->
                     <div id="tabOWL" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Can be overridden.">Att (x5)</th><th title="Auto-Synced (x3). Can be overridden.">Sum (x3)</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points directly added to total">O.W.L Score</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points directly added to total">O.W.L Score</th><th>Action</th></tr></thead>
                             <tbody id="owlBody"></tbody>
                         </table>
                     </div>
 
-                    <!-- SP TAB -->
+                    <!-- SP TAB (Hanya SP Rank dan Score) -->
                     <div id="tabSP" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Can be overridden.">Att (x5)</th><th title="Auto-Synced (x3). Can be overridden.">Sum (x3)</th><th title="Max Rank 10">SP Rank</th><th title="Points directly added to total">SP Score</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">SP Rank</th><th title="Points directly added to total">SP Score</th><th>Action</th></tr></thead>
                             <tbody id="spBody"></tbody>
                         </table>
                     </div>
@@ -389,16 +389,13 @@
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
-                // Kotak Att dan Sum sekarang berupa <input> yang bisa diketik dan dikoordinasikan (Live Update)
-                let attSumCols = `<td><input type="number" id="att_${s.vault}" value="${s.att}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9; color:#2e7d32;" oninput="recalcPoints('${s.vault}')"></td>
-                                  <td><input type="number" id="sum_${s.vault}" value="${s.sum}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb; color:#1565c0;" oninput="recalcPoints('${s.vault}')"></td>`;
-
-                // General Tab Row
+                // General Tab Row (Ada Att dan Sum)
                 genBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        ${attSumCols}
+                        <td><input type="number" id="att_${s.vault}" value="${s.att}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9; color:#2e7d32;" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="sum_${s.vault}" value="${s.sum}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb; color:#1565c0;" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="games_${s.vault}" value="${s.games}" class="inline-inp" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="schc_${s.vault}" value="${s.schc}" class="inline-inp" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="add_${s.vault}" value="${s.add}" class="inline-inp" oninput="recalcPoints('${s.vault}')"></td>
@@ -414,21 +411,21 @@
                     </tr>
                 `;
 
-                // OWL Tab Row (OWL Rank Dropdown: O, E, A, P, D, T)
+                // OWL Tab Row (Hanya OWL Rank, OWL Mark, OWL Score)
                 owlBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        ${attSumCols}
+                        <td><input type="number" id="owlRank_${s.vault}" value="${s.owlRank}" class="inline-inp" max="10" placeholder="Rank"></td>
                         <td>
-                            <select id="owlRank_${s.vault}" class="inline-inp" style="width:60px; font-weight:bold;">
-                                <option value="" ${s.owlRank===''?'selected':''}>-</option>
-                                <option value="O" ${s.owlRank==='O'?'selected':''}>O</option>
-                                <option value="E" ${s.owlRank==='E'?'selected':''}>E</option>
-                                <option value="A" ${s.owlRank==='A'?'selected':''}>A</option>
-                                <option value="P" ${s.owlRank==='P'?'selected':''}>P</option>
-                                <option value="D" ${s.owlRank==='D'?'selected':''}>D</option>
-                                <option value="T" ${s.owlRank==='T'?'selected':''}>T</option>
+                            <select id="owlMark_${s.vault}" class="inline-inp" style="width:60px; font-weight:bold;">
+                                <option value="" ${s.owlMark===''?'selected':''}>-</option>
+                                <option value="O" ${s.owlMark==='O'?'selected':''}>O</option>
+                                <option value="E" ${s.owlMark==='E'?'selected':''}>E</option>
+                                <option value="A" ${s.owlMark==='A'?'selected':''}>A</option>
+                                <option value="P" ${s.owlMark==='P'?'selected':''}>P</option>
+                                <option value="D" ${s.owlMark==='D'?'selected':''}>D</option>
+                                <option value="T" ${s.owlMark==='T'?'selected':''}>T</option>
                             </select>
                         </td>
                         <td><input type="number" id="owlScore_${s.vault}" value="${s.owlScore}" class="inline-inp" placeholder="Score" oninput="recalcPoints('${s.vault}')"></td>
@@ -436,12 +433,11 @@
                     </tr>
                 `;
 
-                // SP Tab Row
+                // SP Tab Row (Hanya SP Rank dan SP Score)
                 spBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        ${attSumCols}
                         <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" max="10" placeholder="Rank"></td>
                         <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Score" oninput="recalcPoints('${s.vault}')"></td>
                         <td>${btnHtml}</td>
@@ -472,14 +468,18 @@
             let elAward = document.getElementById(`award_${vault}`);
             
             let elOwlR = document.getElementById(`owlRank_${vault}`);
+            let elOwlM = document.getElementById(`owlMark_${vault}`);
             let elOwlS = document.getElementById(`owlScore_${vault}`);
             
             let elSpR = document.getElementById(`spRank_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
 
-            if (elSpR && parseInt(elSpR.value) > 10) {
-                alert("SP Rank limit is Maximum 10!"); return;
+            if ((elOwlR && parseInt(elOwlR.value) > 10) || (elSpR && parseInt(elSpR.value) > 10)) {
+                alert("Ranking limit is Maximum 10!"); return;
             }
+
+            // Trik menggabungkan Rank dan Mark agar API Router (1_Main.gs) tidak error!
+            let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
 
             let payload = {
                 action: "saveManualRank",
@@ -490,7 +490,7 @@
                 games: elGms ? elGms.value : s.games,
                 schc: elSchc ? elSchc.value : s.schc,
                 add: elAdd ? elAdd.value : s.add,
-                owlRank: elOwlR ? elOwlR.value : s.owlRank,
+                owlRank: combinedOwlRank, // Data digabung di sini!
                 owlScore: elOwlS ? elOwlS.value : s.owlScore,
                 spRank: elSpR ? elSpR.value : s.spRank,
                 spScore: elSpS ? elSpS.value : s.spScore,
@@ -581,7 +581,7 @@
             let minHtml = '';
             let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
             topMin.forEach((s, idx) => {
-                minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Mark: ${s.owlRank || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
+                minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
             });
             document.getElementById('lbMin').innerHTML = minHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
 
@@ -589,7 +589,7 @@
             let aurHtml = '';
             let topAur = [...data].filter(x => x.major.toLowerCase().includes('auror') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
             topAur.forEach((s, idx) => {
-                aurHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Mark: ${s.owlRank || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
+                aurHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
             });
             document.getElementById('lbAuror').innerHTML = aurHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
 
