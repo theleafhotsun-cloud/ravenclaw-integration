@@ -128,7 +128,6 @@
                     <div class="card"><h5>Total Monthly Rewards<br>(Minus from Petty Cash)</h5><div class="amount minus" id="sumRewards">ʛ0</div></div>
                 </div>
 
-                <!-- TOMBOL EKSPOR DIBAGI MENJADI 4 -->
                 <div class="btn-group">
                     <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
@@ -233,7 +232,7 @@
         var rankAggregator = {};
         
         var currentDownloadType = "";
-        var currentRankDownloadType = ""; // 'HOF_REWARDS' atau 'SP_FINES'
+        var currentRankDownloadType = ""; 
         let currentFetchId = 0; 
 
         window.onload = function() {
@@ -473,7 +472,7 @@
             if (type === 'HOF_REWARDS') {
                 document.getElementById('bestRoomContainer').style.display = 'flex';
                 let sel = document.getElementById('bestRoomVcSelect');
-                if (sel.options.length <= 1) { // Hanya isi kalau belum pernah diisi
+                if (sel.options.length <= 1) { 
                     let sorted = [...rankDataCache].sort((a,b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
                     sorted.forEach(s => {
                         if (!s.isInactive) {
@@ -544,12 +543,10 @@
                 });
             }
 
-            // Render ke Tabel
             let tbody = document.getElementById('rankTbody');
             let thead = document.getElementById('rankThead');
             tbody.innerHTML = '';
             
-            // Atur Judul Kolom
             let amountTitle = currentRankDownloadType === 'HOF_REWARDS' ? 'Reward Amount' : 'Fine Amount';
             thead.innerHTML = `<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>Student Name</th><th>${amountTitle}</th><th>Details</th></tr>`;
             
@@ -595,7 +592,8 @@
             
             thead.innerHTML = ''; tbody.innerHTML = ''; annotBox.style.display = 'none';
             
-            var headersHtml = "<tr><th style='width:50px;'>No.</th><th>Vault Code</th>";
+            // DITAMBAHKAN NAMA MURID
+            var headersHtml = "<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>Student Name</th>";
             var hasFines = false;
             
             if(type === 'DUES_FINES') {
@@ -618,7 +616,8 @@
                 var tr = document.createElement('tr');
                 if (isFined) tr.style.backgroundColor = "#ffebee"; 
 
-                var rowHtml = `<td style="text-align:center;">${counter++}</td><td style="font-family:monospace; font-weight:bold; font-size:14px;">${s.vault}</td>`;
+                // DITAMBAHKAN NAMA MURID
+                var rowHtml = `<td style="text-align:center;">${counter++}</td><td style="font-family:monospace; font-weight:bold; font-size:14px;">${s.vault}</td><td><b style="color:var(--royal-blue);">${s.username}</b></td>`;
 
                 if(type === 'DUES_FINES') { 
                     let totalAmount = s.kas + s.denda;
@@ -663,15 +662,17 @@
             var tKas = 0, tFines = 0, tRewards = 0;
             var hasFines = false;
 
+            // DITAMBAHKAN NAMA MURID
             var tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
                         <tr class="pdf-row">
                             <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 5%;">No.</th>
-                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Vault Code</th>
-                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Total Amount</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 15%;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 25%;">Student Name</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 20%;">Total Amount</th>
             `;
-            if (currentDownloadType === 'DUES_FINES') tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 45%;">Fines Details</th>`;
+            if (currentDownloadType === 'DUES_FINES') tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 35%;">Fines Details</th>`;
             tableHtml += `</tr></thead><tbody>`;
 
             var counter = 1;
@@ -686,9 +687,11 @@
                 
                 var bgColor = isFined ? "background-color: #ffebee;" : "";
 
+                // DITAMBAHKAN NAMA MURID
                 tableHtml += `<tr class="pdf-row" style="${bgColor}">
                     <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
-                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:13px;">${s.vault}</td>`;
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:13px;">${s.vault}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: left; font-weight: bold; color: #112250;">${s.username}</td>`;
                     
                 if(currentDownloadType === 'DUES_FINES') {
                     tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: bold;">ʛ${formatMoney(s.kas + s.denda)}</td>
@@ -701,7 +704,7 @@
             });
             tableHtml += `</tbody></table>`;
 
-            // FOOTER
+            // FOOTER BIASA
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
             if (hasFines && currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
