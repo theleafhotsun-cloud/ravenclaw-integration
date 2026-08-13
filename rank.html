@@ -59,7 +59,7 @@
         .inline-inp { width: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; text-align: center; background-color: #fffde7; font-weight:bold; box-sizing:border-box; color: #112250;}
         .inline-inp::placeholder { color: #9aa2b5; font-weight: bold; font-style: italic; }
         .inline-inp:focus { border-color: var(--royal-blue); background-color: white; outline: none; box-shadow: 0 0 5px rgba(60,80,125,0.3);}
-        .inline-txt { width: 120px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px;}
+        .inline-txt { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px;}
 
         .btn-save-inline { background-color: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; text-transform: uppercase;}
         .btn-save-inline:hover { background-color: #1b5e20; }
@@ -110,7 +110,7 @@
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
                 Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + OWL Score + SP Score + <b>(Top 10 OWL Bonus x 15)</b> + <b>(Top 10 SP Bonus x 15)</b><br>
-                <span style="color:var(--danger); font-weight:bold;">⚠️ G7 Students are exempt from SP Fines. Hiatus Lock Checkbox preserves status permanently when saved.</span>
+                <span style="color:var(--danger); font-weight:bold;">⚠️ G7 Students are exempt from SP Fines. Type LOA/Hiatus Dates and click Save to lock it permanently.</span>
             </div>
 
             <div class="period-controller">
@@ -255,7 +255,7 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
-            setupDynamicSidebar();
+            setupDynamicSidebar(); // Memunculkan navigasi sidebar kembali
             if (!isRankViewer) { alert("Access Denied!"); navigateHome(); return; }
             initPeriodConfig();
         });
@@ -280,11 +280,38 @@
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
-            document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'none');
-            if (isHH) document.querySelectorAll('#sidebarMenu li').forEach(el => el.style.display = 'block');
-            else if (isPrefect) ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isLeadroom) ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
-            else if (isEditor) ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'].forEach(c => { let el = document.querySelector('.'+c); if(el) el.style.display = 'block'; });
+            const allMenus = [
+                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
+                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
+                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
+                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
+                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
+            ];
+
+            let allowedMenuIds = [];
+            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
+            else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+            else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+            else if (isEditor) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+
+            var sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.innerHTML = ''; 
+            allMenus.forEach(menu => {
+                if (allowedMenuIds.includes(menu.id)) {
+                    var li = document.createElement('li'); li.className = menu.id;
+                    var act = menu.id === 'menu-rank' ? ' class="active"' : '';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${act}>${menu.label}</a>`;
+                    sidebarMenu.appendChild(li);
+                }
+            });
         }
 
         function navigateHome() {
@@ -336,6 +363,9 @@
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
                     rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+                    
+                    rankDataStore.sort((a, b) => { return parseInt(a.vault) - parseInt(b.vault); });
+
                     renderInputTables(rankDataStore);
                     renderLeaderboards(rankDataStore);
                     renderRewards(rankDataStore);
@@ -371,9 +401,11 @@
             
             let att = elAtt && elAtt.value !== '' ? Number(elAtt.value) : s.autoAtt;
             let sum = elSum && elSum.value !== '' ? Number(elSum.value) : s.autoSum;
+            
             let gms = elGms && elGms.value !== '' ? Number(elGms.value) : s.games;
             let schc = elSchc && elSchc.value !== '' ? Number(elSchc.value) : s.schc;
             let add = elAdd && elAdd.value !== '' ? Number(elAdd.value) : s.add;
+            
             let owlRVal = elOwlR && elOwlR.value !== '' ? Number(elOwlR.value) : Number(s.owlRank);
             let owlSVal = elOwlS && elOwlS.value !== '' ? Number(elOwlS.value) : s.owlScore;
             let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
@@ -403,12 +435,23 @@
             data.forEach(s => {
                 let rClass = s.isInactive ? "row-inactive" : "";
                 
-                // Hiatus Checkbox (Locks status when saved)
-                let hiatusCheck = `<label style="font-size:9px; color:var(--warning); margin-left:5px; cursor:pointer;" title="Check and click Save to lock Hiatus status permanently for this month."><input type="checkbox" id="hiatus_${s.vault}" ${s.isHiatus ? 'checked' : ''}> <b>Hiatus/LOA</b></label>`;
-                
-                let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} ${hiatusCheck}</div>
-                                <div style="font-size:10px; color:gray; margin-top:2px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Total Class:</b> ${s.totClass} | <b>Grade:</b> ${s.grade}</div>
-                                <div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Total Pts: <b class="tp-disp-${s.vault}">${s.totalPoints}</b></div>`;
+                // Menentukan Status Teks
+                let isHiatus = s.hiatusDates && s.hiatusDates.trim() !== '';
+                let statText = '';
+                if (s.isInactive) statText = `<span style="color:var(--danger);">INACTIVE</span>`;
+                else if (isHiatus || s.isHiatusDynamic) statText = `<span style="color:var(--warning);">HIATUS/LOA</span>`;
+                else statText = `<span style="color:var(--success);">ACTIVE</span>`;
+
+                let rankBadge = `<span style="color:var(--danger); font-weight:bold;">#${s.rankNumber}</span>`;
+
+                // Kotak Input Teks untuk menyimpan tanggal Hiatus secara permanen
+                let placeholderTxt = s.isHiatusDynamic ? "Auto: On Hiatus" : "LOA Dates...";
+                let hiatusInput = `<input type="text" id="hiatus_${s.vault}" value="${s.hiatusDates}" class="inline-txt" style="width:110px; padding:4px; font-size:10px; border:1px solid var(--warning); background:#fff9c4;" placeholder="${placeholderTxt}" title="Isi tanggal cuti dan klik Save untuk mengunci permanen">`;
+
+                let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue); margin-bottom:3px;">${s.name} <span style="font-size:9px;">(${statText})</span></div>
+                                <div style="font-size:10px; color:gray; margin-bottom:3px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Grade:</b> ${s.grade}</div>
+                                <div style="font-size:10px; color:var(--royal-blue); margin-bottom:3px;"><b>LOA Dates:</b> ${hiatusInput}</div>
+                                <div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Total Pts: <b class="tp-disp-${s.vault}">${s.totalPoints}</b> | 🏆 Rank: ${rankBadge}</div>`;
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
@@ -505,7 +548,10 @@
             if (elOwlR && parseInt(elOwlR.value) > 10) { alert("OWL Rank limit is Maximum 10!"); return; }
 
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
-            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + (elHiatus && elHiatus.checked ? "1" : "0");
+            
+            // Menyisipkan Teks Hiatus Dates ke payload untuk Backend
+            let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\|/g, '') : s.hiatusDates;
+            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal;
 
             let payload = {
                 action: "saveManualRank",
@@ -605,7 +651,6 @@
             document.getElementById('rewSpFines').innerHTML = spFinesHtml || '<i>All active students met their Min SP! 🎉</i>';
         }
 
-        // FUNGSI LEADERBOARD
         function getRankCircle(rankNum) {
             if(rankNum === 1) return `<div class="rank-circle rank-1">🥇</div>`;
             if(rankNum === 2) return `<div class="rank-circle rank-2">🥈</div>`;
