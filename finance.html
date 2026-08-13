@@ -50,6 +50,7 @@
         
         .btn-dues-fines { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;} .btn-dues-fines:hover { background-color: #c8e6c9; }
         .btn-rewards { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;} .btn-rewards:hover { background-color: #e1bee7; }
+        .btn-hof { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;} .btn-hof:hover { background-color: #ffe0b2; }
 
         .toggle-dues { font-size: 12px; font-weight: bold; color: var(--royal-blue); background-color: #fff9c4; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--warning); cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
@@ -66,7 +67,7 @@
         .minus { color: var(--danger); }
         
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
-        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 700px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 850px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 15px;}
         
         .preview-table-container { overflow-y: auto; border: 1px solid var(--shellstone); border-radius: 4px; flex-grow: 1; margin-bottom: 10px;}
@@ -84,7 +85,6 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -127,12 +127,12 @@
                 </div>
 
                 <div class="btn-group">
-                    <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines Withdrawal</button>
-                    <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Rewards Disbursement</button>
-                    <!-- Fitur Baru Untuk Merapikan Tabel -->
+                    <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
+                    <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
+                    <button class="btn-export btn-hof" onclick="openHoFModal()">🏆 Preview Hall of Fame & SP Fines</button>
                     <label class="toggle-dues">
                         <input type="checkbox" id="hideKasFilter" onchange="renderMasterTable()">
-                        Focus Mode: Hide Monthly Dues (Show Only Active Fines/Rewards)
+                        Focus Mode: Hide Monthly Dues
                     </label>
                 </div>
 
@@ -157,9 +157,9 @@
         </div>
     </div>
 
-    <!-- PREVIEW MODAL -->
+    <!-- PREVIEW MODAL (DUES, FINES, REWARDS) -->
     <div class="modal-overlay" id="previewModal">
-        <div class="modal-box">
+        <div class="modal-box" style="width: 700px;">
             <h3 id="previewTitle">Preview Data</h3>
             
             <div class="preview-table-container">
@@ -180,8 +180,41 @@
         </div>
     </div>
 
+    <!-- HALL OF FAME & SP FINES MODAL -->
+    <div class="modal-overlay" id="hofModal">
+        <div class="modal-box">
+            <h3>🏆 Hall of Fame Rewards & SP Fines Preview</h3>
+            
+            <div id="hofLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Compiling Rank Data... Please wait.</div>
+            
+            <div id="hofContent" style="display:none; flex-direction:column; flex-grow:1; overflow:hidden;">
+                
+                <!-- CUSTOMIZE BEST ROOM VC -->
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; background:#fff9c4; padding:10px; border-radius:6px; border:1px solid var(--warning);">
+                    <label style="font-size:12px; font-weight:bold; color:var(--royal-blue);">🛡️ Assign Best Room (1000G) to Leadroom VC:</label>
+                    <select id="bestRoomVcSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc; font-family:monospace; font-size:12px; outline:none;" onchange="buildHoFTable()">
+                        <option value="">-- Select Leadroom VC --</option>
+                    </select>
+                </div>
+
+                <div class="preview-table-container" style="max-height: 50vh;">
+                    <table id="hofTable">
+                        <thead>
+                            <tr><th>Vault</th><th>Name</th><th>Rewards (+G)</th><th>Fines (-G)</th><th>Details</th></tr>
+                        </thead>
+                        <tbody id="hofTbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeHoFModal()">Cancel</button>
+                    <button class="btn-download" onclick="downloadHoFPDF()" id="btnDownloadHof">⬇️ Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // API URL BARU
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
         
         let loggedInUser = localStorage.getItem('session_username') || "Guest";
@@ -189,8 +222,10 @@
         
         var periodConfigStore = {}; 
         var masterFinanceList = []; 
+        var rankDataCache = [];
+        var hofAggregator = {};
         var currentDownloadType = "";
-        let currentFetchId = 0; // PENANGKAL TABRAKAN LOADING (RACE CONDITION)
+        let currentFetchId = 0; 
 
         window.onload = function() {
             document.getElementById("displayUsername").innerText = loggedInUser;
@@ -198,12 +233,8 @@
             initPeriodConfig();
         };
 
-        // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI ROLE-BASED
-        // ==========================================
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
@@ -232,53 +263,34 @@
             ];
 
             let allowedMenuIds = [];
-
-            if (isHH) {
-                allowedMenuIds = allMenus.map(m => m.id);
-            } 
-            else if (isPrefect) {
-                allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
-            } 
-            else if (isLeadroom) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
-            } 
-            else if (isEditor) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
-            }
+            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
+            else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+            else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+            else if (isEditor) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
 
             var sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.innerHTML = ''; 
-            
             allMenus.forEach(menu => {
                 if (allowedMenuIds.includes(menu.id)) {
-                    var li = document.createElement('li');
-                    li.className = menu.id;
-                    li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '">' + menu.label + '</a>';
+                    var li = document.createElement('li'); li.className = menu.id;
+                    var act = menu.id === 'menu-finance' ? ' class="active"' : '';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${act}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
 
         function navigateHome() {
-            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
             var targetPage = 'headhouse';
-
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
             else if (userRole.includes('editor')) targetPage = 'editor';
             else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         async function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block';
@@ -286,17 +298,14 @@
 
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
+                    method: 'POST', body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
                 });
                 const res = await response.json();
                 
                 if (res.status === "success") {
                     periodConfigStore = res.data; 
                     populateMonthDropdown();
-                } else {
-                    throw new Error(res.message);
-                }
+                } else throw new Error(res.message);
             } catch (error) {
                 document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + error.message + "</span>";
             }
@@ -304,7 +313,6 @@
 
         function populateMonthDropdown() {
             var monthSel = document.getElementById('monthSelector'); monthSel.innerHTML = '';
-            
             if(periodConfigStore.activeMonth) {
                 var m = periodConfigStore.activeMonth;
                 var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Active)"; opt.selected = true;
@@ -315,7 +323,6 @@
                 var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Archive)";
                 monthSel.appendChild(opt);
             });
-
             onMonthChange();
         }
 
@@ -335,27 +342,25 @@
             var week = document.getElementById('weekSelector').value;
             if(!month) return; 
             
-            let fetchId = ++currentFetchId; // Beri label antrean untuk request ini
+            let fetchId = ++currentFetchId; 
             
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('financeContent').style.display = 'none';
 
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "getActiveRoomData", month: month, week: week })
+                    method: 'POST', body: JSON.stringify({ action: "getActiveRoomData", month: month, week: week })
                 });
                 const res = await response.json();
                 
-                // JIKA USER SUDAH MENGKLIK MINGGU LAIN, BUANG HASIL REQUEST BASI INI!
                 if (fetchId !== currentFetchId) return;
 
-                masterFinanceList = []; // KOSONGKAN HANYA SETELAH DATA ASLI DITERIMA
+                masterFinanceList = []; 
 
                 if (res.status === "success" && res.data) {
                     var data = res.data;
                     var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
-                    var seenVaults = new Set(); // Mencegah dobel dari backend
+                    var seenVaults = new Set(); 
 
                     rooms.forEach(function(rName) {
                         var students = data.rooms[rName] || [];
@@ -373,9 +378,7 @@
 
                     masterFinanceList.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
                     renderMasterTable();
-                } else {
-                    throw new Error(res.message);
-                }
+                } else throw new Error(res.message);
             } catch (error) {
                 if (fetchId === currentFetchId) {
                     document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + error.message + "</span>";
@@ -401,7 +404,6 @@
                 masterFinanceList.forEach(function(s) {
                     sumKas += s.kas; sumFines += s.denda; sumRewards += s.reward;
                     
-                    // Filter Mode Fokus: Sembunyikan jika anak hanya punya Kas tanpa denda/reward
                     if (hideKas && s.denda <= 0 && s.reward <= 0) return;
 
                     var tr = document.createElement('tr');
@@ -425,6 +427,131 @@
             document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
         }
 
+        // ==========================================
+        // FITUR BARU: HALL OF FAME & SP FINES MODAL
+        // ==========================================
+        async function openHoFModal() {
+            var month = document.getElementById('monthSelector').value;
+            if (!month) return alert("Please select a valid month first.");
+
+            document.getElementById('hofModal').style.display = 'flex';
+            document.getElementById('hofLoading').style.display = 'block';
+            document.getElementById('hofContent').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: "getRankData", month: month })
+                });
+                const res = await response.json();
+                
+                if (res.status === "success" && res.data) {
+                    rankDataCache = res.data;
+                    
+                    // Populate Select List for Best Room VC
+                    let sel = document.getElementById('bestRoomVcSelect');
+                    sel.innerHTML = '<option value="">-- Select Leadroom VC --</option>';
+                    
+                    let sorted = [...rankDataCache].sort((a,b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
+                    sorted.forEach(s => {
+                        if (!s.isInactive) {
+                            sel.innerHTML += `<option value="${s.vault}">${s.vault} - ${s.name}</option>`;
+                        }
+                    });
+
+                    buildHoFTable();
+                    
+                    document.getElementById('hofLoading').style.display = 'none';
+                    document.getElementById('hofContent').style.display = 'flex';
+                } else throw new Error(res.message);
+            } catch (error) {
+                document.getElementById('hofLoading').innerHTML = "<span style='color:red;'>Failed to load Rank Data: " + error.message + "</span>";
+            }
+        }
+
+        function closeHoFModal() {
+            document.getElementById('hofModal').style.display = 'none';
+        }
+
+        function buildHoFTable() {
+            hofAggregator = {};
+            
+            function addRecord(v, n, type, amt, desc) {
+                if (!hofAggregator[v]) hofAggregator[v] = { vault: v, name: n, reward: 0, fine: 0, details: [] };
+                if (type === 'REWARD') {
+                    hofAggregator[v].reward += amt;
+                    hofAggregator[v].details.push(`<span style="color:var(--success); font-weight:bold;">${desc} (+ʛ${formatMoney(amt)})</span>`);
+                } else {
+                    hofAggregator[v].fine += amt;
+                    hofAggregator[v].details.push(`<span style="color:var(--danger); font-weight:bold;">${desc} (-ʛ${formatMoney(amt)})</span>`);
+                }
+            }
+
+            // Gamers Logic
+            let maxGames = 0;
+            rankDataCache.forEach(s => { let g = Number(s.games) || 0; if (g > maxGames) maxGames = g; });
+            let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
+            let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
+
+            let bestRoomVc = document.getElementById('bestRoomVcSelect').value;
+
+            // Memproses Setiap Murid
+            rankDataCache.forEach(s => {
+                if (s.isInactive) return; // Skip murid dropout/resign
+
+                // 1. Alpha & Aquilae
+                if (s.award === 'Alpha') addRecord(s.vault, s.name, 'REWARD', 500, 'Alpha of The Month');
+                if (s.award === 'Aquilae') addRecord(s.vault, s.name, 'REWARD', 500, 'Aquilae of The Month');
+                
+                // 2. Rank O.W.L & SP
+                if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, s.name, 'REWARD', 300, `Rank O.W.L (#${s.owlRank})`);
+                if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, s.name, 'REWARD', 300, `Rank SP (#${s.spRank})`);
+                
+                // 3. Denda SP
+                let spScore = Number(s.spScore) || 0;
+                let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
+                if (spScore < minSp) {
+                    let fine = minSp - spScore;
+                    addRecord(s.vault, s.name, 'FINE', fine, `SP Shortage (${spScore}/${minSp})`);
+                }
+
+                // 4. Gamers of the Month
+                if (gamers.some(g => g.vault === s.vault)) {
+                    addRecord(s.vault, s.name, 'REWARD', gamerReward, 'Gamers of The Month');
+                }
+
+                // 5. Best Room Reward
+                if (bestRoomVc && s.vault === bestRoomVc) {
+                    addRecord(s.vault, s.name, 'REWARD', 1000, 'Best Room Reward (Leadroom)');
+                }
+            });
+
+            let tbody = document.getElementById('hofTbody');
+            tbody.innerHTML = '';
+            
+            let sortedVaults = Object.keys(hofAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
+            
+            if (sortedVaults.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:gray; padding:20px;">No Hall of Fame or Fines data for this month.</td></tr>';
+                return;
+            }
+
+            sortedVaults.forEach(v => {
+                let data = hofAggregator[v];
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-family:monospace; font-weight:bold;">${data.vault}</td>
+                    <td><b>${data.name}</b></td>
+                    <td style="color:var(--success); font-weight:bold;">${data.reward > 0 ? '+ʛ'+formatMoney(data.reward) : '-'}</td>
+                    <td style="color:var(--danger); font-weight:bold;">${data.fine > 0 ? '-ʛ'+formatMoney(data.fine) : '-'}</td>
+                    <td style="font-size:10px; line-height:1.6;">${data.details.join('<br>')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // LOGIKA DOWNLOAD PREVIEW BIASA (Dues & Summaries)
+        // ==========================================
         function openPreview(type) {
             if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
             currentDownloadType = type;
@@ -443,7 +570,7 @@
                 title.innerText = "Preview: Dues & Fines Withdrawal";
                 headersHtml += "<th>Total Amount</th><th>Fines Details</th></tr>";
             } else if (type === 'REWARDS') {
-                title.innerText = "Preview: Monthly Rewards Disbursement";
+                title.innerText = "Preview: Monthly Summaries Reward";
                 headersHtml += "<th>Total Amount</th></tr>";
             }
             thead.innerHTML = headersHtml;
@@ -478,14 +605,14 @@
             document.getElementById('previewModal').style.display = 'flex';
         }
 
-        function closePreview() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
+        function closePreview() { document.getElementById('previewModal').style.display = 'none'; }
 
+        // ==========================================
+        // ENGINE PEMBUAT PDF
+        // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
-            btn.innerText = "⏳ Generating...";
-            btn.disabled = true;
+            btn.innerText = "⏳ Generating..."; btn.disabled = true;
 
             var month = document.getElementById('monthSelector').value.replace(/\s+/g, '_');
             var week = document.getElementById('weekSelector').value.replace(/\s+/g, '');
@@ -495,14 +622,11 @@
             var filename = "Ravenclaw_Finance_" + currentDownloadType + "_" + month + "_" + week + ".pdf";
             
             var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0');
-            var yy = String(today.getFullYear()).slice(-2);
-            var dateStr = dd + "/" + mm + "/" + yy;
+            var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
 
             var subjectStr = "";
             if(currentDownloadType === 'DUES_FINES') subjectStr = "House Dues & Fines Withdrawal - " + monthLabel + " " + weekLabel;
-            else if (currentDownloadType === 'REWARDS') subjectStr = "Monthly Summaries Reward Disbursement - " + monthLabel;
+            else if (currentDownloadType === 'REWARDS') subjectStr = "Monthly Summaries Reward - " + monthLabel;
 
             var tKas = 0, tFines = 0, tRewards = 0;
             var hasFines = false;
@@ -515,11 +639,7 @@
                             <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Vault Code</th>
                             <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Total Amount</th>
             `;
-            
-            if (currentDownloadType === 'DUES_FINES') {
-                tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 45%;">Fines Details</th>`;
-            }
-            
+            if (currentDownloadType === 'DUES_FINES') tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 45%;">Fines Details</th>`;
             tableHtml += `</tr></thead><tbody>`;
 
             var counter = 1;
@@ -539,62 +659,110 @@
                     <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:13px;">${s.vault}</td>`;
                     
                 if(currentDownloadType === 'DUES_FINES') {
-                    let totalAmount = s.kas + s.denda;
-                    let fdText = isFined ? s.finesDetail : '-';
-                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: bold;">ʛ${formatMoney(totalAmount)}</td>`;
-                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 10px; color: #555;">${fdText}</td>`;
+                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: bold;">ʛ${formatMoney(s.kas + s.denda)}</td>
+                                  <td style="padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 10px; color: #555;">${isFined ? s.finesDetail : '-'}</td>`;
                 }
                 else if (currentDownloadType === 'REWARDS') {
                     tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: #2e7d32; font-weight: bold;">+ʛ${formatMoney(s.reward)}</td>`;
                 }
-                
                 tableHtml += `</tr>`;
             });
-
             tableHtml += `</tbody></table>`;
 
-            // FOOTER & GRAND TOTAL
+            // FOOTER BIASA
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
-
             if (hasFines && currentDownloadType === 'DUES_FINES') {
-                footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;">
-                    <i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i>
-                </div>`;
+                footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
             }
-
             footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
-            
             if (currentDownloadType === 'DUES_FINES') {
-                footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #112250;">Total House Dues</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #112250;">+ʛ${formatMoney(tKas)}</td></tr>`;
-                footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #1b5e20;">Total Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #1b5e20;">+ʛ${formatMoney(tFines)}</td></tr>`;
-                footerHtml += `<tr style="border-top: 2px solid #3C507D; background-color: #c5cae9;"><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Grand Total Withdrawn</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tKas + tFines)} to Ravenclaw's Petty Cash</td></tr>`;
+                footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #112250;">Total House Dues</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #112250;">+ʛ${formatMoney(tKas)}</td></tr>
+                               <tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #1b5e20;">Total Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #1b5e20;">+ʛ${formatMoney(tFines)}</td></tr>
+                               <tr style="border-top: 2px solid #3C507D; background-color: #c5cae9;"><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Grand Total Withdrawn</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tKas + tFines)} to Ravenclaw's Petty Cash</td></tr>`;
             } else if (currentDownloadType === 'REWARDS') {
                 footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tRewards)} from Ravenclaw's Petty Cash</td></tr>`;
             }
-            footerHtml += `</table>`;
+            footerHtml += `</table><div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;"><span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>Hogwarts School of Witchcraft and Wizardry</div></div>`; 
 
-            footerHtml += `
-                <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
-                    <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
-                    Hogwarts School of Witchcraft and Wizardry<br>
-                    Highlands, Scotland, Great Britain
-                </div>
-            </div>`; 
+            generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn);
+        }
 
-            var pdfContainer = document.createElement('div');
+        function downloadHoFPDF() {
+            var btn = document.getElementById('btnDownloadHof');
+            btn.innerText = "⏳ Generating..."; btn.disabled = true;
+
+            var monthLabel = document.getElementById('monthSelector').value;
+            var filename = "Ravenclaw_HoF_SPFines_" + monthLabel.replace(/\s+/g, '_') + ".pdf";
             
+            var today = new Date();
+            var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
+
+            var tRewards = 0, tFines = 0;
+
+            var tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                    <thead>
+                        <tr class="pdf-row">
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left;">Student Name</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Rewards</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Fines</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left;">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            var counter = 1;
+            let sortedVaults = Object.keys(hofAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
+            
+            sortedVaults.forEach(v => {
+                let data = hofAggregator[v];
+                tRewards += data.reward; tFines += data.fine;
+                
+                tableHtml += `
+                    <tr class="pdf-row">
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size: 13px;">${data.vault}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; font-weight:bold;">${data.name}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #2e7d32; font-weight: bold;">${data.reward > 0 ? '+ʛ'+formatMoney(data.reward) : '-'}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #c62828; font-weight: bold;">${data.fine > 0 ? '-ʛ'+formatMoney(data.fine) : '-'}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; font-size: 10px;">${data.details.join('<br>')}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+
+            var footerHtml = `
+                <div class="pdf-row" style="width: 100%; margin: 20px auto 0;">
+                    <table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">
+                        <tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #1b5e20;">Total Hall of Fame Rewards Disbursed</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #1b5e20;">-ʛ${formatMoney(tRewards)}</td></tr>
+                        <tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #c62828;">Total SP Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #c62828;">+ʛ${formatMoney(tFines)}</td></tr>
+                    </table>
+                    <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
+                        <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
+                        Hogwarts School of Witchcraft and Wizardry
+                    </div>
+                </div>
+            `;
+
+            generateDocument(filename, "Hall of Fame Rewards & SP Fines - " + monthLabel, dateStr, tableHtml, footerHtml, btn, closeHoFModal);
+        }
+
+        // FUNGSI PEMBANTU UNTUK HTML2PDF
+        function generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btnObj, callback) {
+            var pdfContainer = document.createElement('div');
             pdfContainer.innerHTML = `
                 <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 20px; color: #112250; width: 750px; margin: 0 auto; box-sizing: border-box;">
                     <div class="pdf-row" style="text-align: center; margin-bottom: 5px;">
                         <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
                     </div>
                     <hr class="pdf-row" style="border: 0; border-top: 2px solid #112250; margin-bottom: 15px;">
-                    
                     <div class="pdf-row" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px;">
                         <div><b>Subject:</b> ${subjectStr}</div>
                         <div>${dateStr}</div>
                     </div>
-                    
                     ${tableHtml}
                     ${footerHtml}
                 </div>
@@ -610,13 +778,12 @@
             };
 
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
-                btn.innerText = "⬇️ Download PDF";
-                btn.disabled = false;
-                closePreview();
+                btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
+                if (callback) callback();
+                else closePreview();
             }).catch(function(err) {
                 alert("Failed to generate PDF. Please try again.");
-                btn.innerText = "⬇️ Download PDF";
-                btn.disabled = false;
+                btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
             });
         }
     </script>
