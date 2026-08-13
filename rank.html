@@ -255,7 +255,7 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
-            setupDynamicSidebar(); // Memunculkan navigasi sidebar kembali
+            setupDynamicSidebar();
             if (!isRankViewer) { alert("Access Denied!"); navigateHome(); return; }
             initPeriodConfig();
         });
@@ -394,6 +394,7 @@
             let elGms = document.getElementById(`games_${vault}`);
             let elSchc = document.getElementById(`schc_${vault}`);
             let elAdd = document.getElementById(`add_${vault}`);
+            
             let elOwlR = document.getElementById(`owlRank_${vault}`);
             let elOwlS = document.getElementById(`owlScore_${vault}`);
             let elSpR = document.getElementById(`spRank_${vault}`);
@@ -408,6 +409,7 @@
             
             let owlRVal = elOwlR && elOwlR.value !== '' ? Number(elOwlR.value) : Number(s.owlRank);
             let owlSVal = elOwlS && elOwlS.value !== '' ? Number(elOwlS.value) : s.owlScore;
+            
             let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
             let spSVal = elSpS && elSpS.value !== '' ? Number(elSpS.value) : s.spScore;
             
@@ -435,7 +437,6 @@
             data.forEach(s => {
                 let rClass = s.isInactive ? "row-inactive" : "";
                 
-                // Menentukan Status Teks
                 let isHiatus = s.hiatusDates && s.hiatusDates.trim() !== '';
                 let statText = '';
                 if (s.isInactive) statText = `<span style="color:var(--danger);">INACTIVE</span>`;
@@ -444,7 +445,6 @@
 
                 let rankBadge = `<span style="color:var(--danger); font-weight:bold;">#${s.rankNumber}</span>`;
 
-                // Kotak Input Teks untuk menyimpan tanggal Hiatus secara permanen
                 let placeholderTxt = s.isHiatusDynamic ? "Auto: On Hiatus" : "LOA Dates...";
                 let hiatusInput = `<input type="text" id="hiatus_${s.vault}" value="${s.hiatusDates}" class="inline-txt" style="width:110px; padding:4px; font-size:10px; border:1px solid var(--warning); background:#fff9c4;" placeholder="${placeholderTxt}" title="Isi tanggal cuti dan klik Save untuk mengunci permanen">`;
 
@@ -549,7 +549,6 @@
 
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
             
-            // Menyisipkan Teks Hiatus Dates ke payload untuk Backend
             let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\|/g, '') : s.hiatusDates;
             let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal;
 
@@ -592,7 +591,6 @@
             });
         }
 
-        // FUNGSI LOGIKA REWARDS TAB 🎁
         function renderRewards(data) {
             let owlRankers = data.filter(x => x.owlRank >= 1 && x.owlRank <= 10).sort((a,b) => a.owlRank - b.owlRank);
             let owlRewHtml = owlRankers.map(x => `<b>${x.name}</b> (#${x.owlRank}) - <span style="color:var(--success); font-weight:bold;">ʛ300</span>`).join('<br>');
@@ -638,7 +636,6 @@
 
             let spFinesHtml = '';
             data.forEach(s => {
-                // LOGIKA PENGECUALIAN G7 DARI DENDA SP
                 if (!s.isInactive && s.grade !== 'G7') {
                     let minSpReq = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
                     let spAchieved = Number(s.spScore) || 0;
