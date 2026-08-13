@@ -56,7 +56,9 @@
         .row-inactive td { color: gray; background-color: #f9f9f9; }
 
         .inline-inp { width: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; text-align: center; background-color: #fffde7; font-weight:bold; box-sizing:border-box;}
+        .inline-inp::placeholder { color: #888; font-weight: bold; }
         .inline-inp:focus { border-color: var(--royal-blue); background-color: white; outline: none; box-shadow: 0 0 5px rgba(60,80,125,0.3);}
+        
         .inline-txt { width: 120px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px;}
 
         .btn-save-inline { background-color: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; text-transform: uppercase;}
@@ -122,7 +124,7 @@
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
                 Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Additional Events x 10) + (OWL Score) + (SP Score).<br>
-                <i>*Attendance & Summaries are auto-synced from Week 1 to 4. Overriding them here will lock the value.</i><br>
+                <i>*Attendance & Summaries are auto-synced from Week 1 to 4. To revert to auto-sync, clear the input box.</i><br>
                 <i>*Rank O.W.L Mark uses (O, E, A, P, D, T). SP Rank limit input is max 10. The score value will be added directly to Total.</i><br>
                 <i>*Alpha & Aquilae are manually designated via the Dropdown in the General Activity tab. (Exactly 1 Alpha and 1 Aquilae will be selected).</i>
             </div>
@@ -149,10 +151,10 @@
                 </div>
 
                 <div class="table-container">
-                    <!-- GENERAL TAB (Dengan Att dan Sum) -->
+                    <!-- GENERAL TAB (Dengan Att dan Sum Override) -->
                     <div id="tabGeneral" class="tab-content active">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Can be overridden.">Att (x5)</th><th title="Auto-Synced (x3). Can be overridden.">Sum (x3)</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Manual Award</th><th>Notes</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Type to override.">Att (x5)</th><th title="Auto-Synced (x3). Type to override.">Sum (x3)</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Manual Award</th><th>Notes</th><th>Action</th></tr></thead>
                             <tbody id="genBody"></tbody>
                         </table>
                     </div>
@@ -342,7 +344,7 @@
             document.getElementById(tabId).classList.add('active');
         }
 
-        // FUNGSI LIVE RECALCULATE!
+        // FUNGSI LIVE RECALCULATE
         function recalcPoints(vault) {
             let s = rankDataStore.find(x => x.vault === vault);
             if(!s) return;
@@ -355,8 +357,9 @@
             let elOwlS = document.getElementById(`owlScore_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
             
-            let att = elAtt && elAtt.value !== '' ? Number(elAtt.value) : s.att;
-            let sum = elSum && elSum.value !== '' ? Number(elSum.value) : s.sum;
+            let att = elAtt && elAtt.value !== '' ? Number(elAtt.value) : s.autoAtt;
+            let sum = elSum && elSum.value !== '' ? Number(elSum.value) : s.autoSum;
+            
             let gms = elGms && elGms.value !== '' ? Number(elGms.value) : s.games;
             let schc = elSchc && elSchc.value !== '' ? Number(elSchc.value) : s.schc;
             let add = elAdd && elAdd.value !== '' ? Number(elAdd.value) : s.add;
@@ -389,13 +392,16 @@
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
-                // General Tab Row (Ada Att dan Sum)
+                let attValDisp = s.manualAtt !== null ? s.manualAtt : '';
+                let sumValDisp = s.manualSum !== null ? s.manualSum : '';
+
+                // General Tab Row
                 genBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        <td><input type="number" id="att_${s.vault}" value="${s.att}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9; color:#2e7d32;" oninput="recalcPoints('${s.vault}')"></td>
-                        <td><input type="number" id="sum_${s.vault}" value="${s.sum}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb; color:#1565c0;" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="att_${s.vault}" value="${attValDisp}" placeholder="${s.autoAtt}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9; color:#2e7d32;" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="sum_${s.vault}" value="${sumValDisp}" placeholder="${s.autoSum}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb; color:#1565c0;" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="games_${s.vault}" value="${s.games}" class="inline-inp" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="schc_${s.vault}" value="${s.schc}" class="inline-inp" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="add_${s.vault}" value="${s.add}" class="inline-inp" oninput="recalcPoints('${s.vault}')"></td>
@@ -474,23 +480,22 @@
             let elSpR = document.getElementById(`spRank_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
 
-            if ((elOwlR && parseInt(elOwlR.value) > 10) || (elSpR && parseInt(elSpR.value) > 10)) {
-                alert("Ranking limit is Maximum 10!"); return;
+            if (elSpR && parseInt(elSpR.value) > 10) {
+                alert("SP Rank limit is Maximum 10!"); return;
             }
 
-            // Trik menggabungkan Rank dan Mark agar API Router (1_Main.gs) tidak error!
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
 
             let payload = {
                 action: "saveManualRank",
                 month: document.getElementById('monthSelector').value,
                 vault: vault,
-                att: elAtt ? elAtt.value : s.att,
-                sum: elSum ? elSum.value : s.sum,
+                att: elAtt ? elAtt.value : (s.manualAtt !== null ? s.manualAtt : ''), 
+                sum: elSum ? elSum.value : (s.manualSum !== null ? s.manualSum : ''), 
                 games: elGms ? elGms.value : s.games,
                 schc: elSchc ? elSchc.value : s.schc,
                 add: elAdd ? elAdd.value : s.add,
-                owlRank: combinedOwlRank, // Data digabung di sini!
+                owlRank: combinedOwlRank, 
                 owlScore: elOwlS ? elOwlS.value : s.owlScore,
                 spRank: elSpR ? elSpR.value : s.spRank,
                 spScore: elSpS ? elSpS.value : s.spScore,
