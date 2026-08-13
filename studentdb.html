@@ -43,6 +43,11 @@
         .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
         .btn-primary:hover { background-color: var(--sapphire); }
 
+        /* TAB CONTROLLER CSS */
+        .tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
+        .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 20px; font-size: 12px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
+        .tab-btn.active { background-color: var(--royal-blue); color: white; border-bottom: 2px solid var(--sapphire);}
+
         .table-container { overflow-x: auto; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--shellstone); margin-bottom: 60px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
@@ -117,11 +122,17 @@
 
         <div class="content-area">
             <div class="header-actions">
-                <h1 class="page-title">Master Data: Students <span id="studentCount" style="font-size:14px; color:var(--sapphire); background:var(--shellstone); padding:2px 8px; border-radius:12px; margin-left:10px;">(0)</span></h1>
+                <h1 class="page-title">Master Data: Students</h1>
                 <div class="action-group">
                     <input type="text" id="searchInput" class="search-box" placeholder="Search Vault, Username, or Name..." onkeyup="filterTable()">
-                    <button class="btn-primary" onclick="openStudentModal()">+ Add New Student</button>
+                    <button class="btn-primary" onclick="openStudentModal()" id="btnAddStudent">+ Add New Student</button>
                 </div>
+            </div>
+
+            <!-- TABS UNTUK PINDAH DATABASE -->
+            <div class="tabs">
+                <button class="tab-btn active" id="btnTabActive" onclick="switchTab('active')">🟢 Active Students <span id="countActive" style="font-size:10px;">(0)</span></button>
+                <button class="tab-btn" id="btnTabArchived" onclick="switchTab('archived')">📦 Archived Records <span id="countArchived" style="font-size:10px;">(0)</span></button>
             </div>
 
             <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold;">Loading Database...</div>
@@ -277,6 +288,7 @@
         }
 
         let studentDataStore = [];
+        let currentViewTab = 'active'; // Default Tab
 
         const electivesMinistry = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
         const electivesAuror = ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"];
@@ -286,6 +298,19 @@
             setupDynamicSidebar();
             fetchStudents();
         };
+
+        function switchTab(tab) {
+            currentViewTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            if(tab === 'active') {
+                document.getElementById('btnTabActive').classList.add('active');
+                document.getElementById('btnAddStudent').style.display = 'block';
+            } else {
+                document.getElementById('btnTabArchived').classList.add('active');
+                document.getElementById('btnAddStudent').style.display = 'none'; // Sembunyikan tambah murid di arsip
+            }
+            filterTable();
+        }
 
         function isTrue(val) {
             return val === true || String(val).toLowerCase() === 'true';
@@ -382,7 +407,13 @@
                     let data = result.data;
                     data.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
                     studentDataStore = data;
-                    renderTable(data);
+                    
+                    let actCount = data.filter(s => !s.isArchivedTab).length;
+                    let arcCount = data.filter(s => s.isArchivedTab).length;
+                    document.getElementById('countActive').innerText = `(${actCount})`;
+                    document.getElementById('countArchived').innerText = `(${arcCount})`;
+
+                    filterTable(); // Memanggil filterTable agar tab awal terpilih
                 } else { throw new Error(result.message); }
             })
             .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
@@ -391,12 +422,12 @@
         function renderTable(data) {
             document.getElementById('loadingMsg').style.display = 'none';
             document.getElementById('studentTable').style.display = 'table';
-            document.getElementById('studentCount').innerText = `(${data.length} Students)`; 
+            
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;">No students found in Master_Data. Add a new one!</td></tr>';
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;">No students found in ${currentViewTab === 'active' ? 'Active' : 'Archived'} tab.</td></tr>`;
                 return;
             }
 
@@ -448,10 +479,32 @@
                 if(student.lastUpdate) lastEditHtml = `<div style="font-size:9px; color:#888; font-weight:bold; margin-top:6px;">Last Edit: ${student.lastUpdate}</div>`;
 
                 const isInactiveStatus = isTrue(student.isDeactive) || isTrue(student.isResigned) || isTrue(student.isDropOut);
-                const rowClass = isInactiveStatus ? 'row-dimmed' : '';
+                const rowClass = isInactiveStatus && !student.isArchivedTab ? 'row-dimmed' : '';
                 
-                // MENGUBAH TOMBOL DAN TEKS DELETE MENJADI ARCHIVE
-                const deleteWarning = isInactiveStatus ? `<span class="delete-warning">⚠️ Ready to Archive</span>` : '';
+                // MENGATUR TOMBOL BERDASARKAN TAB
+                let actionHtml = '';
+                if (student.isArchivedTab) {
+                    actionHtml = `<span style="color:gray; font-weight:bold; font-size:10px;">📦 ARCHIVED</span>`;
+                } else {
+                    let deleteWarning = isInactiveStatus ? `<span class="delete-warning">⚠️ Ready to Archive</span>` : '';
+                    actionHtml = `
+                        <button class="btn-icon" title="Edit Record" onclick="openStudentModal(${student.rowIdx})">✏️</button>
+                        <button class="btn-icon" title="Archive Record" onclick="archiveRecord(${student.rowIdx}, '${student.username}')">📦</button>
+                        ${deleteWarning}
+                    `;
+                }
+
+                // DISABLE ROOM SELECTION UNTUK ARSIP
+                let roomSelectHtml = `
+                    <select class="select-room" onchange="quickChangeRoom(${student.rowIdx}, this)" ${student.isArchivedTab ? 'disabled style="background:#f5f5f5;"' : ''}>
+                        <option value="" ${!student.room ? 'selected':''}>- None -</option>
+                        <option value="Eternclaw" ${student.room==='Eternclaw' ? 'selected':''}>Eternclaw</option>
+                        <option value="Ravelynx" ${student.room==='Ravelynx' ? 'selected':''}>Ravelynx</option>
+                        <option value="Ravenion" ${student.room==='Ravenion' ? 'selected':''}>Ravenion</option>
+                        <option value="Ravenrow" ${student.room==='Ravenrow' ? 'selected':''}>Ravenrow</option>
+                        <option value="Velaclaw" ${student.room==='Velaclaw' ? 'selected':''}>Velaclaw</option>
+                    </select>
+                `;
 
                 let m_totalClasses = student.totalClasses || 0;
                 let m_fullName = student.fullName || '-';
@@ -485,21 +538,8 @@
                         <div>${cleanNotes}</div>
                         ${lastEditHtml}
                     </td>
-                    <td>
-                        <select class="select-room" onchange="quickChangeRoom(${student.rowIdx}, this)">
-                            <option value="" ${!student.room ? 'selected':''}>- None -</option>
-                            <option value="Eternclaw" ${student.room==='Eternclaw' ? 'selected':''}>Eternclaw</option>
-                            <option value="Ravelynx" ${student.room==='Ravelynx' ? 'selected':''}>Ravelynx</option>
-                            <option value="Ravenion" ${student.room==='Ravenion' ? 'selected':''}>Ravenion</option>
-                            <option value="Ravenrow" ${student.room==='Ravenrow' ? 'selected':''}>Ravenrow</option>
-                            <option value="Velaclaw" ${student.room==='Velaclaw' ? 'selected':''}>Velaclaw</option>
-                        </select>
-                    </td>
-                    <td style="text-align:center;">
-                        <button class="btn-icon" title="Edit Record" onclick="openStudentModal(${student.rowIdx})">✏️</button>
-                        <button class="btn-icon" title="Archive Record" onclick="archiveRecord(${student.rowIdx}, '${student.username}')">📦</button>
-                        ${deleteWarning}
-                    </td>
+                    <td>${roomSelectHtml}</td>
+                    <td style="text-align:center;">${actionHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -524,6 +564,11 @@
         function filterTable() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filteredData = studentDataStore.filter(student => {
+                // FILTER BERDASARKAN TAB YANG AKTIF
+                const isMatchTab = currentViewTab === 'active' ? !student.isArchivedTab : student.isArchivedTab;
+                if (!isMatchTab) return false;
+
+                // FILTER BERDASARKAN PENCARIAN
                 return (student.username && student.username.toLowerCase().includes(query)) ||
                        (student.fullName && student.fullName.toLowerCase().includes(query)) ||
                        (student.nickname && student.nickname.toLowerCase().includes(query)) ||
@@ -624,7 +669,7 @@
             document.querySelectorAll('input[name="studMajor"]').forEach(r => r.checked = false); handleMajorChange("");
 
             if (rowIdx !== null) {
-                const s = studentDataStore.find(x => x.rowIdx === rowIdx);
+                const s = studentDataStore.find(x => x.rowIdx === rowIdx && !x.isArchivedTab);
                 if(!s) return;
 
                 document.getElementById('modalTitle').innerText = "Edit Student Record";
@@ -737,7 +782,6 @@
             });
         }
 
-        // MENGUBAH NAMA DAN PESAN KONFIRMASI MENJADI ARCHIVE
         function archiveRecord(rowIdx, username) {
             if(confirm(`Are you sure you want to move ${username} to the Archive tab? Their data will be saved in "Archived_Data".`)) {
                 document.getElementById('loadingMsg').style.display = 'block'; 
