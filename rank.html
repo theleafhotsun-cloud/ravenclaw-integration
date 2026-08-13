@@ -40,7 +40,6 @@
         .box-section { background: #fafafa; border: 1px solid var(--shellstone); border-radius: 8px; padding: 15px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         .sop-banner { background-color: #fff9c4; border-left: 4px solid var(--warning); padding: 12px 15px; margin-bottom: 15px; font-size: 11px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
 
-        /* INLINE EDIT UI */
         .tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
         .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 20px; font-size: 12px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
         .tab-btn.active { background-color: var(--royal-blue); color: white; border-bottom: 2px solid var(--sapphire);}
@@ -67,7 +66,6 @@
         .btn-save-inline:disabled { background-color: gray; cursor: not-allowed;}
         .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 12px;}
 
-        /* LEADERBOARD UI */
         .leaderboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 10px; padding-bottom: 20px;}
         .lb-card { background: white; border: 1px solid var(--shellstone); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .lb-card h5 { margin: 0; padding: 12px; background: var(--royal-blue); color: var(--quicksand); text-transform: uppercase; font-size: 12px; text-align: center; border-bottom: 3px solid var(--sapphire);}
@@ -76,13 +74,10 @@
         .rank-2 { background: #c0c0c0; color: white; }
         .rank-3 { background: #cd7f32; color: white; }
 
-        .vip-award { background: #fff8e1; border: 2px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        
         .reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px;}
         .reward-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 10px; }
         .reward-box h5 { margin: 0 0 8px 0; color: var(--royal-blue); font-size: 13px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;}
         .fine-list div { padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
-        .fine-list div:last-child { border-bottom: none; }
 
         #toastMsg { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; background: var(--success); color: white; font-weight: bold; font-size: 13px; display: none; z-index: 9999;}
     </style>
@@ -91,27 +86,12 @@
 
     <div id="toastMsg">Action Successful!</div>
 
-    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
-        <ul class="nav-links" id="sidebarMenu">
-            <li class="menu-sop" style="display:none;"><a href="javascript:void(0)" onclick="navigate('sop')">SOP & Guidelines</a></li>
-            <li class="menu-taskdirectory" style="display:none;"><a href="javascript:void(0)" onclick="navigate('task-directory')">Task Directory</a></li>
-            <li class="menu-taskmaster" style="display:none;"><a href="javascript:void(0)" onclick="navigateHome()">Task Master / Home</a></li>
-            <li class="menu-salary" style="display:none;"><a href="javascript:void(0)" onclick="navigate('salary-master')">Salary Master</a></li>
-            <li class="menu-workreport" style="display:none;"><a href="javascript:void(0)" onclick="navigate('workreport')">Work Report</a></li>
-            <li class="menu-studentdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('studentdb')">Student Main Database</a></li>
-            <li class="menu-activeroom" style="display:none;"><a href="javascript:void(0)" onclick="navigate('activeroom')">Active Room Database</a></li>
-            <li class="menu-finance" style="display:none;"><a href="javascript:void(0)" onclick="navigate('finance')">House Finance</a></li>
-            <li class="menu-birthdays" style="display:none;"><a href="javascript:void(0)" onclick="navigate('birthdays')">Staff & Birthdays</a></li>
-            <li class="menu-classdb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('classdb')">Class Database</a></li>
-            <li class="menu-librarydb" style="display:none;"><a href="javascript:void(0)" onclick="navigate('librarydb')">Library Database</a></li>
-            <li class="menu-rank" style="display:none;"><a href="javascript:void(0)" onclick="navigate('rank')" class="active">Rank Panel</a></li>
-            <li class="menu-roster" style="display:none;"><a href="javascript:void(0)" onclick="navigate('roster')">Student Roster Exporter</a></li>
-        </ul>
+        <ul class="nav-links" id="sidebarMenu"></ul>
     </div>
 
     <div class="main-content">
@@ -129,9 +109,8 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC x 5) + (Add Pts x 10) + OWL Score + SP Score + <b>(Top 10 OWL Bonus x 15)</b> + <b>(Top 10 SP Bonus x 15)</b><br>
-                <i>*Attendance & Summaries are auto-synced from Active Room. To revert to auto-sync, <b>delete the number in the box until it's empty, then SAVE.</b></i><br>
-                <i>*Rank O.W.L Mark uses (O, E, A, P, D, T). Max Rank input is 10. SP Fine applies if SP Score < Min SP.</i>
+                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + OWL Score + SP Score + <b>(Top 10 OWL Bonus x 15)</b> + <b>(Top 10 SP Bonus x 15)</b><br>
+                <span style="color:var(--danger); font-weight:bold;">⚠️ G7 Students are exempt from SP Fines. Hiatus Lock Checkbox preserves status permanently when saved.</span>
             </div>
 
             <div class="period-controller">
@@ -156,15 +135,13 @@
                 </div>
 
                 <div class="table-container">
-                    <!-- GENERAL TAB -->
                     <div id="tabGeneral" class="tab-content active">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Type to override.">Att (x5)</th><th title="Auto-Synced (x3). Type to override.">Sum (x3)</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Manual Award</th><th>Notes</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5).">Att (x5)</th><th title="Auto-Synced (x3).">Sum (x3)</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Manual Award</th><th>Notes</th><th>Action</th></tr></thead>
                             <tbody id="genBody"></tbody>
                         </table>
                     </div>
 
-                    <!-- OWL TAB -->
                     <div id="tabOWL" class="tab-content">
                         <table>
                             <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points directly added to total">O.W.L Score</th><th>Action</th></tr></thead>
@@ -172,7 +149,6 @@
                         </table>
                     </div>
 
-                    <!-- SP TAB -->
                     <div id="tabSP" class="tab-content">
                         <table>
                             <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">SP Rank</th><th title="Points directly added to total">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
@@ -181,11 +157,8 @@
                     </div>
                 </div>
 
-                <!-- REWARDS TAB -->
                 <div id="tabRewards" class="tab-content">
                     <div class="reward-grid">
-                        
-                        <!-- KOLOM KIRI: REWARDS -->
                         <div style="display:flex; flex-direction:column; gap:10px; padding:10px; background:#f1f8e9; border:1px solid #c8e6c9; border-radius:8px;">
                             <div class="reward-box" style="border-left: 4px solid var(--success);">
                                 <h5>💰 Top 10 Rank O.W.L (ʛ300 each)</h5>
@@ -209,19 +182,16 @@
                             </div>
                         </div>
 
-                        <!-- KOLOM KANAN: FINES -->
                         <div style="display:flex; flex-direction:column; gap:10px; padding:10px; background:#ffebee; border:1px solid #ffcdd2; border-radius:8px;">
                             <div class="reward-box" style="border-left: 4px solid var(--danger);">
                                 <h5>⚠️ SP Fines / Denda (Target vs Achieved)</h5>
                                 <div id="rewSpFines" class="fine-list" style="font-size:11px; line-height: 1.4;">Calculating...</div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION LEADERBOARDS (TOP 10) -->
             <div class="box-section">
                 <h4>Top 10 Leaderboards</h4>
                 <div class="leaderboard-grid">
@@ -366,11 +336,6 @@
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
                     rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
-                    
-                    rankDataStore.sort((a, b) => {
-                        return parseInt(a.vault) - parseInt(b.vault);
-                    });
-
                     renderInputTables(rankDataStore);
                     renderLeaderboards(rankDataStore);
                     renderRewards(rankDataStore);
@@ -399,7 +364,6 @@
             let elGms = document.getElementById(`games_${vault}`);
             let elSchc = document.getElementById(`schc_${vault}`);
             let elAdd = document.getElementById(`add_${vault}`);
-            
             let elOwlR = document.getElementById(`owlRank_${vault}`);
             let elOwlS = document.getElementById(`owlScore_${vault}`);
             let elSpR = document.getElementById(`spRank_${vault}`);
@@ -407,14 +371,11 @@
             
             let att = elAtt && elAtt.value !== '' ? Number(elAtt.value) : s.autoAtt;
             let sum = elSum && elSum.value !== '' ? Number(elSum.value) : s.autoSum;
-            
             let gms = elGms && elGms.value !== '' ? Number(elGms.value) : s.games;
             let schc = elSchc && elSchc.value !== '' ? Number(elSchc.value) : s.schc;
             let add = elAdd && elAdd.value !== '' ? Number(elAdd.value) : s.add;
-            
             let owlRVal = elOwlR && elOwlR.value !== '' ? Number(elOwlR.value) : Number(s.owlRank);
             let owlSVal = elOwlS && elOwlS.value !== '' ? Number(elOwlS.value) : s.owlScore;
-            
             let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
             let spSVal = elSpS && elSpS.value !== '' ? Number(elSpS.value) : s.spScore;
             
@@ -442,14 +403,11 @@
             data.forEach(s => {
                 let rClass = s.isInactive ? "row-inactive" : "";
                 
-                // Menampilkan Status Hiatus / LOA
-                let statText = '';
-                if (s.isInactive) statText = `<span style="color:var(--danger);">INACTIVE</span>`;
-                else if (s.isHiatus) statText = `<span style="color:var(--warning);">HIATUS/LOA</span>`;
-                else statText = `<span style="color:var(--success);">ACTIVE</span>`;
-
-                let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} <span style="font-size:9px;">(${statText})</span></div>
-                                <div style="font-size:10px; color:gray; margin-top:2px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Total Class:</b> ${s.totClass}</div>
+                // Hiatus Checkbox (Locks status when saved)
+                let hiatusCheck = `<label style="font-size:9px; color:var(--warning); margin-left:5px; cursor:pointer;" title="Check and click Save to lock Hiatus status permanently for this month."><input type="checkbox" id="hiatus_${s.vault}" ${s.isHiatus ? 'checked' : ''}> <b>Hiatus/LOA</b></label>`;
+                
+                let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} ${hiatusCheck}</div>
+                                <div style="font-size:10px; color:gray; margin-top:2px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Total Class:</b> ${s.totClass} | <b>Grade:</b> ${s.grade}</div>
                                 <div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Total Pts: <b class="tp-disp-${s.vault}">${s.totalPoints}</b></div>`;
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
@@ -541,16 +499,13 @@
             let elSpR = document.getElementById(`spRank_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
             let elMinSp = document.getElementById(`minSp_${vault}`);
+            let elHiatus = document.getElementById(`hiatus_${vault}`);
 
-            if (elSpR && parseInt(elSpR.value) > 10) {
-                alert("SP Rank limit is Maximum 10!"); return;
-            }
-            if (elOwlR && parseInt(elOwlR.value) > 10) {
-                alert("OWL Rank limit is Maximum 10!"); return;
-            }
+            if (elSpR && parseInt(elSpR.value) > 10) { alert("SP Rank limit is Maximum 10!"); return; }
+            if (elOwlR && parseInt(elOwlR.value) > 10) { alert("OWL Rank limit is Maximum 10!"); return; }
 
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
-            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp);
+            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + (elHiatus && elHiatus.checked ? "1" : "0");
 
             let payload = {
                 action: "saveManualRank",
@@ -593,24 +548,20 @@
 
         // FUNGSI LOGIKA REWARDS TAB 🎁
         function renderRewards(data) {
-            // 1. OWL Rank (Top 10)
             let owlRankers = data.filter(x => x.owlRank >= 1 && x.owlRank <= 10).sort((a,b) => a.owlRank - b.owlRank);
             let owlRewHtml = owlRankers.map(x => `<b>${x.name}</b> (#${x.owlRank}) - <span style="color:var(--success); font-weight:bold;">ʛ300</span>`).join('<br>');
             document.getElementById('rewOwl').innerHTML = owlRewHtml || '<i>No Rank O.W.L recorded yet.</i>';
 
-            // 2. SP Rank (Top 10)
             let spRankers = data.filter(x => x.spRank >= 1 && x.spRank <= 10).sort((a,b) => a.spRank - b.spRank);
             let spRewHtml = spRankers.map(x => `<b>${x.name}</b> (#${x.spRank}) - <span style="color:var(--success); font-weight:bold;">ʛ300</span>`).join('<br>');
             document.getElementById('rewSp').innerHTML = spRewHtml || '<i>No Rank SP recorded yet.</i>';
 
-            // 3. Alpha & Aquilae Logic
             let alpha = data.find(x => x.award === 'Alpha');
             let aquilae = data.find(x => x.award === 'Aquilae');
             let alphaTxt = alpha ? `<b>${alpha.name}</b> (${alpha.vault}) - <span style="color:var(--success); font-weight:bold;">ʛ500</span>` : `<i>Not assigned yet</i>`;
             let aquilaeTxt = aquilae ? `<b>${aquilae.name}</b> (${aquilae.vault}) - <span style="color:var(--success); font-weight:bold;">ʛ500</span>` : `<i>Not assigned yet</i>`;
             document.getElementById('rewAlphaAquilae').innerHTML = `Alpha: ${alphaTxt}<br>Aquilae: ${aquilaeTxt}`;
 
-            // 4. Best Room Logic
             let rooms = {};
             data.forEach(s => {
                 let r = s.room;
@@ -624,16 +575,13 @@
                 document.getElementById('rewRoom').innerHTML = `<i>No room points accumulated.</i>`;
             }
 
-            // 5. Gamers of the Month Logic
             let maxGames = 0;
             data.forEach(s => {
                 let gms = parseInt(s.games) || 0;
                 if (gms > maxGames) maxGames = gms;
             });
             let gamers = [];
-            if (maxGames > 0) {
-                gamers = data.filter(s => (parseInt(s.games) || 0) === maxGames);
-            }
+            if (maxGames > 0) { gamers = data.filter(s => (parseInt(s.games) || 0) === maxGames); }
             if (gamers.length > 0) {
                 let splitReward = Math.floor(750 / gamers.length);
                 let namesStr = gamers.map(g => `<b>${g.name}</b> (${g.vault})`).join(", ");
@@ -642,10 +590,10 @@
                 document.getElementById('rewGamers').innerHTML = `<i>No one scored games points this month.</i>`;
             }
 
-            // 6. SP Fines / Denda Logic (Hanya untuk anak aktif / tidak drop out)
             let spFinesHtml = '';
             data.forEach(s => {
-                if (!s.isInactive) {
+                // LOGIKA PENGECUALIAN G7 DARI DENDA SP
+                if (!s.isInactive && s.grade !== 'G7') {
                     let minSpReq = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
                     let spAchieved = Number(s.spScore) || 0;
                     if (spAchieved < minSpReq) {
