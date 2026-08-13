@@ -127,8 +127,9 @@
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
                 Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Additional Events x 10) + (OWL Score) + (SP Score).<br>
-                <i>*Data is sorted strictly by Vault Code. <b>Total Rank is displayed as 🏆 Rank: #...</b> below the student's Total Pts.</i><br>
+                <i>*Data is strictly sorted by Vault Code in the Editor. The Accumulation Leaderboards are at the bottom.</i><br>
                 <i>*Attendance & Summaries are auto-synced from Active Room Database. To revert to auto-sync, <b>delete the number in the box until it's empty, then SAVE.</b></i><br>
+                <i>*Rank O.W.L Mark uses (O, E, A, P, D, T). SP Rank limit input is max 10. The score value will be added directly to Total.</i><br>
                 <i>*Alpha & Aquilae are manually designated via the Dropdown in the General Activity tab. Check the 🎁 Rewards tab to see the distribution.</i>
             </div>
 
@@ -154,7 +155,7 @@
                 </div>
 
                 <div class="table-container">
-                    <!-- GENERAL TAB (Dengan Att dan Sum Override) -->
+                    <!-- GENERAL TAB -->
                     <div id="tabGeneral" class="tab-content active">
                         <table>
                             <thead><tr><th>Vault</th><th>Student Info</th><th title="Auto-Synced (x5). Type to override.">Att (x5)</th><th title="Auto-Synced (x3). Type to override.">Sum (x3)</th><th>Games (x10)</th><th>SC/HC (x5)</th><th>Add. Pts (x10)</th><th>Manual Award</th><th>Notes</th><th>Action</th></tr></thead>
@@ -162,7 +163,7 @@
                         </table>
                     </div>
 
-                    <!-- OWL TAB (Hanya OWL Rank, Mark, Score) -->
+                    <!-- OWL TAB -->
                     <div id="tabOWL" class="tab-content">
                         <table>
                             <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points directly added to total">O.W.L Score</th><th>Action</th></tr></thead>
@@ -170,7 +171,7 @@
                         </table>
                     </div>
 
-                    <!-- SP TAB (Hanya SP Rank dan Score) -->
+                    <!-- SP TAB -->
                     <div id="tabSP" class="tab-content">
                         <table>
                             <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">SP Rank</th><th title="Points directly added to total">SP Score</th><th>Action</th></tr></thead>
@@ -347,6 +348,12 @@
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
                     rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+                    
+                    // MEMASTIKAN TABEL UTAMA SELALU DIURUT BERDASARKAN VAULT (ASCENDING)
+                    rankDataStore.sort((a, b) => {
+                        return parseInt(a.vault) - parseInt(b.vault);
+                    });
+
                     renderInputTables(rankDataStore);
                     renderLeaderboards(rankDataStore);
                     renderRewards(rankDataStore);
@@ -408,12 +415,10 @@
                 let rClass = s.isInactive ? "row-inactive" : "";
                 let statText = s.isInactive ? `<span style="color:var(--danger);">INACTIVE</span>` : `<span style="color:var(--success);">ACTIVE</span>`;
                 
-                // Peringkat (Rank) ditampilkan di sini walau urutan Vault!
-                let rankBadge = `<span style="color:var(--danger); font-weight:bold;">#${s.rankNumber}</span>`;
-
+                // MENGHAPUS RANK OVERALL DARI STUDENT INFO, TAPI MEMUNCULKAN TOTAL POINT SAJA
                 let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} <span style="font-size:9px;">(${statText})</span></div>
                                 <div style="font-size:10px; color:gray; margin-top:2px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Total Class:</b> ${s.totClass}</div>
-                                <div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Total Pts: <b class="tp-disp-${s.vault}">${s.totalPoints}</b> | 🏆 Rank: ${rankBadge}</div>`;
+                                <div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Total Pts: <b class="tp-disp-${s.vault}">${s.totalPoints}</b></div>`;
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
@@ -594,6 +599,13 @@
         }
 
         // FUNGSI LEADERBOARD
+        function getRankCircle(rankNum) {
+            if(rankNum === 1) return `<div class="rank-circle rank-1">🥇</div>`;
+            if(rankNum === 2) return `<div class="rank-circle rank-2">🥈</div>`;
+            if(rankNum === 3) return `<div class="rank-circle rank-3">🥉</div>`;
+            return `<div class="rank-circle">${rankNum}</div>`;
+        }
+
         function renderLeaderboards(data) {
             let alphaHtml = '';
             let topAlpha = [...data].sort((a,b) => b.totalPoints - a.totalPoints).slice(0, 10);
@@ -617,14 +629,14 @@
             let minHtml = '';
             let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
             topMin.forEach((s, idx) => {
-                minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
+                minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.owlRank || '-'} | Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
             });
             document.getElementById('lbMin').innerHTML = minHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
 
             let aurHtml = '';
             let topAur = [...data].filter(x => x.major.toLowerCase().includes('auror') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
             topAur.forEach((s, idx) => {
-                aurHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
+                aurHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.owlRank || '-'} | Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
             });
             document.getElementById('lbAuror').innerHTML = aurHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
 
