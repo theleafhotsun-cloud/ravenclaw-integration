@@ -129,10 +129,9 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Summaries x 3) + (Attendance x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + OWL Score + SP Score.<br>
-                <span style="color:var(--danger); font-weight:bold;">🔥 BONUS +15 PTS: Given automatically if student achieves Top 10 in Rank O.W.L or Rank SP.</span><br>
-                <i>*Attendance & Summaries auto-sync. To revert to auto-sync, <b>clear the input box and SAVE.</b></i><br>
-                <i>*Rank O.W.L Mark uses (O, E, A, P, D, T). Max Rank input is 10. SP Fine applies if SP < Min SP.</i>
+                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC x 5) + (Add Pts x 10) + OWL Score + SP Score + <b>(Top 10 OWL Bonus x 15)</b> + <b>(Top 10 SP Bonus x 15)</b><br>
+                <i>*Attendance & Summaries are auto-synced from Active Room. To revert to auto-sync, <b>delete the number in the box until it's empty, then SAVE.</b></i><br>
+                <i>*Rank O.W.L Mark uses (O, E, A, P, D, T). Max Rank input is 10. SP Fine applies if SP Score < Min SP.</i>
             </div>
 
             <div class="period-controller">
@@ -367,6 +366,11 @@
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
                     rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+                    
+                    rankDataStore.sort((a, b) => {
+                        return parseInt(a.vault) - parseInt(b.vault);
+                    });
+
                     renderInputTables(rankDataStore);
                     renderLeaderboards(rankDataStore);
                     renderRewards(rankDataStore);
@@ -414,7 +418,6 @@
             let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
             let spSVal = elSpS && elSpS.value !== '' ? Number(elSpS.value) : s.spScore;
             
-            // BONUS 15 PTS UNTUK RANK 1-10
             let rBonus = 0;
             if (owlRVal >= 1 && owlRVal <= 10) rBonus += 15;
             if (spRVal >= 1 && spRVal <= 10) rBonus += 15;
@@ -438,8 +441,13 @@
 
             data.forEach(s => {
                 let rClass = s.isInactive ? "row-inactive" : "";
-                let statText = s.isInactive ? `<span style="color:var(--danger);">INACTIVE</span>` : `<span style="color:var(--success);">ACTIVE</span>`;
                 
+                // Menampilkan Status Hiatus / LOA
+                let statText = '';
+                if (s.isInactive) statText = `<span style="color:var(--danger);">INACTIVE</span>`;
+                else if (s.isHiatus) statText = `<span style="color:var(--warning);">HIATUS/LOA</span>`;
+                else statText = `<span style="color:var(--success);">ACTIVE</span>`;
+
                 let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue);">${s.name} <span style="font-size:9px;">(${statText})</span></div>
                                 <div style="font-size:10px; color:gray; margin-top:2px;"><b>Major:</b> ${s.major} | <b>Room:</b> ${s.room} | <b>Total Class:</b> ${s.totClass}</div>
                                 <div style="font-size:10px; color:var(--sapphire); margin-top:3px;">Total Pts: <b class="tp-disp-${s.vault}">${s.totalPoints}</b></div>`;
@@ -449,7 +457,6 @@
                 let attValDisp = s.manualAtt !== null ? s.manualAtt : '';
                 let sumValDisp = s.manualSum !== null ? s.manualSum : '';
 
-                // General Tab Row
                 genBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
@@ -471,7 +478,6 @@
                     </tr>
                 `;
 
-                // OWL Tab Row (Hanya OWL Rank, OWL Mark, OWL Score)
                 owlBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
@@ -493,7 +499,6 @@
                     </tr>
                 `;
 
-                // SP Tab Row (SP Rank, SP Score, Min SP)
                 let minSpVal = s.minSp !== undefined && s.minSp !== '' ? s.minSp : 600;
                 spBody.innerHTML += `
                     <tr class="${rClass}">
@@ -637,7 +642,7 @@
                 document.getElementById('rewGamers').innerHTML = `<i>No one scored games points this month.</i>`;
             }
 
-            // 6. SP Fines / Denda Logic (Hanya untuk anak aktif)
+            // 6. SP Fines / Denda Logic (Hanya untuk anak aktif / tidak drop out)
             let spFinesHtml = '';
             data.forEach(s => {
                 if (!s.isInactive) {
