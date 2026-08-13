@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>House Finance - Ravenclaw</title>
-    <!-- Library PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -161,7 +160,7 @@
         </div>
     </div>
 
-    <!-- PREVIEW MODAL BIASA (DUES, FINES, REWARDS) -->
+    <!-- PREVIEW MODAL BIASA -->
     <div class="modal-overlay" id="previewModal">
         <div class="modal-box" style="width: 700px;">
             <h3 id="previewTitle">Preview Data</h3>
@@ -193,7 +192,6 @@
             
             <div id="rankContent" style="display:none; flex-direction:column; flex-grow:1; overflow:hidden;">
                 
-                <!-- CUSTOMIZE BEST ROOM VC (Hanya Muncul Saat HOF Rewards) -->
                 <div id="bestRoomContainer" style="display:flex; align-items:center; gap:10px; margin-bottom:15px; background:#fff9c4; padding:10px; border-radius:6px; border:1px solid var(--warning);">
                     <label style="font-size:12px; font-weight:bold; color:var(--royal-blue);">🛡️ Assign Best Room (1000G) to Leadroom VC:</label>
                     <select id="bestRoomVcSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc; font-family:monospace; font-size:12px; outline:none;" onchange="buildRankPreviewTable()">
@@ -226,8 +224,6 @@
         
         var periodConfigStore = {}; 
         var masterFinanceList = []; 
-        
-        // Caching Rank Data
         var rankDataCache = [];
         var rankAggregator = {};
         
@@ -531,7 +527,7 @@
             } 
             else if (currentRankDownloadType === 'SP_FINES') {
                 rankDataCache.forEach(s => {
-                    if (s.isInactive) return;
+                    if (s.isInactive || s.grade === 'G7') return; // LOGIKA PENGECUALIAN G7 DARI SP FINES
                     let spScore = Number(s.spScore) || 0;
                     let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
                     if (spScore < minSp) {
@@ -590,7 +586,6 @@
             
             thead.innerHTML = ''; tbody.innerHTML = ''; annotBox.style.display = 'none';
             
-            // DITAMBAHKAN NAMA MURID
             var headersHtml = "<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>Student Name</th>";
             var hasFines = false;
             
@@ -614,7 +609,6 @@
                 var tr = document.createElement('tr');
                 if (isFined) tr.style.backgroundColor = "#ffebee"; 
 
-                // DITAMBAHKAN NAMA MURID
                 var rowHtml = `<td style="text-align:center;">${counter++}</td><td style="font-family:monospace; font-weight:bold; font-size:14px;">${s.vault}</td><td><b style="color:var(--royal-blue);">${s.username}</b></td>`;
 
                 if(type === 'DUES_FINES') { 
@@ -660,7 +654,6 @@
             var tKas = 0, tFines = 0, tRewards = 0;
             var hasFines = false;
 
-            // DITAMBAHKAN NAMA MURID
             var tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
@@ -685,7 +678,6 @@
                 
                 var bgColor = isFined ? "background-color: #ffebee;" : "";
 
-                // DITAMBAHKAN NAMA MURID
                 tableHtml += `<tr class="pdf-row" style="${bgColor}">
                     <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
                     <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:13px;">${s.vault}</td>
@@ -721,7 +713,7 @@
         }
 
         // ==========================================
-        // ENGINE PEMBUAT PDF RANKING (HOF & SP FINES) (TANPA NAMA MURID)
+        // ENGINE PEMBUAT PDF RANKING (HOF & SP FINES) TANPA NAMA MURID
         // ==========================================
         function downloadRankPDF() {
             var btn = document.getElementById('btnDownloadRank');
@@ -736,7 +728,7 @@
             var subjectStr = currentRankDownloadType === 'HOF_REWARDS' ? "Hall of Fame Rewards - " + monthLabel : "SP Fines - " + monthLabel;
 
             var tAmount = 0;
-            // Dihilangkan Kolom Student Name
+            // TANPA KOLOM STUDENT NAME
             var tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
