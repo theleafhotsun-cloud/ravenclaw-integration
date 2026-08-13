@@ -346,6 +346,11 @@
             background-color: var(--swan-wing); 
         }
         
+        .row-inactive td { 
+            opacity: 0.55; 
+            background-color: #f5f5f5; 
+        }
+
         .vault-tag { 
             font-weight: bold; 
             color: var(--royal-blue); 
@@ -367,6 +372,37 @@
         }
         .plus { color: var(--success); }
         .minus { color: var(--danger); }
+
+        /* INLINE INPUT STYLE BARU */
+        .inline-inp { 
+            width: 45px; 
+            padding: 4px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            font-size: 11px; 
+            font-weight: bold; 
+            text-align: center; 
+            background-color: #fffde7; 
+            transition: 0.3s; 
+        }
+        .inline-inp:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
+        .inline-txt { width: 100px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .inline-sel { width: 85px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 4px; font-weight:bold; }
+        
+        .btn-save-inline { 
+            background-color: var(--success); 
+            color: white; 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-size: 9px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+        }
+        .btn-save-inline:hover { background-color: #1b5e20; }
+        .btn-save-inline:disabled { background-color: gray; cursor: not-allowed;}
 
         .direct-input { 
             width: 60px; 
@@ -390,11 +426,6 @@
             color: var(--danger); 
             background-color: #ffebee; 
             border-color: #ef9a9a; 
-        }
-        .direct-input.minus-input:focus { 
-            background-color: white; 
-            border-color: var(--danger); 
-            box-shadow: 0 0 4px rgba(198,40,40,0.3); 
         }
         
         .status-loa { 
@@ -434,206 +465,32 @@
             font-weight: bold; 
             margin-left: 5px;
         }
-        .badge-pending { 
-            color: #f57f17; 
-            font-size: 9px; 
-            border: 1px solid #f57f17; 
-            padding: 1px 4px; 
-            border-radius: 3px; 
-            font-weight: bold;
-        }
-        .badge-approved { 
-            color: var(--success); 
-            font-size: 9px; 
-            border: 1px solid var(--success); 
-            padding: 1px 4px; 
-            border-radius: 3px; 
-            font-weight: bold;
-        }
+        .badge-pending { color: #f57f17; font-size: 9px; border: 1px solid #f57f17; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
+        .badge-approved { color: var(--success); font-size: 9px; border: 1px solid var(--success); padding: 1px 4px; border-radius: 3px; font-weight: bold;}
         
-        .btn-edit { 
-            background-color: var(--sapphire); 
-            color: white; 
-            border: none; 
-            padding: 5px 10px; 
-            border-radius: 4px; 
-            font-size: 10px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            transition: 0.2s;
-        }
-        .btn-edit:hover { 
-            background-color: var(--royal-blue); 
-        }
-        .btn-adjust-sum { 
-            background-color: #6a1b9a; 
-            color: white; 
-            border: none; 
-            padding: 5px 10px; 
-            border-radius: 4px; 
-            font-size: 10px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            transition: 0.2s;
-        }
-        .btn-adjust-sum:hover { 
-            background-color: #4a148c; 
-        }
-        .link-icon { 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 10px; 
-            padding: 3px 8px; 
-            background-color: #e8eaf6; 
-            color: var(--sapphire); 
-            border-radius: 4px; 
-            display: inline-block; 
-            margin: 2px;
-        }
-        .link-icon:hover { 
-            background-color: var(--sapphire); 
-            color: white; 
-        }
-        
-        .modal-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            bottom: 0; 
-            background-color: rgba(17, 34, 80, 0.7); 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 1000; 
-            padding: 10px;
-        }
-        .modal-box { 
-            background-color: var(--swan-wing); 
-            padding: 20px; 
-            border-radius: 8px; 
-            width: 550px; 
-            max-width: 95%; 
-            max-height: 85vh; 
-            overflow-y: auto; 
-            border: 2px solid var(--quicksand); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
-        }
-        .modal-box h3 { 
-            margin-top: 0; 
-            color: var(--royal-blue); 
-            border-bottom: 1px solid var(--shellstone); 
-            padding-bottom: 8px; 
-            margin-bottom: 12px; 
-            font-size: 16px;
-        }
-        .section-header { 
-            font-size: 11px; 
-            font-weight: bold; 
-            color: var(--sapphire); 
-            text-transform: uppercase; 
-            border-bottom: 1px dashed var(--shellstone); 
-            padding-bottom: 4px; 
-            margin: 12px 0 8px 0; 
-        }
-        .form-row { 
-            display: flex; 
-            gap: 10px; 
-            margin-bottom: 10px; 
-        }
-        .form-row .form-group { 
-            flex: 1; 
-            margin-bottom: 0; 
-        }
-        .form-group { 
-            margin-bottom: 10px; 
-        }
-        .form-group label { 
-            display: block; 
-            font-size: 11px; 
-            font-weight: bold; 
-            color: var(--sapphire); 
-            margin-bottom: 4px; 
-            text-transform: uppercase; 
-        }
-        .form-group input, .form-group select, .form-group textarea { 
-            width: 100%; 
-            padding: 6px 8px; 
-            border: 1px solid var(--shellstone); 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            background-color: #fff; 
-            color: var(--royal-blue); 
-            font-family: inherit; 
-            font-size: 12px;
-        }
-        .loa-section { 
-            background-color: #fff3e0; 
-            padding: 10px; 
-            border-radius: 6px; 
-            border: 1px solid #ffe0b2; 
-            margin-top: 10px; 
-            display: none;
-        }
-        .modal-actions { 
-            display: flex; 
-            justify-content: flex-end; 
-            gap: 10px; 
-            margin-top: 15px; 
-            border-top: 1px solid var(--shellstone); 
-            padding-top: 10px;
-        }
-        .btn-cancel { 
-            background-color: var(--shellstone); 
-            border: none; 
-            padding: 8px 14px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            color: var(--royal-blue); 
-            font-size: 11px;
-        }
-        .btn-submit { 
-            background-color: var(--royal-blue); 
-            border: none; 
-            padding: 8px 14px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            color: var(--swan-wing); 
-            font-size: 11px;
-        }
-        .rep-info { 
-            background: #e8eaf6; 
-            padding: 10px; 
-            border-radius: 6px; 
-            margin-bottom: 15px; 
-            font-size: 12px; 
-            color: var(--royal-blue); 
-            border-left: 4px solid var(--sapphire); 
-        }
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
+        .btn-icon:hover { transform: scale(1.2); }
 
-        #saveSnack { 
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px; 
-            background: var(--success); 
-            color: white; 
-            padding: 10px 20px; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 12px; 
-            display: none; 
-            z-index: 9999; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 16px;}
+        .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 12px 0 8px 0; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 4px; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 12px;}
+        .loa-section { background-color: #fff3e0; padding: 10px; border-radius: 6px; border: 1px solid #ffe0b2; margin-top: 10px; display: none;}
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--shellstone); padding-top: 10px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
+        .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
+        .rep-info { background: #e8eaf6; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; color: var(--royal-blue); border-left: 4px solid var(--sapphire); }
+
+        #saveSnack { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 12px; display: none; z-index: 9999; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Dinamis -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -790,18 +647,15 @@
         </div>
     </div>
 
+    <!-- MODAL ADVANCED LOA / OVERRIDE (TIDAK LAGI DIPAKAI UNTUK ANGKA HARIAN) -->
     <div class="modal-overlay" id="adjustModal">
         <div class="modal-box">
-            <h3 id="modalTitle">Adjust Weekly Activity</h3>
+            <h3 id="modalTitle">Advanced Settings (LOA & Override)</h3>
             <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
             <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
                 <div><b>Student:</b> <span id="adjVault"></span> - <span id="adjUsername"></span><br><b>Default Required Classes:</b> <span id="adjMandatory"></span></div>
-                <label style="color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;" title="Lock this data to prevent Auto-Sync overrides">
-                    <input type="checkbox" id="adjLockSync"> 🔒 Lock Sync
-                </label>
             </div>
 
-            <div class="section-header">Basic Status & Override</div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Student Status</label>
@@ -816,7 +670,7 @@
                 </div>
             </div>
 
-            <div class="loa-section" id="loaSection">
+            <div class="loa-section" id="loaSection" style="display:block;">
                 <div class="form-row">
                     <div class="form-group"><label>LoA Start Date</label><input type="date" id="adjLoaStart"></div>
                     <div class="form-group"><label>LoA End Date</label><input type="date" id="adjLoaEnd"></div>
@@ -824,57 +678,20 @@
                 <div class="form-group"><label>LoA Letter Link</label><input type="text" id="adjLoaLink" placeholder="https://..."></div>
             </div>
 
-            <div class="section-header">Weekly Attendance</div>
-            <div class="form-row">
-                <div class="form-group"><label>Classes Attended</label><input type="number" id="adjAttended" value="0"></div>
-                <div class="form-group"><label>Class Absences</label><input type="number" id="adjAbsences" value="0"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Excused Absences</label><input type="number" id="adjExcused" value="0"></div>
-                <div class="form-group"><label>Replacement Assignments</label><input type="number" id="adjReplacements" value="0"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label title="Canceled class without replacement.">Free Class (Exemption)</label><input type="number" id="adjFreeClass" value="0"></div>
-                <div class="form-group"><label></label><div></div></div>
-            </div>
-
-            <div class="section-header">Penalties & Submissions</div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Weekly Form Submission</label>
-                    <select id="adjFormStatus">
-                        <option value="Pending">Pending (0 Fines)</option>
-                        <option value="On Time">On Time</option>
-                        <option value="Late">Late (+ʛ50)</option>
-                        <option value="Late (Excused)">Late (Excused: 0 Fines)</option>
-                        <option value="No Submit">No Submit (+ʛ100 / Newizzy: +ʛ60)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="section-header">Additional Information</div>
-            <div class="form-group"><label>Notes</label><textarea id="adjNotes" rows="2" placeholder="Special notes from Lead Room..."></textarea></div>
-
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAdjustModal()">Cancel</button>
-                <button class="btn-submit" onclick="saveActivityAdjustment()" id="btnSaveAct">Save Activity</button>
+                <button class="btn-submit" onclick="saveAdvancedSettings()" id="btnSaveAct">Save Advanced</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="adjustSumModal">
         <div class="modal-box" style="width: 500px;">
-            <h3 id="modalTitleSum">Adjust Summaries & Approvals</h3>
+            <h3 id="modalTitleSum">Adjust Links Approval</h3>
             <div id="modalStatusSum" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
             <div style="font-size: 11px; color: var(--royal-blue); margin-bottom: 12px; background: #f0f0f0; padding: 8px; border-radius: 4px; display:flex; justify-content:space-between; align-items:center;">
                 <div><b>Student:</b> <span id="adjSumVault"></span> - <span id="adjSumUsername"></span></div>
-                <label style="color:var(--danger); font-size:10px; font-weight:bold; cursor:pointer;" title="Lock this data to prevent Auto-Sync overrides">
-                    <input type="checkbox" id="adjLockSyncSum"> 🔒 Lock Sync
-                </label>
             </div>
-            <div class="section-header">Total Summaries Count</div>
-            <div class="form-row"><div class="form-group"><label>Total Valid Summaries</label><input type="number" id="adjSumCount" value="0"></div></div>
-            <div class="section-header">Link Approvals</div>
             <div class="form-row">
                 <div class="form-group"><label>Link 1 Status</label><select id="adjSumStat1"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
                 <div class="form-group"><label>Link 2 Status</label><select id="adjSumStat2"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
@@ -883,7 +700,7 @@
                 <div class="form-group"><label>Link 3 Status</label><select id="adjSumStat3"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
                 <div class="form-group"><label>Link 4 Status</label><select id="adjSumStat4"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
             </div>
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button><button class="btn-submit" onclick="saveSummariesAdjustment()" id="btnSaveSum">Save Summaries</button></div>
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button><button class="btn-submit" onclick="saveSummariesApproval()" id="btnSaveSum">Save Links</button></div>
         </div>
     </div>
 
@@ -939,10 +756,7 @@
 
         function resetBtn(btnId, originalText) {
             var btn = document.getElementById(btnId);
-            if(btn) { 
-                btn.innerText = originalText; 
-                btn.disabled = false; 
-            }
+            if(btn) { btn.innerText = originalText; btn.disabled = false; }
         }
 
         function showSnack(msg, isError=false) {
@@ -998,14 +812,8 @@
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
         
         function initPeriodConfig() {
             document.getElementById('loadingMsg').style.display = 'block'; 
@@ -1143,13 +951,8 @@
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ " + (type === 'KAS' ? "Dues" : "Fines") + " Vault " + vault + " Saved!"); 
-                } 
-                else { 
-                    showSnack("❌ Failed to Save!", true); 
-                }
-            }).catch(err => { 
-                showSnack("❌ Connection Error!", true); 
-            });
+                } else { showSnack("❌ Failed to Save!", true); }
+            }).catch(err => { showSnack("❌ Connection Error!", true); });
         }
 
         function updateTotalFinesCard(roomName) {
@@ -1163,6 +966,103 @@
                 totalSum += num; 
             });
             cardEl.innerText = "ʛ" + formatMoney(totalSum);
+        }
+
+        // ==========================================
+        // FUNGSI INLINE SAVE YANG BARU (ACTIVITY & SUMMARIES)
+        // ==========================================
+        function saveInlineActivity(roomName, index) {
+            var s = fullDataStore.rooms[roomName][index];
+            var vault = s.vault;
+            var act = s.activity;
+
+            var payload = {
+                status: act.status, // Diambil dari data bawaan atau form advanced
+                reqOverride: act.reqOverride,
+                attended: Math.max(0, parseInt(document.getElementById('att_'+vault).value) || 0),
+                absences: Math.max(0, parseInt(document.getElementById('abs_'+vault).value) || 0),
+                excused: Math.max(0, parseInt(document.getElementById('exc_'+vault).value) || 0),
+                replacements: Math.max(0, parseInt(document.getElementById('rep_'+vault).value) || 0),
+                freeClass: Math.max(0, parseInt(document.getElementById('free_'+vault).value) || 0),
+                formStatus: document.getElementById('fs_'+vault).value,
+                dendaOverride: act.dendaOverride,
+                loaStart: act.loaStart,
+                loaEnd: act.loaEnd,
+                loaLink: act.loaLink,
+                summaries: act.summaries, // Tetap menggunakan summary yg sudah ada
+                sumStat: act.sumStat,
+                notes: document.getElementById('not_'+vault).value,
+                lockSync: true // Otomatis mengunci dari Auto-Sync form
+            };
+
+            var btn = document.getElementById('btnAct_'+vault);
+            var ori = btn.innerText;
+            btn.innerText = "⏳..."; btn.disabled = true;
+
+            var month = document.getElementById('monthSelector').value; 
+            var week = document.getElementById('weekSelector').value;
+
+            fetch(API_URL, { 
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: vault, payload: payload }) 
+            })
+            .then(r => r.json()).then(res => {
+                if(res.status === 'success' || res.success) { 
+                    showSnack("✅ Activity Data Saved!"); 
+                    fetchRoomData(); // Reload UI
+                } else { 
+                    alert(res.message); btn.innerText = ori; btn.disabled = false;
+                } 
+            }).catch(err => { 
+                alert("Error: " + err.message); btn.innerText = ori; btn.disabled = false;
+            });
+        }
+
+        function saveInlineSummary(roomName, index) {
+            var s = fullDataStore.rooms[roomName][index];
+            var vault = s.vault;
+            var act = s.activity;
+
+            var payload = {
+                status: act.status, 
+                reqOverride: act.reqOverride,
+                attended: act.attended,
+                absences: act.absences,
+                excused: act.excused,
+                replacements: act.replacements,
+                freeClass: act.freeClass,
+                formStatus: act.formStatus,
+                dendaOverride: act.dendaOverride,
+                loaStart: act.loaStart,
+                loaEnd: act.loaEnd,
+                loaLink: act.loaLink,
+                summaries: Math.max(0, parseInt(document.getElementById('sum_'+vault).value) || 0),
+                sumStat: act.sumStat, // Tetap menggunakan status link yg ada
+                notes: act.notes,
+                lockSync: true // Otomatis mengunci
+            };
+
+            var btn = document.getElementById('btnSum_'+vault);
+            var ori = btn.innerText;
+            btn.innerText = "⏳..."; btn.disabled = true;
+
+            var month = document.getElementById('monthSelector').value; 
+            var week = document.getElementById('weekSelector').value;
+
+            fetch(API_URL, { 
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: vault, payload: payload }) 
+            })
+            .then(r => r.json()).then(res => {
+                if(res.status === 'success' || res.success) { 
+                    showSnack("✅ Summary Count Saved!"); 
+                    fetchRoomData(); 
+                } else { 
+                    alert(res.message); btn.innerText = ori; btn.disabled = false;
+                } 
+            }).catch(err => { 
+                alert("Error: " + err.message); btn.innerText = ori; btn.disabled = false;
+            });
         }
 
         function renderAllTabs() {
@@ -1197,12 +1097,14 @@
                         roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>'; 
                     } 
                     else if (students.length === 0) { 
-                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray;">No active students found in this room.</td></tr>'; 
+                        roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray;">No students found in this room.</td></tr>'; 
                     } 
                     else {
                         students.forEach(function(s, idx) {
                             var act = s.activity; 
-                            var isPending = (act.formStatus === 'Pending' && !act.lockSync);
+                            var isInactive = s.isInactive;
+                            var trClass = isInactive ? 'row-inactive' : '';
+
                             var loaLabel = '<span class="status-loa">HIATUS / LOA</span>';
                             if (act.status === 'Leave of Absence') {
                                 var sDate = act.loaStart ? act.loaStart : '...'; 
@@ -1212,22 +1114,56 @@
                                     loaLabel += '<span class="status-loa" style="background:#ffebee; color:#c62828; border-color:#ef9a9a; margin-top:2px; text-align:center;">⚠️ Return: ' + act.loaDaysText + '</span>'; 
                                 }
                             }
-                            var loaText = act.status === 'Leave of Absence' ? loaLabel : (isPending ? '<span class="status-pending">Pending Data</span>' : '<span class="status-active">Active</span>');
+                            
+                            var loaText = act.status === 'Leave of Absence' ? loaLabel : (act.formStatus === 'Pending' && !act.lockSync ? '<span class="status-pending">Pending Data</span>' : '<span class="status-active">Active</span>');
                             var wlBadge = s.wl ? '<span class="wl-badge" title="Warning Letter">WL: ' + s.wl + '</span>' : '';
-                            var excTextDisp = act.excusedText;
-                            if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) { 
-                                excTextDisp = '<div style="font-size:9px; color:gray; max-width:150px; white-space:normal; margin-top:4px; line-height:1.2;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>'; 
-                            } else { 
-                                excTextDisp = ''; 
-                            }
-                            var notesDisp = act.notes ? '<div style="font-size:9px; color:#112250; font-style:italic; max-width:120px; white-space:normal;">' + act.notes.replace(/\n/g, '<br>') + '</div>' : '<span style="color:#ccc;">-</span>';
 
-                            roomActHtml += '<tr><td class="vault-tag">' + s.vault + '</td><td><b>' + s.username + '</b> ' + wlBadge + '</td><td><span style="font-weight:bold; color:var(--sapphire);">' + (s.grade || '-') + '</span></td><td>' + loaText + '</td><td><span class="num-badge">' + s.totalClasses + '</span></td><td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + s.mandatory + '</span></td><td><span class="num-badge" style="background:#e3f2fd; color:#1565c0;">' + (isPending?0:act.attended) + '</span></td><td><span class="num-badge" style="background:#ffebee; color:#c62828;">' + (isPending?0:act.absences) + '</span></td><td><span class="num-badge" style="background:#fff3e0; color:#e65100;">' + (isPending?0:act.excused) + '</span>' + excTextDisp + '</td><td><span class="num-badge" style="background:#f1f8e9; color:#2e7d32;">' + (isPending?0:act.freeClass) + '</span></td><td><span class="num-badge" style="background:#e8f5e9; color:#2e7d32;">' + (isPending?0:act.replacements) + '</span></td><td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td><td>' + notesDisp + '</td><td><button class="btn-edit" onclick="openAdjustModal(\'' + roomName + '\', ' + idx + ')">Edit</button></td></tr>';
+                            // MERENDER INLINE INPUTS JIKA AKTIF, ATAU TEKS BIASA JIKA ARSIP MATI
+                            var attInp = isInactive ? act.attended : `<input type="number" id="att_${s.vault}" value="${act.attended}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9;">`;
+                            var absInp = isInactive ? act.absences : `<input type="number" id="abs_${s.vault}" value="${act.absences}" class="inline-inp" style="background:#ffebee; border-color:#ffcdd2;">`;
+                            var excInp = isInactive ? act.excused : `<input type="number" id="exc_${s.vault}" value="${act.excused}" class="inline-inp" style="background:#fff3e0; border-color:#ffe0b2;">`;
+                            var freeInp = isInactive ? act.freeClass : `<input type="number" id="free_${s.vault}" value="${act.freeClass}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb;">`;
+                            var repInp = isInactive ? act.replacements : `<input type="number" id="rep_${s.vault}" value="${act.replacements}" class="inline-inp" style="background:#f3e5f5; border-color:#e1bee7;">`;
+                            var notInp = isInactive ? (act.notes || '-') : `<input type="text" id="not_${s.vault}" value="${act.notes}" class="inline-txt" placeholder="...">`;
+
+                            var fsSelect = isInactive ? act.formStatus : `
+                                <select id="fs_${s.vault}" class="inline-sel">
+                                    <option value="Pending" ${act.formStatus==='Pending'?'selected':''}>Pending</option>
+                                    <option value="On Time" ${act.formStatus==='On Time'?'selected':''}>On Time</option>
+                                    <option value="Late" ${act.formStatus==='Late'?'selected':''}>Late</option>
+                                    <option value="Late (Excused)" ${act.formStatus==='Late (Excused)'?'selected':''}>Late (Exc)</option>
+                                    <option value="No Submit" ${act.formStatus==='No Submit'?'selected':''}>No Submit</option>
+                                </select>
+                            `;
+
+                            var actCol = isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:9px;">ARCHIVED / INACTIVE</span>` : `
+                                <div style="display:flex; gap:4px; align-items:center;">
+                                    <button class="btn-save-inline" id="btnAct_${s.vault}" onclick="saveInlineActivity('${roomName}', ${idx})">💾 Save</button>
+                                    <button class="btn-icon" title="Advanced (LOA Dates & Override)" onclick="openAdjustModal('${roomName}', ${idx})">⚙️</button>
+                                </div>
+                            `;
+
+                            roomActHtml += `<tr class="${trClass}">
+                                <td class="vault-tag">${s.vault}</td>
+                                <td><b>${s.username}</b> ${wlBadge}</td>
+                                <td><span style="font-weight:bold; color:var(--sapphire);">${s.grade || '-'}</span></td>
+                                <td>${loaText}</td>
+                                <td><span class="num-badge">${s.totalClasses}</span></td>
+                                <td><span class="num-badge" style="background:#ffebee; color:#c62828;">${s.mandatory}</span></td>
+                                <td>${attInp}</td>
+                                <td>${absInp}</td>
+                                <td>${excInp} <div style="font-size:9px; color:gray; max-width:80px;">${act.excusedText === '0' ? '' : act.excusedText}</div></td>
+                                <td>${freeInp}</td>
+                                <td>${repInp}</td>
+                                <td>${fsSelect}</td>
+                                <td>${notInp}</td>
+                                <td>${actCol}</td>
+                            </tr>`;
                         });
                     }
                    
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
-                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA/Hiatus)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
+                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th>Grade</th><th>Status (LOA)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Form Status">Form Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
                     // --- BOX 2: ROOM SUMMARIES ---
                     var roomSumHtml = '';
@@ -1235,12 +1171,14 @@
                         roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>'; 
                     } 
                     else if (students.length === 0) { 
-                        roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray;">No active students found in this room.</td></tr>'; 
+                        roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray;">No students found in this room.</td></tr>'; 
                     } 
                     else {
                         students.forEach(function(s, idx) {
                             var act = s.activity; 
-                            var isPending = (act.formStatus === 'Pending' && !act.lockSync); 
+                            var isInactive = s.isInactive;
+                            var trClass = isInactive ? 'row-inactive' : '';
+
                             var sumStatuses = (act.sumStat || 'Pending,Pending,Pending,Pending').split(',');
 
                             var linkCols = '';
@@ -1251,15 +1189,32 @@
                                 if(lnk && lnk.toString().trim().length > 4) { 
                                     var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk; 
                                     linkCols += '<td><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>'; 
-                                } 
-                                else { 
+                                } else { 
                                     linkCols += '<td>-</td>'; 
                                 }
                             }
-                            roomSumHtml += '<tr><td class="vault-tag">' + s.vault + '</td><td><b>' + s.username + '</b></td><td><span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">' + (isPending?0:act.summaries) + '</span></td><td>' + act.sumAuror + '</td><td>' + act.sumMinistry + '</td><td>' + act.sumExtra + '</td>' + linkCols + '<td><button class="btn-adjust-sum" onclick="openAdjustSumModal(\'' + roomName + '\', ' + idx + ')">Adjust</button></td></tr>';
+                            
+                            var sumInp = isInactive ? act.summaries : `<input type="number" id="sum_${s.vault}" value="${act.summaries}" class="inline-inp" style="background:#f3e5f5; color:#6a1b9a;">`;
+                            var actCol = isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:9px;">ARCHIVED</span>` : `
+                                <div style="display:flex; gap:4px; align-items:center;">
+                                    <button class="btn-save-inline" id="btnSum_${s.vault}" onclick="saveInlineSummary('${roomName}', ${idx})">💾 Save</button>
+                                    <button class="btn-icon" title="Adjust Approval Links" onclick="openAdjustSumModal('${roomName}', ${idx})">⚙️</button>
+                                </div>
+                            `;
+
+                            roomSumHtml += `<tr class="${trClass}">
+                                <td class="vault-tag">${s.vault}</td>
+                                <td><b>${s.username}</b></td>
+                                <td>${sumInp}</td>
+                                <td><div style="font-size:9px;">${act.sumAuror}</div></td>
+                                <td><div style="font-size:9px;">${act.sumMinistry}</div></td>
+                                <td><div style="font-size:9px;">${act.sumExtra}</div></td>
+                                ${linkCols}
+                                <td>${actCol}</td>
+                            </tr>`;
                         });
                     }
-                    var boxSum = '<div class="box-section"><h4>2. Summaries Collection</h4>' + scheduleBanner + '<div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror Subject</th><th>Ministry Subject</th><th>Extracurricular</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th></tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
+                    var boxSum = '<div class="box-section"><h4>2. Summaries Collection</h4>' + scheduleBanner + '<div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror</th><th>Ministry</th><th>Extra.</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th></tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
 
                     // --- BOX 3: FINANCE (PETTY CASH & DIRECT EDIT) ---
                     var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
@@ -1268,6 +1223,9 @@
                     } 
                     else {
                         students.forEach(function(s) {
+                            var isInactive = s.isInactive;
+                            var trClass = isInactive ? 'row-inactive' : '';
+
                             totalKas += s.kas; 
                             totalDenda += s.denda; 
                             totalReward += s.reward;
@@ -1278,12 +1236,26 @@
                             var finalDenda = autoFines + customDenda;
                             
                             var cellKasStr = `<td class="money">ʛ${formatMoney(s.kas)}</td>`;
-                            
-                            var cellCustomDendaStr = isPrivilegedUser 
-                                ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}', '${roomName}')"></td>` 
-                                : `<td class="money ${customDenda > 0 ? 'minus' : ''}">${customDenda > 0 ? '-ʛ' + formatMoney(customDenda) : '-'}</td>`;
+                            var cellCustomDendaStr = '';
 
-                            finHtml += '<tr><td class="vault-tag">' + s.vault + '</td><td><b>' + s.username + '</b></td>' + cellKasStr + '<td class="money ' + (autoFines > 0 ? 'minus' : '') + '">' + (autoFines > 0 ? '-ʛ' + formatMoney(autoFines) : '-') + '</td>' + cellCustomDendaStr + '<td class="money total-fines-td ' + (finalDenda > 0 ? 'minus' : '') + '" id="td-' + s.vault + '">' + (finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-') + '</td><td class="money ' + (s.reward > 0 ? 'plus' : '') + '">' + (s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-') + '</td><td><div style="font-size:10px; color:gray; line-height:1.4;">' + s.finesDetail + '</div></td></tr>';
+                            if (isInactive) {
+                                cellCustomDendaStr = `<td class="money">-</td>`;
+                            } else {
+                                cellCustomDendaStr = isPrivilegedUser 
+                                    ? `<td><input type="number" class="direct-input minus-input" value="${customDenda > 0 ? customDenda : ''}" placeholder="0" onchange="autoSaveFinance('${s.vault}', 'DENDA', this, ${autoFines}, 'td-${s.vault}', '${roomName}')"></td>` 
+                                    : `<td class="money ${customDenda > 0 ? 'minus' : ''}">${customDenda > 0 ? '-ʛ' + formatMoney(customDenda) : '-'}</td>`;
+                            }
+
+                            finHtml += `<tr class="${trClass}">
+                                <td class="vault-tag">${s.vault}</td>
+                                <td><b>${s.username}</b></td>
+                                ${cellKasStr}
+                                <td class="money ${autoFines > 0 ? 'minus' : ''}">${autoFines > 0 ? '-ʛ' + formatMoney(autoFines) : '-'}</td>
+                                ${cellCustomDendaStr}
+                                <td class="money total-fines-td ${finalDenda > 0 ? 'minus' : ''}" id="td-${s.vault}">${finalDenda > 0 ? '-ʛ' + formatMoney(finalDenda) : '-'}</td>
+                                <td class="money ${s.reward > 0 ? 'plus' : ''}">${s.reward > 0 ? 'ʛ' + formatMoney(s.reward) : '-'}</td>
+                                <td><div style="font-size:10px; color:gray; line-height:1.4;">${s.finesDetail}</div></td>
+                            </tr>`;
                         });
                     }
                     var boxFin = '<div class="box-section"><h4>3. Room Finance & Penalties</h4><div class="dashboard-cards"><div class="card"><h5>Total Dues (Kas)</h5><div class="amount">ʛ' + formatMoney(totalKas) + '</div></div><div class="card"><h5>Total Fines</h5><div class="amount minus" id="card-total-fines-' + roomName + '">ʛ' + formatMoney(totalDenda) + '</div></div><div class="card"><h5>Summary Rewards</h5><div class="amount plus">ʛ' + formatMoney(totalReward) + '</div></div></div><div class="table-container"><table id="table-fin-' + roomName + '"><thead><tr><th>Vault</th><th>Username</th><th>Dues (Kas)</th><th>Auto Fines</th><th>Manual Edit Fines</th><th>Total Fines</th><th>Rewards</th><th>Breakdown</th></tr></thead><tbody>' + finHtml + '</tbody></table></div></div>';
@@ -1424,10 +1396,7 @@
         
         function saveRotSubjects() {
             var btn = document.getElementById('btnSaveRot'); 
-            if(btn) { 
-                btn.innerText = "Saving..."; 
-                btn.disabled = true; 
-            }
+            if(btn) { btn.innerText = "Saving..."; btn.disabled = true; }
             var payload = { 
                 action: "saveRotSubjects", 
                 month: document.getElementById('monthSelector').value.trim(), 
@@ -1441,20 +1410,18 @@
             })
             .then(r => r.json()).then(res => {
                 resetBtn('btnSaveRot', 'Save Assignment');
-                if(res.status === 'success') { 
-                    closeRotModal(); 
-                    fetchRoomData(); 
-                } else { 
+                if(res.status === 'success') { closeRotModal(); fetchRoomData(); } 
+                else { 
                     document.getElementById('rotStatus').innerText = res.message; 
                     document.getElementById('rotStatus').style.color = "red"; 
                     document.getElementById('rotStatus').style.display = "block"; 
                 }
-            }).catch(err => { 
-                resetBtn('btnSaveRot', 'Save Assignment'); 
-                alert("Error: " + err.message); 
-            });
+            }).catch(err => { resetBtn('btnSaveRot', 'Save Assignment'); alert("Error: " + err.message); });
         }
 
+        // ==========================================
+        // FUNGSI ADVANCED POP UP
+        // ==========================================
         function openAdjustModal(roomName, index) {
             var student = fullDataStore.rooms[roomName][index];
             currentEditVault = student.vault; 
@@ -1469,16 +1436,9 @@
             document.getElementById('adjStatus').value = act.status || 'Active'; 
             document.getElementById('adjReqOverride').value = act.reqOverride || ''; 
             document.getElementById('adjMandatory').innerText = student.mandatory; 
-            document.getElementById('adjAttended').value = act.attended || 0; 
-            document.getElementById('adjAbsences').value = act.absences || 0; 
-            document.getElementById('adjExcused').value = act.excused || 0; 
-            document.getElementById('adjFreeClass').value = act.freeClass || 0; 
-            document.getElementById('adjReplacements').value = act.replacements || 0; 
             document.getElementById('adjLoaStart').value = act.loaStart; 
             document.getElementById('adjLoaEnd').value = act.loaEnd; 
             document.getElementById('adjLoaLink').value = act.loaLink; 
-            document.getElementById('adjFormStatus').value = act.formStatus || 'Pending'; 
-            document.getElementById('adjNotes').value = act.notes || '';
             
             toggleLoaFields();
         }
@@ -1487,35 +1447,32 @@
             var status = document.getElementById('adjStatus').value; 
             document.getElementById('loaSection').style.display = status === 'Leave of Absence' ? 'block' : 'none'; 
         }
-        function closeAdjustModal() { 
-            document.getElementById('adjustModal').style.display = 'none'; 
-        }
+        function closeAdjustModal() { document.getElementById('adjustModal').style.display = 'none'; }
        
-        function saveActivityAdjustment() {
+        function saveAdvancedSettings() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
             var act = s.activity;
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
-                attended: Math.max(0, parseInt(document.getElementById('adjAttended').value) || 0), 
-                absences: Math.max(0, parseInt(document.getElementById('adjAbsences').value) || 0), 
-                excused: Math.max(0, parseInt(document.getElementById('adjExcused').value) || 0), 
-                replacements: Math.max(0, parseInt(document.getElementById('adjReplacements').value) || 0), 
-                freeClass: Math.max(0, parseInt(document.getElementById('adjFreeClass').value) || 0), 
-                formStatus: document.getElementById('adjFormStatus').value, 
+                attended: act.attended, 
+                absences: act.absences, 
+                excused: act.excused, 
+                replacements: act.replacements, 
+                freeClass: act.freeClass, 
+                formStatus: act.formStatus, 
                 dendaOverride: act.dendaOverride, 
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
                 loaLink: document.getElementById('adjLoaLink').value, 
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
-                notes: document.getElementById('adjNotes').value, 
-                lockSync: document.getElementById('adjLockSync').checked 
+                notes: act.notes, 
+                lockSync: true 
             };
             
             var btn = document.getElementById('btnSaveAct'); 
-            btn.innerText = "Saving..."; 
-            btn.disabled = true;
+            btn.innerText = "Saving..."; btn.disabled = true;
             
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
@@ -1525,21 +1482,16 @@
                 body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload }) 
             })
             .then(r => r.json()).then(res => {
-                resetBtn('btnSaveAct', 'Save Activity');
+                resetBtn('btnSaveAct', 'Save Advanced');
                 if(res.status === 'success' || res.success) { 
                     closeAdjustModal(); 
-                    showSnack("✅ Status & Class Changes Saved!"); 
+                    showSnack("✅ Status Changes Saved!"); 
                     fetchRoomData();
                 } else { 
                     var statusBox = document.getElementById('modalStatus'); 
-                    statusBox.innerText = res.message; 
-                    statusBox.style.color = "red"; 
-                    statusBox.style.display = "block"; 
+                    statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
                 } 
-            }).catch(err => { 
-                resetBtn('btnSaveAct', 'Save Activity'); 
-                alert("Error: " + err.message); 
-            });
+            }).catch(err => { resetBtn('btnSaveAct', 'Save Advanced'); alert("Error: " + err.message); });
         }
 
         function openAdjustSumModal(roomName, index) {
@@ -1552,8 +1504,6 @@
             document.getElementById('adjSumVault').innerText = student.vault; 
             document.getElementById('adjSumUsername').innerText = student.username;
             var act = student.activity; 
-            document.getElementById('adjSumCount').value = act.summaries || 0; 
-            document.getElementById('adjLockSyncSum').checked = act.lockSync || false;
             var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); 
             document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; 
             document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; 
@@ -1561,36 +1511,20 @@
             document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
         }
        
-        function closeAdjustSumModal() { 
-            document.getElementById('adjustSumModal').style.display = 'none'; 
-        }
+        function closeAdjustSumModal() { document.getElementById('adjustSumModal').style.display = 'none'; }
        
-        function saveSummariesAdjustment() {
+        function saveSummariesApproval() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
             var act = s.activity;
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
             var payload = { 
-                status: act.status, 
-                reqOverride: act.reqOverride, 
-                attended: act.attended, 
-                absences: act.absences, 
-                excused: act.excused, 
-                replacements: act.replacements, 
-                freeClass: act.freeClass, 
-                formStatus: act.formStatus, 
-                dendaOverride: act.dendaOverride, 
-                loaStart: act.loaStart, 
-                loaEnd: act.loaEnd, 
-                loaLink: act.loaLink, 
-                notes: act.notes, 
-                summaries: Math.max(0, parseInt(document.getElementById('adjSumCount').value) || 0), 
+                status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: act.summaries, 
                 sumStat: sStat, 
-                lockSync: document.getElementById('adjLockSyncSum').checked 
+                lockSync: true 
             };
             
             var btn = document.getElementById('btnSaveSum'); 
-            btn.innerText = "Saving..."; 
-            btn.disabled = true;
+            btn.innerText = "Saving..."; btn.disabled = true;
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
             
@@ -1599,31 +1533,21 @@
                 body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: currentEditVault, payload: payload }) 
             })
             .then(r => r.json()).then(res => {
-                resetBtn('btnSaveSum', 'Save Summaries');
+                resetBtn('btnSaveSum', 'Save Links');
                 if(res.status === 'success' || res.success) { 
-                    closeAdjustSumModal(); 
-                    showSnack("✅ Summaries Changes Saved!"); 
-                    fetchRoomData(); 
+                    closeAdjustSumModal(); showSnack("✅ Links Approval Saved!"); fetchRoomData(); 
                 } 
                 else { 
                     var statusBox = document.getElementById('modalStatusSum'); 
-                    statusBox.innerText = res.message; 
-                    statusBox.style.color = "red"; 
-                    statusBox.style.display = "block"; 
+                    statusBox.innerText = res.message; statusBox.style.color = "red"; statusBox.style.display = "block"; 
                 } 
-            }).catch(err => { 
-                resetBtn('btnSaveSum', 'Save Summaries'); 
-                alert("Error: " + err.message); 
-            });
+            }).catch(err => { resetBtn('btnSaveSum', 'Save Links'); alert("Error: " + err.message); });
         }
 
         function openReportModal(roomName) {
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
-            if(!month || !week) { 
-                alert("Please select the Month and Week period in the top right corner first!"); 
-                return; 
-            }
+            if(!month || !week) { alert("Please select the Month and Week period in the top right corner first!"); return; }
             currentReportRoom = roomName; 
             document.getElementById('repRoomName').innerText = roomName; 
             document.getElementById('repPeriod').innerText = month + " - " + week; 
@@ -1631,9 +1555,7 @@
             document.getElementById('reportModal').style.display = 'flex';
         }
 
-        function closeReportModal() { 
-            document.getElementById('reportModal').style.display = 'none'; 
-        }
+        function closeReportModal() { document.getElementById('reportModal').style.display = 'none'; }
 
         function executeSendReport() {
             var month = document.getElementById('monthSelector').value.trim(); 
@@ -1641,8 +1563,7 @@
             var notes = document.getElementById('repNotes').value.trim();
             var btn = document.getElementById('btnConfirmReport'); 
             var originalText = btn.innerHTML; 
-            btn.innerHTML = "⏳ Sending..."; 
-            btn.disabled = true;
+            btn.innerHTML = "⏳ Sending..."; btn.disabled = true;
             
             var safeUsername = loggedInUser + "|||" + notes;
             
@@ -1656,17 +1577,9 @@
                     alert("✅ Report for " + currentReportRoom + " successfully sent via email!"); 
                     closeReportModal();
                     var mainBtn = document.getElementById('btnReport_' + currentReportRoom); 
-                    if(mainBtn) { 
-                        mainBtn.innerHTML = "✅ Report Sent"; 
-                        mainBtn.style.backgroundColor = "gray"; 
-                    }
-                } else { 
-                    alert("❌ Failed to send report: " + res.message); 
-                }
-            }).catch(err => { 
-                resetBtn('btnConfirmReport', originalText); 
-                alert("❌ Failed to send report: " + err.message); 
-            });
+                    if(mainBtn) { mainBtn.innerHTML = "✅ Report Sent"; mainBtn.style.backgroundColor = "gray"; }
+                } else { alert("❌ Failed to send report: " + res.message); }
+            }).catch(err => { resetBtn('btnConfirmReport', originalText); alert("❌ Failed to send report: " + err.message); });
         }
     </script>
 </body>
