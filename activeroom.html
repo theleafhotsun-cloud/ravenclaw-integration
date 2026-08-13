@@ -334,7 +334,7 @@
             text-align: left; 
             border-bottom: 1px solid var(--shellstone); 
             font-size: 11px; 
-            vertical-align: top; /* Rata atas */
+            vertical-align: top;
         }
         th { 
             background-color: var(--royal-blue); 
@@ -390,6 +390,44 @@
         }
         .inline-inp:focus { outline: none; border-color: var(--sapphire); background-color: white; box-shadow: 0 0 4px rgba(60,80,125,0.3); }
         
+        /* STYLE "BUNGLON" UNTUK NOTES - Menyatu dengan background saat disimpan, kotak saat diklik */
+        .editable-notes { 
+            width: 150px;
+            max-height: 4em; /* Membatasi tinggi saat tidak fokus */
+            padding: 4px 6px; 
+            font-size: 10px; 
+            font-family: inherit;
+            color: var(--royal-blue);
+            background-color: transparent; 
+            border: 1px solid transparent; 
+            border-radius: 4px;
+            word-wrap: break-word;
+            white-space: pre-wrap; 
+            line-height: 1.4;
+            transition: all 0.3s ease;
+            cursor: text;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Menampilkan maksimal 2 baris */
+            -webkit-box-orient: vertical;
+        }
+        .editable-notes:empty:before {
+            content: attr(placeholder);
+            color: #b0bec5;
+            font-style: italic;
+        }
+        .editable-notes:focus { 
+            max-height: none; /* Membuka batas tinggi saat fokus */
+            overflow-y: visible;
+            outline: none; 
+            border-color: var(--sapphire); 
+            background-color: white; 
+            box-shadow: 0 0 5px rgba(60,80,125,0.3); 
+            display: block; /* Menghilangkan efek line-clamp */
+            z-index: 10;
+            position: relative;
+        }
+
         .inline-sel { width: 85px; padding: 4px; font-size: 10px; border: 1px solid #ccc; border-radius: 4px; font-weight:bold; margin-top: 2px;}
         
         .btn-save-inline { 
@@ -990,9 +1028,9 @@
             var vault = s.vault;
             var act = s.activity;
 
-            // MENGAMBIL NILAI NOTES DARI INPUT TEXT YANG RAPI
+            // MENGAMBIL NILAI NOTES DARI DIV EDITABLE
             var notesElement = document.getElementById('not_'+vault);
-            var notesContent = notesElement ? notesElement.value : '';
+            var notesContent = notesElement ? (notesElement.innerText || notesElement.textContent || '') : '';
 
             var payload = {
                 status: act.status, 
@@ -1028,7 +1066,7 @@
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ Activity Data Saved!"); 
                     btn.innerText = ori; btn.disabled = false;
-                    fetchRoomData(); // MENGUPDATE ULANG POIN AGAR SINKRON
+                    fetchRoomData(); 
                 } else { 
                     alert(res.message); btn.innerText = ori; btn.disabled = false;
                 } 
@@ -1146,10 +1184,10 @@
                                 excTextDisp = ''; 
                             }
 
-                            // KOTAK NOTES MENGGUNAKAN INPUT TAPI DIBIKIN TEXT-OVERFLOW
+                            // KOTAK NOTES "BUNGLON" MENGGUNAKAN DIV CONTENTEDITABLE
                             var notInp = isInactive ? 
                                 `<div style="font-size:10px; color:gray; width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${act.notes || '-'}">${act.notes || '-'}</div>` : 
-                                `<input type="text" id="not_${s.vault}" value="${act.notes || ''}" class="inline-txt" placeholder="..." title="${act.notes || ''}">`;
+                                `<div id="not_${s.vault}" contenteditable="true" class="editable-notes" placeholder="...">` + (act.notes || '') + `</div>`;
 
                             var attInp = isInactive ? act.attended : `<input type="number" id="att_${s.vault}" value="${act.attended}" class="inline-inp" style="background:#e8f5e9; border-color:#c8e6c9;">`;
                             var absInp = isInactive ? act.absences : `<input type="number" id="abs_${s.vault}" value="${act.absences}" class="inline-inp" style="background:#ffebee; border-color:#ffcdd2;">`;
@@ -1178,9 +1216,6 @@
                             let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue); margin-bottom:3px;">${displayName} <span style="font-size:9px;">(${s.grade || '-'})</span></div>
                                             <div style="font-size:10px; color:gray; margin-bottom:3px;"><b>Major:</b> ${s.major}</div>`;
 
-                            // MENGEMBALIKAN KOLOM SUMMARIES YANG HILANG DI TABEL PERTAMA
-                            var sumBadge = `<span class="num-badge" style="background:#f3e5f5; color:#6a1b9a;">${act.summaries}</span>`;
-
                             roomActHtml += `<tr class="${trClass}">
                                 <td class="vault-tag" style="vertical-align:top; padding-top:10px;">${s.vault}</td>
                                 <td style="vertical-align:top; padding-top:10px; white-space:normal; min-width:160px;"><b>${s.username}</b> ${wlBadge}<br>${infoHTML}</td>
@@ -1192,7 +1227,6 @@
                                 <td style="vertical-align:top; padding-top:10px;">${excInp}<br>${excTextDisp}</td>
                                 <td style="vertical-align:top; padding-top:10px;">${freeInp}</td>
                                 <td style="vertical-align:top; padding-top:10px;">${repInp}</td>
-                                <td style="vertical-align:top; padding-top:10px; text-align:center;">${sumBadge}</td>
                                 <td style="vertical-align:top; padding-top:10px;">${fsSelect}</td>
                                 <td style="vertical-align:top; padding-top:10px;">${notInp}</td>
                                 <td style="vertical-align:top; padding-top:10px;">${actCol}</td>
@@ -1201,7 +1235,7 @@
                     }
                    
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
-                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>User Info</th><th>Status (LOA)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th title="Form Status">Form Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
+                    var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>User Info</th><th>Status (LOA)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Form Status">Form Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
                     // --- BOX 2: ROOM SUMMARIES ---
                     var roomSumHtml = '';
@@ -1232,7 +1266,8 @@
                                 }
                             }
                             
-                            var sumInp = isInactive ? act.summaries : `<input type="number" id="sum_${s.vault}" value="${act.summaries}" class="inline-inp" style="background:#f3e5f5; color:#6a1b9a;">`;
+                            // SUMMARIES BISA DIEDIT MANUAL DENGAN INLINE INPUT
+                            var sumInp = isInactive ? act.summaries : `<input type="number" id="sum_${s.vault}" value="${act.summaries}" class="inline-inp" style="background:#f3e5f5; border-color:#e1bee7; color:#6a1b9a;">`;
                             var actCol = isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:9px;">ARCHIVED</span>` : `
                                 <div style="display:flex; gap:4px; align-items:center;">
                                     <button class="btn-save-inline" id="btnSum_${s.vault}" onclick="saveInlineSummary('${roomName}', ${idx})">💾 Save</button>
