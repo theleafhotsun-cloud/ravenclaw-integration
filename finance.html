@@ -50,7 +50,9 @@
         
         .btn-dues-fines { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;} .btn-dues-fines:hover { background-color: #c8e6c9; }
         .btn-rewards { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;} .btn-rewards:hover { background-color: #e1bee7; }
+        
         .btn-hof { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;} .btn-hof:hover { background-color: #ffe0b2; }
+        .btn-spfines { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;} .btn-spfines:hover { background-color: #ffcdd2; }
 
         .toggle-dues { font-size: 12px; font-weight: bold; color: var(--royal-blue); background-color: #fff9c4; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--warning); cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
@@ -126,10 +128,13 @@
                     <div class="card"><h5>Total Monthly Rewards<br>(Minus from Petty Cash)</h5><div class="amount minus" id="sumRewards">ʛ0</div></div>
                 </div>
 
+                <!-- TOMBOL EKSPOR DIBAGI MENJADI 4 -->
                 <div class="btn-group">
                     <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
-                    <button class="btn-export btn-hof" onclick="openHoFModal()">🏆 Preview Hall of Fame & SP Fines</button>
+                    <button class="btn-export btn-hof" onclick="openRankPreview('HOF_REWARDS')">🏆 Preview HoF Rewards</button>
+                    <button class="btn-export btn-spfines" onclick="openRankPreview('SP_FINES')">⚠️ Preview SP Fines</button>
+                    
                     <label class="toggle-dues">
                         <input type="checkbox" id="hideKasFilter" onchange="renderMasterTable()">
                         Focus Mode: Hide Monthly Dues
@@ -157,7 +162,7 @@
         </div>
     </div>
 
-    <!-- PREVIEW MODAL (DUES, FINES, REWARDS) -->
+    <!-- PREVIEW MODAL BIASA (DUES, FINES, REWARDS) -->
     <div class="modal-overlay" id="previewModal">
         <div class="modal-box" style="width: 700px;">
             <h3 id="previewTitle">Preview Data</h3>
@@ -180,35 +185,35 @@
         </div>
     </div>
 
-    <!-- HALL OF FAME & SP FINES MODAL -->
-    <div class="modal-overlay" id="hofModal">
+    <!-- MODAL KHUSUS RANKING (HOF REWARDS & SP FINES) -->
+    <div class="modal-overlay" id="rankModal">
         <div class="modal-box">
-            <h3>🏆 Hall of Fame Rewards & SP Fines Preview</h3>
+            <h3 id="rankModalTitle">🏆 Hall of Fame Rewards Preview</h3>
             
-            <div id="hofLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Compiling Rank Data... Please wait.</div>
+            <div id="rankLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Compiling Rank Data... Please wait.</div>
             
-            <div id="hofContent" style="display:none; flex-direction:column; flex-grow:1; overflow:hidden;">
+            <div id="rankContent" style="display:none; flex-direction:column; flex-grow:1; overflow:hidden;">
                 
-                <!-- CUSTOMIZE BEST ROOM VC -->
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px; background:#fff9c4; padding:10px; border-radius:6px; border:1px solid var(--warning);">
+                <!-- CUSTOMIZE BEST ROOM VC (Hanya Muncul Saat HOF Rewards) -->
+                <div id="bestRoomContainer" style="display:flex; align-items:center; gap:10px; margin-bottom:15px; background:#fff9c4; padding:10px; border-radius:6px; border:1px solid var(--warning);">
                     <label style="font-size:12px; font-weight:bold; color:var(--royal-blue);">🛡️ Assign Best Room (1000G) to Leadroom VC:</label>
-                    <select id="bestRoomVcSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc; font-family:monospace; font-size:12px; outline:none;" onchange="buildHoFTable()">
+                    <select id="bestRoomVcSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc; font-family:monospace; font-size:12px; outline:none;" onchange="buildRankPreviewTable()">
                         <option value="">-- Select Leadroom VC --</option>
                     </select>
                 </div>
 
                 <div class="preview-table-container" style="max-height: 50vh;">
-                    <table id="hofTable">
-                        <thead>
-                            <tr><th>Vault</th><th>Name</th><th>Rewards (+G)</th><th>Fines (-G)</th><th>Details</th></tr>
+                    <table id="rankTable">
+                        <thead id="rankThead">
+                            <tr><th>Vault</th><th>Name</th><th>Amount</th><th>Details</th></tr>
                         </thead>
-                        <tbody id="hofTbody"></tbody>
+                        <tbody id="rankTbody"></tbody>
                     </table>
                 </div>
 
                 <div class="modal-actions">
-                    <button class="btn-cancel" onclick="closeHoFModal()">Cancel</button>
-                    <button class="btn-download" onclick="downloadHoFPDF()" id="btnDownloadHof">⬇️ Download PDF</button>
+                    <button class="btn-cancel" onclick="closeRankPreview()">Cancel</button>
+                    <button class="btn-download" onclick="downloadRankPDF()" id="btnDownloadRank">⬇️ Download PDF</button>
                 </div>
             </div>
         </div>
@@ -222,9 +227,13 @@
         
         var periodConfigStore = {}; 
         var masterFinanceList = []; 
+        
+        // Caching Rank Data
         var rankDataCache = [];
-        var hofAggregator = {};
+        var rankAggregator = {};
+        
         var currentDownloadType = "";
+        var currentRankDownloadType = ""; // 'HOF_REWARDS' atau 'SP_FINES'
         let currentFetchId = 0; 
 
         window.onload = function() {
@@ -356,6 +365,7 @@
                 if (fetchId !== currentFetchId) return;
 
                 masterFinanceList = []; 
+                rankDataCache = []; // Kosongkan cache rank kalau pindah periode
 
                 if (res.status === "success" && res.data) {
                     var data = res.data;
@@ -428,121 +438,143 @@
         }
 
         // ==========================================
-        // FITUR BARU: HALL OF FAME & SP FINES MODAL
+        // FITUR BARU: HALL OF FAME REWARDS & SP FINES
         // ==========================================
-        async function openHoFModal() {
+        async function openRankPreview(type) {
             var month = document.getElementById('monthSelector').value;
             if (!month) return alert("Please select a valid month first.");
 
-            document.getElementById('hofModal').style.display = 'flex';
-            document.getElementById('hofLoading').style.display = 'block';
-            document.getElementById('hofContent').style.display = 'none';
+            currentRankDownloadType = type;
+            document.getElementById('rankModal').style.display = 'flex';
+            document.getElementById('rankLoading').style.display = 'block';
+            document.getElementById('rankContent').style.display = 'none';
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "getRankData", month: month })
-                });
-                const res = await response.json();
-                
-                if (res.status === "success" && res.data) {
-                    rankDataCache = res.data;
+            let titleStr = type === 'HOF_REWARDS' ? "🏆 Hall of Fame Rewards Preview" : "⚠️ SP Fines Preview";
+            document.getElementById('rankModalTitle').innerText = titleStr;
+
+            // Jika cache rankDataStore sudah ada, langsung pakai. Jika tidak, fetch.
+            if (rankDataCache.length === 0) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST', body: JSON.stringify({ action: "getRankData", month: month })
+                    });
+                    const res = await response.json();
                     
-                    // Populate Select List for Best Room VC
-                    let sel = document.getElementById('bestRoomVcSelect');
-                    sel.innerHTML = '<option value="">-- Select Leadroom VC --</option>';
-                    
+                    if (res.status === "success" && res.data) {
+                        rankDataCache = res.data;
+                    } else throw new Error(res.message);
+                } catch (error) {
+                    document.getElementById('rankLoading').innerHTML = "<span style='color:red;'>Failed to load Rank Data: " + error.message + "</span>";
+                    return;
+                }
+            }
+
+            // Jika Mode HOF_REWARDS, tampilkan dropdown Best Room
+            if (type === 'HOF_REWARDS') {
+                document.getElementById('bestRoomContainer').style.display = 'flex';
+                let sel = document.getElementById('bestRoomVcSelect');
+                if (sel.options.length <= 1) { // Hanya isi kalau belum pernah diisi
                     let sorted = [...rankDataCache].sort((a,b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
                     sorted.forEach(s => {
                         if (!s.isInactive) {
                             sel.innerHTML += `<option value="${s.vault}">${s.vault} - ${s.name}</option>`;
                         }
                     });
-
-                    buildHoFTable();
-                    
-                    document.getElementById('hofLoading').style.display = 'none';
-                    document.getElementById('hofContent').style.display = 'flex';
-                } else throw new Error(res.message);
-            } catch (error) {
-                document.getElementById('hofLoading').innerHTML = "<span style='color:red;'>Failed to load Rank Data: " + error.message + "</span>";
+                }
+            } else {
+                document.getElementById('bestRoomContainer').style.display = 'none';
             }
+
+            buildRankPreviewTable();
+            document.getElementById('rankLoading').style.display = 'none';
+            document.getElementById('rankContent').style.display = 'flex';
         }
 
-        function closeHoFModal() {
-            document.getElementById('hofModal').style.display = 'none';
+        function closeRankPreview() {
+            document.getElementById('rankModal').style.display = 'none';
         }
 
-        function buildHoFTable() {
-            hofAggregator = {};
+        function buildRankPreviewTable() {
+            rankAggregator = {};
             
-            function addRecord(v, n, type, amt, desc) {
-                if (!hofAggregator[v]) hofAggregator[v] = { vault: v, name: n, reward: 0, fine: 0, details: [] };
-                if (type === 'REWARD') {
-                    hofAggregator[v].reward += amt;
-                    hofAggregator[v].details.push(`<span style="color:var(--success); font-weight:bold;">${desc} (+ʛ${formatMoney(amt)})</span>`);
-                } else {
-                    hofAggregator[v].fine += amt;
-                    hofAggregator[v].details.push(`<span style="color:var(--danger); font-weight:bold;">${desc} (-ʛ${formatMoney(amt)})</span>`);
-                }
+            function addRecord(v, n, amt, desc) {
+                if (!rankAggregator[v]) rankAggregator[v] = { vault: v, name: n, total: 0, details: [] };
+                rankAggregator[v].total += amt;
+                
+                let color = currentRankDownloadType === 'HOF_REWARDS' ? 'var(--success)' : 'var(--danger)';
+                let sign = currentRankDownloadType === 'HOF_REWARDS' ? '+' : '-';
+                rankAggregator[v].details.push(`<span style="color:${color}; font-weight:bold;">${desc} (${sign}ʛ${formatMoney(amt)})</span>`);
             }
 
-            // Gamers Logic
-            let maxGames = 0;
-            rankDataCache.forEach(s => { let g = Number(s.games) || 0; if (g > maxGames) maxGames = g; });
-            let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
-            let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
+            if (currentRankDownloadType === 'HOF_REWARDS') {
+                let maxGames = 0;
+                rankDataCache.forEach(s => { let g = Number(s.games) || 0; if (g > maxGames) maxGames = g; });
+                let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
+                let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
 
-            let bestRoomVc = document.getElementById('bestRoomVcSelect').value;
+                let bestRoomVc = document.getElementById('bestRoomVcSelect').value;
 
-            // Memproses Setiap Murid
-            rankDataCache.forEach(s => {
-                if (s.isInactive) return; // Skip murid dropout/resign
+                rankDataCache.forEach(s => {
+                    if (s.isInactive) return;
 
-                // 1. Alpha & Aquilae
-                if (s.award === 'Alpha') addRecord(s.vault, s.name, 'REWARD', 500, 'Alpha of The Month');
-                if (s.award === 'Aquilae') addRecord(s.vault, s.name, 'REWARD', 500, 'Aquilae of The Month');
-                
-                // 2. Rank O.W.L & SP
-                if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, s.name, 'REWARD', 300, `Rank O.W.L (#${s.owlRank})`);
-                if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, s.name, 'REWARD', 300, `Rank SP (#${s.spRank})`);
-                
-                // 3. Denda SP
-                let spScore = Number(s.spScore) || 0;
-                let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
-                if (spScore < minSp) {
-                    let fine = minSp - spScore;
-                    addRecord(s.vault, s.name, 'FINE', fine, `SP Shortage (${spScore}/${minSp})`);
-                }
+                    if (s.award === 'Alpha') addRecord(s.vault, s.name, 500, 'Alpha of The Month');
+                    if (s.award === 'Aquilae') addRecord(s.vault, s.name, 500, 'Aquilae of The Month');
+                    
+                    if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, s.name, 300, `Rank O.W.L (#${s.owlRank})`);
+                    if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, s.name, 300, `Rank SP (#${s.spRank})`);
+                    
+                    if (gamers.some(g => g.vault === s.vault)) {
+                        addRecord(s.vault, s.name, gamerReward, 'Gamers of The Month');
+                    }
 
-                // 4. Gamers of the Month
-                if (gamers.some(g => g.vault === s.vault)) {
-                    addRecord(s.vault, s.name, 'REWARD', gamerReward, 'Gamers of The Month');
-                }
+                    if (bestRoomVc && s.vault === bestRoomVc) {
+                        addRecord(s.vault, s.name, 1000, 'Best Room Reward (Leadroom)');
+                    }
+                });
+            } 
+            else if (currentRankDownloadType === 'SP_FINES') {
+                rankDataCache.forEach(s => {
+                    if (s.isInactive) return;
+                    let spScore = Number(s.spScore) || 0;
+                    let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
+                    if (spScore < minSp) {
+                        let fine = minSp - spScore;
+                        addRecord(s.vault, s.name, fine, `SP Shortage (${spScore}/${minSp})`);
+                    }
+                });
+            }
 
-                // 5. Best Room Reward
-                if (bestRoomVc && s.vault === bestRoomVc) {
-                    addRecord(s.vault, s.name, 'REWARD', 1000, 'Best Room Reward (Leadroom)');
-                }
-            });
-
-            let tbody = document.getElementById('hofTbody');
+            // Render ke Tabel
+            let tbody = document.getElementById('rankTbody');
+            let thead = document.getElementById('rankThead');
             tbody.innerHTML = '';
             
-            let sortedVaults = Object.keys(hofAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
+            // Atur Judul Kolom
+            let amountTitle = currentRankDownloadType === 'HOF_REWARDS' ? 'Reward Amount' : 'Fine Amount';
+            thead.innerHTML = `<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>Student Name</th><th>${amountTitle}</th><th>Details</th></tr>`;
+            
+            let sortedVaults = Object.keys(rankAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
             
             if (sortedVaults.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:gray; padding:20px;">No Hall of Fame or Fines data for this month.</td></tr>';
+                let emptyMsg = currentRankDownloadType === 'HOF_REWARDS' ? 'No Hall of Fame rewards assigned yet.' : 'All active students met their Min SP! 🎉';
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray; padding:20px;">${emptyMsg}</td></tr>`;
                 return;
             }
 
+            let counter = 1;
             sortedVaults.forEach(v => {
-                let data = hofAggregator[v];
+                let data = rankAggregator[v];
+                if (data.total <= 0) return;
+
                 let tr = document.createElement('tr');
+                let colorClass = currentRankDownloadType === 'HOF_REWARDS' ? 'color:var(--success);' : 'color:var(--danger);';
+                let sign = currentRankDownloadType === 'HOF_REWARDS' ? '+' : '-';
+
                 tr.innerHTML = `
-                    <td style="font-family:monospace; font-weight:bold;">${data.vault}</td>
+                    <td style="text-align:center;">${counter++}</td>
+                    <td style="font-family:monospace; font-weight:bold; font-size:14px;">${data.vault}</td>
                     <td><b>${data.name}</b></td>
-                    <td style="color:var(--success); font-weight:bold;">${data.reward > 0 ? '+ʛ'+formatMoney(data.reward) : '-'}</td>
-                    <td style="color:var(--danger); font-weight:bold;">${data.fine > 0 ? '-ʛ'+formatMoney(data.fine) : '-'}</td>
+                    <td style="${colorClass} font-weight:bold; font-size:13px;">${sign}ʛ${formatMoney(data.total)}</td>
                     <td style="font-size:10px; line-height:1.6;">${data.details.join('<br>')}</td>
                 `;
                 tbody.appendChild(tr);
@@ -669,7 +701,7 @@
             });
             tableHtml += `</tbody></table>`;
 
-            // FOOTER BIASA
+            // FOOTER
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
             if (hasFines && currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
@@ -684,21 +716,25 @@
             }
             footerHtml += `</table><div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;"><span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>Hogwarts School of Witchcraft and Wizardry</div></div>`; 
 
-            generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn);
+            generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn, closePreview);
         }
 
-        function downloadHoFPDF() {
-            var btn = document.getElementById('btnDownloadHof');
+        // ==========================================
+        // ENGINE PEMBUAT PDF RANKING (HOF & SP FINES)
+        // ==========================================
+        function downloadRankPDF() {
+            var btn = document.getElementById('btnDownloadRank');
             btn.innerText = "⏳ Generating..."; btn.disabled = true;
 
             var monthLabel = document.getElementById('monthSelector').value;
-            var filename = "Ravenclaw_HoF_SPFines_" + monthLabel.replace(/\s+/g, '_') + ".pdf";
+            var filename = "Ravenclaw_" + currentRankDownloadType + "_" + monthLabel.replace(/\s+/g, '_') + ".pdf";
             
             var today = new Date();
             var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
 
-            var tRewards = 0, tFines = 0;
+            var subjectStr = currentRankDownloadType === 'HOF_REWARDS' ? "Hall of Fame Rewards - " + monthLabel : "SP Fines - " + monthLabel;
 
+            var tAmount = 0;
             var tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
@@ -706,8 +742,7 @@
                             <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">No.</th>
                             <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Vault Code</th>
                             <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left;">Student Name</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Rewards</th>
-                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Fines</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center;">Amount</th>
                             <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left;">Details</th>
                         </tr>
                     </thead>
@@ -715,39 +750,47 @@
             `;
 
             var counter = 1;
-            let sortedVaults = Object.keys(hofAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
+            let sortedVaults = Object.keys(rankAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
             
             sortedVaults.forEach(v => {
-                let data = hofAggregator[v];
-                tRewards += data.reward; tFines += data.fine;
+                let data = rankAggregator[v];
+                if (data.total <= 0) return;
+
+                tAmount += data.total;
                 
+                let colorClass = currentRankDownloadType === 'HOF_REWARDS' ? 'color:#2e7d32;' : 'color:#c62828;';
+                let sign = currentRankDownloadType === 'HOF_REWARDS' ? '+' : '-';
+                let bgColor = currentRankDownloadType === 'SP_FINES' ? 'background-color: #ffebee;' : '';
+
                 tableHtml += `
-                    <tr class="pdf-row">
+                    <tr class="pdf-row" style="${bgColor}">
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size: 13px;">${data.vault}</td>
                         <td style="padding: 8px; border: 1px solid #ddd; font-weight:bold;">${data.name}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #2e7d32; font-weight: bold;">${data.reward > 0 ? '+ʛ'+formatMoney(data.reward) : '-'}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; color: #c62828; font-weight: bold;">${data.fine > 0 ? '-ʛ'+formatMoney(data.fine) : '-'}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${colorClass} font-weight: bold;">${sign}ʛ${formatMoney(data.total)}</td>
                         <td style="padding: 8px; border: 1px solid #ddd; font-size: 10px;">${data.details.join('<br>')}</td>
                     </tr>
                 `;
             });
             tableHtml += `</tbody></table>`;
 
-            var footerHtml = `
-                <div class="pdf-row" style="width: 100%; margin: 20px auto 0;">
-                    <table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">
-                        <tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #1b5e20;">Total Hall of Fame Rewards Disbursed</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #1b5e20;">-ʛ${formatMoney(tRewards)}</td></tr>
-                        <tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #c62828;">Total SP Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #c62828;">+ʛ${formatMoney(tFines)}</td></tr>
-                    </table>
-                    <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
-                        <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
-                        Hogwarts School of Witchcraft and Wizardry
-                    </div>
+            var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
+            footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
+            
+            if (currentRankDownloadType === 'HOF_REWARDS') {
+                footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tAmount)} from Ravenclaw's Petty Cash</td></tr>`;
+            } else {
+                footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Total SP Fines Collected</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tAmount)} to Ravenclaw's Petty Cash</td></tr>`;
+            }
+            
+            footerHtml += `</table>
+                <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
+                    <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
+                    Hogwarts School of Witchcraft and Wizardry
                 </div>
-            `;
+            </div>`;
 
-            generateDocument(filename, "Hall of Fame Rewards & SP Fines - " + monthLabel, dateStr, tableHtml, footerHtml, btn, closeHoFModal);
+            generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn, closeRankPreview);
         }
 
         // FUNGSI PEMBANTU UNTUK HTML2PDF
@@ -780,7 +823,6 @@
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
                 btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
                 if (callback) callback();
-                else closePreview();
             }).catch(function(err) {
                 alert("Failed to generate PDF. Please try again.");
                 btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
