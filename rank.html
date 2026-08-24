@@ -455,8 +455,9 @@
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
-                let attValDisp = s.manualAtt !== null ? s.manualAtt : '';
-                let sumValDisp = s.manualSum !== null ? s.manualSum : '';
+                // PERBAIKAN DI SINI
+                let attValDisp = (s.manualAtt !== null && s.manualAtt !== '') ? s.manualAtt : s.autoAtt;
+                let sumValDisp = (s.manualSum !== null && s.manualSum !== '') ? s.manualSum : s.autoSum;
 
                 genBody.innerHTML += `
                     <tr class="${rClass}">
