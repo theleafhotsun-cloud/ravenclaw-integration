@@ -49,9 +49,9 @@
         
         .btn-dues-fines { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;} .btn-dues-fines:hover { background-color: #c8e6c9; }
         .btn-rewards { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;} .btn-rewards:hover { background-color: #e1bee7; }
-        
         .btn-hof { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;} .btn-hof:hover { background-color: #ffe0b2; }
         .btn-spfines { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;} .btn-spfines:hover { background-color: #ffcdd2; }
+        .btn-sp-format { background-color: #e0f2f1; color: #00695c; border: 1px solid #b2dfdb;} .btn-sp-format:hover { background-color: #b2dfdb; }
 
         .toggle-dues { font-size: 12px; font-weight: bold; color: var(--royal-blue); background-color: #fff9c4; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--warning); cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
@@ -82,6 +82,8 @@
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); text-transform: uppercase;}
         .btn-download { background-color: var(--success); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-transform: uppercase; display: flex; gap: 8px; align-items: center;}
         .btn-download:disabled { background-color: gray; cursor: not-allowed; }
+
+        .report-textarea { width: 100%; height: 260px; font-family: monospace; font-size: 12px; padding: 12px; border: 1px solid var(--shellstone); border-radius: 6px; box-sizing: border-box; resize: none; background: #fafafa; color: var(--royal-blue); line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -132,6 +134,7 @@
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
                     <button class="btn-export btn-hof" onclick="openRankPreview('HOF_REWARDS')">🏆 Preview HoF Rewards</button>
                     <button class="btn-export btn-spfines" onclick="openRankPreview('SP_FINES')">⚠️ Preview SP Fines</button>
+                    <button class="btn-export btn-sp-format" onclick="openSpReportFormatModal()">📜 Preview SP Exam Reports</button>
                     
                     <label class="toggle-dues">
                         <input type="checkbox" id="hideKasFilter" onchange="renderMasterTable()">
@@ -216,6 +219,26 @@
         </div>
     </div>
 
+    <!-- MODAL KHUSUS SP EXAM REPORT FORMAT -->
+    <div class="modal-overlay" id="spReportModal">
+        <div class="modal-box" style="width: 650px;">
+            <h3>📜 Ravenclaw O.W.L Student Point Report</h3>
+            <div id="spReportLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Fetching SP Report Format...</div>
+            
+            <div id="spReportContent" style="display:none; flex-direction:column; flex-grow:1;">
+                <textarea id="spReportTextarea" class="report-textarea" readonly></textarea>
+                
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeSpReportModal()">Close</button>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-cancel" style="background-color:var(--sapphire); color:white;" onclick="copySpReportText()">📋 Copy Text</button>
+                        <button class="btn-download" onclick="downloadSpReportDoc()" id="btnDownloadSpDoc">⬇️ Download Document</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
         
@@ -226,6 +249,7 @@
         var masterFinanceList = []; 
         var rankDataCache = [];
         var rankAggregator = {};
+        var spReportDataCache = [];
         
         var currentDownloadType = "";
         var currentRankDownloadType = ""; 
@@ -360,7 +384,7 @@
                 if (fetchId !== currentFetchId) return;
 
                 masterFinanceList = []; 
-                rankDataCache = []; // Kosongkan cache rank kalau pindah periode
+                rankDataCache = [];
 
                 if (res.status === "success" && res.data) {
                     var data = res.data;
@@ -432,9 +456,6 @@
             document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
         }
 
-        // ==========================================
-        // FITUR BARU: HALL OF FAME REWARDS & SP FINES
-        // ==========================================
         async function openRankPreview(type) {
             var month = document.getElementById('monthSelector').value;
             if (!month) return alert("Please select a valid month first.");
@@ -527,7 +548,7 @@
             } 
             else if (currentRankDownloadType === 'SP_FINES') {
                 rankDataCache.forEach(s => {
-                    if (s.isInactive || s.grade === 'G7') return; // LOGIKA PENGECUALIAN G7 DARI SP FINES
+                    if (s.isInactive || s.grade === 'G7') return;
                     let spScore = Number(s.spScore) || 0;
                     let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
                     if (spScore < minSp) {
@@ -537,7 +558,6 @@
                 });
             }
 
-            // Render ke Tabel Modal Preview (Tanpa Nama)
             let tbody = document.getElementById('rankTbody');
             let thead = document.getElementById('rankThead');
             tbody.innerHTML = '';
@@ -573,8 +593,98 @@
         }
 
         // ==========================================
-        // LOGIKA DOWNLOAD PREVIEW BIASA (Dues & Summaries)
+        // FITUR BARU: PREVIEW SP EXAM REPORTS DARI SHEET
         // ==========================================
+        async function openSpReportFormatModal() {
+            var month = document.getElementById('monthSelector').value;
+            document.getElementById('spReportModal').style.display = 'flex';
+            document.getElementById('spReportLoading').style.display = 'block';
+            document.getElementById('spReportContent').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormat" })
+                });
+                const res = await response.json();
+                
+                if (res.status === "success" && res.data) {
+                    spReportDataCache = res.data;
+                    
+                    let lines = [
+                        "RAVENCLAW O.W.L STUDENT POINT REPORT",
+                        "Period: " + month,
+                        ""
+                    ];
+                    
+                    spReportDataCache.forEach(item => {
+                        lines.push(item.report);
+                    });
+                    
+                    lines.push("");
+                    lines.push("- Wit beyond measure is man's greatest treasure -");
+                    
+                    document.getElementById('spReportTextarea').value = lines.join("\n");
+                    document.getElementById('spReportLoading').style.display = 'none';
+                    document.getElementById('spReportContent').style.display = 'flex';
+                } else throw new Error(res.message);
+            } catch (err) {
+                document.getElementById('spReportLoading').innerHTML = "<span style='color:red;'>Failed to load SP Reports: " + err.message + "</span>";
+            }
+        }
+
+        function closeSpReportModal() {
+            document.getElementById('spReportModal').style.display = 'none';
+        }
+
+        function copySpReportText() {
+            var textarea = document.getElementById('spReportTextarea');
+            textarea.select();
+            document.execCommand('copy');
+            alert("✅ Report text copied to clipboard!");
+        }
+
+        function downloadSpReportDoc() {
+            var btn = document.getElementById('btnDownloadSpDoc');
+            btn.innerText = "⏳ Generating..."; btn.disabled = true;
+
+            var month = document.getElementById('monthSelector').value;
+            var filename = "Ravenclaw_OWL_SP_Report_" + month.replace(/\s+/g, '_') + ".pdf";
+
+            var reportLines = document.getElementById('spReportTextarea').value.split('\n');
+            var contentHtml = reportLines.map(line => {
+                if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:bold; font-size:14px; text-align:center; margin-bottom:4px; color:#112250;">${line}</div>`;
+                if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:12px; text-align:center; margin-bottom:20px; color:#3C507D;">${line}</div>`;
+                if (line.includes('Wit beyond measure')) return `<div style="font-style:italic; font-size:11px; text-align:center; margin-top:25px; color:#555;">${line}</div>`;
+                return `<div style="font-family:monospace; font-size:12px; padding:3px 0; border-bottom:1px solid #f0f0f0;">${line}</div>`;
+            }).join('');
+
+            var pdfContainer = document.createElement('div');
+            pdfContainer.innerHTML = `
+                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 25px; color: #112250; width: 600px; margin: 0 auto; box-sizing: border-box;">
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 70px; height: auto;">
+                    </div>
+                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 20px;">
+                    ${contentHtml}
+                </div>
+            `;
+
+            var opt = {
+                margin:       0.4,
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(pdfContainer).save().then(function() {
+                btn.innerText = "⬇️ Download Document"; btn.disabled = false;
+            }).catch(function() {
+                alert("Failed to generate Document.");
+                btn.innerText = "⬇️ Download Document"; btn.disabled = false;
+            });
+        }
+
         function openPreview(type) {
             if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
             currentDownloadType = type;
@@ -630,9 +740,6 @@
 
         function closePreview() { document.getElementById('previewModal').style.display = 'none'; }
 
-        // ==========================================
-        // ENGINE PEMBUAT PDF (DUES & SUMMARIES)
-        // ==========================================
         function downloadPDF() {
             var btn = document.getElementById('btnDownload');
             btn.innerText = "⏳ Generating..."; btn.disabled = true;
@@ -692,7 +799,6 @@
             });
             tableHtml += `</tbody></table>`;
 
-            // FOOTER BIASA
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
             if (hasFines && currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
@@ -710,9 +816,6 @@
             generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn, closePreview);
         }
 
-        // ==========================================
-        // ENGINE PEMBUAT PDF RANKING (HOF & SP FINES) TANPA NAMA MURID
-        // ==========================================
         function downloadRankPDF() {
             var btn = document.getElementById('btnDownloadRank');
             btn.innerText = "⏳ Generating..."; btn.disabled = true;
@@ -724,9 +827,8 @@
             var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
 
             var subjectStr = currentRankDownloadType === 'HOF_REWARDS' ? "Hall of Fame Rewards - " + monthLabel : "SP Fines - " + monthLabel;
-
             var tAmount = 0;
-            // TANPA KOLOM STUDENT NAME
+
             var tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                     <thead>
@@ -783,7 +885,6 @@
             generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn, closeRankPreview);
         }
 
-        // FUNGSI PEMBANTU UNTUK HTML2PDF
         function generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btnObj, callback) {
             var pdfContainer = document.createElement('div');
             pdfContainer.innerHTML = `
