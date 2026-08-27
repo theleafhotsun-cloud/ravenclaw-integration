@@ -13,7 +13,6 @@
 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar & Topbar */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -30,7 +29,6 @@
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* CONTENT AREA SCROLL */
         .content-area { padding: 25px 25px 80px 25px; overflow-y: auto; display: block; height: calc(100vh - 60px); box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;}
@@ -43,7 +41,6 @@
         .btn-primary { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 9px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; }
         .btn-primary:hover { background-color: var(--sapphire); }
 
-        /* TAB CONTROLLER CSS */
         .tabs { display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--shellstone); flex-wrap: wrap;}
         .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 20px; font-size: 12px; font-weight: bold; color: gray; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.3s;}
         .tab-btn.active { background-color: var(--royal-blue); color: white; border-bottom: 2px solid var(--sapphire);}
@@ -69,19 +66,21 @@
         .status-dropout { background-color: #424242; color: #ffffff; border: 1px solid #212121;}
         .status-rereg { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;}
         
+        /* SP REPORT BADGES */
+        .sp-badge-taking { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 3px; }
+        .sp-badge-not-taking { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 3px; }
+        .sp-badge-none { background-color: #f5f5f5; color: #9e9e9e; border: 1px solid #e0e0e0; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 3px; }
+
         .link-icon { text-decoration: none; font-weight: bold; font-size: 11px; padding: 2px 6px; background-color: #e8eaf6; color: var(--sapphire); border-radius: 4px; margin-left: 5px;}
         .link-icon:hover { background-color: var(--sapphire); color: white; }
 
         .select-room { padding: 4px 8px; border-radius: 4px; border: 1px solid var(--shellstone); font-size: 11px; font-weight: bold; color: var(--royal-blue); background-color: #fbfbfb; cursor: pointer; transition: background-color 0.3s;}
-
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s;}
         .btn-icon:hover { transform: scale(1.2); }
 
-        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 15px;}
-        
         .section-header { font-size: 11px; font-weight: bold; color: var(--sapphire); text-transform: uppercase; border-bottom: 1px dashed var(--shellstone); padding-bottom: 4px; margin: 12px 0 8px 0; }
 
         .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -89,14 +88,11 @@
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--sapphire); margin-bottom: 4px; text-transform: uppercase; }
         .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 6px 8px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); font-family: inherit; font-size: 11px;}
-        .form-group select:disabled { background-color: #e0e0e0; cursor: not-allowed; font-weight: bold; color: var(--royal-blue); }
         
         .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; background: white; padding: 8px; border-radius: 4px; border: 1px solid var(--shellstone); min-height: 30px; align-items: center;}
         .checkbox-item { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: bold; color: var(--royal-blue); cursor: pointer; }
-        .checkbox-item input { margin: 0; cursor: pointer; }
         
         .empty-electives-msg { font-size: 11px; color: gray; font-style: italic; }
-
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid var(--shellstone); padding-top: 10px;}
         .btn-cancel { background-color: var(--shellstone); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); font-size: 11px;}
         .btn-submit { background-color: var(--royal-blue); border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); font-size: 11px;}
@@ -129,7 +125,6 @@
                 </div>
             </div>
 
-            <!-- TABS UNTUK PINDAH DATABASE -->
             <div class="tabs">
                 <button class="tab-btn active" id="btnTabActive" onclick="switchTab('active')">🟢 Active Students <span id="countActive" style="font-size:10px;">(0)</span></button>
                 <button class="tab-btn" id="btnTabArchived" onclick="switchTab('archived')">📦 Archived Records <span id="countArchived" style="font-size:10px;">(0)</span></button>
@@ -143,7 +138,7 @@
                         <tr>
                             <th style="width: 40px; text-align: center;">No.</th>
                             <th>Vault</th>
-                            <th>Username</th>
+                            <th>Username & Exam</th>
                             <th>Name & Nickname</th>
                             <th>Profile (DOB & FC)</th>
                             <th>Grade</th>
@@ -276,19 +271,16 @@
         </div>
     </div>
 
-    <!-- SCRIPT AREA -->
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
-        if (!loggedInUser) {
-            window.location.href = "index.html";
-        }
+        if (!loggedInUser) window.location.href = "index.html";
 
         let studentDataStore = [];
-        let currentViewTab = 'active'; // Default Tab
+        let currentViewTab = 'active';
 
         const electivesMinistry = ["Charm", "Potion", "Arithmancy", "Transfiguration", "Defence Against The Dark Arts", "Herbology"];
         const electivesAuror = ["Astronomy", "Divination", "Care Of Magical Creatures", "Ancient Runes", "Muggle Studies", "History Of Magic"];
@@ -307,7 +299,7 @@
                 document.getElementById('btnAddStudent').style.display = 'block';
             } else {
                 document.getElementById('btnTabArchived').classList.add('active');
-                document.getElementById('btnAddStudent').style.display = 'none'; // Sembunyikan tambah murid di arsip
+                document.getElementById('btnAddStudent').style.display = 'none';
             }
             filterTable();
         }
@@ -330,7 +322,6 @@
 
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
@@ -359,7 +350,6 @@
             ];
 
             let allowedMenuIds = [];
-
             if (isHH) allowedMenuIds = allMenus.map(m => m.id);
             else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
             else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
@@ -367,7 +357,6 @@
 
             var sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.innerHTML = ''; 
-            
             allMenus.forEach(menu => {
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
@@ -379,8 +368,7 @@
             });
         }
 
-        function navigateHome(element) {
-            if(element) element.innerText = "Loading...";
+        function navigateHome() {
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -413,7 +401,7 @@
                     document.getElementById('countActive').innerText = `(${actCount})`;
                     document.getElementById('countArchived').innerText = `(${arcCount})`;
 
-                    filterTable(); // Memanggil filterTable agar tab awal terpilih
+                    filterTable();
                 } else { throw new Error(result.message); }
             })
             .catch(err => { document.getElementById('loadingMsg').innerText = "Error: " + err.message; });
@@ -472,6 +460,16 @@
                 
                 if (!wlDisplay) wlDisplay = '<span style="color:gray;">-</span>';
 
+                // TAMPILAN STATUS SP REPORT / EXAM IN ENGLISH
+                let spReportBadge = '';
+                if (student.spReportStatus === 'Taking Exam') {
+                    spReportBadge = `<span class="sp-badge-taking">Taking Exam</span>`;
+                } else if (student.spReportStatus === 'Not Taking Exam') {
+                    spReportBadge = `<span class="sp-badge-not-taking">Not Taking Exam</span>`;
+                } else {
+                    spReportBadge = `<span class="sp-badge-none">No Report</span>`;
+                }
+
                 let cleanNotes = student.notesEtc || '-';
                 if(String(cleanNotes).trim().toUpperCase() === 'FALSE' || String(cleanNotes).trim().toUpperCase() === 'TRUE') { cleanNotes = '-'; }
 
@@ -481,7 +479,6 @@
                 const isInactiveStatus = isTrue(student.isDeactive) || isTrue(student.isResigned) || isTrue(student.isDropOut);
                 const rowClass = isInactiveStatus && !student.isArchivedTab ? 'row-dimmed' : '';
                 
-                // MENGATUR TOMBOL BERDASARKAN TAB
                 let actionHtml = '';
                 if (student.isArchivedTab) {
                     actionHtml = `<span style="color:gray; font-weight:bold; font-size:10px;">📦 ARCHIVED</span>`;
@@ -494,7 +491,6 @@
                     `;
                 }
 
-                // DISABLE ROOM SELECTION UNTUK ARSIP
                 let roomSelectHtml = `
                     <select class="select-room" onchange="quickChangeRoom(${student.rowIdx}, this)" ${student.isArchivedTab ? 'disabled style="background:#f5f5f5;"' : ''}>
                         <option value="" ${!student.room ? 'selected':''}>- None -</option>
@@ -515,7 +511,10 @@
                 tr.innerHTML = `
                     <td style="text-align: center; color: gray; font-weight: bold;">${index + 1}</td>
                     <td class="vault-tag">${student.vault}</td>
-                    <td><div style="font-weight:bold;">${student.username}</div></td>
+                    <td>
+                        <div style="font-weight:bold;">${student.username}</div>
+                        <div>${spReportBadge}</div>
+                    </td>
                     <td>
                         <div style="color:var(--sapphire); font-weight:bold;">${m_fullName}</div>
                         <div style="font-size:10px; color:gray; font-style:italic;">"${student.nickname || '-'}"</div>
@@ -564,16 +563,15 @@
         function filterTable() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filteredData = studentDataStore.filter(student => {
-                // FILTER BERDASARKAN TAB YANG AKTIF
                 const isMatchTab = currentViewTab === 'active' ? !student.isArchivedTab : student.isArchivedTab;
                 if (!isMatchTab) return false;
 
-                // FILTER BERDASARKAN PENCARIAN
                 return (student.username && student.username.toLowerCase().includes(query)) ||
                        (student.fullName && student.fullName.toLowerCase().includes(query)) ||
                        (student.nickname && student.nickname.toLowerCase().includes(query)) ||
                        (student.vault && student.vault.toString().toLowerCase().includes(query)) ||
                        (student.major && student.major.toLowerCase().includes(query)) ||
+                       (student.spReportStatus && student.spReportStatus.toLowerCase().includes(query)) ||
                        (student.room && student.room.toLowerCase().includes(query));
             });
             renderTable(filteredData);
@@ -660,7 +658,6 @@
         function openStudentModal(rowIdx = null) {
             const modal = document.getElementById('studentModal');
             const statusBox = document.getElementById('modalStatus');
-            
             const btnSubmit = document.getElementById('btnSubmit');
             const btnCancel = document.getElementById('btnCancel');
             btnSubmit.innerText = "Save Record"; btnSubmit.disabled = false; btnCancel.disabled = false;
