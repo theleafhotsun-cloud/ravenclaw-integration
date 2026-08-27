@@ -202,7 +202,6 @@
     </div>
 
     <!-- MODAL 2: ADD MANUAL ENTRY (REGULAR CLASS) -->
-    <!-- Dihapus Title/Description agar tidak bingung -->
     <div class="modal-overlay" id="manualModal">
         <div class="modal-box">
             <h3>📝 Add Manual Entry</h3>
@@ -225,7 +224,6 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // API URL (PASTIKAN MENGGUNAKAN DEPLOY BARU)
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -280,9 +278,6 @@
             setTimeout(function() { toast.style.display = 'none'; }, 3000);
         }
 
-        // ==========================================
-        // FUNGSI DYNAMIC SIDEBAR NAVIGASI
-        // ==========================================
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
 
@@ -468,9 +463,6 @@
             if(targetContent) targetContent.classList.add('active');
         }
 
-        // ==========================================
-        // FUNGSI RENDER LINK TERKUNCI 
-        // ==========================================
         function getLinkHtml(val, placeholder, inputClass, isDisabled) {
             if (val && String(val).trim().length > 4) {
                 var cleanVal = String(val).trim();
@@ -496,15 +488,11 @@
             group.outerHTML = inputHtml;
         }
 
-        // ==========================================
-        // AUTO-SAVE FUNGSI UNTUK TAB MATERI & GRAND SUMMARY
-        // ==========================================
         function saveGrandSummaryRow(btnEl, subject, rowIdx) {
             var tr = btnEl.closest('tr');
             var linkInput = tr.querySelector('.gs-link');
             var link = linkInput ? linkInput.value.trim() : '';
             
-            // AUTO FORMAT HTTPS AGAR TIDAK ERROR
             if (link && !link.match(/^https?:\/\//i)) link = 'https://' + link;
 
             var status = tr.querySelector('.gs-status') ? tr.querySelector('.gs-status').value : 'Pending';
@@ -523,7 +511,7 @@
             .then(res => {
                 if(res.status === 'success' || res.success) { 
                     showToast("✅ Grand Summary Saved!", "success"); 
-                    fetchLibraryData(); // REFRESH UI UNTUK MENGUNCI LINK
+                    fetchLibraryData();
                 } 
                 else showToast("❌ Failed to save!", "error");
             }).catch(e => { btnEl.innerText = "💾 Save"; showToast("❌ Error Connection", "error"); });
@@ -534,7 +522,6 @@
             var linkInput = tr.querySelector('.fs-link');
             var link = linkInput ? linkInput.value.trim() : '';
             
-            // AUTO FORMAT HTTPS AGAR TIDAK ERROR
             if (link && !link.match(/^https?:\/\//i)) link = 'https://' + link;
 
             var status = tr.querySelector('.fs-status') ? tr.querySelector('.fs-status').value : 'Pending';
@@ -553,7 +540,7 @@
             .then(res => {
                 if(res.status === 'success' || res.success) { 
                     showToast("✅ Final Summary Saved!", "success"); 
-                    fetchLibraryData(); // REFRESH UI UNTUK MENGUNCI LINK
+                    fetchLibraryData(); 
                 } 
                 else showToast("❌ Failed to save!", "error");
             }).catch(e => { btnEl.innerText = "💾 Save"; showToast("❌ Error Connection", "error"); });
@@ -564,7 +551,6 @@
             var subjLevel = tr.querySelector('.mat-subj').innerText;
             var inputs = tr.querySelectorAll('.mat-link');
             
-            // AUTO FORMAT HTTPS AGAR TIDAK ERROR
             var linksArray = Array.from(inputs).map(inp => {
                 var v = inp.value.trim();
                 if (v && !v.match(/^https?:\/\//i)) return 'https://' + v;
@@ -584,7 +570,7 @@
             .then(res => {
                 if(res.status === 'success' || res.success) { 
                     showToast("✅ Row Saved!", "success"); 
-                    fetchLibraryData(); // REFRESH UI UNTUK MENGUNCI LINK
+                    fetchLibraryData(); 
                 } 
                 else showToast("❌ Failed to save!", "error");
             }).catch(e => {
@@ -594,7 +580,7 @@
         }
 
         // ==========================================
-        // RENDER TABS UTAMA
+        // RENDER TABS UTAMA (DIPERBAIKI)
         // ==========================================
         function renderTabs() {
             try {
@@ -633,7 +619,7 @@
 
                 var mapped = libraryDataStore.categorized || {};
 
-                // HELPER: Merender Tabel per Level
+                // HELPER: Merender Tabel per Level (DIPERBAIKI AGAR TIDAK DOUBLE)
                 function renderLevelTable(levelName, divId) {
                     let tbodyHtml = '';
                     let count = 0;
@@ -652,24 +638,24 @@
                             let savedEntries = mapped[fullSubjName] || [];
 
                             if(savedEntries.length > 0) {
-                                savedEntries.forEach(item => {
-                                    let safeL = safeLink(item.link);
-                                    let encL = encodeURIComponent(item.link); 
-                                    let actionBtns = `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${catPrefix}', '${subj}', '${fullSubjName}')">✏️ Edit / Unassign</button>`;
+                                // PERBAIKAN: Hanya mengambil satu data terbaru, menghindari baris double di UI
+                                let item = savedEntries[savedEntries.length - 1]; 
+                                let safeL = safeLink(item.link);
+                                let encL = encodeURIComponent(item.link); 
+                                let actionBtns = `<button class="btn-map" style="background-color: var(--warning); padding: 4px 10px;" onclick="openEditModal(${item.rowIdx}, '${encL}', '${item.classDate}', '${catPrefix}', '${subj}', '${fullSubjName}')">✏️ Edit / Unassign</button>`;
 
-                                    tbodyHtml += `
-                                        <tr>
-                                            <td><span style="font-weight:bold; color:gray;">${count}</span></td>
-                                            <td><span class="badge-date">📅 ${formatDateDisplay(item.classDate)}</span></td>
-                                            <td>
-                                                <span style="font-weight:bold; color:var(--sapphire);">${subj}</span>
-                                                ${item.isManual ? '<span style="font-size:9px; color:gray; display:block;">(Manual Entry)</span>' : ''}
-                                            </td>
-                                            <td><a href="${safeL}" target="_blank" class="link-icon" style="padding:4px 8px; display:inline-block;">🔗 Read File</a></td>
-                                            <td style="text-align:center;">${actionBtns}</td>
-                                        </tr>
-                                    `;
-                                });
+                                tbodyHtml += `
+                                    <tr>
+                                        <td><span style="font-weight:bold; color:gray;">${count}</span></td>
+                                        <td><span class="badge-date">📅 ${formatDateDisplay(item.classDate)}</span></td>
+                                        <td>
+                                            <span style="font-weight:bold; color:var(--sapphire);">${subj}</span>
+                                            ${item.isManual ? '<span style="font-size:9px; color:gray; display:block;">(Manual Entry)</span>' : ''}
+                                        </td>
+                                        <td><a href="${safeL}" target="_blank" class="link-icon" style="padding:4px 8px; display:inline-block;">🔗 Read File</a></td>
+                                        <td style="text-align:center;">${actionBtns}</td>
+                                    </tr>
+                                `;
                             } else {
                                 tbodyHtml += `
                                     <tr style="background-color: #fafafa;">
@@ -780,7 +766,6 @@
                     `;
                 });
 
-                // FINAL SUMMARY RENDERING
                 let fsTbody = '';
                 let fsData = libraryDataStore.finalSummaries || {};
 
@@ -847,7 +832,7 @@
         }
 
         // ===============================================
-        // MAPPING MODALS & UNASSIGN LOGIC
+        // MAPPING MODALS & UNASSIGN LOGIC (DIPERBAIKI)
         // ===============================================
         function openMappingModal(btnElement) {
             var link = decodeURIComponent(btnElement.getAttribute('data-link'));
@@ -877,11 +862,24 @@
 
         function closeMappingModal() { document.getElementById('mappingModal').style.display = 'none'; }
 
+        // PERBAIKAN: Fungsi ini sekarang akan menyembunyikan map yang sudah terisi
         function updateModalSubjects() {
             var cat = document.getElementById('mapCategory').value;
             var subjSelect = document.getElementById('mapSubjectItem');
+            var oldCat = document.getElementById('editOldCat').value;
+            
             subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
+            if(cat && catMap[cat]) { 
+                catMap[cat].forEach(s => { 
+                    var fullSubjName = cat + ' - ' + s;
+                    var isMapped = libraryDataStore.categorized[fullSubjName] && libraryDataStore.categorized[fullSubjName].length > 0;
+                    var isCurrentEdit = (oldCat === fullSubjName);
+                    
+                    if (!isMapped || isCurrentEdit) {
+                        subjSelect.innerHTML += `<option value="${s}">${s}</option>`; 
+                    }
+                }); 
+            }
         }
 
         function unassignMapping() {
@@ -979,7 +977,7 @@
         }
 
         // ==========================================
-        // MANUAL ENTRY REGULAR (FORM INPUT)
+        // MANUAL ENTRY REGULAR (FORM INPUT - DIPERBAIKI)
         // ==========================================
         function openManualModal() {
             document.getElementById('manualModal').style.display = 'flex';
@@ -990,11 +988,21 @@
         }
         function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
         
+        // PERBAIKAN: Fungsi ini sekarang akan menyembunyikan map yang sudah terisi
         function updateManualModalSubjects() {
             var cat = document.getElementById('manCategory').value;
             var subjSelect = document.getElementById('manSubjectItem');
             subjSelect.innerHTML = '<option value="">-- Select Subject --</option>';
-            if(cat && catMap[cat]) { catMap[cat].forEach(s => { subjSelect.innerHTML += `<option value="${s}">${s}</option>`; }); }
+            if(cat && catMap[cat]) { 
+                catMap[cat].forEach(s => { 
+                    var fullSubjName = cat + ' - ' + s;
+                    var isMapped = libraryDataStore.categorized[fullSubjName] && libraryDataStore.categorized[fullSubjName].length > 0;
+                    
+                    if (!isMapped) {
+                        subjSelect.innerHTML += `<option value="${s}">${s}</option>`; 
+                    }
+                }); 
+            }
         }
 
         function saveManualEntryRegular() {
@@ -1007,7 +1015,6 @@
 
             if(!cDate || !linkInput || !cat || !subjItem) return showToast("⚠️ Please fill all fields!", "error");
             
-            // AUTO FORMAT HTTPS
             if (linkInput && !linkInput.match(/^https?:\/\//i)) linkInput = 'https://' + linkInput;
 
             var fullSubject = cat + ' - ' + subjItem;
