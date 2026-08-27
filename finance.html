@@ -597,18 +597,23 @@
         // ==========================================
         async function openSpReportFormatModal() {
             var month = document.getElementById('monthSelector').value;
+            if (!month) return alert("Please select a valid month first.");
+
             document.getElementById('spReportModal').style.display = 'flex';
             document.getElementById('spReportLoading').style.display = 'block';
             document.getElementById('spReportContent').style.display = 'none';
 
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormat" })
+                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormat", month: month })
                 });
                 const res = await response.json();
                 
                 if (res.status === "success" && res.data) {
                     spReportDataCache = res.data;
+                    
+                    // Memastikan datanya 100% diurutkan dari Vault terkecil ke terbesar
+                    spReportDataCache.sort((a, b) => parseInt(String(a.vault).replace(/\D/g, '') || '0') - parseInt(String(b.vault).replace(/\D/g, '') || '0'));
                     
                     let lines = [
                         "RAVENCLAW O.W.L STUDENT POINT REPORT",
@@ -616,12 +621,16 @@
                         ""
                     ];
                     
-                    spReportDataCache.forEach(item => {
-                        lines.push(item.report);
-                    });
+                    if (spReportDataCache.length === 0) {
+                        lines.push("No SP Reports found for this period.");
+                    } else {
+                        spReportDataCache.forEach(item => {
+                            lines.push(item.report);
+                        });
+                    }
                     
                     lines.push("");
-                    lines.push("- Wit beyond measure is man's greatest treasure -");
+                    lines.push("\"Wit beyond measure is man's greatest treasure.\"");
                     
                     document.getElementById('spReportTextarea').value = lines.join("\n");
                     document.getElementById('spReportLoading').style.display = 'none';
@@ -652,19 +661,21 @@
 
             var reportLines = document.getElementById('spReportTextarea').value.split('\n');
             var contentHtml = reportLines.map(line => {
-                if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:bold; font-size:14px; text-align:center; margin-bottom:4px; color:#112250;">${line}</div>`;
-                if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:12px; text-align:center; margin-bottom:20px; color:#3C507D;">${line}</div>`;
-                if (line.includes('Wit beyond measure')) return `<div style="font-style:italic; font-size:11px; text-align:center; margin-top:25px; color:#555;">${line}</div>`;
-                return `<div style="font-family:monospace; font-size:12px; padding:3px 0; border-bottom:1px solid #f0f0f0;">${line}</div>`;
+                if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:bold; font-size:16px; text-align:center; margin-bottom:6px; color:#112250; letter-spacing: 1px;">${line}</div>`;
+                if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:12px; text-align:center; margin-bottom:25px; color:#3C507D; text-transform: uppercase;">${line}</div>`;
+                if (line.includes('Wit beyond measure')) return `<div style="font-family: 'Georgia', serif; font-style:italic; font-size:13px; text-align:center; margin-top:35px; color:#3C507D; letter-spacing: 0.5px;">${line}</div>`;
+                if (line.trim() === "") return `<div style="height: 10px;"></div>`;
+                
+                return `<div style="font-family:'Courier New', monospace; font-size:12px; padding:6px 0; border-bottom:1px dashed #e0e0e0; color:#112250;">${line}</div>`;
             }).join('');
 
             var pdfContainer = document.createElement('div');
             pdfContainer.innerHTML = `
-                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 25px; color: #112250; width: 600px; margin: 0 auto; box-sizing: border-box;">
-                    <div style="text-align: center; margin-bottom: 10px;">
-                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 70px; height: auto;">
+                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 30px; color: #112250; width: 650px; margin: 0 auto; box-sizing: border-box; background-color: #ffffff;">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
                     </div>
-                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 20px;">
+                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 25px;">
                     ${contentHtml}
                 </div>
             `;
@@ -799,6 +810,7 @@
             });
             tableHtml += `</tbody></table>`;
 
+            // FOOTER BIASA
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
             if (hasFines && currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
