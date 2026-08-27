@@ -612,7 +612,6 @@
                 if (res.status === "success" && res.data) {
                     spReportDataCache = res.data;
                     
-                    // Memastikan datanya 100% diurutkan dari Vault terkecil ke terbesar
                     spReportDataCache.sort((a, b) => parseInt(String(a.vault).replace(/\D/g, '') || '0') - parseInt(String(b.vault).replace(/\D/g, '') || '0'));
                     
                     let lines = [
@@ -660,28 +659,40 @@
             var filename = "Ravenclaw_OWL_SP_Report_" + month.replace(/\s+/g, '_') + ".pdf";
 
             var reportLines = document.getElementById('spReportTextarea').value.split('\n');
+            var footerText = "";
+            
             var contentHtml = reportLines.map(line => {
-                if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:bold; font-size:16px; text-align:center; margin-bottom:6px; color:#112250; letter-spacing: 1px;">${line}</div>`;
-                if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:12px; text-align:center; margin-bottom:25px; color:#3C507D; text-transform: uppercase;">${line}</div>`;
-                if (line.includes('Wit beyond measure')) return `<div style="font-family: 'Georgia', serif; font-style:italic; font-size:13px; text-align:center; margin-top:35px; color:#3C507D; letter-spacing: 0.5px;">${line}</div>`;
+                if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:900; font-size:18px; text-align:center; margin-bottom:6px; color:#112250; letter-spacing: 1px;">${line}</div>`;
+                if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:13px; text-align:center; margin-bottom:25px; color:#3C507D; text-transform: uppercase;">${line}</div>`;
+                if (line.includes('Wit beyond measure')) {
+                    footerText = line;
+                    return '';
+                }
                 if (line.trim() === "") return `<div style="height: 10px;"></div>`;
                 
-                return `<div style="font-family:'Courier New', monospace; font-size:12px; padding:6px 0; border-bottom:1px dashed #e0e0e0; color:#112250;">${line}</div>`;
+                // MENEBALKAN TEKS DATA (font-weight: 800)
+                return `<div style="font-family:'Courier New', monospace; font-size:13px; font-weight:800; padding:8px 0; border-bottom:1px dashed #e0e0e0; color:#112250;">${line}</div>`;
             }).join('');
 
             var pdfContainer = document.createElement('div');
+            // MENGGUNAKAN FLEXBOX DAN MIN-HEIGHT FULL A4 AGAR FOOTER SELALU DI BAWAH
             pdfContainer.innerHTML = `
-                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 30px; color: #112250; width: 650px; margin: 0 auto; box-sizing: border-box; background-color: #ffffff;">
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
+                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 40px; color: #112250; width: 720px; min-height: 1050px; display: flex; flex-direction: column; box-sizing: border-box; background-color: #ffffff;">
+                    <div>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
+                        </div>
+                        <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 25px;">
+                        ${contentHtml}
                     </div>
-                    <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 25px;">
-                    ${contentHtml}
+                    <div style="margin-top: auto; padding-top: 30px; text-align: center;">
+                        <div style="font-family: 'Georgia', serif; font-style:italic; font-weight:bold; font-size:14px; color:#3C507D; letter-spacing: 0.5px;">${footerText}</div>
+                    </div>
                 </div>
             `;
 
             var opt = {
-                margin:       0.4,
+                margin:       0.2,
                 filename:     filename,
                 image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { scale: 2, useCORS: true },
