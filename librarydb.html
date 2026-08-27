@@ -94,7 +94,6 @@
 
     <div id="toastMsg">Action Successful!</div>
 
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -116,12 +115,22 @@
                 <h1 class="page-title">Library Database</h1>
             </div>
 
-            <div class="sop-banner">
-                <b>📌 HOW IT WORKS:</b><br>
-                1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
-                2. Grand Summary & Materials are viewed <b>Monthly</b> (Same content for all 4 weeks).<br>
-                3. URLs must start with <b>http://</b> or <b>https://</b>. When saved, the input will be Locked.<br>
-                4. Headhouse/Prefect/VP has the sole right to <b>Approve (ACC)</b> Grand Summaries.
+            <!-- SOP BANNER DIPERBARUI -->
+            <div class="sop-banner" style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:1; min-width: 280px;">
+                    <b style="font-size: 12px;">📌 HOW IT WORKS:</b><br>
+                    1. Summaries approved in the <i>Active Room</i> will automatically appear in the <b>"Pending Mapping"</b> tab.<br>
+                    2. Grand Summary & Materials are viewed <b>Monthly</b> (Same content for all 4 weeks).<br>
+                    3. URLs must start with <b>http://</b> or <b>https://</b>. When saved, the input will be Locked.<br>
+                    4. Headhouse/Prefect/VP has the sole right to <b>Approve (ACC)</b> Grand Summaries.
+                </div>
+                <div style="flex:1; min-width: 280px; border-left: 2px solid var(--sapphire); padding-left: 15px;">
+                    <b style="font-size: 12px;">📌 DEADLINES & MAPPING RULES:</b><br>
+                    • <b>Regular Summaries:</b> Students have <b>2x24 hours</b> to submit. Leadrooms have <b>3x24 hours</b> to check, approve, and map. <br>
+                    <span style="color: gray; font-style: italic;">(e.g., If Eternclaw has Charm & Astronomy on Mon, student deadline is Wed 24:00; LR mapping deadline is Thu 24:00).</span><br>
+                    • <b>Grand Summary:</b> Deadline is <b>Wednesday at 12:00 UTC+7</b> during the silent week <i>(Pekan Tenang)</i>. Excused delays are tolerated until Wed 22:00 UTC+7.<br>
+                    • <b>Public Sync:</b> All successfully mapped subjects auto-sync to the <a href="https://script.google.com/macros/s/AKfycbw9PnkDHHaO5bKpwLLjZm9LlanUKUDsyZhGkSHCDHxn4X-GqT3XQt0aKSMlcFwnl6FO/exec" target="_blank" style="color:var(--danger); font-weight:bold; text-decoration:none;">Public Library Portal 🔗</a>.
+                </div>
             </div>
 
             <div class="period-controller">
@@ -580,7 +589,7 @@
         }
 
         // ==========================================
-        // RENDER TABS UTAMA (DIPERBAIKI)
+        // RENDER TABS UTAMA
         // ==========================================
         function renderTabs() {
             try {
@@ -619,7 +628,6 @@
 
                 var mapped = libraryDataStore.categorized || {};
 
-                // HELPER: Merender Tabel per Level (DIPERBAIKI AGAR TIDAK DOUBLE)
                 function renderLevelTable(levelName, divId) {
                     let tbodyHtml = '';
                     let count = 0;
@@ -638,7 +646,6 @@
                             let savedEntries = mapped[fullSubjName] || [];
 
                             if(savedEntries.length > 0) {
-                                // PERBAIKAN: Hanya mengambil satu data terbaru, menghindari baris double di UI
                                 let item = savedEntries[savedEntries.length - 1]; 
                                 let safeL = safeLink(item.link);
                                 let encL = encodeURIComponent(item.link); 
@@ -648,10 +655,7 @@
                                     <tr>
                                         <td><span style="font-weight:bold; color:gray;">${count}</span></td>
                                         <td><span class="badge-date">📅 ${formatDateDisplay(item.classDate)}</span></td>
-                                        <td>
-                                            <span style="font-weight:bold; color:var(--sapphire);">${subj}</span>
-                                            ${item.isManual ? '<span style="font-size:9px; color:gray; display:block;">(Manual Entry)</span>' : ''}
-                                        </td>
+                                        <td><span style="font-weight:bold; color:var(--sapphire);">${subj}</span></td>
                                         <td><a href="${safeL}" target="_blank" class="link-icon" style="padding:4px 8px; display:inline-block;">🔗 Read File</a></td>
                                         <td style="text-align:center;">${actionBtns}</td>
                                     </tr>
@@ -680,22 +684,27 @@
                 renderLevelTable('Beginner', 'tab-Beginner');
                 renderLevelTable('Advanced', 'tab-Advanced');
 
-                // 3. RENDER MATERI TAMBAHAN (25 SLOT PENGASJAR & QNA)
+                // 3. RENDER MATERI TAMBAHAN (25 SLOT PENGASJAR, QNA, DAN KISI-KISI)
                 let matTbody = '';
                 let matData = libraryDataStore.materials || [];
                 
                 for(let i=0; i<25; i++) {
                     let defaultSubj = staticMateriList[i];
-                    let m = matData[i] || { links: ['','','','','','','',''] };
+                    let m = matData[i] || { links: ['','','','','','','','','',''] };
                     
                     let linkInputsHtml = '<div style="font-size:10px; font-weight:bold; color:var(--sapphire); margin-bottom:4px;">📚 MATERIALS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:10px;">';
                     for(let j=0; j<4; j++) {
                         let ph = `Material ${j+1} URL...`;
                         linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
                     }
-                    linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--warning); margin-bottom:4px;">❓ Q&A SESSIONS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">';
+                    linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--warning); margin-bottom:4px;">❓ Q&A SESSIONS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:10px;">';
                     for(let j=4; j<8; j++) {
                         let ph = `Q&A ${j-3} URL...`;
+                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
+                    }
+                    linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--danger); margin-bottom:4px;">📋 KISI-KISI / STUDY GUIDE</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">';
+                    for(let j=8; j<10; j++) {
+                        let ph = `Kisi-kisi ${j-7} URL...`;
                         linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
                     }
                     linkInputsHtml += '</div>';
@@ -717,7 +726,7 @@
                 var divMat = document.createElement('div');
                 divMat.className = 'tab-content';
                 divMat.id = 'tab-Materi';
-                divMat.innerHTML = `<div class="box-section"><h4>📚 Materials & QnA (25 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material & Q&A Links (Up to 8)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
+                divMat.innerHTML = `<div class="box-section"><h4>📚 Materials, QnA, & Kisi-kisi (25 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material, Q&A, & Kisi-kisi Links (Up to 10)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
                 container.appendChild(divMat);
 
                 // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra) & FINAL SUMMARY
@@ -832,7 +841,7 @@
         }
 
         // ===============================================
-        // MAPPING MODALS & UNASSIGN LOGIC (DIPERBAIKI)
+        // MAPPING MODALS & UNASSIGN LOGIC 
         // ===============================================
         function openMappingModal(btnElement) {
             var link = decodeURIComponent(btnElement.getAttribute('data-link'));
@@ -862,7 +871,6 @@
 
         function closeMappingModal() { document.getElementById('mappingModal').style.display = 'none'; }
 
-        // PERBAIKAN: Fungsi ini sekarang akan menyembunyikan map yang sudah terisi
         function updateModalSubjects() {
             var cat = document.getElementById('mapCategory').value;
             var subjSelect = document.getElementById('mapSubjectItem');
@@ -977,7 +985,7 @@
         }
 
         // ==========================================
-        // MANUAL ENTRY REGULAR (FORM INPUT - DIPERBAIKI)
+        // MANUAL ENTRY REGULAR (FORM INPUT)
         // ==========================================
         function openManualModal() {
             document.getElementById('manualModal').style.display = 'flex';
@@ -988,7 +996,6 @@
         }
         function closeManualModal() { document.getElementById('manualModal').style.display = 'none'; }
         
-        // PERBAIKAN: Fungsi ini sekarang akan menyembunyikan map yang sudah terisi
         function updateManualModalSubjects() {
             var cat = document.getElementById('manCategory').value;
             var subjSelect = document.getElementById('manSubjectItem');
