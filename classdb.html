@@ -132,6 +132,7 @@
                         <option value="Week 2">Week 2</option>
                         <option value="Week 3">Week 3</option>
                         <option value="Week 4">Week 4</option>
+                        <option value="Week 5">Week 5</option>
                     </select>
                 </div>
                 <div>
@@ -212,7 +213,7 @@
         var currentData = {};
         var dynamicPicMap = {};
 
-        // MAP: Subject to Room Category
+        // MAP: Subject to Room Category (UPDATED)
         const subjectRoomMap = {
             "Astronomy": "Eternclaw", "Charm": "Eternclaw", 
             "Potion": "Ravelynx", "Divination": "Ravelynx",
@@ -373,8 +374,8 @@
                 if(res.status === 'success' || res.success) {
                     currentData = res.data || {};
                     dynamicPicMap = res.picData || {}; 
-                    window.rotRunes = res.rotRunes || "-";
-                    window.rotComc = res.rotComc || "-";
+                    window.rotHerbo = res.rotRunes || res.rotHerbology || "-";
+                    window.rotDada = res.rotComc || res.rotDada || "-";
                     renderTables();
                 } else {
                     alert("Error loading data: " + res.message);
@@ -588,7 +589,6 @@
             var subject = document.getElementById('modalSubjectName').innerText;
             var status = document.getElementById('modalStatus').value;
             
-            // Optional Logic (Automatically assigning "-" if left blank)
             var deadline = document.getElementById('modalDeadline').value;
             var detail = document.getElementById('modalDetail').value;
             
