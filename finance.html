@@ -355,12 +355,27 @@
         }
 
         function onMonthChange() {
-            var selectedMonth = document.getElementById('monthSelector').value;
-            if(!selectedMonth) { document.getElementById('weekSelector').innerHTML=''; return; }
-            var weekSel = document.getElementById('weekSelector'); weekSel.innerHTML = '';
-            for (var i = 1; i <= 4; i++) {
-                var opt = document.createElement('option'); opt.value = "Week " + i; opt.innerText = "Period: Week " + i;
-                weekSel.appendChild(opt);
+            var selectedMonth = document.getElementById('monthSelector').value; 
+            if(!selectedMonth) { 
+                document.getElementById('weekSelector').innerHTML = ''; 
+                return; 
+            }
+            var weekSel = document.getElementById('weekSelector'); 
+            weekSel.innerHTML = '';
+
+            var tWeeks = 4;
+            if (periodConfigStore.activeMonth && periodConfigStore.activeMonth.monthLabel === selectedMonth) {
+                tWeeks = periodConfigStore.activeMonth.totalWeeks;
+            } else if (periodConfigStore.archivedMonths) {
+                var am = periodConfigStore.archivedMonths.find(m => m.monthLabel === selectedMonth);
+                if (am) tWeeks = am.totalWeeks;
+            }
+
+            for (var i = 1; i <= tWeeks; i++) { 
+                var opt = document.createElement('option'); 
+                opt.value = "Week " + i; 
+                opt.innerText = "Period: Week " + i; 
+                weekSel.appendChild(opt); 
             }
             fetchFinanceData();
         }
