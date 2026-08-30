@@ -382,38 +382,78 @@
 
         async function fetchFinanceData() {
             var month = document.getElementById('monthSelector').value;
-            var week = document.getElementById('weekSelector').value;
+            var currentWeek = document.getElementById('weekSelector').value;
             if(!month) return; 
             
             let fetchId = ++currentFetchId; 
             
             document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Compiling financial records across all weeks for Monthly Summaries... This may take a moment.";
             document.getElementById('financeContent').style.display = 'none';
 
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "getActiveRoomData", month: month, week: week })
-                });
-                const res = await response.json();
+                // Menentukan total minggu di bulan ini untuk agregasi Monthly Summaries
+                var tWeeks = 4;
+                if (periodConfigStore.activeMonth && periodConfigStore.activeMonth.monthLabel === month) {
+                    tWeeks = periodConfigStore.activeMonth.totalWeeks;
+                } else if (periodConfigStore.archivedMonths) {
+                    var am = periodConfigStore.archivedMonths.find(m => m.monthLabel === month);
+                    if (am) tWeeks = am.totalWeeks;
+                }
+
+                // Fetch semua data di setiap minggu secara serentak
+                let promises = [];
+                for(let i = 1; i <= tWeeks; i++) {
+                    promises.push(fetch(API_URL, {
+                        method: 'POST', body: JSON.stringify({ action: "getActiveRoomData", month: month, week: "Week " + i })
+                    }).then(r => r.json()));
+                }
+
+                const results = await Promise.all(promises);
                 
                 if (fetchId !== currentFetchId) return;
 
                 masterFinanceList = []; 
                 rankDataCache = [];
+                
+                let aggregatedRewards = {};
+                let currentWeekData = null;
 
-                if (res.status === "success" && res.data) {
-                    var data = res.data;
+                // Mengumpulkan reward dari seluruh minggu
+                results.forEach((res, idx) => {
+                    let weekName = "Week " + (idx + 1);
+                    if (res.status === "success" && res.data) {
+                        if (weekName === currentWeek) {
+                            currentWeekData = res.data; // Menyimpan base data untuk minggu yang di-select (Kas & Denda)
+                        }
+                        var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
+                        rooms.forEach(rName => {
+                            var students = res.data.rooms[rName] || [];
+                            students.forEach(s => {
+                                if (!aggregatedRewards[s.vault]) aggregatedRewards[s.vault] = 0;
+                                aggregatedRewards[s.vault] += (s.reward || 0);
+                            });
+                        });
+                    } else {
+                        throw new Error(res.message || "Error fetching " + weekName);
+                    }
+                });
+
+                if (currentWeekData) {
+                    var data = currentWeekData;
                     var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
                     var seenVaults = new Set(); 
 
                     rooms.forEach(function(rName) {
                         var students = data.rooms[rName] || [];
                         students.forEach(function(s) {
-                            if ((s.kas > 0 || s.denda > 0 || s.reward > 0) && !seenVaults.has(s.vault)) {
+                            let totalMonthlyReward = aggregatedRewards[s.vault] || 0;
+                            // Menambahkan siswa jika memiliki Kas, Denda di minggu ini, atau Monthly Reward
+                            if ((s.kas > 0 || s.denda > 0 || totalMonthlyReward > 0) && !seenVaults.has(s.vault)) {
                                 seenVaults.add(s.vault);
                                 masterFinanceList.push({
                                     vault: s.vault, username: s.username, room: rName,
-                                    kas: s.kas || 0, denda: s.denda || 0, reward: s.reward || 0,
+                                    kas: s.kas || 0, denda: s.denda || 0, reward: totalMonthlyReward,
                                     finesDetail: s.finesDetail || '-'
                                 });
                             }
@@ -422,7 +462,10 @@
 
                     masterFinanceList.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
                     renderMasterTable();
-                } else throw new Error(res.message);
+                } else {
+                    throw new Error("Current week data not found.");
+                }
+
             } catch (error) {
                 if (fetchId === currentFetchId) {
                     document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + error.message + "</span>";
@@ -685,12 +728,10 @@
                 }
                 if (line.trim() === "") return `<div style="height: 10px;"></div>`;
                 
-                // MENEBALKAN TEKS DATA (font-weight: 800)
                 return `<div style="font-family:'Courier New', monospace; font-size:13px; font-weight:800; padding:8px 0; border-bottom:1px dashed #e0e0e0; color:#112250;">${line}</div>`;
             }).join('');
 
             var pdfContainer = document.createElement('div');
-            // MENGGUNAKAN FLEXBOX DAN MIN-HEIGHT FULL A4 AGAR FOOTER SELALU DI BAWAH
             pdfContainer.innerHTML = `
                 <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 40px; color: #112250; width: 720px; min-height: 1050px; display: flex; flex-direction: column; box-sizing: border-box; background-color: #ffffff;">
                     <div>
@@ -836,7 +877,6 @@
             });
             tableHtml += `</tbody></table>`;
 
-            // FOOTER BIASA
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
             if (hasFines && currentDownloadType === 'DUES_FINES') {
                 footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
