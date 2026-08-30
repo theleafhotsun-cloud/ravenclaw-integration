@@ -216,7 +216,7 @@
         const subjectRoomMap = {
             "Astronomy": "Eternclaw", "Charm": "Eternclaw", 
             "Potion": "Ravelynx", "Divination": "Ravelynx",
-            "Herbology": "Ravenion", "Defence Against The Dark Arts": "Ravenion",
+            "Care of Magical Creatures": "Ravenion", "Ancient Runes": "Ravenion",
             "Muggle Studies": "Ravenrow", "Arithmancy": "Ravenrow",
             "Transfiguration": "Velaclaw", "History Of Magic": "Velaclaw",
             "Quidditch": "PVP"
@@ -261,7 +261,7 @@
             const allMenus = [
                 { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
                 { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
-                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateHome()" },
                 { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
                 { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
                 { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
@@ -408,16 +408,16 @@
                     
                     var roomCat = subjectRoomMap[subj] || "Headhouse";
                     
-                    if (subj === "Ancient Runes") {
-                        roomCat = (window.rotRunes && window.rotRunes !== "-") ? window.rotRunes : "🔄 Unassigned";
-                    } else if (subj === "Care Of Magical Creatures") {
-                        roomCat = (window.rotComc && window.rotComc !== "-") ? window.rotComc : "🔄 Unassigned";
+                    if (subj === "Herbology") {
+                        roomCat = (window.rotHerbo && window.rotHerbo !== "-") ? window.rotHerbo : "🔄 Unassigned";
+                    } else if (subj === "Defence Against The Dark Arts") {
+                        roomCat = (window.rotDada && window.rotDada !== "-") ? window.rotDada : "🔄 Unassigned";
                     }
 
                     var pic = dynamicPicMap[roomCat] || roomCat; 
                     
                     if (subj.includes("Quidditch")) {
-                        pic = "PVP";
+                        pic = "P-VP";
                     }
 
                     var statBadge = '<span class="stat-badge stat-normal">✅ Scheduled (Normal)</span>';
