@@ -115,7 +115,6 @@
                 <h1 class="page-title">Library Database</h1>
             </div>
 
-            <!-- SOP BANNER DIPERBARUI -->
             <div class="sop-banner" style="display:flex; gap:20px; flex-wrap:wrap;">
                 <div style="flex:1; min-width: 280px;">
                     <b style="font-size: 12px;">📌 HOW IT WORKS:</b><br>
@@ -129,7 +128,7 @@
                     • <b>Regular Summaries:</b> Students have <b>2x24 hours</b> to submit. Leadrooms have <b>3x24 hours</b> to check, approve, and map. <br>
                     <span style="color: gray; font-style: italic;">(e.g., If Eternclaw has Charm & Astronomy on Mon, student deadline is Wed 24:00; LR mapping deadline is Thu 24:00).</span><br>
                     • <b>Grand Summary:</b> Deadline is <b>Wednesday at 12:00 UTC+7</b> during the silent week <i>(Pekan Tenang)</i>. Excused delays are tolerated until Wed 22:00 UTC+7.<br>
-                    • <b>Public Sync:</b> All successfully mapped subjects auto-sync to the <a href="https://script.google.com/macros/s/AKfycbw9PnkDHHaO5bKpwLLjZm9LlanUKUDsyZhGkSHCDHxn4X-GqT3XQt0aKSMlcFwnl6FO/exec" target="_blank" style="color:var(--danger); font-weight:bold; text-decoration:none;">Public Library Portal 🔗</a>.
+                    • <b>Public Sync:</b> All successfully mapped subjects auto-sync to the <a href="https://script.google.com/macros/s/AKfycbw9PnkDHHaO5bKpwLLjZm9LlanUKUDsyZhGkSHCDHxn4X-GqT3XQt0aKSMlcFwnl6FO/exec" target="_blank" style="color:var(--danger); font-weight:bold; text-decoration:none;">Academic Portal 🔗</a>.
                 </div>
             </div>
 
@@ -474,7 +473,6 @@
 
         function getLinkHtml(val, placeholder, inputClass, isDisabled, needsTitle = false) {
             if (!needsTitle) {
-                // Formatting standar satu URL
                 if (val && String(val).trim().length > 4) {
                     var cleanVal = String(val).trim();
                     var safeUrl = cleanVal.indexOf('http') === 0 ? cleanVal : 'https://' + cleanVal;
@@ -491,7 +489,6 @@
                     return `<input type="text" class="direct-input ${inputClass}" style="margin-bottom:4px;" value="" placeholder="${placeholder}" ${disabledAttr}>`;
                 }
             } else {
-                // Formatting khusus untuk Title & URL
                 let title = '';
                 let url = val || '';
                 if (val && typeof val === 'string' && val.includes('|||')) {
@@ -517,7 +514,7 @@
                     var disabledAttr = isDisabled ? 'disabled' : '';
                     return `
                     <div style="display:flex; gap:5px; margin-bottom:4px;">
-                        <input type="text" class="direct-input ${inputClass}-title" style="flex:3;" placeholder="Judul" value="${title}" ${disabledAttr}>
+                        <input type="text" class="direct-input ${inputClass}-title" style="flex:3;" placeholder="Title" value="${title}" ${disabledAttr}>
                         <input type="text" class="direct-input ${inputClass}-url" style="flex:4;" placeholder="${placeholder}" value="${url}" ${disabledAttr}>
                     </div>`;
                 }
@@ -535,7 +532,7 @@
                 var url = group.querySelector(`.${inputClass}-url`).value;
                 var inputHtml = `
                     <div style="display:flex; gap:5px; margin-bottom:4px;">
-                        <input type="text" class="direct-input ${inputClass}-title" style="flex:3;" placeholder="Judul" value="${title}">
+                        <input type="text" class="direct-input ${inputClass}-title" style="flex:3;" placeholder="Title" value="${title}">
                         <input type="text" class="direct-input ${inputClass}-url" style="flex:4;" placeholder="${placeholder}" value="${url}">
                     </div>`;
                 group.outerHTML = inputHtml;
@@ -550,12 +547,13 @@
             if (link && !link.match(/^https?:\/\//i)) link = 'https://' + link;
 
             var status = tr.querySelector('.gs-status') ? tr.querySelector('.gs-status').value : 'Pending';
-            var catatan = tr.querySelector('.gs-catatan') ? tr.querySelector('.gs-catatan').value.trim() : '';
+            var lrNotes = tr.querySelector('.gs-lr-notes') ? tr.querySelector('.gs-lr-notes').value.trim() : '';
+            var hhNotes = tr.querySelector('.gs-hh-notes') ? tr.querySelector('.gs-hh-notes').value.trim() : '';
             
             var month = document.getElementById('monthSelector').value;
             btnEl.innerText = "Saving...";
             
-            var payload = JSON.stringify({link: link, status: status, catatan: catatan, finalSumm: "", rowIdx: rowIdx});
+            var payload = JSON.stringify({link: link, status: status, lrNotes: lrNotes, hhNotes: hhNotes, finalSumm: "", rowIdx: rowIdx});
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -579,7 +577,7 @@
             if (link && !link.match(/^https?:\/\//i)) link = 'https://' + link;
 
             var status = tr.querySelector('.fs-status') ? tr.querySelector('.fs-status').value : 'Pending';
-            var catatan = tr.querySelector('.fs-catatan') ? tr.querySelector('.fs-catatan').value.trim() : '';
+            var catatan = tr.querySelector('.fs-notes') ? tr.querySelector('.fs-notes').value.trim() : '';
             
             var month = document.getElementById('monthSelector').value;
             btnEl.innerText = "Saving...";
@@ -616,7 +614,7 @@
                     if (t) {
                         linksArray.push(t + '|||' + u);
                     } else {
-                        linksArray.push(u); // Fallback tanpa judul
+                        linksArray.push(u);
                     }
                 } else {
                     linksArray.push('');
@@ -786,19 +784,18 @@
                 divMat.innerHTML = `<div class="box-section"><h4>📚 Materials, QnA, & Question Blueprint (25 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material, Q&A, & Question Blueprint Links (Up to 10)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
                 container.appendChild(divMat);
 
-                // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra) & FINAL SUMMARY
+                // 4. RENDER GRAND SUMMARY (DENGAN 2 KOLOM NOTES) & FINAL SUMMARY (DENGAN 1 KOLOM NOTES)
                 let gsTbody = '';
                 let gsData = libraryDataStore.grandSummaries || {};
                 
                 staticGrandSummaryList.forEach((subj, i) => {
-                    let m = gsData[subj] || { rowIdx: -1, link: '', status: 'Pending', catatan: '' };
+                    let m = gsData[subj] || { rowIdx: -1, link: '', status: 'Pending', lrNotes: '', hhNotes: '' };
                     let mStatus = m.status === 'ACC' ? 'Approved' : (m.status === 'Revisi' ? 'Revision' : m.status);
 
                     let isLockedForLR = (mStatus === 'Approved' && !canApproveGrandSummary);
-                    
                     let linkHtml = getLinkHtml(m.link, "Paste URL here...", "gs-link", isLockedForLR);
                     
-                    let catHtml = ''; let statusHtml = '';
+                    let lrNotesHtml = ''; let hhNotesHtml = ''; let statusHtml = '';
 
                     if (canApproveGrandSummary) {
                         let bgStatus = (mStatus === 'Approved') ? '#c8e6c9' : (mStatus === 'Revision' ? '#ffcdd2' : 'white');
@@ -807,7 +804,8 @@
                                         <option value="Revisi" ${mStatus==='Revision'?'selected':''}>Revision</option>
                                         <option value="ACC" ${mStatus==='Approved'?'selected':''}>Approved</option>
                                       </select>`;
-                        catHtml = `<input type="text" class="direct-input gs-catatan" value="${m.catatan}" placeholder="Notes (LR/HH)...">`;
+                        lrNotesHtml = `<input type="text" class="direct-input gs-lr-notes" value="${m.lrNotes || ''}" placeholder="Leadroom Notes...">`;
+                        hhNotesHtml = `<input type="text" class="direct-input gs-hh-notes" value="${m.hhNotes || ''}" placeholder="PVP/HH Notes...">`;
                     } else {
                         if (mStatus === 'Approved') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">Approved</span>`;
                         else if (mStatus === 'Revision') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revision</span>`;
@@ -816,10 +814,12 @@
                         statusHtml += `<input type="hidden" class="gs-status" value="${m.status}">`;
                         
                         if (isLockedForLR) {
-                            catHtml = `<span style="font-size:11px; color:var(--danger);">${m.catatan || '-'}</span><input type="hidden" class="gs-catatan" value="${m.catatan}">`;
+                            lrNotesHtml = `<span style="font-size:11px; color:var(--danger);">${m.lrNotes || '-'}</span><input type="hidden" class="gs-lr-notes" value="${m.lrNotes || ''}">`;
                         } else {
-                            catHtml = `<input type="text" class="direct-input gs-catatan" value="${m.catatan}" placeholder="Leadroom notes...">`;
+                            lrNotesHtml = `<input type="text" class="direct-input gs-lr-notes" value="${m.lrNotes || ''}" placeholder="Leadroom Notes...">`;
                         }
+                        
+                        hhNotesHtml = `<span style="font-size:11px; color:var(--sapphire);">${m.hhNotes || '-'}</span><input type="hidden" class="gs-hh-notes" value="${m.hhNotes || ''}">`;
                     }
 
                     let actionHtml = `<button class="btn-manage" style="background-color: var(--success); color: white;" onclick="saveGrandSummaryRow(this, '${subj}', ${m.rowIdx})">💾 Save</button>`;
@@ -831,7 +831,8 @@
                             <td><span style="font-weight:bold; color:var(--royal-blue);">${subj}</span></td>
                             <td>${linkHtml}</td>
                             <td style="text-align:center;">${statusHtml}</td>
-                            <td>${catHtml}</td>
+                            <td>${lrNotesHtml}</td>
+                            <td>${hhNotesHtml}</td>
                             <td style="text-align:center;">${actionHtml}</td>
                         </tr>
                     `;
@@ -845,10 +846,9 @@
                     let mStatus = m.status === 'ACC' ? 'Approved' : (m.status === 'Revisi' ? 'Revision' : m.status);
 
                     let isLockedForLR = (mStatus === 'Approved' && !canApproveGrandSummary);
-
                     let linkHtml = getLinkHtml(m.link, "Paste Final Summary URL here...", "fs-link", isLockedForLR);
                     
-                    let catHtml = ''; let statusHtml = '';
+                    let notesHtml = ''; let statusHtml = '';
 
                     if (canApproveGrandSummary) {
                         let bgStatus = (mStatus === 'Approved') ? '#c8e6c9' : (mStatus === 'Revision' ? '#ffcdd2' : 'white');
@@ -857,7 +857,7 @@
                                         <option value="Revisi" ${mStatus==='Revision'?'selected':''}>Revision</option>
                                         <option value="ACC" ${mStatus==='Approved'?'selected':''}>Approved</option>
                                       </select>`;
-                        catHtml = `<input type="text" class="direct-input fs-catatan" value="${m.notes}" placeholder="Notes (LR/HH)...">`;
+                        notesHtml = `<input type="text" class="direct-input fs-notes" value="${m.notes || ''}" placeholder="Notes...">`;
                     } else {
                         if (mStatus === 'Approved') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">Approved</span>`;
                         else if (mStatus === 'Revision') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revision</span>`;
@@ -866,9 +866,9 @@
                         statusHtml += `<input type="hidden" class="fs-status" value="${m.status}">`;
                         
                         if (isLockedForLR) {
-                            catHtml = `<span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span><input type="hidden" class="fs-catatan" value="${m.notes}">`;
+                            notesHtml = `<span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span><input type="hidden" class="fs-notes" value="${m.notes || ''}">`;
                         } else {
-                            catHtml = `<input type="text" class="direct-input fs-catatan" value="${m.notes}" placeholder="Leadroom notes...">`;
+                            notesHtml = `<input type="text" class="direct-input fs-notes" value="${m.notes || ''}" placeholder="Notes...">`;
                         }
                     }
 
@@ -881,7 +881,7 @@
                             <td><span style="font-weight:bold; color:var(--royal-blue); font-size:14px;">FINAL SUMMARY - ${cat.toUpperCase()}</span></td>
                             <td>${linkHtml}</td>
                             <td style="text-align:center;">${statusHtml}</td>
-                            <td>${catHtml}</td>
+                            <td>${notesHtml}</td>
                             <td style="text-align:center;">${actionHtml}</td>
                         </tr>
                     `;
@@ -892,10 +892,10 @@
                 divGs.id = 'tab-GrandSummary';
                 divGs.innerHTML = `
                     <div class="box-section"><h4>🏆 Grand Summary (Monthly Compilation)</h4>
-                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Notes / Revision</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
+                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Leadroom Notes</th><th>PVP/HH Notes</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
                     </div>
                     <div class="box-section" style="border: 2px solid var(--warning); background-color:#fff9c4;"><h4>🏛️ Final Summary</h4>
-                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Notes / Revision</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
+                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Notes</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
                     </div>
                 `;
                 container.appendChild(divGs);
