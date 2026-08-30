@@ -472,29 +472,74 @@
             if(targetContent) targetContent.classList.add('active');
         }
 
-        function getLinkHtml(val, placeholder, inputClass, isDisabled) {
-            if (val && String(val).trim().length > 4) {
-                var cleanVal = String(val).trim();
-                var safeUrl = cleanVal.indexOf('http') === 0 ? cleanVal : 'https://' + cleanVal;
-                var editBtn = !isDisabled ? `<button type="button" class="btn-manage" style="padding:6px 8px; background-color:var(--warning); color:white; margin-left:4px;" title="Edit Link" onclick="unlockLink(this, '${inputClass}', '${placeholder}')">✏️ Edit</button>` : '';
-                
-                return `
-                <div class="saved-link-group" style="display:flex; align-items:center; margin-bottom:4px; width:100%;">
-                    <a href="${safeUrl}" target="_blank" class="link-icon" style="flex-grow:1; text-align:center; padding:8px 4px; box-sizing:border-box; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔗 Open Link</a>
-                    ${editBtn}
-                    <input type="hidden" class="${inputClass}" value="${cleanVal}">
-                </div>`;
+        function getLinkHtml(val, placeholder, inputClass, isDisabled, needsTitle = false) {
+            if (!needsTitle) {
+                // Formatting standar satu URL
+                if (val && String(val).trim().length > 4) {
+                    var cleanVal = String(val).trim();
+                    var safeUrl = cleanVal.indexOf('http') === 0 ? cleanVal : 'https://' + cleanVal;
+                    var editBtn = !isDisabled ? `<button type="button" class="btn-manage" style="padding:6px 8px; background-color:var(--warning); color:white; margin-left:4px;" title="Edit Link" onclick="unlockLink(this, '${inputClass}', '${placeholder}', false)">✏️ Edit</button>` : '';
+                    
+                    return `
+                    <div class="saved-link-group" style="display:flex; align-items:center; margin-bottom:4px; width:100%;">
+                        <a href="${safeUrl}" target="_blank" class="link-icon" style="flex-grow:1; text-align:center; padding:8px 4px; box-sizing:border-box; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🔗 Open Link</a>
+                        ${editBtn}
+                        <input type="hidden" class="${inputClass}" value="${cleanVal}">
+                    </div>`;
+                } else {
+                    var disabledAttr = isDisabled ? 'disabled' : '';
+                    return `<input type="text" class="direct-input ${inputClass}" style="margin-bottom:4px;" value="" placeholder="${placeholder}" ${disabledAttr}>`;
+                }
             } else {
-                var disabledAttr = isDisabled ? 'disabled' : '';
-                return `<input type="text" class="direct-input ${inputClass}" style="margin-bottom:4px;" value="" placeholder="${placeholder}" ${disabledAttr}>`;
+                // Formatting khusus untuk Title & URL
+                let title = '';
+                let url = val || '';
+                if (val && typeof val === 'string' && val.includes('|||')) {
+                    let parts = val.split('|||');
+                    title = parts[0];
+                    url = parts[1];
+                }
+
+                if (url && String(url).trim().length > 4) {
+                    var cleanUrl = String(url).trim();
+                    var safeUrl = cleanUrl.indexOf('http') === 0 ? cleanUrl : 'https://' + cleanUrl;
+                    var displayTitle = title ? title : '🔗 Open Link';
+                    var editBtn = !isDisabled ? `<button type="button" class="btn-manage" style="padding:6px 8px; background-color:var(--warning); color:white; margin-left:4px;" title="Edit Link" onclick="unlockLink(this, '${inputClass}', '${placeholder}', true)">✏️ Edit</button>` : '';
+
+                    return `
+                    <div class="saved-link-group" style="display:flex; align-items:center; margin-bottom:4px; width:100%;">
+                        <a href="${safeUrl}" target="_blank" class="link-icon" style="flex-grow:1; text-align:center; padding:8px 4px; box-sizing:border-box; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${displayTitle}</a>
+                        ${editBtn}
+                        <input type="hidden" class="${inputClass}-title" value="${title}">
+                        <input type="hidden" class="${inputClass}-url" value="${cleanUrl}">
+                    </div>`;
+                } else {
+                    var disabledAttr = isDisabled ? 'disabled' : '';
+                    return `
+                    <div style="display:flex; gap:5px; margin-bottom:4px;">
+                        <input type="text" class="direct-input ${inputClass}-title" style="flex:3;" placeholder="Judul" value="${title}" ${disabledAttr}>
+                        <input type="text" class="direct-input ${inputClass}-url" style="flex:4;" placeholder="${placeholder}" value="${url}" ${disabledAttr}>
+                    </div>`;
+                }
             }
         }
 
-        function unlockLink(btn, inputClass, placeholder) {
+        function unlockLink(btn, inputClass, placeholder, needsTitle) {
             var group = btn.closest('.saved-link-group');
-            var val = group.querySelector('input[type="hidden"]').value;
-            var inputHtml = `<input type="text" class="direct-input ${inputClass}" style="margin-bottom:4px;" value="${val}" placeholder="${placeholder}">`;
-            group.outerHTML = inputHtml;
+            if (!needsTitle) {
+                var val = group.querySelector('input[type="hidden"]').value;
+                var inputHtml = `<input type="text" class="direct-input ${inputClass}" style="margin-bottom:4px;" value="${val}" placeholder="${placeholder}">`;
+                group.outerHTML = inputHtml;
+            } else {
+                var title = group.querySelector(`.${inputClass}-title`).value;
+                var url = group.querySelector(`.${inputClass}-url`).value;
+                var inputHtml = `
+                    <div style="display:flex; gap:5px; margin-bottom:4px;">
+                        <input type="text" class="direct-input ${inputClass}-title" style="flex:3;" placeholder="Judul" value="${title}">
+                        <input type="text" class="direct-input ${inputClass}-url" style="flex:4;" placeholder="${placeholder}" value="${url}">
+                    </div>`;
+                group.outerHTML = inputHtml;
+            }
         }
 
         function saveGrandSummaryRow(btnEl, subject, rowIdx) {
@@ -558,13 +603,25 @@
         function autoSaveMaterialRow(btnEl, idx) {
             var tr = btnEl.closest('tr');
             var subjLevel = tr.querySelector('.mat-subj').innerText;
-            var inputs = tr.querySelectorAll('.mat-link');
             
-            var linksArray = Array.from(inputs).map(inp => {
-                var v = inp.value.trim();
-                if (v && !v.match(/^https?:\/\//i)) return 'https://' + v;
-                return v;
-            });
+            var titleInputs = tr.querySelectorAll('.mat-link-title');
+            var urlInputs = tr.querySelectorAll('.mat-link-url');
+            
+            var linksArray = [];
+            for (let i = 0; i < urlInputs.length; i++) {
+                let u = urlInputs[i].value.trim();
+                let t = titleInputs[i] ? titleInputs[i].value.trim() : '';
+                if (u) {
+                    if (!u.match(/^https?:\/\//i)) u = 'https://' + u;
+                    if (t) {
+                        linksArray.push(t + '|||' + u);
+                    } else {
+                        linksArray.push(u); // Fallback tanpa judul
+                    }
+                } else {
+                    linksArray.push('');
+                }
+            }
             
             var month = document.getElementById('monthSelector').value;
             var payload = [subjLevel].concat(linksArray);
@@ -684,7 +741,7 @@
                 renderLevelTable('Beginner', 'tab-Beginner');
                 renderLevelTable('Advanced', 'tab-Advanced');
 
-                // 3. RENDER MATERI TAMBAHAN (25 SLOT PENGASJAR, QNA, DAN KISI-KISI)
+                // 3. RENDER MATERI TAMBAHAN
                 let matTbody = '';
                 let matData = libraryDataStore.materials || [];
                 
@@ -694,18 +751,18 @@
                     
                     let linkInputsHtml = '<div style="font-size:10px; font-weight:bold; color:var(--sapphire); margin-bottom:4px;">📚 MATERIALS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:10px;">';
                     for(let j=0; j<4; j++) {
-                        let ph = `Material ${j+1} URL...`;
-                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
+                        let ph = `URL...`;
+                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false, true);
                     }
                     linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--warning); margin-bottom:4px;">❓ Q&A SESSIONS</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-bottom:10px;">';
                     for(let j=4; j<8; j++) {
-                        let ph = `Q&A ${j-3} URL...`;
-                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
+                        let ph = `URL...`;
+                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false, true);
                     }
-                    linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--danger); margin-bottom:4px;">📋 KISI-KISI / STUDY GUIDE</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">';
+                    linkInputsHtml += '</div><div style="font-size:10px; font-weight:bold; color:var(--danger); margin-bottom:4px;">📋 QUESTION BLUEPRINT</div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">';
                     for(let j=8; j<10; j++) {
-                        let ph = `Kisi-kisi ${j-7} URL...`;
-                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false);
+                        let ph = `URL...`;
+                        linkInputsHtml += getLinkHtml(m.links[j], ph, "mat-link", false, true);
                     }
                     linkInputsHtml += '</div>';
 
@@ -726,7 +783,7 @@
                 var divMat = document.createElement('div');
                 divMat.className = 'tab-content';
                 divMat.id = 'tab-Materi';
-                divMat.innerHTML = `<div class="box-section"><h4>📚 Materials, QnA, & Kisi-kisi (25 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material, Q&A, & Kisi-kisi Links (Up to 10)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
+                divMat.innerHTML = `<div class="box-section"><h4>📚 Materials, QnA, & Question Blueprint (25 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material, Q&A, & Question Blueprint Links (Up to 10)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
                 container.appendChild(divMat);
 
                 // 4. RENDER GRAND SUMMARY (12 Wajib + 1 Ekstra) & FINAL SUMMARY
@@ -750,14 +807,19 @@
                                         <option value="Revisi" ${mStatus==='Revision'?'selected':''}>Revision</option>
                                         <option value="ACC" ${mStatus==='Approved'?'selected':''}>Approved</option>
                                       </select>`;
-                        catHtml = `<input type="text" class="direct-input gs-catatan" value="${m.catatan}" placeholder="Revision notes...">`;
+                        catHtml = `<input type="text" class="direct-input gs-catatan" value="${m.catatan}" placeholder="Notes (LR/HH)...">`;
                     } else {
                         if (mStatus === 'Approved') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">Approved</span>`;
                         else if (mStatus === 'Revision') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revision</span>`;
                         else statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">Pending</span>`;
 
                         statusHtml += `<input type="hidden" class="gs-status" value="${m.status}">`;
-                        catHtml = `<span style="font-size:11px; color:var(--danger);">${m.catatan || '-'}</span><input type="hidden" class="gs-catatan" value="${m.catatan}">`;
+                        
+                        if (isLockedForLR) {
+                            catHtml = `<span style="font-size:11px; color:var(--danger);">${m.catatan || '-'}</span><input type="hidden" class="gs-catatan" value="${m.catatan}">`;
+                        } else {
+                            catHtml = `<input type="text" class="direct-input gs-catatan" value="${m.catatan}" placeholder="Leadroom notes...">`;
+                        }
                     }
 
                     let actionHtml = `<button class="btn-manage" style="background-color: var(--success); color: white;" onclick="saveGrandSummaryRow(this, '${subj}', ${m.rowIdx})">💾 Save</button>`;
@@ -795,14 +857,19 @@
                                         <option value="Revisi" ${mStatus==='Revision'?'selected':''}>Revision</option>
                                         <option value="ACC" ${mStatus==='Approved'?'selected':''}>Approved</option>
                                       </select>`;
-                        catHtml = `<input type="text" class="direct-input fs-catatan" value="${m.notes}" placeholder="Revision notes...">`;
+                        catHtml = `<input type="text" class="direct-input fs-catatan" value="${m.notes}" placeholder="Notes (LR/HH)...">`;
                     } else {
                         if (mStatus === 'Approved') statusHtml = `<span class="badge-date" style="background:#c8e6c9; color:var(--success);">Approved</span>`;
                         else if (mStatus === 'Revision') statusHtml = `<span class="badge-date" style="background:#ffcdd2; color:var(--danger);">Revision</span>`;
                         else statusHtml = `<span class="badge-date" style="background:#e0e0e0; color:gray;">Pending</span>`;
 
                         statusHtml += `<input type="hidden" class="fs-status" value="${m.status}">`;
-                        catHtml = `<span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span><input type="hidden" class="fs-catatan" value="${m.notes}">`;
+                        
+                        if (isLockedForLR) {
+                            catHtml = `<span style="font-size:11px; color:var(--danger);">${m.notes || '-'}</span><input type="hidden" class="fs-catatan" value="${m.notes}">`;
+                        } else {
+                            catHtml = `<input type="text" class="direct-input fs-catatan" value="${m.notes}" placeholder="Leadroom notes...">`;
+                        }
                     }
 
                     let actionHtml = `<button class="btn-manage" style="background-color: var(--success); color: white;" onclick="saveFinalSummaryRow(this, '${cat}', ${m.rowIdx})">💾 Save</button>`;
@@ -825,10 +892,10 @@
                 divGs.id = 'tab-GrandSummary';
                 divGs.innerHTML = `
                     <div class="box-section"><h4>🏆 Grand Summary (Monthly Compilation)</h4>
-                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Revision Notes</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
+                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject</th><th>Grand Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Notes / Revision</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${gsTbody}</tbody></table></div>
                     </div>
                     <div class="box-section" style="border: 2px solid var(--warning); background-color:#fff9c4;"><h4>🏛️ Final Summary</h4>
-                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Revision Notes</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
+                        <div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Division</th><th>Final Summary Link</th><th style="text-align:center; width:100px;">Status</th><th>Notes / Revision</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${fsTbody}</tbody></table></div>
                     </div>
                 `;
                 container.appendChild(divGs);
