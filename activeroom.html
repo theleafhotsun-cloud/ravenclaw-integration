@@ -639,8 +639,8 @@
             <div id="rotStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:12px;"></div>
             <p style="font-size:11px; color:gray; margin-top:-10px;">For: <span id="rotPeriodLabel" style="font-weight:bold; color:var(--royal-blue);"></span></p>
             <div class="form-group">
-                <label>Ancient Runes Room</label>
-                <select id="rotRunes">
+                <label>Herbology Room</label>
+                <select id="rotHerbology">
                     <option value="-">-- Select Room --</option>
                     <option value="Eternclaw">Eternclaw</option>
                     <option value="Ravelynx">Ravelynx</option>
@@ -650,8 +650,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Care Of Magical Creatures Room</label>
-                <select id="rotComc">
+                <label>Defence Against The Dark Arts Room</label>
+                <select id="rotDada">
                     <option value="-">-- Select Room --</option>
                     <option value="Eternclaw">Eternclaw</option>
                     <option value="Ravelynx">Ravelynx</option>
@@ -785,7 +785,7 @@
         var roomSchedules = {
             "Eternclaw": "Monday: Beginner/Advanced Astronomy, Charm",
             "Ravelynx": "Tuesday: Beginner/Advanced Potion, Divination",
-            "Ravenion": "Wednesday: Beginner/Advanced Defence Against The Dark Arts, Herbology",
+            "Ravenion": "Wednesday: Beginner/Advanced Care Of Magical Creatures, Ancient Runes",
             "Ravenrow": "Thursday: Beginner/Advanced Muggle Studies, Arithmancy",
             "Velaclaw": "Friday: Beginner/Advanced Transfiguration, History Of Magic"
         };
@@ -1139,8 +1139,8 @@
 
                     var rSched = roomSchedules[roomName]; 
                     var extraRot = "";
-                    if (fullDataStore.rotRunes === roomName) extraRot += ", Ancient Runes"; 
-                    if (fullDataStore.rotComc === roomName) extraRot += ", Care Of Magical Creatures";
+                    if (fullDataStore.rotHerbology === roomName) extraRot += ", Herbology"; 
+                    if (fullDataStore.rotDada === roomName) extraRot += ", Defence Against The Dark Arts";
                     var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
                     // --- BOX 1: ACTIVITY ---
@@ -1461,8 +1461,8 @@
             document.getElementById('rotModal').style.display = 'flex'; 
             document.getElementById('rotStatus').style.display = 'none';
             document.getElementById('rotPeriodLabel').innerText = document.getElementById('monthSelector').value + " - " + document.getElementById('weekSelector').value;
-            document.getElementById('rotRunes').value = fullDataStore.rotRunes && fullDataStore.rotRunes !== '-' ? fullDataStore.rotRunes : '-'; 
-            document.getElementById('rotComc').value = fullDataStore.rotComc && fullDataStore.rotComc !== '-' ? fullDataStore.rotComc : '-';
+            document.getElementById('rotHerbology').value = fullDataStore.rotHerbology && fullDataStore.rotHerbology !== '-' ? fullDataStore.rotHerbology : '-'; 
+            document.getElementById('rotDada').value = fullDataStore.rotDada && fullDataStore.rotDada !== '-' ? fullDataStore.rotDada : '-';
         }
         function closeRotModal() { 
             document.getElementById('rotModal').style.display = 'none'; 
@@ -1475,8 +1475,8 @@
                 action: "saveRotSubjects", 
                 month: document.getElementById('monthSelector').value.trim(), 
                 week: document.getElementById('weekSelector').value.trim(), 
-                runes: document.getElementById('rotRunes').value, 
-                comc: document.getElementById('rotComc').value 
+                herbology: document.getElementById('rotHerbology').value, 
+                dada: document.getElementById('rotDada').value 
             };
             fetch(API_URL, { 
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, 
