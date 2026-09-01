@@ -614,15 +614,22 @@
             let aquilaeTxt = aquilae ? `<b>${aquilae.name}</b> (${aquilae.vault}) - <span style="color:var(--success); font-weight:bold;">ʛ500</span>` : `<i>Not assigned yet</i>`;
             document.getElementById('rewAlphaAquilae').innerHTML = `Alpha: ${alphaTxt}<br>Aquilae: ${aquilaeTxt}`;
 
+            // --- BEST ROOM LOGIC MEMUNCULKAN ANGGOTA KAMAR ---
             let rooms = {};
             data.forEach(s => {
                 let r = s.room;
-                if(r && r !== '-' && r !== '') { rooms[r] = (rooms[r] || 0) + s.totalPoints; }
+                if(r && r !== '-' && r !== '') { 
+                    if (!rooms[r]) rooms[r] = { pts: 0, members: [] };
+                    rooms[r].pts += s.totalPoints;
+                    if (s.totalPoints > 0 || !s.isInactive) {
+                        rooms[r].members.push(s.name);
+                    }
+                }
             });
-            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k] })).sort((a,b) => b.pts - a.pts);
+            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].pts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
             if (roomArr.length > 0 && roomArr[0].pts > 0) {
                 let bestRoom = roomArr[0];
-                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ1000 to Leadroom</span><br><span style="font-size:10px; color:gray;">Winning with ${bestRoom.pts} total room points</span>`;
+                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ1000 to Leadroom</span><br><span style="font-size:10px; color:gray;">Winning with ${bestRoom.pts} total room points</span><br><div style="font-size:10px; color:var(--royal-blue); margin-top:4px;"><b>Members:</b> ${bestRoom.members.join(', ')}</div>`;
             } else {
                 document.getElementById('rewRoom').innerHTML = `<i>No room points accumulated.</i>`;
             }
@@ -674,9 +681,12 @@
             let rooms = {};
             data.forEach(s => {
                 let r = s.room;
-                if(r && r !== '-' && r !== '') { rooms[r] = (rooms[r] || 0) + s.totalPoints; }
+                if(r && r !== '-' && r !== '') { 
+                    if(!rooms[r]) rooms[r] = { pts: 0 };
+                    rooms[r].pts += s.totalPoints; 
+                }
             });
-            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k] })).sort((a,b) => b.pts - a.pts).slice(0,10);
+            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].pts })).sort((a,b) => b.pts - a.pts).slice(0,10);
             let roomHtml = '';
             roomArr.forEach((r, idx) => {
                 if(r.pts > 0) roomHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--sapphire);">${r.room}</b></td><td style="text-align:right;"><b>${r.pts}</b> Pts</td></tr>`;
@@ -684,9 +694,8 @@
             document.getElementById('lbRoom').innerHTML = roomHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
 
             let minHtml = '';
-            let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.得分).slice(0,10); // Typos corrected below
-            let topMinCorrect = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
-            topMinCorrect.forEach((s, idx) => {
+            let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
+            topMin.forEach((s, idx) => {
                 minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.owlRank || '-'} | Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
             });
             document.getElementById('lbMin').innerHTML = minHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
