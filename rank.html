@@ -189,6 +189,28 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- NEW: BEST ROOM MEMBERS SPOTLIGHT -->
+                    <div id="bestRoomDetailsContainer" style="margin-top: 20px; display:none;">
+                        <div class="box-section" style="border: 2px solid var(--warning); background-color: #fffde7;">
+                            <h4 style="color: #e65100; border-bottom: 2px dashed var(--warning);">🌟 Best Room Spotlight: <span id="spotlightRoomName"></span></h4>
+                            <div class="table-container" style="margin-bottom:0; border: 1px solid var(--warning);">
+                                <table style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="background-color: var(--warning); color: white;">Vault</th>
+                                            <th style="background-color: var(--warning); color: white;">Username</th>
+                                            <th style="background-color: var(--warning); color: white;">Name</th>
+                                            <th style="background-color: var(--warning); color: white;">Face Claim</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bestRoomMembersBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -252,7 +274,6 @@
         var isRankViewer = false;
         var isRankEditor = false;
         var rankDataStore = [];
-        var periodConfigStore = null;
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
@@ -334,7 +355,6 @@
             })
             .then(r => r.json()).then(res => {
                 if(res.status === 'success') {
-                    periodConfigStore = res.data;
                     var monthSel = document.getElementById('monthSelector'); 
                     if(res.data.activeMonth) {
                         var opt = document.createElement('option'); opt.value = res.data.activeMonth.monthLabel; opt.innerText = res.data.activeMonth.monthLabel + " (Active)"; opt.selected = true;
@@ -355,7 +375,6 @@
             var monthDropdown = document.getElementById('monthSelector');
             var rawValue = monthDropdown.value; 
             
-            // CLEAN UP LABEL UNTUK BACKEND AGAR MURNI NAMA BULAN AJA (HAPUS "(ACTIVE)" dll)
             var cleanMonth = rawValue.split('(')[0].trim();
             if(!cleanMonth) return;
 
@@ -363,13 +382,12 @@
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getRankData", month: cleanMonth }) // KITA KIRIM CLEAN MONTH
+                body: JSON.stringify({ action: "getRankData", month: cleanMonth }) 
             })
             .then(r => r.json()).then(res => {
                 document.getElementById('loadingMsg').style.display = 'none';
                 if(res.status === 'success') {
                     rankDataStore = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
-                    
                     rankDataStore.sort((a, b) => { return parseInt(a.vault) - parseInt(b.vault); });
 
                     renderInputTables(rankDataStore);
@@ -562,7 +580,7 @@
 
             let payload = {
                 action: "saveManualRank",
-                month: cleanMonthStr, // KIRIM BULAN BERSIH KE BACKEND
+                month: cleanMonthStr,
                 vault: vault,
                 att: elAtt ? elAtt.value : (s.manualAtt !== null ? s.manualAtt : ''), 
                 sum: elSum ? elSum.value : (s.manualSum !== null ? s.manualSum : ''), 
@@ -614,24 +632,44 @@
             let aquilaeTxt = aquilae ? `<b>${aquilae.name}</b> (${aquilae.vault}) - <span style="color:var(--success); font-weight:bold;">ʛ500</span>` : `<i>Not assigned yet</i>`;
             document.getElementById('rewAlphaAquilae').innerHTML = `Alpha: ${alphaTxt}<br>Aquilae: ${aquilaeTxt}`;
 
-            // --- BEST ROOM LOGIC MEMUNCULKAN ANGGOTA KAMAR ---
+            // --- BEST ROOM & SPOTLIGHT MEMBERS LOGIC ---
             let rooms = {};
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if (!rooms[r]) rooms[r] = { pts: 0, members: [] };
+                    if(!rooms[r]) rooms[r] = { pts: 0, members: [] };
                     rooms[r].pts += s.totalPoints;
-                    if (s.totalPoints > 0 || !s.isInactive) {
-                        rooms[r].members.push(s.name);
+                    if(s.totalPoints > 0 || !s.isInactive) {
+                        rooms[r].members.push(s); 
                     }
                 }
             });
             let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].pts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
+            
+            let bestRoomDetailsContainer = document.getElementById('bestRoomDetailsContainer');
+            let bestRoomMembersBody = document.getElementById('bestRoomMembersBody');
+            let spotlightRoomName = document.getElementById('spotlightRoomName');
+
             if (roomArr.length > 0 && roomArr[0].pts > 0) {
                 let bestRoom = roomArr[0];
-                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ1000 to Leadroom</span><br><span style="font-size:10px; color:gray;">Winning with ${bestRoom.pts} total room points</span><br><div style="font-size:10px; color:var(--royal-blue); margin-top:4px;"><b>Members:</b> ${bestRoom.members.join(', ')}</div>`;
+                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ1000 to Leadroom</span><br><span style="font-size:10px; color:gray;">Winning with ${bestRoom.pts} total room points</span>`;
+                
+                // ISI DATA SPOTLIGHT MEMBERS
+                spotlightRoomName.innerText = bestRoom.room;
+                bestRoomDetailsContainer.style.display = 'block';
+                let membersHtml = '';
+                bestRoom.members.sort((a, b) => parseInt(a.vault) - parseInt(b.vault)).forEach(m => {
+                    membersHtml += `<tr>
+                        <td class="vault-tag">${m.vault}</td>
+                        <td style="font-weight:bold; color:var(--royal-blue);">${m.username}</td>
+                        <td>${m.name}</td>
+                        <td>${m.faceClaim || '-'}</td>
+                    </tr>`;
+                });
+                bestRoomMembersBody.innerHTML = membersHtml;
             } else {
                 document.getElementById('rewRoom').innerHTML = `<i>No room points accumulated.</i>`;
+                bestRoomDetailsContainer.style.display = 'none';
             }
 
             let maxGames = 0;
