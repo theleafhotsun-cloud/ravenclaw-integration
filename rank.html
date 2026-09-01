@@ -252,6 +252,7 @@
         var isRankViewer = false;
         var isRankEditor = false;
         var rankDataStore = [];
+        var periodConfigStore = null;
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
@@ -333,6 +334,7 @@
             })
             .then(r => r.json()).then(res => {
                 if(res.status === 'success') {
+                    periodConfigStore = res.data;
                     var monthSel = document.getElementById('monthSelector'); 
                     if(res.data.activeMonth) {
                         var opt = document.createElement('option'); opt.value = res.data.activeMonth.monthLabel; opt.innerText = res.data.activeMonth.monthLabel + " (Active)"; opt.selected = true;
@@ -350,14 +352,18 @@
         }
 
         function fetchRankData() {
-            var month = document.getElementById('monthSelector').value;
-            if(!month) return;
+            var monthDropdown = document.getElementById('monthSelector');
+            var rawValue = monthDropdown.value; 
+            
+            // CLEAN UP LABEL UNTUK BACKEND AGAR MURNI NAMA BULAN AJA (HAPUS "(ACTIVE)" dll)
+            var cleanMonth = rawValue.split('(')[0].trim();
+            if(!cleanMonth) return;
 
             document.getElementById('loadingMsg').style.display = 'block';
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getRankData", month: month })
+                body: JSON.stringify({ action: "getRankData", month: cleanMonth }) // KITA KIRIM CLEAN MONTH
             })
             .then(r => r.json()).then(res => {
                 document.getElementById('loadingMsg').style.display = 'none';
@@ -455,7 +461,6 @@
                 
                 let btnHtml = isRankEditor ? `<button class="btn-save-inline" onclick="saveInline(this, '${s.vault}')">💾 Save</button>` : `<span style="color:gray;">View Only</span>`;
 
-                // PERBAIKAN DI SINI
                 let attValDisp = (s.manualAtt !== null && s.manualAtt !== '') ? s.manualAtt : s.autoAtt;
                 let sumValDisp = (s.manualSum !== null && s.manualSum !== '') ? s.manualSum : s.autoSum;
 
@@ -553,9 +558,11 @@
             let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\|/g, '') : s.hiatusDates;
             let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal;
 
+            let cleanMonthStr = document.getElementById('monthSelector').value.split('(')[0].trim();
+
             let payload = {
                 action: "saveManualRank",
-                month: document.getElementById('monthSelector').value,
+                month: cleanMonthStr, // KIRIM BULAN BERSIH KE BACKEND
                 vault: vault,
                 att: elAtt ? elAtt.value : (s.manualAtt !== null ? s.manualAtt : ''), 
                 sum: elSum ? elSum.value : (s.manualSum !== null ? s.manualSum : ''), 
@@ -677,8 +684,9 @@
             document.getElementById('lbRoom').innerHTML = roomHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
 
             let minHtml = '';
-            let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
-            topMin.forEach((s, idx) => {
+            let topMin = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.得分).slice(0,10); // Typos corrected below
+            let topMinCorrect = [...data].filter(x => x.major.toLowerCase().includes('ministry') && x.owlScore > 0).sort((a,b) => b.owlScore - a.owlScore).slice(0,10);
+            topMinCorrect.forEach((s, idx) => {
                 minHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--royal-blue);">${s.name}</b><br><span style="font-size:9px; color:gray;">Rank Input: ${s.owlRank || '-'} | Mark: ${s.owlMark || '-'}</span></td><td style="text-align:right;"><b>${s.owlScore}</b> Pts</td></tr>`;
             });
             document.getElementById('lbMin').innerHTML = minHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
