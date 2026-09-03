@@ -148,14 +148,14 @@
 
                     <div id="tabOWL" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points directly added to total">O.W.L Score</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points score - tidak langsung ditambah ke total">O.W.L Score</th><th>Action</th></tr></thead>
                             <tbody id="owlBody"></tbody>
                         </table>
                     </div>
 
                     <div id="tabSP" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">SP Rank</th><th title="Points directly added to total">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10 (Dapat Bonus)">SP Rank (Sekolah)</th><th title="Hanya untuk display mading">SP Rank (Asrama)</th><th title="Points score - tidak langsung ditambah ke total">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
                             <tbody id="spBody"></tbody>
                         </table>
                     </div>
@@ -530,9 +530,7 @@
             let elAdd = document.getElementById(`add_${vault}`);
             
             let elOwlR = document.getElementById(`owlRank_${vault}`);
-            let elOwlS = document.getElementById(`owlScore_${vault}`);
-            let elSpR = document.getElementById(`spRank_${vault}`);
-            let elSpS = document.getElementById(`spScore_${vault}`);
+            let elSpRSekolah = document.getElementById(`spRank_${vault}`);
             
             let att = elAtt && elAtt.value !== '' ? Number(elAtt.value) : s.autoAtt;
             let sum = elSum && elSum.value !== '' ? Number(elSum.value) : s.autoSum;
@@ -542,16 +540,17 @@
             let add = elAdd && elAdd.value !== '' ? Number(elAdd.value) : s.add;
             
             let owlRVal = elOwlR && elOwlR.value !== '' ? Number(elOwlR.value) : Number(s.owlRank);
-            let owlSVal = elOwlS && elOwlS.value !== '' ? Number(elOwlS.value) : s.owlScore;
-            
-            let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
-            let spSVal = elSpS && elSpS.value !== '' ? Number(elSpS.value) : s.spScore;
+            let spRSekolahVal = elSpRSekolah && elSpRSekolah.value !== '' ? Number(elSpRSekolah.value) : Number(s.spRank);
             
             let rBonus = 0;
+            // Top 10 OWL Bonus x 15
             if (owlRVal >= 1 && owlRVal <= 10) rBonus += 15;
-            if (spRVal >= 1 && spRVal <= 10) rBonus += 15;
+            
+            // Top 10 SP Bonus x 15 (Hanya berdasarkan SP Rank Sekolah)
+            if (spRSekolahVal >= 1 && spRSekolahVal <= 10) rBonus += 15;
 
-            let total = (sum * 3) + (att * 5) + (gms * 10) + (schc * 5) + (add * 10) + owlSVal + spSVal + rBonus;
+            // Hitungan baru: (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + (Top 10 OWL Bonus x 15) + (Top 10 SP Bonus x 15)
+            let total = (sum * 3) + (att * 5) + (gms * 10) + (schc * 5) + (add * 10) + rBonus;
             
             let tpDisplays = document.querySelectorAll(`.tp-disp-${vault}`);
             tpDisplays.forEach(el => el.innerText = total);
@@ -636,11 +635,13 @@
                 `;
 
                 let minSpVal = s.minSp !== undefined && s.minSp !== '' ? s.minSp : 600;
+                let spRankAsramaVal = s.spRankAsrama !== undefined && s.spRankAsrama !== null ? s.spRankAsrama : '';
                 spBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" max="10" placeholder="Rank" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" max="10" placeholder="R. Sekolah" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="spRankAsrama_${s.vault}" value="${spRankAsramaVal}" class="inline-inp" placeholder="R. Asrama"></td>
                         <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Score" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="minSp_${s.vault}" value="${minSpVal}" class="inline-inp" style="background:#ffebee; border-color:#ffcdd2; color:#c62828;" title="Edit if student is on Hiatus"></td>
                         <td>${btnHtml}</td>
@@ -676,17 +677,19 @@
             let elOwlS = document.getElementById(`owlScore_${vault}`);
             
             let elSpR = document.getElementById(`spRank_${vault}`);
+            let elSpRAsrama = document.getElementById(`spRankAsrama_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
             let elMinSp = document.getElementById(`minSp_${vault}`);
             let elHiatus = document.getElementById(`hiatus_${vault}`);
 
-            if (elSpR && parseInt(elSpR.value) > 10) { alert("SP Rank limit is Maximum 10!"); return; }
+            if (elSpR && parseInt(elSpR.value) > 10) { alert("SP Rank (Sekolah) limit is Maximum 10!"); return; }
             if (elOwlR && parseInt(elOwlR.value) > 10) { alert("OWL Rank limit is Maximum 10!"); return; }
 
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
             
             let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\|/g, '') : s.hiatusDates;
-            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal;
+            let asramaVal = elSpRAsrama ? elSpRAsrama.value : (s.spRankAsrama || '');
+            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal + "|||" + asramaVal;
 
             let cleanMonthStr = document.getElementById('monthSelector').value.split('(')[0].trim();
 
@@ -754,7 +757,7 @@
                 spotlightOwlBody.innerHTML = owlRows;
             }
 
-            // 2. TOP 10 SP
+            // 2. TOP 10 SP (Hanya Sekolah)
             let spRankers = data.filter(x => Number(x.spRank) >= 1 && Number(x.spRank) <= 10).sort((a,b) => Number(a.spRank) - Number(b.spRank));
             let spRewHtml = spRankers.map(x => `<b>${x.name}</b> (#${x.spRank}) - <span style="color:var(--success); font-weight:bold;">ʛ300</span>`).join('<br>');
             document.getElementById('rewSp').innerHTML = spRewHtml || '<i>No Rank SP recorded yet.</i>';
