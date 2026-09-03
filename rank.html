@@ -113,7 +113,7 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + <b>(Top 10 OWL Bonus x 15)</b> + <b>(Top 10 SP Bonus x 15)</b><br>
+                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + <b>(OWL Rank Bonus x 15)</b> + <b>(SP Schl Rank Bonus x 15)</b><br>
                 <span style="color:var(--danger); font-weight:bold;">⚠️ G7 Students are exempt from SP Fines. Type LOA/Hiatus Dates and click Save to lock it permanently.</span>
             </div>
 
@@ -148,14 +148,14 @@
 
                     <div id="tabOWL" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Points score - tidak langsung ditambah ke total">O.W.L Score</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Rank Bonus Appliable">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Score - not directly added to total points">O.W.L Score</th><th>Action</th></tr></thead>
                             <tbody id="owlBody"></tbody>
                         </table>
                     </div>
 
                     <div id="tabSP" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Max Rank 10 (Dapat Bonus)">SP Rank (Sekolah)</th><th title="Hanya untuk display mading">SP Rank (Asrama)</th><th title="Points score - tidak langsung ditambah ke total">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Rank Bonus Appliable">SP Rank (School)</th><th title="For display purposes only">SP Rank (Dorm)</th><th title="Score - not directly added to total points">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
                             <tbody id="spBody"></tbody>
                         </table>
                     </div>
@@ -190,7 +190,7 @@
 
                         <div style="display:flex; flex-direction:column; gap:10px; padding:10px; background:#ffebee; border:1px solid #ffcdd2; border-radius:8px;">
                             <div class="reward-box" style="border-left: 4px solid var(--danger);">
-                                <h5>⚠️ SP Fines / Denda (Target vs Achieved)</h5>
+                                <h5>⚠️ SP Fines (Target vs Achieved)</h5>
                                 <div id="rewSpFines" class="fine-list" style="font-size:11px; line-height: 1.4;">Calculating...</div>
                             </div>
                         </div>
@@ -204,7 +204,7 @@
                             🎨 Editor's Spotlight: Winners & Leaderboard Profiles
                         </h3>
                         <p style="font-size: 11px; color: gray; margin-top: -5px; margin-bottom: 15px;">
-                            Tabel di bawah memuat data lengkap (Vault, Username, Nama, dan Face Claim) untuk memudahkan pembuatan poster/desain pengumuman.
+                            The table below contains complete data (Vault, Username, Name, and Face Claim) to facilitate the creation of announcement posters/designs.
                         </p>
 
                         <!-- 1. ALPHA & AQUILAE -->
@@ -543,13 +543,13 @@
             let spRSekolahVal = elSpRSekolah && elSpRSekolah.value !== '' ? Number(elSpRSekolah.value) : Number(s.spRank);
             
             let rBonus = 0;
-            // Top 10 OWL Bonus x 15
-            if (owlRVal >= 1 && owlRVal <= 10) rBonus += 15;
+            // OWL Bonus (Any valid rank gets the bonus)
+            if (owlRVal > 0) rBonus += 15;
             
-            // Top 10 SP Bonus x 15 (Hanya berdasarkan SP Rank Sekolah)
-            if (spRSekolahVal >= 1 && spRSekolahVal <= 10) rBonus += 15;
+            // SP Bonus (Any valid School Rank gets the bonus)
+            if (spRSekolahVal > 0) rBonus += 15;
 
-            // Hitungan baru: (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + (Top 10 OWL Bonus x 15) + (Top 10 SP Bonus x 15)
+            // Revised calculation formula
             let total = (sum * 3) + (att * 5) + (gms * 10) + (schc * 5) + (add * 10) + rBonus;
             
             let tpDisplays = document.querySelectorAll(`.tp-disp-${vault}`);
@@ -579,7 +579,7 @@
                 let rankBadge = `<span style="color:var(--danger); font-weight:bold;">#${s.rankNumber}</span>`;
 
                 let placeholderTxt = s.isHiatusDynamic ? "Auto: On Hiatus" : "LOA Dates...";
-                let hiatusInput = `<input type="text" id="hiatus_${s.vault}" value="${s.hiatusDates}" class="inline-txt" style="width:110px; padding:4px; font-size:10px; border:1px solid var(--warning); background:#fff9c4;" placeholder="${placeholderTxt}" title="Isi tanggal cuti dan klik Save untuk mengunci permanen">`;
+                let hiatusInput = `<input type="text" id="hiatus_${s.vault}" value="${s.hiatusDates}" class="inline-txt" style="width:110px; padding:4px; font-size:10px; border:1px solid var(--warning); background:#fff9c4;" placeholder="${placeholderTxt}" title="Enter LOA dates and click Save to lock permanently">`;
 
                 let infoHTML = `<div style="font-weight:bold; color:var(--royal-blue); margin-bottom:3px;">${s.name} <span style="font-size:9px;">(${statText})</span></div>
                                 <div style="font-size:10px; color:gray; margin-bottom:3px;"><b>Username:</b> ${s.username} | <b>FC:</b> ${s.faceClaim || '-'}</div>
@@ -617,7 +617,7 @@
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        <td><input type="number" id="owlRank_${s.vault}" value="${s.owlRank}" class="inline-inp" max="10" placeholder="Rank" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="owlRank_${s.vault}" value="${s.owlRank}" class="inline-inp" placeholder="Rank" oninput="recalcPoints('${s.vault}')"></td>
                         <td>
                             <select id="owlMark_${s.vault}" class="inline-inp" style="width:60px; font-weight:bold;">
                                 <option value="" ${s.owlMark===''?'selected':''}>-</option>
@@ -640,8 +640,8 @@
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" max="10" placeholder="R. Sekolah" oninput="recalcPoints('${s.vault}')"></td>
-                        <td><input type="number" id="spRankAsrama_${s.vault}" value="${spRankAsramaVal}" class="inline-inp" placeholder="R. Asrama"></td>
+                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" placeholder="Schl Rank" oninput="recalcPoints('${s.vault}')"></td>
+                        <td><input type="number" id="spRankAsrama_${s.vault}" value="${spRankAsramaVal}" class="inline-inp" placeholder="Dorm Rank"></td>
                         <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Score" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="minSp_${s.vault}" value="${minSpVal}" class="inline-inp" style="background:#ffebee; border-color:#ffcdd2; color:#c62828;" title="Edit if student is on Hiatus"></td>
                         <td>${btnHtml}</td>
@@ -681,9 +681,6 @@
             let elSpS = document.getElementById(`spScore_${vault}`);
             let elMinSp = document.getElementById(`minSp_${vault}`);
             let elHiatus = document.getElementById(`hiatus_${vault}`);
-
-            if (elSpR && parseInt(elSpR.value) > 10) { alert("SP Rank (Sekolah) limit is Maximum 10!"); return; }
-            if (elOwlR && parseInt(elOwlR.value) > 10) { alert("OWL Rank limit is Maximum 10!"); return; }
 
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
             
@@ -757,7 +754,7 @@
                 spotlightOwlBody.innerHTML = owlRows;
             }
 
-            // 2. TOP 10 SP (Hanya Sekolah)
+            // 2. TOP 10 SP
             let spRankers = data.filter(x => Number(x.spRank) >= 1 && Number(x.spRank) <= 10).sort((a,b) => Number(a.spRank) - Number(b.spRank));
             let spRewHtml = spRankers.map(x => `<b>${x.name}</b> (#${x.spRank}) - <span style="color:var(--success); font-weight:bold;">ʛ300</span>`).join('<br>');
             document.getElementById('rewSp').innerHTML = spRewHtml || '<i>No Rank SP recorded yet.</i>';
