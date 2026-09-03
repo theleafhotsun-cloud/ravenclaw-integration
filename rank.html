@@ -113,8 +113,9 @@
 
             <div class="sop-banner">
                 <b>📌 POINT WEIGHTS (AUTOMATIC + MANUAL):</b><br>
-                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + <b>(OWL Rank Bonus x 15)</b> + <b>(SP Schl Rank Bonus x 15)</b><br>
-                <span style="color:var(--danger); font-weight:bold;">⚠️ G7 Students are exempt from SP Fines. Type LOA/Hiatus Dates and click Save to lock it permanently.</span>
+                Total Points = (Sum x 3) + (Att x 5) + (Games x 10) + (SC/HC/GC x 5) + (Add Pts x 10) + <b>(OWL Rank Bonus x 15)</b> + <b>(SP Rank Bonus x 15)</b><br>
+                <span style="color:var(--danger); font-weight:bold;">⚠️ G7 Students are exempt from SP Fines. Type LOA/Hiatus Dates and click Save to lock it permanently.</span><br>
+                <span style="color:var(--info); font-weight:bold; margin-top:5px; display:inline-block;">ℹ️ IMPORTANT: Rank fields (O.W.L Rank & SP Rank) should ONLY be filled if the rank is officially obtained from the school.</span>
             </div>
 
             <div class="period-controller">
@@ -148,14 +149,14 @@
 
                     <div id="tabOWL" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Rank Bonus Appliable">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Score - not directly added to total points">O.W.L Score</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Only fill if rank is from the school">O.W.L Rank</th><th title="O, E, A, P, D, T">O.W.L Mark</th><th title="Score - not directly added to total points">O.W.L Score</th><th>Action</th></tr></thead>
                             <tbody id="owlBody"></tbody>
                         </table>
                     </div>
 
                     <div id="tabSP" class="tab-content">
                         <table>
-                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Rank Bonus Appliable">SP Rank (School)</th><th title="For display purposes only">SP Rank (Dorm)</th><th title="Score - not directly added to total points">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
+                            <thead><tr><th>Vault</th><th>Student Info</th><th title="Only fill if rank is from the school">SP Rank</th><th title="Score - not directly added to total points">SP Score</th><th title="Default 600. Edit if Hiatus">Min SP</th><th>Action</th></tr></thead>
                             <tbody id="spBody"></tbody>
                         </table>
                     </div>
@@ -400,7 +401,10 @@
         }
 
         function setupDynamicSidebar() {
+            // isRankViewer menyertakan 'editor' (sehingga mereka bisa masuk ke halaman)
             isRankViewer = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole.includes('editor') || userRole === 'system admin';
+            
+            // isRankEditor TIDAK menyertakan 'editor' (sehingga mereka hanya VIEW ONLY)
             isRankEditor = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole === 'system admin';
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -530,7 +534,7 @@
             let elAdd = document.getElementById(`add_${vault}`);
             
             let elOwlR = document.getElementById(`owlRank_${vault}`);
-            let elSpRSekolah = document.getElementById(`spRank_${vault}`);
+            let elSpR = document.getElementById(`spRank_${vault}`);
             
             let att = elAtt && elAtt.value !== '' ? Number(elAtt.value) : s.autoAtt;
             let sum = elSum && elSum.value !== '' ? Number(elSum.value) : s.autoSum;
@@ -540,14 +544,14 @@
             let add = elAdd && elAdd.value !== '' ? Number(elAdd.value) : s.add;
             
             let owlRVal = elOwlR && elOwlR.value !== '' ? Number(elOwlR.value) : Number(s.owlRank);
-            let spRSekolahVal = elSpRSekolah && elSpRSekolah.value !== '' ? Number(elSpRSekolah.value) : Number(s.spRank);
+            let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
             
             let rBonus = 0;
             // OWL Bonus (Any valid rank gets the bonus)
             if (owlRVal > 0) rBonus += 15;
             
             // SP Bonus (Any valid School Rank gets the bonus)
-            if (spRSekolahVal > 0) rBonus += 15;
+            if (spRVal > 0) rBonus += 15;
 
             // Revised calculation formula
             let total = (sum * 3) + (att * 5) + (gms * 10) + (schc * 5) + (add * 10) + rBonus;
@@ -635,13 +639,11 @@
                 `;
 
                 let minSpVal = s.minSp !== undefined && s.minSp !== '' ? s.minSp : 600;
-                let spRankAsramaVal = s.spRankAsrama !== undefined && s.spRankAsrama !== null ? s.spRankAsrama : '';
                 spBody.innerHTML += `
                     <tr class="${rClass}">
                         <td class="vault-tag">${s.vault}</td>
                         <td>${infoHTML}</td>
-                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" placeholder="Schl Rank" oninput="recalcPoints('${s.vault}')"></td>
-                        <td><input type="number" id="spRankAsrama_${s.vault}" value="${spRankAsramaVal}" class="inline-inp" placeholder="Dorm Rank"></td>
+                        <td><input type="number" id="spRank_${s.vault}" value="${s.spRank}" class="inline-inp" placeholder="Rank" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="spScore_${s.vault}" value="${s.spScore}" class="inline-inp" placeholder="Score" oninput="recalcPoints('${s.vault}')"></td>
                         <td><input type="number" id="minSp_${s.vault}" value="${minSpVal}" class="inline-inp" style="background:#ffebee; border-color:#ffcdd2; color:#c62828;" title="Edit if student is on Hiatus"></td>
                         <td>${btnHtml}</td>
@@ -677,7 +679,6 @@
             let elOwlS = document.getElementById(`owlScore_${vault}`);
             
             let elSpR = document.getElementById(`spRank_${vault}`);
-            let elSpRAsrama = document.getElementById(`spRankAsrama_${vault}`);
             let elSpS = document.getElementById(`spScore_${vault}`);
             let elMinSp = document.getElementById(`minSp_${vault}`);
             let elHiatus = document.getElementById(`hiatus_${vault}`);
@@ -685,8 +686,7 @@
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
             
             let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\|/g, '') : s.hiatusDates;
-            let asramaVal = elSpRAsrama ? elSpRAsrama.value : (s.spRankAsrama || '');
-            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal + "|||" + asramaVal;
+            let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal;
 
             let cleanMonthStr = document.getElementById('monthSelector').value.split('(')[0].trim();
 
