@@ -1052,7 +1052,7 @@
                 summaries: Math.max(0, parseInt(document.getElementById('sumAct_'+vault).value) || 0), // UPDATE SUMMARIES DARI TABEL 1
                 sumStat: act.sumStat,
                 notes: notesContent, 
-                lockSync: true 
+                lockSync: false // DIUBAH KE FALSE AGAR TIDAK MENGUNCI DATA FORM
             };
 
             var btn = document.getElementById('btnAct_'+vault);
@@ -1100,7 +1100,7 @@
                 summaries: Math.max(0, parseInt(document.getElementById('sum_'+vault).value) || 0),
                 sumStat: act.sumStat, 
                 notes: act.notes,
-                lockSync: true 
+                lockSync: false // DIUBAH KE FALSE AGAR TIDAK MENGUNCI DATA FORM
             };
 
             var btn = document.getElementById('btnSum_'+vault);
@@ -1562,7 +1562,7 @@
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
                 notes: act.notes, 
-                lockSync: true 
+                lockSync: false // DIUBAH KE FALSE AGAR TIDAK MENGUNCI DATA FORM
             };
             
             var btn = document.getElementById('btnSaveAct'); 
@@ -1614,7 +1614,7 @@
             var payload = { 
                 status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: act.summaries, 
                 sumStat: sStat, 
-                lockSync: true 
+                lockSync: false // DIUBAH KE FALSE AGAR TIDAK MENGUNCI DATA FORM
             };
             
             var btn = document.getElementById('btnSaveSum'); 
