@@ -349,7 +349,7 @@
 
         function navigateHome() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-            var targetPage = 'headhouse'; // Default
+            var targetPage = 'headhouse';
 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -643,12 +643,16 @@
             });
         }
 
+        // ==========================================
+        // RENDER TABS UTAMA
+        // ==========================================
         function renderTabs() {
             try {
                 document.getElementById('categoryTabs').style.display = 'flex';
                 var container = document.getElementById('tabContainer');
                 container.innerHTML = '';
 
+                // 1. TAB PENDING MAPPING DENGAN TOMBOL REJECT
                 var unList = libraryDataStore.unassigned || [];
                 document.getElementById('unassignedCount').innerText = unList.length;
                 var unHtml = '';
@@ -659,13 +663,18 @@
                         var safeL = safeLink(item.link);
                         var encL = encodeURIComponent(item.link); 
                         var roomName = item.room || "Unknown Room"; 
+                        var currentStatStr = item.currentStatuses || 'Pending,Pending,Pending,Pending';
+
                         unHtml += `
                             <tr>
                                 <td><span style="font-weight:bold; color:gray;">${idx + 1}</span></td>
                                 <td><span style="font-weight:bold; color:var(--royal-blue); background:#e8eaf6; padding:3px 8px; border-radius:4px; font-size:11px;">🏠 ${roomName}</span></td>
                                 <td><a href="${safeL}" target="_blank" class="link-icon" style="padding:4px 8px; display:inline-block;">📄 Open File</a></td>
                                 <td style="text-align:center;">
-                                    <button class="btn-primary" data-link="${encL}" onclick="openMappingModal(this)">🔗 Assign Subject</button>
+                                    <div style="display:flex; gap:5px; justify-content:center;">
+                                        <button class="btn-primary" data-link="${encL}" onclick="openMappingModal(this)">🔗 Assign Subject</button>
+                                        <button class="btn-manage" style="background-color: var(--danger); color: white;" onclick="rejectPendingLink('${item.vault}', ${item.linkIndex}, '${currentStatStr}')">❌ Reject</button>
+                                    </div>
                                 </td>
                             </tr>
                         `;
@@ -735,6 +744,7 @@
                 renderLevelTable('Beginner', 'tab-Beginner');
                 renderLevelTable('Advanced', 'tab-Advanced');
 
+                // 3. RENDER MATERI TAMBAHAN
                 let matTbody = '';
                 let matData = libraryDataStore.materials || [];
                 
@@ -776,10 +786,10 @@
                 var divMat = document.createElement('div');
                 divMat.className = 'tab-content';
                 divMat.id = 'tab-Materi';
-                divMat.innerHTML = `<div class="box-section"><h4>📚 Materials, QnA, & Question Blueprint</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material, Q&A, & Question Blueprint Links (Up to 10)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
+                divMat.innerHTML = `<div class="box-section"><h4>📚 Materials, QnA, & Question Blueprint (25 Subjects)</h4><div class="table-container"><table><thead><tr><th style="width:40px;">No.</th><th style="width:200px;">Subject & Level</th><th>Material, Q&A, & Question Blueprint Links (Up to 10)</th><th style="text-align:center; width:100px;">Action</th></tr></thead><tbody>${matTbody}</tbody></table></div></div>`;
                 container.appendChild(divMat);
 
-                // 4. RENDER GRAND SUMMARY (DENGAN 2 KOLOM NOTES) & FINAL SUMMARY (DENGAN 1 KOLOM NOTES)
+                // 4. RENDER GRAND SUMMARY
                 let gsTbody = '';
                 let gsData = libraryDataStore.grandSummaries || {};
                 
@@ -900,6 +910,33 @@
                 console.error(e);
                 document.getElementById('tabContainer').innerHTML = `<div style="padding: 20px; font-weight:bold; color:var(--danger);">❌ UI Render Error: ${e.message}</div>`;
             }
+        }
+
+        function rejectPendingLink(vault, linkIndex, currentStatStr) {
+            if(!confirm("Reject this summary link?\n\nThe link will be removed from the Mapping queue and its status will be changed to 'Rejected' with an automatic rejection note in the Active Room.")) return;
+            
+            var month = document.getElementById('monthSelector').value;
+            var week = document.getElementById('weekSelector').value;
+            
+            var payloadStr = JSON.stringify({
+                isReject: true, month: month, week: week, vault: vault, linkIndex: linkIndex, currentStatuses: currentStatStr
+            });
+
+            showToast("Menolak link...", "info");
+            
+            fetch(API_URL, {
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "deleteLibraryMapping", rowIdx: payloadStr })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === 'success' || res.success) {
+                    showToast("✅ Link berhasil ditolak!", "success");
+                    fetchLibraryData(); 
+                } else {
+                    showToast("❌ Gagal menolak: " + res.message, "error");
+                }
+            }).catch(e => { showToast("❌ Connection Error", "error"); });
         }
 
         // ===============================================
