@@ -511,6 +511,9 @@
         .badge-pending { color: #f57f17; font-size: 9px; border: 1px solid #f57f17; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
         .badge-approved { color: var(--success); font-size: 9px; border: 1px solid var(--success); padding: 1px 4px; border-radius: 3px; font-weight: bold;}
         
+        /* NEW BADGE STYLING FOR REJECTED SUMMARIES */
+        .badge-rejected { color: var(--danger); font-size: 9px; border: 1px solid var(--danger); background-color: #ffebee; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
+        
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s; margin-top: 2px;}
         .btn-icon:hover { transform: scale(1.2); }
 
@@ -737,12 +740,12 @@
                 <div><b>Student:</b> <span id="adjSumVault"></span> - <span id="adjSumUsername"></span></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Link 1 Status</label><select id="adjSumStat1"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
-                <div class="form-group"><label>Link 2 Status</label><select id="adjSumStat2"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
+                <div class="form-group"><label>Link 1 Status</label><select id="adjSumStat1"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
+                <div class="form-group"><label>Link 2 Status</label><select id="adjSumStat2"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Link 3 Status</label><select id="adjSumStat3"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
-                <div class="form-group"><label>Link 4 Status</label><select id="adjSumStat4"><option value="Pending">Pending</option><option value="Approved">Approved</option></select></div>
+                <div class="form-group"><label>Link 3 Status</label><select id="adjSumStat3"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
+                <div class="form-group"><label>Link 4 Status</label><select id="adjSumStat4"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
             </div>
             <div class="modal-actions"><button class="btn-cancel" onclick="closeAdjustSumModal()">Cancel</button><button class="btn-submit" onclick="saveSummariesApproval()" id="btnSaveSum">Save Links</button></div>
         </div>
@@ -1180,7 +1183,6 @@
                             var loaText = act.status === 'Leave of Absence' ? loaLabel : (act.formStatus === 'Pending' && !act.lockSync ? '<span class="status-pending">Pending Data</span>' : '<span class="status-active">Active</span>');
                             var wlBadge = s.wl ? '<span class="wl-badge" title="Warning Letter">WL: ' + s.wl + '</span>' : '';
 
-                            // TEXT YANG OTOMATIS WRAP TAPI RAPI
                             var excTextDisp = act.excusedText;
                             if(excTextDisp && excTextDisp !== '0' && excTextDisp !== String(act.excused)) { 
                                 excTextDisp = '<div style="font-size:9px; color:gray; width:130px; white-space:pre-wrap; margin-top:6px; line-height:1.4;">' + excTextDisp.replace(/\n/g, '<br>') + '</div>'; 
@@ -1188,7 +1190,6 @@
                                 excTextDisp = ''; 
                             }
 
-                            // KOTAK NOTES BUNGLON: Tampil penuh saat tertutup, dan berbentuk box input saat diklik
                             var notInp = isInactive ? 
                                 `<div style="font-size:10px; color:gray; width:140px; white-space:pre-wrap; padding:4px;">${act.notes || '-'}</div>` : 
                                 `<div id="not_${s.vault}" contenteditable="true" class="editable-notes" placeholder="...">` + (act.notes || '') + `</div>`;
@@ -1198,8 +1199,6 @@
                             var excInp = isInactive ? act.excused : `<input type="number" id="exc_${s.vault}" value="${act.excused}" class="inline-inp" style="background:#fff3e0; border-color:#ffe0b2;">`;
                             var freeInp = isInactive ? act.freeClass : `<input type="number" id="free_${s.vault}" value="${act.freeClass}" class="inline-inp" style="background:#e3f2fd; border-color:#bbdefb;">`;
                             var repInp = isInactive ? act.replacements : `<input type="number" id="rep_${s.vault}" value="${act.replacements}" class="inline-inp" style="background:#f3e5f5; border-color:#e1bee7;">`;
-                            
-                            // INPUT SUMMARIES DI BOX 1
                             var sumInpAct = isInactive ? act.summaries : `<input type="number" id="sumAct_${s.vault}" value="${act.summaries}" class="inline-inp" style="background:#f3e5f5; border-color:#e1bee7; color:#6a1b9a;">`;
 
                             var fsSelect = isInactive ? act.formStatus : `
@@ -1219,7 +1218,6 @@
                                 </div>
                             `;
 
-                            // TAMPILAN BADGE STAFF (HANYA UNTUK LEADROOM JIKA ADA)
                             let staffBadgesHtml = '';
                             if (s.staffPositions && s.staffPositions.length > 0) {
                                 s.staffPositions.forEach(staff => {
@@ -1277,8 +1275,13 @@
                             var linkCols = '';
                             for(var j=0; j<4; j++) {
                                 var lnk = act.sumLinks[j]; 
-                                var stat = sumStatuses[j] || 'Pending'; 
-                                var badgeClass = stat === 'Approved' ? 'badge-approved' : 'badge-pending';
+                                var rawStat = sumStatuses[j] ? sumStatuses[j].trim() : 'Pending'; 
+                                var stat = rawStat.charAt(0).toUpperCase() + rawStat.slice(1).toLowerCase();
+                                
+                                var badgeClass = 'badge-pending';
+                                if (stat === 'Approved' || stat === 'Acc') badgeClass = 'badge-approved';
+                                else if (stat === 'Rejected') badgeClass = 'badge-rejected';
+
                                 if(lnk && lnk.toString().trim().length > 4) { 
                                     var safeLnk = lnk.toString().trim().indexOf('http') === 0 ? lnk : 'https://' + lnk; 
                                     linkCols += '<td style="vertical-align:top; padding-top:10px;"><div style="margin-bottom:3px;"><span class="' + badgeClass + '">' + stat + '</span></div><a href="'+safeLnk+'" target="_blank" class="link-icon">Open Link</a></td>'; 
@@ -1296,10 +1299,20 @@
                             `;
 
                             let displayName = s.fullName && s.fullName !== '-' ? s.fullName : s.username;
+                            
+                            // MENAMPILKAN CATATAN REJECTED DI TAB SUMMARIES
+                            let rejectedNotes = '';
+                            if (act.notes && act.notes.toLowerCase().indexOf('rejected') > -1) {
+                                var noteLines = act.notes.split('\n');
+                                var rejLines = noteLines.filter(function(line) { return line.toLowerCase().indexOf('rejected') > -1; });
+                                if(rejLines.length > 0) {
+                                    rejectedNotes = `<div style="margin-top:6px; font-size:9px; color:var(--danger); background:#ffebee; border:1px dashed #ef9a9a; border-radius:4px; padding:4px; line-height:1.4;">${rejLines.join('<br>')}</div>`;
+                                }
+                            }
 
                             roomSumHtml += `<tr class="${trClass}">
                                 <td class="vault-tag" style="vertical-align:top; padding-top:10px;">${s.vault}</td>
-                                <td style="vertical-align:top; padding-top:10px; white-space:normal; min-width:150px;"><b>${displayName}</b></td>
+                                <td style="vertical-align:top; padding-top:10px; white-space:normal; min-width:150px;"><b>${displayName}</b>${rejectedNotes}</td>
                                 <td style="vertical-align:top; padding-top:10px;">${sumInp}</td>
                                 <td style="vertical-align:top; padding-top:10px;"><div style="font-size:9px; white-space:normal; min-width:80px;">${act.sumAuror}</div></td>
                                 <td style="vertical-align:top; padding-top:10px;"><div style="font-size:9px; white-space:normal; min-width:80px;">${act.sumMinistry}</div></td>
@@ -1562,7 +1575,7 @@
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
                 notes: act.notes, 
-                lockSync: true // Diubah ke TRUE agar hasil edit manual tersimpan
+                lockSync: true 
             };
             
             var btn = document.getElementById('btnSaveAct'); 
@@ -1599,10 +1612,17 @@
             document.getElementById('adjSumUsername').innerText = student.username;
             var act = student.activity; 
             var stats = (act.sumStat || 'Pending,Pending,Pending,Pending').split(','); 
-            document.getElementById('adjSumStat1').value = stats[0] || 'Pending'; 
-            document.getElementById('adjSumStat2').value = stats[1] || 'Pending'; 
-            document.getElementById('adjSumStat3').value = stats[2] || 'Pending'; 
-            document.getElementById('adjSumStat4').value = stats[3] || 'Pending';
+            
+            var getStat = function(idx) {
+                var s = stats[idx] ? stats[idx].trim() : 'Pending';
+                s = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+                return ['Pending','Approved','Rejected'].includes(s) ? s : 'Pending';
+            };
+
+            document.getElementById('adjSumStat1').value = getStat(0); 
+            document.getElementById('adjSumStat2').value = getStat(1); 
+            document.getElementById('adjSumStat3').value = getStat(2); 
+            document.getElementById('adjSumStat4').value = getStat(3);
         }
        
         function closeAdjustSumModal() { document.getElementById('adjustSumModal').style.display = 'none'; }
@@ -1614,7 +1634,7 @@
             var payload = { 
                 status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: act.summaries, 
                 sumStat: sStat, 
-                lockSync: true // Diubah ke TRUE agar hasil edit manual tersimpan
+                lockSync: true 
             };
             
             var btn = document.getElementById('btnSaveSum'); 
