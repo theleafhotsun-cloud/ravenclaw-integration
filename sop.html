@@ -99,33 +99,22 @@
 
             <!-- TAB CONTENT: HEAD OF HOUSE -->
             <div id="tabHH" class="tab-content">
-                <div class="native-doc-container" id="docContentHH">
-                    <div style="text-align: center; color: gray; padding: 40px;">⏳ Loading document contents from database...</div>
-                </div>
+                <div class="native-doc-container" id="docContentHH"></div>
             </div>
 
             <!-- TAB CONTENT: P-VP -->
             <div id="tabPVP" class="tab-content">
-                <div class="native-doc-container">
-                    <h3 style="color:var(--royal-blue); margin-top:0;">Prefect & Vice Prefect Master Guidelines</h3>
-                    <p style="color:gray;">Operational duties, disciplinary actions, and supervision protocols for P-VP will be rendered here natively.</p>
-                </div>
+                <div class="native-doc-container" id="docContentPVP"></div>
             </div>
 
             <!-- TAB CONTENT: LEADROOM -->
             <div id="tabLR" class="tab-content">
-                <div class="native-doc-container">
-                    <h3 style="color:var(--royal-blue); margin-top:0;">Leadroom Standard Workflows</h3>
-                    <p style="color:gray;">Weekly summaries evaluation, room management, and automated mapping guides will be rendered here natively.</p>
-                </div>
+                <div class="native-doc-container" id="docContentLR"></div>
             </div>
 
             <!-- TAB CONTENT: EDITOR -->
             <div id="tabEditor" class="tab-content">
-                <div class="native-doc-container">
-                    <h3 style="color:var(--royal-blue); margin-top:0;">Editor & Creative Design Protocols</h3>
-                    <p style="color:gray;">Poster templates, branding guidelines, and announcement publishing rules will be rendered here natively.</p>
-                </div>
+                <div class="native-doc-container" id="docContentEditor"></div>
             </div>
 
             <!-- FOOTER KONSISTEN -->
@@ -137,7 +126,6 @@
     </div>
 
     <script>
-        // MASUKKAN API URL KAMU DI SINI (Contoh: https://script.google.com/macros/s/AKfy.../exec)
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -145,28 +133,37 @@
         
         if (!loggedInUser) { window.location.href = "index.html"; }
 
+        var loadedTabs = {};
+
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
             setupDynamicSidebar();
             setupRoleBasedTabs();
-            loadSopData();
         });
 
-        function loadSopData() {
+        // FUNGSI TARIK DATA DARI SPREADSHEET
+        function loadSopData(tabId, sheetName) {
+            var targetId = tabId.replace('tab', '');
+            var container = document.getElementById('docContent' + targetId);
+            if (!container) return;
+
+            container.innerHTML = `<div style="text-align: center; color: gray; padding: 40px;">⏳ Pulling SOP data from Spreadsheet (${sheetName})...</div>`;
+
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: "getSopDocumentContent" }) // Menggunakan Rute Resmi dan Bersih
+                body: JSON.stringify({ action: "getSopData", sheetName: sheetName })
             })
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'success' || res.success) {
-                    document.getElementById('docContentHH').innerHTML = res.content;
+                    container.innerHTML = res.content || '<div style="text-align: center; color: gray; padding: 40px;">Document is empty.</div>';
+                    loadedTabs[tabId] = true;
                 } else {
-                    document.getElementById('docContentHH').innerHTML = `<div style="color:red; text-align:center;">Failed to load document: ${res.message}</div>`;
+                    container.innerHTML = `<div style="color:red; text-align:center;">Failed to load document: ${res.message}</div>`;
                 }
             })
             .catch(err => {
-                document.getElementById('docContentHH').innerHTML = `<div style="color:red; text-align:center;">Connection Error: Please authorize the script to read Google Docs.</div>`;
+                container.innerHTML = `<div style="color:red; text-align:center;">Connection Error. Please check your internet or API url.</div>`;
             });
         }
 
@@ -264,6 +261,19 @@
             if(targetContent) {
                 targetContent.classList.add('active');
                 targetContent.style.display = 'flex';
+            }
+
+            // OTOMATIS TARIK DATA SAAT TAB DIKLIK
+            if (!loadedTabs[tabId]) {
+                var sheetName = "";
+                if (tabId === 'tabHH') sheetName = "Pedoman_Headhouse";
+                else if (tabId === 'tabPVP') sheetName = "Pedoman_PVP";
+                else if (tabId === 'tabLR') sheetName = "Pedoman_Leadroom";
+                else if (tabId === 'tabEditor') sheetName = "Pedoman_Editor";
+
+                if (sheetName) {
+                    loadSopData(tabId, sheetName);
+                }
             }
         }
 
