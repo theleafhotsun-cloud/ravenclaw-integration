@@ -130,20 +130,21 @@
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
-            const allMenus = [
+             const allMenus = [
                 { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
+                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
                 { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
-                { id: 'menu-sop', label: 'Documents & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
+                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
                 { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
                 { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
-                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
-                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
-                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
-                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
-                { id: 'menu-studentdb', label: 'Student Database', action: "navigate('studentdb')" },
                 { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
                 { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
-                { id: 'menu-roster', label: 'Student Roster', action: "navigate('roster')" }
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
             ];
 
             let allowedMenuIds = [];
