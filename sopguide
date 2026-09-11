@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOP & Guidelines - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --info: #0277bd; --warning: #f57c00;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative;}
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0;}
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        .content-area { padding: 25px 30px; display: block; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 20px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 24px;}
+        
+        .sop-banner { background-color: #fffde7; border-left: 4px solid var(--warning); padding: 12px 15px; margin-bottom: 20px; font-size: 12px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
+
+        /* TAB STYLING */
+        .tabs-container { display: flex; gap: 5px; border-bottom: 2px solid var(--shellstone); margin-bottom: 20px; flex-wrap: wrap;}
+        .tab-btn { background-color: #f0f0f0; border: none; padding: 12px 24px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.3s; display: none; }
+        .tab-btn.active { background-color: var(--royal-blue); color: white; border-bottom: 2px solid var(--sapphire); }
+        .tab-btn:hover:not(.active) { background-color: #e0e0e0; color: var(--royal-blue); }
+        
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; height: calc(100% - 150px); display: flex; flex-direction: column;}
+        .tab-content.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* IFRAME CONTAINER */
+        .doc-header-info { margin-bottom: 15px; }
+        .doc-header-info h3 { margin: 0 0 5px 0; color: var(--royal-blue); font-size: 18px; }
+        .doc-header-info p { margin: 0; font-size: 12px; color: gray; }
+
+        .iframe-container {
+            flex-grow: 1;
+            width: 100%;
+            min-height: 60vh;
+            border: 2px solid var(--shellstone);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fafafa;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .btn-external { display: inline-flex; align-items: center; gap: 5px; background-color: var(--sapphire); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: bold; margin-top: 10px; transition: 0.3s;}
+        .btn-external:hover { background-color: var(--royal-blue); }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="usernameDisplay">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">📚 Standard Operating Procedures & Guidelines</h1>
+            </div>
+
+            <div class="sop-banner">
+                <b>📌 DOCUMENT ACCESS & CONFIDENTIALITY:</b><br>
+                Welcome to the Ravenclaw House central document repository. The guidelines provided here outline the governance, authorities, and detailed workflows for each division. These documents are <b>strictly for authorized personnel only</b>. 
+            </div>
+
+            <!-- TAB BUTTONS -->
+            <div class="tabs-container">
+                <button id="tabBtn-HH" class="tab-btn" onclick="openTab('tabHH')">👑 Head of House</button>
+                <button id="tabBtn-PVP" class="tab-btn" onclick="openTab('tabPVP')">🛡️ Prefect & VP</button>
+                <button id="tabBtn-LR" class="tab-btn" onclick="openTab('tabLR')">📚 Leadroom</button>
+                <button id="tabBtn-Editor" class="tab-btn" onclick="openTab('tabEditor')">🎨 Editor</button>
+            </div>
+
+            <!-- TAB CONTENT: HEAD OF HOUSE -->
+            <div id="tabHH" class="tab-content">
+                <div class="doc-header-info">
+                    <h3>Head of House Governance, Authority, and Responsibilities</h3>
+                    <p>Pedoman Tata Kelola, Wewenang, dan Tanggung Jawab Head of House.</p>
+                    <a href="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit?tab=t.98c6yr9bcong" target="_blank" class="btn-external">↗️ Open in Google Docs</a>
+                </div>
+                <div class="iframe-container">
+                    <!-- Menggunakan parameter ?rm=minimal agar bar menu Google Docs tersembunyi dan terlihat bersih -->
+                    <iframe src="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit?rm=minimal&tab=t.98c6yr9bcong"></iframe>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: P-VP -->
+            <div id="tabPVP" class="tab-content" style="display:none;">
+                <div class="doc-header-info">
+                    <h3>Prefect & Vice Prefect Master Guidelines</h3>
+                    <p>General operational duties, disciplinary actions, and supervision protocols for P-VP.</p>
+                    <a href="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit" target="_blank" class="btn-external">↗️ Open in Google Docs</a>
+                </div>
+                <div class="iframe-container">
+                    <!-- Ganti link src di bawah ini dengan dokumen khusus PVP nanti -->
+                    <iframe src="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit?rm=minimal"></iframe>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: LEADROOM -->
+            <div id="tabLR" class="tab-content" style="display:none;">
+                <div class="doc-header-info">
+                    <h3>Leadroom Standard Workflows</h3>
+                    <p>Weekly summaries evaluation, room management, and automated mapping guides.</p>
+                    <a href="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit" target="_blank" class="btn-external">↗️ Open in Google Docs</a>
+                </div>
+                <div class="iframe-container">
+                    <!-- Ganti link src di bawah ini dengan dokumen khusus Leadroom nanti -->
+                    <iframe src="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit?rm=minimal"></iframe>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: EDITOR -->
+            <div id="tabEditor" class="tab-content" style="display:none;">
+                <div class="doc-header-info">
+                    <h3>Editor & Creative Design Protocols</h3>
+                    <p>Poster templates, branding guidelines, and announcement publishing rules.</p>
+                    <a href="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit" target="_blank" class="btn-external">↗️ Open in Google Docs</a>
+                </div>
+                <div class="iframe-container">
+                    <!-- Ganti link src di bawah ini dengan dokumen khusus Editor nanti -->
+                    <iframe src="https://docs.google.com/document/d/1j-XpIxvt6K5odh425eUad4TOAxDO9BryUwvQvFJraXI/edit?rm=minimal"></iframe>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+        
+        if (!loggedInUser) {
+            window.location.href = "index.html";
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('usernameDisplay').innerText = loggedInUser;
+            setupDynamicSidebar();
+            setupRoleBasedTabs();
+        });
+
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
+
+            const allMenus = [
+                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
+                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
+                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
+                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
+                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
+            ];
+
+            let allowedMenuIds = [];
+            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
+            else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+            else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+            else if (isEditor) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+
+            var sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.innerHTML = ''; 
+            allMenus.forEach(menu => {
+                if (allowedMenuIds.includes(menu.id)) {
+                    var li = document.createElement('li'); li.className = menu.id;
+                    var act = menu.id === 'menu-sop' ? ' class="active"' : '';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${act}>${menu.label}</a>`;
+                    sidebarMenu.appendChild(li);
+                }
+            });
+        }
+
+        function setupRoleBasedTabs() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom') || userRole.includes('lr');
+            var isEditor = userRole.includes('editor');
+
+            var btnHH = document.getElementById('tabBtn-HH');
+            var btnPVP = document.getElementById('tabBtn-PVP');
+            var btnLR = document.getElementById('tabBtn-LR');
+            var btnEditor = document.getElementById('tabBtn-Editor');
+
+            var firstAvailableTab = null;
+
+            if (isHH) {
+                btnHH.style.display = 'block'; btnPVP.style.display = 'block'; btnLR.style.display = 'block'; btnEditor.style.display = 'block';
+                firstAvailableTab = 'tabHH';
+            } 
+            else if (isPrefect) {
+                btnPVP.style.display = 'block';
+                firstAvailableTab = 'tabPVP';
+            }
+            else if (isLeadroom) {
+                btnLR.style.display = 'block';
+                firstAvailableTab = 'tabLR';
+            }
+            else if (isEditor) {
+                btnEditor.style.display = 'block';
+                firstAvailableTab = 'tabEditor';
+            }
+
+            if (firstAvailableTab) {
+                openTab(firstAvailableTab);
+            } else {
+                document.querySelector('.tabs-container').innerHTML = '<div style="color:var(--danger); font-weight:bold;">No SOP assigned for your role.</div>';
+            }
+        }
+
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.display = 'none';
+            });
+            
+            var activeBtn = document.querySelector(`[onclick="openTab('${tabId}')"]`);
+            if(activeBtn) activeBtn.classList.add('active');
+            
+            var targetContent = document.getElementById(tabId);
+            if(targetContent) {
+                targetContent.classList.add('active');
+                targetContent.style.display = 'flex';
+            }
+        }
+
+        function navigateHome() {
+            var targetPage = 'headhouse';
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + '-dashboard.html';
+        }
+
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    </script>
+</body>
+</html>
