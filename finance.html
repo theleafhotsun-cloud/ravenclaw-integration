@@ -132,8 +132,9 @@
                 <div class="btn-group">
                     <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
-                    <!-- UPDATED BUTTON LABEL -->
-                    <button class="btn-export btn-hof" onclick="openRankPreview('HOF_REWARDS')">🏆 Preview Top Rank O.W.L & SP Rewards</button>
+                    <!-- SEPARATED BUTTONS FOR HOF AND SCHOOL REWARDS -->
+                    <button class="btn-export btn-hof" onclick="openRankPreview('HOF_REWARDS')">🏆 Preview HoF Rewards</button>
+                    <button class="btn-export" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;" onclick="openRankPreview('SCHOOL_REWARDS')">🎓 Preview School Ranks Rewards</button>
                     <button class="btn-export btn-spfines" onclick="openRankPreview('SP_FINES')">⚠️ Preview SP Fines</button>
                     <button class="btn-export btn-sp-format" onclick="openSpReportFormatModal()">📜 Preview SP Exam Reports</button>
                     
@@ -187,22 +188,14 @@
         </div>
     </div>
 
-    <!-- MODAL KHUSUS RANKING (HOF REWARDS & SP FINES) -->
+    <!-- MODAL KHUSUS RANKING (HOF REWARDS, SCHOOL REWARDS, & SP FINES) -->
     <div class="modal-overlay" id="rankModal">
         <div class="modal-box">
-            <h3 id="rankModalTitle">🏆 Rank O.W.L & SP Rewards Preview</h3>
+            <h3 id="rankModalTitle">🏆 Rewards Preview</h3>
             
             <div id="rankLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Compiling Rank Data... Please wait.</div>
             
             <div id="rankContent" style="display:none; flex-direction:column; flex-grow:1; overflow:hidden;">
-                
-                <div id="bestRoomContainer" style="display:flex; align-items:center; gap:10px; margin-bottom:15px; background:#fff9c4; padding:10px; border-radius:6px; border:1px solid var(--warning);">
-                    <label style="font-size:12px; font-weight:bold; color:var(--royal-blue);">🛡️ Assign Best Room (1000G) to Leadroom VC:</label>
-                    <select id="bestRoomVcSelect" style="padding:5px; border-radius:4px; border:1px solid #ccc; font-family:monospace; font-size:12px; outline:none;" onchange="buildRankPreviewTable()">
-                        <option value="">-- Select Leadroom VC --</option>
-                    </select>
-                </div>
-
                 <div class="preview-table-container" style="max-height: 50vh;">
                     <table id="rankTable">
                         <thead id="rankThead">
@@ -520,7 +513,11 @@
             document.getElementById('rankLoading').style.display = 'block';
             document.getElementById('rankContent').style.display = 'none';
 
-            let titleStr = type === 'HOF_REWARDS' ? "🏆 Rank O.W.L & SP Rewards Preview" : "⚠️ SP Fines Preview";
+            let titleStr = "Preview";
+            if (type === 'HOF_REWARDS') titleStr = "🏆 Hall of Fame Rewards Preview";
+            else if (type === 'SCHOOL_REWARDS') titleStr = "🎓 School Ranks (O.W.L & SP) Preview";
+            else titleStr = "⚠️ SP Fines Preview";
+            
             document.getElementById('rankModalTitle').innerText = titleStr;
 
             if (rankDataCache.length === 0) {
@@ -539,21 +536,6 @@
                 }
             }
 
-            if (type === 'HOF_REWARDS') {
-                document.getElementById('bestRoomContainer').style.display = 'flex';
-                let sel = document.getElementById('bestRoomVcSelect');
-                if (sel.options.length <= 1) { 
-                    let sorted = [...rankDataCache].sort((a,b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
-                    sorted.forEach(s => {
-                        if (!s.isInactive) {
-                            sel.innerHTML += `<option value="${s.vault}">${s.vault} - ${s.name}</option>`;
-                        }
-                    });
-                }
-            } else {
-                document.getElementById('bestRoomContainer').style.display = 'none';
-            }
-
             buildRankPreviewTable();
             document.getElementById('rankLoading').style.display = 'none';
             document.getElementById('rankContent').style.display = 'flex';
@@ -570,8 +552,8 @@
                 if (!rankAggregator[v]) rankAggregator[v] = { vault: v, total: 0, details: [] };
                 rankAggregator[v].total += amt;
                 
-                let color = currentRankDownloadType === 'HOF_REWARDS' ? 'var(--success)' : 'var(--danger)';
-                let sign = currentRankDownloadType === 'HOF_REWARDS' ? '+' : '-';
+                let color = currentRankDownloadType === 'SP_FINES' ? 'var(--danger)' : 'var(--success)';
+                let sign = currentRankDownloadType === 'SP_FINES' ? '-' : '+';
                 rankAggregator[v].details.push(`<span style="color:${color}; font-weight:bold;">${desc} (${sign}ʛ${formatMoney(amt)})</span>`);
             }
 
@@ -581,7 +563,25 @@
                 let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
                 let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
 
-                let bestRoomVc = document.getElementById('bestRoomVcSelect').value;
+                // PERHITUNGAN BEST ROOM (DIBAGI RATA KE SELURUH ANGGOTA KAMAR)
+                let rooms = {};
+                rankDataCache.forEach(s => {
+                    let r = s.room;
+                    if(r && r !== '-' && r !== '' && !s.isInactive) {
+                        if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, memberCount: 0, members: [] };
+                        rooms[r].memberCount++;
+                        rooms[r].basePts += s.totalPoints;
+                        if(s.isLeadroom) rooms[r].lrPts += s.totalPoints;
+                        rooms[r].members.push(s);
+                    }
+                });
+                Object.keys(rooms).forEach(k => {
+                    let rm = rooms[k];
+                    if(rm.memberCount > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / rm.memberCount) * 100) / 100;
+                    else rm.finalPts = 0;
+                });
+                let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
+                let bestRoom = roomArr.length > 0 && roomArr[0].pts > 0 ? roomArr[0] : null;
 
                 rankDataCache.forEach(s => {
                     if (s.isInactive) return;
@@ -589,19 +589,23 @@
                     if (s.award === 'Alpha') addRecord(s.vault, 500, 'Alpha of The Month');
                     if (s.award === 'Aquilae') addRecord(s.vault, 500, 'Aquilae of The Month');
                     
-                    // PENYESUAIAN REWARD RANK O.W.L & SP DARI SEKOLAH
-                    if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, 300, `Rank O.W.L (#${s.owlRank})`);
-                    if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, 300, `Rank SP (#${s.spRank})`);
-                    
                     if (gamers.some(g => g.vault === s.vault)) {
                         addRecord(s.vault, gamerReward, 'Gamers of The Month');
                     }
 
-                    if (bestRoomVc && s.vault === bestRoomVc) {
-                        addRecord(s.vault, 1000, 'Best Room Reward (Leadroom)');
+                    if (bestRoom && bestRoom.members.some(m => m.vault === s.vault)) {
+                        let splitRoomReward = Math.floor(1000 / bestRoom.memberCount);
+                        addRecord(s.vault, splitRoomReward, `Best Room Reward (${bestRoom.room})`);
                     }
                 });
             } 
+            else if (currentRankDownloadType === 'SCHOOL_REWARDS') {
+                rankDataCache.forEach(s => {
+                    if (s.isInactive) return;
+                    if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, 300, `Rank O.W.L (#${s.owlRank})`);
+                    if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, 300, `Rank SP (#${s.spRank})`);
+                });
+            }
             else if (currentRankDownloadType === 'SP_FINES') {
                 rankDataCache.forEach(s => {
                     if (s.isInactive || s.grade === 'G7') return;
@@ -618,13 +622,14 @@
             let thead = document.getElementById('rankThead');
             tbody.innerHTML = '';
             
-            let amountTitle = currentRankDownloadType === 'HOF_REWARDS' ? 'Reward Amount' : 'Fine Amount';
+            let amountTitle = currentRankDownloadType === 'SP_FINES' ? 'Fine Amount' : 'Reward Amount';
             thead.innerHTML = `<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>${amountTitle}</th><th>Details</th></tr>`;
             
             let sortedVaults = Object.keys(rankAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
             
             if (sortedVaults.length === 0) {
-                let emptyMsg = currentRankDownloadType === 'HOF_REWARDS' ? 'No school ranks or rewards recorded yet.' : 'All active students met their Min SP! 🎉';
+                let emptyMsg = 'No rewards or fines assigned yet.';
+                if (currentRankDownloadType === 'SP_FINES') emptyMsg = 'All active students met their Min SP! 🎉';
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:gray; padding:20px;">${emptyMsg}</td></tr>`;
                 return;
             }
@@ -635,8 +640,8 @@
                 if (data.total <= 0) return;
 
                 let tr = document.createElement('tr');
-                let colorClass = currentRankDownloadType === 'HOF_REWARDS' ? 'color:var(--success);' : 'color:var(--danger);';
-                let sign = currentRankDownloadType === 'HOF_REWARDS' ? '+' : '-';
+                let colorClass = currentRankDownloadType === 'SP_FINES' ? 'color:var(--danger);' : 'color:var(--success);';
+                let sign = currentRankDownloadType === 'SP_FINES' ? '-' : '+';
 
                 tr.innerHTML = `
                     <td style="text-align:center;">${counter++}</td>
@@ -902,8 +907,11 @@
             var today = new Date();
             var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
 
-            // PENYESUAIAN JUDUL LAPORAN REWARD SP & OWL
-            var subjectStr = currentRankDownloadType === 'HOF_REWARDS' ? "Top Rank O.W.L & SP Rewards - " + monthLabel : "SP Fines - " + monthLabel;
+            var subjectStr = "";
+            if (currentRankDownloadType === 'HOF_REWARDS') subjectStr = "Hall of Fame Rewards - " + monthLabel;
+            else if (currentRankDownloadType === 'SCHOOL_REWARDS') subjectStr = "School Ranks Rewards - " + monthLabel;
+            else subjectStr = "SP Fines - " + monthLabel;
+
             var tAmount = 0;
 
             var tableHtml = `
@@ -928,8 +936,8 @@
 
                 tAmount += data.total;
                 
-                let colorClass = currentRankDownloadType === 'HOF_REWARDS' ? 'color:#2e7d32;' : 'color:#c62828;';
-                let sign = currentRankDownloadType === 'HOF_REWARDS' ? '+' : '-';
+                let colorClass = currentRankDownloadType === 'SP_FINES' ? 'color:#c62828;' : 'color:#2e7d32;';
+                let sign = currentRankDownloadType === 'SP_FINES' ? '-' : '+';
                 let bgColor = currentRankDownloadType === 'SP_FINES' ? 'background-color: #ffebee;' : '';
 
                 tableHtml += `
@@ -946,7 +954,7 @@
             var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
             footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
             
-            if (currentRankDownloadType === 'HOF_REWARDS') {
+            if (currentRankDownloadType === 'HOF_REWARDS' || currentRankDownloadType === 'SCHOOL_REWARDS') {
                 footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tAmount)} from Ravenclaw's Petty Cash</td></tr>`;
             } else {
                 footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Total SP Fines Collected</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tAmount)} to Ravenclaw's Petty Cash</td></tr>`;
