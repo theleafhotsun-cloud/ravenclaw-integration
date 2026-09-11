@@ -72,45 +72,74 @@
         .doc-header-logo h2 { margin: 0 0 5px 0; color: var(--royal-blue); font-size: 22px; font-weight: 800; letter-spacing: 1px; font-family: 'Segoe UI', Tahoma, sans-serif;}
         .doc-header-logo p { margin: 0; color: gray; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Segoe UI', Tahoma, sans-serif;}
 
-        /* DOCUMENT TEXT ELEMENTS */
+        /* ========================================= */
+        /* PENGATURAN SPASI & JUSTIFY KETAT          */
+        /* ========================================= */
+        
         .doc-main-title { 
-            font-size: 18px; font-weight: bold; color: var(--royal-blue); 
-            text-align: center; margin: 30px 0 25px 0; 
-            text-transform: uppercase; text-decoration: underline; 
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 20px; font-weight: bold; color: var(--royal-blue); 
+            text-align: center; margin: 0 0 15px 0; 
+            text-transform: uppercase; border-bottom: 2px solid var(--quicksand); 
+            padding-bottom: 12px; font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        /* BATAS PEMISAH ANTAR SUB-TITLE AGAR MUDAH DIBACA */
+        .doc-section-separator {
+            border-top: 2px solid var(--shellstone);
+            margin: 30px 0 15px 0;
         }
         
+        /* SUB-TITLE ROMAWI: BOLD DAN MENEMPEL DENGAN BAWAHNYA */
         .doc-roman { 
-            font-size: 16px; font-weight: bold; color: #112250; 
-            margin-top: 30px; margin-bottom: 12px; text-transform: uppercase;
+            font-size: 15.5px; font-weight: bold; color: var(--royal-blue); 
+            margin-top: 0px; margin-bottom: 2px; 
+            text-transform: uppercase; text-align: justify;
         }
         
-        .doc-number { 
-            font-size: 15px; font-weight: bold; color: #112250; 
-            margin-top: 18px; margin-bottom: 8px;
+        /* KATA BAHASA INGGRIS CAPSLOCK: BOLD & ITALIC, MENEMPEL DENGAN BAWAHNYA */
+        .doc-caps-subtitle {
+            font-size: 13.5px; font-weight: bold; font-style: italic; color: var(--sapphire);
+            margin-top: 8px; margin-bottom: 2px; 
+            text-align: justify;
         }
-        
-        /* Justified Paragraphs */
+
+        /* ======================================================== */
+        /* SEMUA TEKS DI BAWAH INI: NORMAL (TIDAK BOLD) & JUSTIFIED */
+        /* ======================================================== */
+
+        /* PARAGRAF BIASA */
         .doc-text { 
-            font-size: 14.5px; line-height: 1.65; color: #111; 
-            margin-bottom: 12px; 
+            font-size: 13.5px; line-height: 1.6; color: #222; 
+            margin-top: 0px; margin-bottom: 8px; 
             text-align: justify; text-justify: inter-word;
+            font-weight: normal; 
         }
         
-        /* Bullet Points */
+        /* PENOMORAN BIASA (1., 2.) */
+        .doc-list-item-num {
+            font-size: 13.5px; line-height: 1.6; color: #222; 
+            margin-top: 0px; margin-bottom: 5px; padding-left: 18px; 
+            text-indent: -18px; 
+            text-align: justify; text-justify: inter-word;
+            font-weight: normal;
+        }
+
+        /* BULLET POINT (-) */
         .doc-list-item { 
-            font-size: 14.5px; line-height: 1.65; color: #111; 
-            margin-bottom: 6px; padding-left: 20px; 
+            font-size: 13.5px; line-height: 1.6; color: #222; 
+            margin-top: 0px; margin-bottom: 5px; padding-left: 18px; 
             text-indent: -12px; 
             text-align: justify; text-justify: inter-word;
+            font-weight: normal; 
         }
         
-        /* Quotes */
+        /* KUTIPAN */
         .doc-quote { 
-            font-size: 14px; line-height: 1.65; color: #444; font-style: italic; 
+            font-size: 13.5px; line-height: 1.6; color: #444; font-style: italic; 
             background: #f8f9fa; border-left: 4px solid var(--sapphire); 
-            padding: 15px 20px; margin: 15px 0; 
+            padding: 10px 15px; margin: 5px 0 10px 0; 
             text-align: justify; text-justify: inter-word;
+            font-weight: normal;
         }
         
         .doc-footer-date { 
