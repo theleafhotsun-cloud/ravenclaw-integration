@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Room Dashboard - Ravenclaw</title>
+    <title>Ravenclaw Dashboard</title>
     <style>
         :root {
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
@@ -22,74 +22,53 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
 
-        /* Main Content */
+        /* Main Content Styles */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
         
-        /* PERBAIKAN HEADER MENYEMPIT: Tambahkan flex-shrink: 0 */
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; min-height: 60px;}
+        /* PERBAIKAN HEADER MENYEMPIT */
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; min-height: 60px; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
-        
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
 
-        /* PERBAIKAN KONTEN TERPOTONG: Tambahkan padding-bottom 80px */
-        .content-area { padding: 30px 30px 80px 30px; overflow-y: auto; flex-grow: 1; display: block; box-sizing: border-box;}
-        .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px; }
+        /* PERBAIKAN KONTEN TERPOTONG */
+        .content-area { padding: 30px 30px 80px 30px; overflow-y: auto; flex-grow: 1; display: block; box-sizing: border-box; }
+        .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px;}
 
-        /* Performance & KPI Section */
-        .performance-card { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 20px; display: flex; align-items: center; gap: 20px; }
+        /* Performance Section */
+        .performance-card { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
         .performance-info { flex-grow: 1; }
         .progress-container { background-color: var(--shellstone); height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
         .progress-bar { height: 100%; background-color: var(--sapphire); width: 0%; transition: width 0.5s ease; }
         .performance-text { font-weight: bold; color: var(--royal-blue); }
-        
-        .action-buttons { display: flex; flex-direction: column; gap: 10px; }
-        .btn-kpi { background-color: var(--royal-blue); color: var(--swan-wing); border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
-        .btn-kpi:hover { background-color: var(--sapphire); }
-        .btn-reset { background-color: var(--danger); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
+        .btn-reset { background-color: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
         .btn-reset:hover { background-color: #b71c1c; }
 
-        /* Table Design */
+        /* Table Styles */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 40px;}
-        th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px;}
+        th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px; }
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
         tr:hover { background-color: var(--swan-wing); }
-        
         .checkbox-container { text-align: center; } 
-        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sapphire); margin: 0; vertical-align: middle;}
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sapphire); margin: 0; vertical-align: middle; }
         .completed-text td { color: gray; }
         .completed-text .task-name { text-decoration: line-through; }
 
         /* Week Badges */
-        .week-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block;}
+        .week-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block; }
         .week-1 { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
         .week-2 { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
         .week-3 { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
         .week-4 { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
         .week-0 { background-color: #f5f5f5; color: #616161; border: 1px solid #e0e0e0; }
 
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background-color: var(--swan-wing); padding: 30px; border-radius: 8px; width: 450px; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; }
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-row .form-group { flex: 1; margin-bottom: 0; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--sapphire); margin-bottom: 5px; text-transform: uppercase; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--shellstone); border-radius: 4px; box-sizing: border-box; background-color: #fff; color: var(--royal-blue); }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); }
-        .btn-submit { background-color: var(--sapphire); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--swan-wing); }
-        
         #loadingMsg { text-align: center; color: var(--sapphire); font-weight: bold; margin: 20px 0; }
         .error-message { background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border-left: 5px solid #c62828; margin: 20px 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -103,28 +82,27 @@
         <div class="topbar">
             <div class="user-profile">
                 Welcome, <span id="display-username">Loading...</span>
-                <button class="btn-logout" onclick="logout(this)">Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
         <div class="content-area">
-            <h1 class="page-title">Task Tracker</h1>
+            <h1 class="page-title">Task Master Overview</h1>
             
             <div class="performance-card">
                 <div class="performance-info">
                     <div class="performance-text" id="performanceText">Performance: 0% (0 / 0 Tasks)</div>
-                    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
                 </div>
-                <!-- Action Buttons Terkumpul di Kanan -->
-                <div class="action-buttons">
-                    <button class="btn-kpi" onclick="openKpiModal()">Report Monthly KPI</button>
-                    <button class="btn-reset" onclick="resetAllCheckboxes()">Reset All Tasks</button>
-                </div>
+                <!-- HANYA TOMBOL RESET, TIDAK ADA TOMBOL KPI -->
+                <button class="btn-reset" onclick="resetAllCheckboxes()">Reset All Tasks</button>
             </div>
 
-            <div id="loadingMsg">Fetching tasks...</div>
-            
-            <!-- Tabel Terupdate -->
+            <div id="loadingMsg">Fetching tasks from database...</div>
+
+            <!-- Tabel Tugas -->
             <table id="taskTable" style="display: none;">
                 <thead>
                     <tr>
@@ -142,50 +120,10 @@
         </div>
     </div>
 
-    <!-- Modal Form Laporan Bulanan -->
-    <div class="modal-overlay" id="kpiModal">
-        <div class="modal-box">
-            <h3>Monthly Report & KPI</h3>
-            <div id="modalStatus" style="display:none; margin-bottom:10px; font-weight:bold; font-size:14px;"></div>
-            
-            <!-- Peringatan Missed Tasks Otomatis -->
-            <div id="missedTasksWarning" style="display:none; background-color:#ffebee; border:1px solid #ef9a9a; color:#c62828; padding:10px; border-radius:4px; font-size:11px; margin-bottom:15px; font-weight:bold; line-height:1.4;">
-                <!-- Disesuaikan oleh JS -->
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Main Tasks</label>
-                    <input type="text" id="modalCompleted" readonly style="background-color: var(--swan-wing); font-weight:bold;">
-                </div>
-                <div class="form-group">
-                    <label>KPI %</label>
-                    <input type="text" id="modalPercentage" readonly style="background-color: var(--swan-wing); font-weight:bold;">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Backup / Overtime</label>
-                <input type="number" id="modalBackup" min="0" value="0" placeholder="0">
-            </div>
-
-            <div class="form-group">
-                <label>Monthly Notes</label>
-                <textarea id="modalNotes" placeholder="Enter notes regarding your work or backup tasks this month..."></textarea>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeKpiModal()" id="btnCancel">Cancel</button>
-                <button class="btn-submit" onclick="submitKpiReport()" id="btnSubmit">Submit Report</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Script Area -->
     <script>
-        // --- 1. SETTING URL API BARU ---
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
         
-        // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
         
@@ -195,18 +133,15 @@
 
         let totalTasks = 0;
         let completedTasks = 0;
-        let currentPercentage = 0;
-        let missedTasksArray = []; // Array Penyimpan Daftar Tugas yang Terlewat
 
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
-            setupDynamicSidebar(); 
+            setupDynamicSidebar();
             
             let loadMsg = document.getElementById('loadingMsg');
-            var fetchRole = userRole === 'unknown' ? 'leadroom' : userRole;
+            var fetchRole = userRole === 'unknown' ? 'headhouse' : userRole;
             loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + fetchRole + "</b>... <br><br><small style='color:gray;'>(If stuck, please press <b>F12</b> -> <b>Console</b> tab to view the process)</small>";
 
-            // --- 3. FETCH API MENGAMBIL DATA TUGAS ---
             fetch(API_URL, {
                 method: "POST",
                 redirect: "follow",
@@ -225,20 +160,17 @@
                 }
             })
             .catch(err => {
-                loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`;
+                loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`; 
             });
         };
 
-        // --- 4. FUNGSI DYNAMIC SIDEBAR NAVIGASI ---
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
             var isEditor = userRole.includes('editor');
 
-            // Set Nama Panel Sesuai Jabatan
             var sidebarTitle = document.getElementById('sidebarTitle');
             if (sidebarTitle) {
                 var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
@@ -246,9 +178,10 @@
             }
 
             const allMenus = [
+                { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
                 { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
                 { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
-                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
                 { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
                 { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
                 { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
@@ -263,18 +196,26 @@
 
             let allowedMenuIds = [];
 
-            // Atur Hak Akses Menu Sesuai Permintaan
             if (isHH) {
                 allowedMenuIds = allMenus.map(m => m.id);
             } 
             else if (isPrefect) {
-                allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 
+                    'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 
+                    'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'
+                ];
             } 
             else if (isLeadroom) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 
+                    'menu-classdb', 'menu-librarydb'
+                ];
             } 
             else if (isEditor) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'
+                ];
             }
 
             var sidebarMenu = document.getElementById('sidebarMenu');
@@ -284,20 +225,16 @@
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
-                    
-                    // Highlight active state specifically for this dashboard as it is the "home" dashboard
                     var activeClass = menu.id === 'menu-taskmaster' ? ' class="active"' : '';
-                    
-                    li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '"' + activeClass + '>' + menu.label + '</a>';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
 
-        function navigateHome() {
-            // Mengarahkan user ke Home (Dashboard) mereka masing-masing sesuai role
+        function navigateTaskMaster() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-            var targetPage = 'headhouse'; // Default
+            var targetPage = 'headhouse';
 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -307,18 +244,10 @@
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-        // ========================================================
-        // LOGIKA PENYIMPANAN AMAN & RENDER TABEL
-        // ========================================================
+        // --- FUNGSI TRACKER ---
         function getStorageKey(taskName, weekNum) {
             return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`;
         }
@@ -330,7 +259,7 @@
 
         function setStorage(key, value) {
             try { localStorage.setItem(key, value); } 
-            catch (e) { console.warn("Cache diblokir oleh browser."); }
+            catch (e) { console.warn("Browser cache blocked."); }
         }
 
         function clearStoragePrefix(prefix) {
@@ -338,7 +267,7 @@
                 Object.keys(localStorage).forEach(key => {
                     if (key.startsWith(prefix)) localStorage.removeItem(key);
                 });
-            } catch (e) { console.warn("Gagal mereset cache browser."); }
+            } catch (e) { console.warn("Failed to reset browser cache."); }
         }
 
         function renderTable(rawTasks) {
@@ -367,7 +296,7 @@
             totalTasks = tasks.length;
 
             if (tasks.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">No active tasks found for your role.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">No tasks found. Please check your role/database.</td></tr>';
                 updatePerformance();
                 return;
             }
@@ -378,10 +307,11 @@
                 let safeCategory = t.category || t.kategori || "-";
                 let safeTaskName = t.taskName || "Untitled Task";
                 let safeDescription = t.description || "-";
+                
                 let escapedName = safeTaskName.replace(/'/g, "\\'").replace(/"/g, "&quot;");
 
                 const storageKey = getStorageKey(escapedName, t.targetWeek);
-                const checked = checkStorage(storageKey);
+                const checked = checkStorage(storageKey); 
                 
                 if (checked) { completedTasks++; tr.classList.add('completed-text'); }
                 
@@ -389,13 +319,13 @@
                     tbody.innerHTML = `<tr><td colspan="7"><div class="error-message"><b>${safeTaskName}</b><br>${safeDescription}<br>Time/Remarks: ${t.time} | ${t.remarks}</div></td></tr>`;
                     return; 
                 }
-
+                
                 let badgeClass = t.targetWeek >= 1 && t.targetWeek <= 4 ? `week-${t.targetWeek}` : 'week-0';
                 let weekLabel = t.targetWeek > 0 ? `Week ${t.targetWeek}` : (t.section || '-');
 
                 tr.innerHTML = `
                     <td class="checkbox-container">
-                        <input type="checkbox" data-taskname="${escapedName} [W${t.targetWeek}]" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
+                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
                     </td>
                     <td><span class="week-badge ${badgeClass}">${weekLabel}</span></td>
                     <td style="text-align:center; font-weight:bold;">${t.kpi || '-'}</td>
@@ -413,7 +343,7 @@
         }
 
         function toggleTask(cb, taskName, weekNum) {
-            setStorage(getStorageKey(taskName, weekNum), cb.checked);
+            setStorage(getStorageKey(taskName, weekNum), cb.checked); 
             cb.closest('tr').classList.toggle('completed-text', cb.checked);
             completedTasks += cb.checked ? 1 : -1;
             updatePerformance();
@@ -436,101 +366,10 @@
         }
 
         function updatePerformance() {
-            currentPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
-            document.getElementById('performanceText').innerText = `Performance: ${currentPercentage}% (${completedTasks} / ${totalTasks} Tasks)`;
-            document.getElementById('progressBar').style.width = currentPercentage + '%';
-            document.getElementById('progressBar').style.backgroundColor = currentPercentage === 100 ? 'var(--quicksand)' : 'var(--sapphire)';
-        }
-
-        // ==========================================
-        // FUNGSI LAPORAN BULANAN DENGAN MISSED TASKS
-        // ==========================================
-        function openKpiModal() {
-            if(totalTasks === 0) { alert("No tasks available to report!"); return; }
-            
-            // 1. CARI SEMUA KOTAK YANG TIDAK DICENTANG!
-            missedTasksArray = [];
-            const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
-            checkboxes.forEach(cb => {
-                if (!cb.checked) {
-                    missedTasksArray.push(cb.getAttribute('data-taskname'));
-                }
-            });
-
-            // 2. MUNCULKAN PERINGATAN JIKA ADA TUGAS YANG TERLEWAT
-            const warningBox = document.getElementById('missedTasksWarning');
-            if (missedTasksArray.length > 0) {
-                warningBox.style.display = 'block';
-                warningBox.innerHTML = `⚠️ <b>WARNING: You missed ${missedTasksArray.length} tasks!</b><br>
-                                        <div style="margin-top:5px; font-weight:normal;">${missedTasksArray.join(', ')}</div>
-                                        <div style="margin-top:5px; color:var(--royal-blue);">Please provide an explanation in the <b>Monthly Notes</b> below.</div>`;
-            } else {
-                warningBox.style.display = 'none';
-                warningBox.innerHTML = '';
-            }
-
-            document.getElementById('kpiModal').style.display = 'flex';
-            document.getElementById('modalCompleted').value = `${completedTasks} / ${totalTasks}`;
-            document.getElementById('modalPercentage').value = `${currentPercentage}%`;
-            document.getElementById('modalBackup').value = '0';
-            document.getElementById('modalNotes').value = '';
-            document.getElementById('modalStatus').style.display = 'none';
-        }
-
-        function closeKpiModal() { document.getElementById('kpiModal').style.display = 'none'; }
-
-        function submitKpiReport() {
-            const btnSubmit = document.getElementById('btnSubmit');
-            const btnCancel = document.getElementById('btnCancel');
-            const status = document.getElementById('modalStatus');
-            
-            // RUBAH ARRAY JADI TEKS AGAR BISA DISIMPAN KE SHEET
-            const missedTasksText = missedTasksArray.length > 0 ? missedTasksArray.join(', ') : '-';
-
-            const kpiData = {
-                username: loggedInUser,
-                position: userRole === 'unknown' ? 'Lead Room' : userRole,
-                completed: completedTasks,
-                total: totalTasks,
-                percentage: currentPercentage,
-                backupTasks: document.getElementById('modalBackup').value || 0,
-                notes: document.getElementById('modalNotes').value,
-                missedList: missedTasksText // KIRIMKAN DAFTAR TUGAS BOLONG KE BACKEND
-            };
-
-            btnSubmit.innerText = 'Sending...';
-            btnSubmit.disabled = true; btnCancel.disabled = true;
-            status.style.display = 'none';
-
-            // --- FETCH API UNTUK MENGIRIM KPI ---
-            fetch(API_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ 
-                    action: "submitMonthlyKPI",
-                    data: kpiData 
-                })
-            })
-            .then(response => response.json())
-            .then(result => {
-                status.style.display = 'block';
-                if(result.status === "success" || result.success) { 
-                    status.style.color = '#2e7d32'; 
-                    status.innerText = result.message || "Report submitted successfully!"; 
-                    setTimeout(closeKpiModal, 2000); 
-                } else { 
-                    status.style.color = '#c62828'; 
-                    status.innerText = result.message || "Submission failed."; 
-                }
-                btnSubmit.innerText = 'Submit Report'; btnSubmit.disabled = false; btnCancel.disabled = false;
-            })
-            .catch(err => {
-                status.style.color = '#c62828'; 
-                status.innerText = 'System Error: Failed to connect to server.'; 
-                status.style.display = 'block';
-                btnSubmit.innerText = 'Submit Report'; btnSubmit.disabled = false; btnCancel.disabled = false;
-            });
+            const percentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+            document.getElementById('performanceText').innerText = `Performance: ${percentage}% (${completedTasks} / ${totalTasks} Tasks)`;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressBar').style.backgroundColor = percentage === 100 ? 'var(--quicksand)' : 'var(--sapphire)';
         }
     </script>
 </body>
