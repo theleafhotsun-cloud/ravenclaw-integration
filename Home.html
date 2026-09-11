@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Dashboard - RMIS Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --warning: #f57c00;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; height: 100vh; overflow: hidden; }
+        
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; letter-spacing: 1px;}
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; position: relative;}
+        .topbar { height: 60px; background-color: #ffffff; border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0;}
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;}
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger);}
+
+        .content-area { padding: 30px 40px; display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; gap: 25px;}
+        
+        /* WELCOME BANNER */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--royal-blue) 0%, var(--sapphire) 100%);
+            border-radius: 12px;
+            padding: 35px 40px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(17, 34, 80, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-banner h1 { margin: 0 0 10px 0; font-size: 28px; color: var(--quicksand); }
+        .welcome-banner p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 800px; color: var(--swan-wing); opacity: 0.9; }
+        
+        /* GRID LAYOUT FOR SECTIONS */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 25px;
+        }
+
+        /* ABOUT RMIS CARD */
+        .info-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .info-card h3 {
+            margin: 0 0 15px 0;
+            color: var(--royal-blue);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--swan-wing);
+            padding-bottom: 10px;
+        }
+        .info-card p { font-size: 14px; color: #444; line-height: 1.7; margin-bottom: 15px; text-align: justify;}
+        
+        /* SYSTEM UPDATES TIMELINE */
+        .updates-container {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .updates-container h3 {
+            margin: 0 0 20px 0;
+            color: var(--sapphire);
+            font-size: 18px;
+            border-bottom: 2px solid var(--swan-wing);
+            padding-bottom: 10px;
+        }
+        .timeline { list-style: none; padding: 0; margin: 0; }
+        .timeline-item {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 20px;
+            border-left: 2px solid var(--quicksand);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            background-color: var(--royal-blue);
+            border-radius: 50%;
+        }
+        .timeline-date { font-size: 11px; font-weight: bold; color: var(--warning); margin-bottom: 3px; text-transform: uppercase;}
+        .timeline-title { font-size: 14px; font-weight: bold; color: var(--royal-blue); margin-bottom: 5px; }
+        .timeline-desc { font-size: 13px; color: #555; line-height: 1.5; margin: 0; }
+        
+        .rules-list { padding-left: 20px; margin: 0; font-size: 13px; color: #444; line-height: 1.7;}
+        .rules-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="usernameDisplay">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- HEADER WELCOME BANNER -->
+            <div class="welcome-banner">
+                <h1>Welcome to RMIS, <span id="bannerName">Staff</span>!</h1>
+                <p>Ravenclaw Management Information System (RMIS) is the central command center for our House operations. From managing student activities to securing official guidelines, this platform empowers our divisions to work seamlessly.</p>
+            </div>
+
+            <div class="dashboard-grid">
+                
+                <!-- KIRI: PENJELASAN TEKNIS RMIS -->
+                <div class="info-card">
+                    <h3>🦅 Panduan Teknis & Penggunaan RMIS</h3>
+                    <p><b>RMIS (Ravenclaw Management Information System)</b> dirancang sebagai platform administrasi yang cerdas, terpadu, dan terotomatisasi. Platform ini dibangun khusus untuk menjembatani koordinasi antar staf asrama agar manajemen berjalan secara transparan dan akuntabel.</p>
+                    
+                    <p>Panduan singkat untuk setiap modul eksklusif:</p>
+                    <ul class="rules-list">
+                        <li><b>📝 Task Master:</b> Dasbor pelacakan tugas pribadi Anda. Centang kotak (✓) setelah menyelesaikan tugas. Laporan bulanan KPI dapat dikirimkan langsung dari modul ini.</li>
+                        <li><b>📚 Documents & Guidelines:</b> Repositori pusat untuk semua panduan resmi. Akses dokumen yang tersedia secara ketat bergantung pada peran administratif Anda.</li>
+                        <li><b>📊 Active Room Database:</b> Melacak presensi, rangkuman, kas, dan sanksi anggota asrama secara otomatis. Khusus bagi Leadroom dan P-VP untuk mengontrol aktivitas kamar.</li>
+                        <li><b>📖 Library & Class Database:</b> Pusat pemetaan kelas (mapping), tugas kelas, dan materi pembelajaran bagi seluruh staf untuk kemudahan akses edukasi.</li>
+                        <li><b>💰 House Finance:</b> Modul rekapitulasi penuh mengenai arus kas, penalti (denda), hingga hadiah/gaji bulanan secara real-time.</li>
+                        <li><b>🏆 Rank Panel:</b> Perhitungan kalkulasi poin asrama untuk menentukan predikat <i>Best Room</i> secara otomatis dan transparan.</li>
+                    </ul>
+                </div>
+
+                <!-- KANAN: SYSTEM UPDATES (CHANGELOG) -->
+                <div class="updates-container">
+                    <h3>🔄 System Updates & Announcements</h3>
+                    
+                    <ul class="timeline">
+                        <li class="timeline-item">
+                            <div class="timeline-date">September 2026</div>
+                            <div class="timeline-title">Central Home Dashboard</div>
+                            <p class="timeline-desc">Diluncurkan antarmuka <b>Home Dashboard</b> yang tersentralisasi. Seluruh staf kini masuk melalui pintu depan yang sama untuk melihat pembaruan dan petunjuk teknis sebelum mengakses <i>Task Master</i> masing-masing.</p>
+                        </li>
+                        <li class="timeline-item">
+                            <div class="timeline-date">September 2026</div>
+                            <div class="timeline-title">Central Document Repository</div>
+                            <p class="timeline-desc">Seluruh SOP dan Pedoman Tata Kelola kini tersimpan dengan keamanan berbasis akses hirarki (RBAC) dan dirender dalam antarmuka kertas dokumen asli (Native HTML) yang bersih.</p>
+                        </li>
+                        <li class="timeline-item">
+                            <div class="timeline-date">September 2026</div>
+                            <div class="timeline-title">Best Room Calculator Update</div>
+                            <p class="timeline-desc">Algoritma perhitungan Rank Panel diperbarui untuk menimbang poin Leadroom x2, guna memastikan penghargaan <i>Best Room</i> terdistribusi secara lebih objektif dan adil.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
+
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+        
+        if (!loggedInUser) window.location.href = "index.html";
+
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('usernameDisplay').innerText = loggedInUser;
+            
+            // Menyapa pengguna di banner biru dengan kapital huruf depan
+            let cleanName = loggedInUser.replace('@', '');
+            document.getElementById('bannerName').innerText = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+            
+            setupDynamicSidebar();
+        });
+
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
+
+            const allMenus = [
+                { id: 'menu-home', label: '🏠 Home Dashboard', action: "navigate('home')" },
+                { id: 'menu-taskmaster', label: '📝 Task Master', action: "navigateTaskMaster()" },
+                { id: 'menu-sop', label: '📚 Documents & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-activeroom', label: '📊 Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: '💰 House Finance', action: "navigate('finance')" },
+                { id: 'menu-librarydb', label: '📖 Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: '🏆 Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-workreport', label: '📈 Work Report', action: "navigate('workreport')" },
+                { id: 'menu-salary', label: '💸 Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-studentdb', label: '📁 Student Database', action: "navigate('studentdb')" },
+                { id: 'menu-birthdays', label: '🎂 Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: '🏫 Class Database', action: "navigate('classdb')" },
+                { id: 'menu-roster', label: '📄 Student Roster', action: "navigate('roster')" }
+            ];
+
+            let allowedMenuIds = [];
+            if (isHH) {
+                allowedMenuIds = allMenus.map(m => m.id);
+            } 
+            else if (isPrefect) {
+                allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+            } 
+            else if (isLeadroom) {
+                allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+            } 
+            else if (isEditor) {
+                allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-birthdays', 'menu-rank'];
+            }
+
+            var sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.innerHTML = ''; 
+            
+            allMenus.forEach(menu => {
+                if (allowedMenuIds.includes(menu.id)) {
+                    var li = document.createElement('li');
+                    li.className = menu.id;
+                    // Aktifkan sorotan biru untuk menu Home yang sedang dibuka
+                    var act = menu.id === 'menu-home' ? ' class="active"' : '';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${act}>${menu.label}</a>`;
+                    sidebarMenu.appendChild(li);
+                }
+            });
+        }
+
+        // FUNGSI UNTUK MENUJU HALAMAN TUGAS (TASK MASTER) SESUAI JABATAN MEREKA MASING-MASING
+        function navigateTaskMaster() {
+            var targetPage = 'headhouse'; // Default
+
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            
+            window.location.href = targetPage + '-dashboard.html';
+        }
+
+        // NAVIGASI BIASA KE HALAMAN LAIN
+        function navigate(targetPage) { 
+            window.location.href = targetPage + ".html"; 
+        }
+        
+        function logout() { 
+            localStorage.clear(); 
+            window.location.href = "index.html"; 
+        }
+    </script>
+</body>
+</html>
