@@ -344,9 +344,10 @@
             }
 
             const allMenus = [
+                { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
                 { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
                 { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
-                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
                 { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
                 { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
                 { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
@@ -360,25 +361,44 @@
             ];
 
             let allowedMenuIds = [];
-            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
-            else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
-            else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
-            else if (isEditor) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+
+            if (isHH) {
+                allowedMenuIds = allMenus.map(m => m.id);
+            } 
+            else if (isPrefect) {
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 
+                    'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 
+                    'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'
+                ];
+            } 
+            else if (isLeadroom) {
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 
+                    'menu-classdb', 'menu-librarydb'
+                ];
+            } 
+            else if (isEditor) {
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'
+                ];
+            }
 
             var sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.innerHTML = ''; 
+            
             allMenus.forEach(menu => {
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
                     var activeClass = menu.id === 'menu-studentdb' ? ' class="active"' : '';
-                    li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '"' + activeClass + '>' + menu.label + '</a>';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
 
-        function navigateHome() {
+        function navigateTaskMaster() {
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -387,6 +407,7 @@
             window.location.href = targetPage + "-dashboard.html";
         }
 
+        function navigateHome() { navigate('home'); }
         function navigate(targetPage) { window.location.href = targetPage + ".html"; }
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
@@ -506,7 +527,7 @@
                     spReportBadge = `<span class="sp-badge-none">No Report</span>`;
                 }
 
-                // TAMPILAN BADGE STAFF (KEMBALIKAN SEMUA POSISI)
+                // TAMPILAN BADGE STAFF
                 let staffBadgesHtml = '';
                 if (student.staffPositions && student.staffPositions.length > 0) {
                     student.staffPositions.forEach(staff => {
