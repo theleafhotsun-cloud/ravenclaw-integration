@@ -36,18 +36,65 @@
         .content-area { display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; }
         .content-wrapper { padding: 30px 40px; flex-grow: 1; display: flex; flex-direction: column; gap: 25px; }
         
-        /* WELCOME BANNER */
+        /* WELCOME BANNER (DIPERBARUI) */
         .welcome-banner {
             background: linear-gradient(135deg, var(--royal-blue) 0%, var(--sapphire) 100%);
             border-radius: 12px;
-            padding: 35px 40px;
+            padding: 30px 40px;
             color: white;
             box-shadow: 0 4px 15px rgba(17, 34, 80, 0.15);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .welcome-banner h1 { margin: 0 0 10px 0; font-size: 28px; color: var(--quicksand); }
-        .welcome-banner p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 850px; color: var(--swan-wing); opacity: 0.9; }
+        .banner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 15px;
+        }
+        .banner-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .welcome-banner h1 { margin: 0; font-size: 26px; color: var(--quicksand); }
+        .role-badge {
+            background-color: var(--quicksand);
+            color: var(--royal-blue);
+            font-size: 11px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .datetime-display {
+            text-align: right;
+            color: var(--swan-wing);
+        }
+        .datetime-display #currentTime {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        .datetime-display #currentDate {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        /* Paragraf di-justify */
+        .welcome-banner p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--swan-wing); opacity: 0.95; text-align: justify; }
         
         /* GRID LAYOUT FOR SECTIONS */
         .dashboard-grid {
@@ -113,7 +160,7 @@
             border-top: 1px solid var(--shellstone);
             color: gray;
             font-size: 12px;
-            margin-top: auto; /* Pushes footer to the bottom */
+            margin-top: auto;
         }
         .footer i { color: var(--sapphire); font-weight: 500; }
     </style>
@@ -139,9 +186,18 @@
         <div class="content-area">
             <div class="content-wrapper">
                 
-                <!-- HEADER WELCOME BANNER -->
+                <!-- HEADER WELCOME BANNER DI-UPDATE -->
                 <div class="welcome-banner">
-                    <h1>Welcome to RMIS, <span id="bannerName">Staff</span>!</h1>
+                    <div class="banner-header">
+                        <div class="banner-title-group">
+                            <h1>Welcome to RMIS, <span id="bannerName">Staff</span>!</h1>
+                            <span id="bannerRole" class="role-badge">Staff</span>
+                        </div>
+                        <div class="datetime-display">
+                            <div id="currentTime">00:00:00</div>
+                            <div id="currentDate">Day, DD Month YYYY</div>
+                        </div>
+                    </div>
                     <p>The Ravenclaw Management Information System (RMIS) is the central command center for our House operations. From tracking student activities to securing official guidelines, this platform empowers our divisions to work seamlessly, transparently, and efficiently.</p>
                 </div>
 
@@ -206,13 +262,35 @@
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
             
+            // Format Sapaan & Jabatan
             let cleanName = loggedInUser.replace('@', '');
             document.getElementById('bannerName').innerText = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+            document.getElementById('bannerRole').innerText = userRole;
             
             setupDynamicSidebar();
+            startLiveClock();
         });
 
-       function setupDynamicSidebar() {
+        // FUNGSI JAM & TANGGAL REAL-TIME
+        function startLiveClock() {
+            const timeElement = document.getElementById('currentTime');
+            const dateElement = document.getElementById('currentDate');
+            
+            function updateTime() {
+                const now = new Date();
+                
+                // Format Jam (HH:MM:SS)
+                timeElement.innerText = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                
+                // Format Tanggal (Weekday, DD Month YYYY)
+                dateElement.innerText = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            
+            updateTime(); // Panggil langsung agar tidak delay 1 detik
+            setInterval(updateTime, 1000); // Perbarui setiap detik
+        }
+
+        function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
@@ -224,7 +302,6 @@
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
-            // DAFTAR MENU LENGKAP TANPA EMOJI SESUAI FORMAT ASLI
             const allMenus = [
                 { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
                 { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
@@ -244,7 +321,6 @@
 
             let allowedMenuIds = [];
 
-            // FILTER AKSES MENU BERDASARKAN JABATAN
             if (isHH) {
                 allowedMenuIds = allMenus.map(m => m.id);
             } 
@@ -274,17 +350,13 @@
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
-                    
-                    // Pastikan id menu yang aktif sesuai dengan halaman yang sedang dibuka
-                    // Ubah 'menu-home' di bawah ini jika kamu menempelkan kode ini di halaman Task Master (menjadi 'menu-taskmaster')
                     var activeClass = menu.id === 'menu-home' ? ' class="active"' : '';
-                    
                     li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
-        
+
         function navigateTaskMaster() {
             var targetPage = 'headhouse'; 
 
