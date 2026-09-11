@@ -180,7 +180,7 @@
                                 <div id="rewAlphaAquilae" style="font-size:11px; color:gray; line-height: 1.6;">Calculating...</div>
                             </div>
                             <div class="reward-box" style="border-left: 4px solid #8e24aa;">
-                                <h5>🛡️ Best Room (ʛ1000 to Leadroom)</h5>
+                                <h5>🛡️ Best Room (1000G Distributed)</h5>
                                 <div id="rewRoom" style="font-size:11px; color:gray; line-height: 1.6;">Calculating...</div>
                             </div>
                             <div class="reward-box" style="border-left: 4px solid var(--warning);">
@@ -197,9 +197,7 @@
                         </div>
                     </div>
                     
-                    <!-- ========================================== -->
-                    <!-- 🎨 EDITOR SPOTLIGHT HUB (ALL CATEGORIES) -->
-                    <!-- ========================================== -->
+                    <!-- EDITOR SPOTLIGHT HUB -->
                     <div style="margin-top: 30px;">
                         <h3 style="color: var(--royal-blue); border-bottom: 2px solid var(--quicksand); padding-bottom: 8px; font-size: 16px;">
                             🎨 Editor's Spotlight: Winners & Leaderboard Profiles
@@ -208,7 +206,6 @@
                             The table below contains complete data (Vault, Username, Name, and Face Claim) to facilitate the creation of announcement posters/designs.
                         </p>
 
-                        <!-- 1. ALPHA & AQUILAE -->
                         <div class="spotlight-card">
                             <h4>👑 Alpha & Aquilae of The Month</h4>
                             <div class="table-container" style="margin-bottom:0;">
@@ -228,7 +225,6 @@
                             </div>
                         </div>
 
-                        <!-- 2. BEST ROOM -->
                         <div class="spotlight-card">
                             <h4>🛡️ Best Room: <span id="spotlightRoomName" style="color: #e65100;"></span></h4>
                             <div class="table-container" style="margin-bottom:0;">
@@ -246,7 +242,6 @@
                             </div>
                         </div>
 
-                        <!-- 3. GAMERS OF THE MONTH -->
                         <div class="spotlight-card">
                             <h4>🎮 Gamers of The Month</h4>
                             <div class="table-container" style="margin-bottom:0;">
@@ -266,7 +261,6 @@
                             </div>
                         </div>
 
-                        <!-- 4. TOP 10 O.W.L -->
                         <div class="spotlight-card">
                             <h4>📜 Top 10 Rank O.W.L</h4>
                             <div class="table-container" style="margin-bottom:0;">
@@ -287,7 +281,6 @@
                             </div>
                         </div>
 
-                        <!-- 5. TOP 10 SP -->
                         <div class="spotlight-card">
                             <h4>🌟 Top 10 Rank Student Point (SP)</h4>
                             <div class="table-container" style="margin-bottom:0;">
@@ -308,11 +301,9 @@
                         </div>
 
                     </div>
-
                 </div>
             </div>
 
-            <!-- OVERALL LEADERBOARD SECTION -->
             <div class="box-section">
                 <h4>Top 10 Leaderboards (Overview)</h4>
                 <div class="leaderboard-grid">
@@ -331,7 +322,7 @@
                         <h5>🛡️ Best Room</h5>
                         <div class="table-container" style="margin-bottom:0; border:none; border-radius:0;">
                             <table class="lb-table">
-                                <thead><tr><th style="width:30px;">Rank</th><th>Room Name</th><th style="text-align:right;">Points Accumulation</th></tr></thead>
+                                <thead><tr><th style="width:30px;">Rank</th><th>Room Name</th><th style="text-align:right;">Calculated Score</th></tr></thead>
                                 <tbody id="lbRoom"></tbody>
                             </table>
                         </div>
@@ -401,10 +392,7 @@
         }
 
         function setupDynamicSidebar() {
-            // isRankViewer menyertakan 'editor' (sehingga mereka bisa masuk ke halaman)
             isRankViewer = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole.includes('editor') || userRole === 'system admin';
-            
-            // isRankEditor TIDAK menyertakan 'editor' (sehingga mereka hanya VIEW ONLY)
             isRankEditor = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole === 'system admin';
 
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -547,13 +535,9 @@
             let spRVal = elSpR && elSpR.value !== '' ? Number(elSpR.value) : Number(s.spRank);
             
             let rBonus = 0;
-            // OWL Bonus (Any valid rank gets the bonus)
             if (owlRVal > 0) rBonus += 15;
-            
-            // SP Bonus (Any valid School Rank gets the bonus)
             if (spRVal > 0) rBonus += 15;
 
-            // Revised calculation formula
             let total = (sum * 3) + (att * 5) + (gms * 10) + (schc * 5) + (add * 10) + rBonus;
             
             let tpDisplays = document.querySelectorAll(`.tp-disp-${vault}`);
@@ -811,28 +795,37 @@
             }
             spotlightAlphaBody.innerHTML = alphaRows;
 
-            // 4. BEST ROOM & SPOTLIGHT MEMBERS
+            // 4. BEST ROOM (DIHITUNG DENGAN RUMUS BARU)
             let rooms = {};
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if(!rooms[r]) rooms[r] = { pts: 0, members: [] };
-                    rooms[r].pts += s.totalPoints;
-                    if(s.totalPoints > 0 || !s.isInactive) {
+                    if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, memberCount: 0, members: [] };
+                    if(!s.isInactive) { // Hanya menghitung anggota aktif
+                        rooms[r].memberCount++;
+                        rooms[r].basePts += s.totalPoints;
+                        // Poin Leadroom ditambahkan lagi (dikali 2)
+                        if(s.isLeadroom) rooms[r].lrPts += s.totalPoints;
                         rooms[r].members.push(s); 
                     }
                 }
             });
-            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].pts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
+            Object.keys(rooms).forEach(k => {
+                let rm = rooms[k];
+                if(rm.memberCount > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / rm.memberCount) * 100) / 100;
+                else rm.finalPts = 0;
+            });
+            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
             
             let bestRoomMembersBody = document.getElementById('bestRoomMembersBody');
             let spotlightRoomName = document.getElementById('spotlightRoomName');
 
             if (roomArr.length > 0 && roomArr[0].pts > 0) {
                 let bestRoom = roomArr[0];
-                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ1000 to Leadroom</span><br><span style="font-size:10px; color:gray;">Winning with ${bestRoom.pts} total room points</span>`;
+                let splitReward = Math.floor(1000 / bestRoom.memberCount);
+                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ${splitReward} each</span><br><span style="font-size:10px; color:gray;">Score: ${bestRoom.pts} Pts | 1000G divided by ${bestRoom.memberCount} members</span>`;
                 
-                spotlightRoomName.innerText = bestRoom.room + " (" + bestRoom.pts + " Total Points)";
+                spotlightRoomName.innerText = bestRoom.room + " (" + bestRoom.pts + " Score)";
                 let membersHtml = '';
                 bestRoom.members.sort((a, b) => parseInt(a.vault) - parseInt(b.vault)).forEach(m => {
                     membersHtml += `<tr>
@@ -856,7 +849,7 @@
                 if (gms > maxGames) maxGames = gms;
             });
             let gamers = [];
-            if (maxGames > 0) { gamers = data.filter(s => (parseInt(s.games) || 0) === maxGames); }
+            if (maxGames > 0) { gamers = data.filter(s => (parseInt(s.games) || 0) === maxGames && !s.isInactive); }
             
             let spotlightGamersBody = document.getElementById('spotlightGamersBody');
             if (gamers.length > 0) {
@@ -911,17 +904,28 @@
             });
             document.getElementById('lbAlpha').innerHTML = alphaHtml || '<tr><td colspan="6" style="text-align:center;">No data</td></tr>';
 
-            let rooms = {};
+            // LEADERBOARDS BEST ROOM
+            let roomsLb = {};
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if(!rooms[r]) rooms[r] = { pts: 0 };
-                    rooms[r].pts += s.totalPoints; 
+                    if(!roomsLb[r]) roomsLb[r] = { basePts: 0, lrPts: 0, memberCount: 0 };
+                    if(!s.isInactive) {
+                        roomsLb[r].memberCount++;
+                        roomsLb[r].basePts += s.totalPoints;
+                        if(s.isLeadroom) roomsLb[r].lrPts += s.totalPoints;
+                    }
                 }
             });
-            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].pts })).sort((a,b) => b.pts - a.pts).slice(0,10);
+            Object.keys(roomsLb).forEach(k => {
+                let rm = roomsLb[k];
+                if(rm.memberCount > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / rm.memberCount) * 100) / 100;
+                else rm.finalPts = 0;
+            });
+            let roomArrLb = Object.keys(roomsLb).map(k => ({ room: k, pts: roomsLb[k].finalPts })).sort((a,b) => b.pts - a.pts).slice(0,10);
+            
             let roomHtml = '';
-            roomArr.forEach((r, idx) => {
+            roomArrLb.forEach((r, idx) => {
                 if(r.pts > 0) roomHtml += `<tr><td>${getRankCircle(idx+1)}</td><td><b style="color:var(--sapphire);">${r.room}</b></td><td style="text-align:right;"><b>${r.pts}</b> Pts</td></tr>`;
             });
             document.getElementById('lbRoom').innerHTML = roomHtml || '<tr><td colspan="3" style="text-align:center;">No data</td></tr>';
