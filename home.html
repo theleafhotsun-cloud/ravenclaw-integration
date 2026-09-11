@@ -212,7 +212,7 @@
             setupDynamicSidebar();
         });
 
-        function setupDynamicSidebar() {
+       function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
@@ -224,34 +224,47 @@
                 sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
             }
 
+            // DAFTAR MENU LENGKAP TANPA EMOJI SESUAI FORMAT ASLI
             const allMenus = [
-                { id: 'menu-home', label: '🏠 Home Dashboard', action: "navigate('home')" },
-                { id: 'menu-taskmaster', label: '📝 Task Master', action: "navigateTaskMaster()" },
-                { id: 'menu-sop', label: '📚 Documents & Guidelines', action: "navigate('sop')" },
-                { id: 'menu-activeroom', label: '📊 Active Room Database', action: "navigate('activeroom')" },
-                { id: 'menu-finance', label: '💰 House Finance', action: "navigate('finance')" },
-                { id: 'menu-librarydb', label: '📖 Library Database', action: "navigate('librarydb')" },
-                { id: 'menu-rank', label: '🏆 Rank Panel', action: "navigate('rank')" },
-                { id: 'menu-workreport', label: '📈 Work Report', action: "navigate('workreport')" },
-                { id: 'menu-salary', label: '💸 Salary Master', action: "navigate('salary-master')" },
-                { id: 'menu-studentdb', label: '📁 Student Database', action: "navigate('studentdb')" },
-                { id: 'menu-birthdays', label: '🎂 Staff & Birthdays', action: "navigate('birthdays')" },
-                { id: 'menu-classdb', label: '🏫 Class Database', action: "navigate('classdb')" },
-                { id: 'menu-roster', label: '📄 Student Roster', action: "navigate('roster')" }
+                { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
+                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
+                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
+                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
+                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
+                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
+                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
             ];
 
             let allowedMenuIds = [];
+
+            // FILTER AKSES MENU BERDASARKAN JABATAN
             if (isHH) {
                 allowedMenuIds = allMenus.map(m => m.id);
             } 
             else if (isPrefect) {
-                allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 
+                    'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 
+                    'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'
+                ];
             } 
             else if (isLeadroom) {
-                allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 
+                    'menu-classdb', 'menu-librarydb'
+                ];
             } 
             else if (isEditor) {
-                allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-birthdays', 'menu-rank'];
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'
+                ];
             }
 
             var sidebarMenu = document.getElementById('sidebarMenu');
@@ -261,13 +274,17 @@
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
-                    var act = menu.id === 'menu-home' ? ' class="active"' : '';
-                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${act}>${menu.label}</a>`;
+                    
+                    // Pastikan id menu yang aktif sesuai dengan halaman yang sedang dibuka
+                    // Ubah 'menu-home' di bawah ini jika kamu menempelkan kode ini di halaman Task Master (menjadi 'menu-taskmaster')
+                    var activeClass = menu.id === 'menu-home' ? ' class="active"' : '';
+                    
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
-
+        
         function navigateTaskMaster() {
             var targetPage = 'headhouse'; 
 
