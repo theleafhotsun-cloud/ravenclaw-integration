@@ -29,47 +29,49 @@
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger);}
 
         .content-area { display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; }
-        .content-wrapper { padding: 30px 40px; flex-grow: 1; display: flex; flex-direction: column; gap: 25px; }
+        .content-wrapper { padding: 30px 40px; flex-grow: 1; display: flex; flex-direction: column; gap: 20px; }
         
         .welcome-banner {
             background: linear-gradient(135deg, var(--royal-blue) 0%, var(--sapphire) 100%);
             border-radius: 12px;
-            padding: 30px 40px;
+            padding: 25px 35px;
             color: white;
             box-shadow: 0 4px 15px rgba(17, 34, 80, 0.15);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
-        .banner-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 15px; }
+        .banner-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 12px; }
         .banner-title-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .welcome-banner h1 { margin: 0; font-size: 26px; color: var(--quicksand); }
+        .welcome-banner h1 { margin: 0; font-size: 24px; color: var(--quicksand); }
         .role-badge { background-color: var(--quicksand); color: var(--royal-blue); font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .datetime-display { text-align: right; color: var(--swan-wing); }
-        .datetime-display #currentTime { font-size: 24px; font-weight: bold; color: #ffffff; font-family: monospace; letter-spacing: 1px; }
-        .datetime-display #currentDate { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-top: 2px; }
-        .welcome-banner p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--swan-wing); opacity: 0.95; text-align: justify; }
+        .datetime-display #currentTime { font-size: 22px; font-weight: bold; color: #ffffff; font-family: monospace; letter-spacing: 1px; }
+        .datetime-display #currentDate { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-top: 2px; }
+        .welcome-banner p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--swan-wing); opacity: 0.95; text-align: justify; }
         
-        .dashboard-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 25px; align-items: start; }
-        .info-card, .updates-container { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .info-card h3, .updates-container h3 { margin: 0 0 20px 0; color: var(--royal-blue); font-size: 18px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--swan-wing); padding-bottom: 12px; }
+        .dashboard-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: start; }
+        .info-card, .updates-container { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .info-card h3, .updates-container h3 { margin: 0 0 15px 0; color: var(--royal-blue); font-size: 18px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--swan-wing); padding-bottom: 10px; }
         
-        .info-card p { font-size: 14px; color: #444; line-height: 1.7; margin-top: 0; margin-bottom: 15px; text-align: justify;}
+        /* CSS Baru untuk merapatkan teks dan set rata kanan-kiri (justify) */
+        .info-card p { font-size: 14px; color: #444; line-height: 1.45; margin-top: 0; margin-bottom: 8px; text-align: justify;}
         .rules-list { padding-left: 0; margin: 0; list-style-type: none;}
-        .rules-list li { margin-bottom: 12px; font-size: 13.5px; color: #444; line-height: 1.6; display: flex; align-items: flex-start; gap: 10px;}
-        .rules-list li span { font-size: 16px; line-height: 1.2;}
+        .rules-list li { margin-bottom: 6px; font-size: 13.5px; color: #444; line-height: 1.45; display: flex; align-items: flex-start; gap: 8px; text-align: justify;}
+        .rules-list li div { width: 100%; text-align: justify; } 
+        .rules-list li span { font-size: 15px; line-height: 1.45;}
         
         .timeline { list-style: none; padding: 0; margin: 0; }
-        .timeline-item { position: relative; padding-left: 25px; margin-bottom: 25px; border-left: 2px solid var(--quicksand); }
+        .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; border-left: 2px solid var(--quicksand); }
         .timeline-item:last-child { margin-bottom: 0; }
         .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; background-color: var(--royal-blue); border-radius: 50%; }
         .timeline-date { font-size: 11px; font-weight: bold; color: var(--warning); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
-        .timeline-title { font-size: 15px; font-weight: bold; color: var(--royal-blue); margin-bottom: 6px; }
-        .timeline-desc { font-size: 13px; color: #555; line-height: 1.6; margin: 0; text-align: justify; white-space: pre-wrap;}
+        .timeline-title { font-size: 14px; font-weight: bold; color: var(--royal-blue); margin-bottom: 4px; }
+        .timeline-desc { font-size: 13px; color: #555; line-height: 1.5; margin: 0; text-align: justify; white-space: pre-wrap;}
         
-        .footer { text-align: center; padding: 20px; background-color: #ffffff; border-top: 1px solid var(--shellstone); color: gray; font-size: 12px; margin-top: auto; }
+        .footer { text-align: center; padding: 15px; background-color: #ffffff; border-top: 1px solid var(--shellstone); color: gray; font-size: 12px; margin-top: auto; }
         .footer i { color: var(--sapphire); font-weight: 500; }
         
         #loadingUpdates { font-size: 13px; color: var(--sapphire); font-style: italic; font-weight: bold;}
@@ -117,18 +119,19 @@
                         <h3>🦅 Ravenclaw Management Integration System (RMIS)</h3>
                         <p>The Ravenclaw Management Integration System (RMIS) serves as the central platform for Ravenclaw House operations. It brings together the House's administrative, operational, academic, financial, and management needs within a single integrated system. RMIS is designed to support seamless, transparent, and efficient coordination across the House while maintaining clear accountability at every level of management.</p>
                         
-                        <h4 style="color: var(--royal-blue); margin-top: 25px; margin-bottom: 10px;">🔐 Role-Based Account System</h4>
+                        <!-- Inline margin disesuaikan agar lebih rapat -->
+                        <h4 style="color: var(--royal-blue); margin-top: 15px; margin-bottom: 6px; font-size: 15px;">🔐 Role-Based Account System</h4>
                         <p>RMIS uses a Role-Based Account System, meaning each account is configured according to the user's assigned role and responsibilities within Ravenclaw House. Access to features, data, and administrative functions may therefore differ between roles such as the Head of House, Prefects, Vice Prefects, Lead Rooms, Editors, and other authorised users. Each account is provided only with the level of access required for its respective responsibilities.</p>
                         
-                        <h4 style="color: var(--royal-blue); margin-top: 25px; margin-bottom: 10px;">🛠️ Access & Technical Notes</h4>
-                        <p>RMIS can be accessed through: <br><a href="https://ravenclaw-integration.vercel.app/index.html" target="_blank" style="color: var(--sapphire); font-weight: bold; text-decoration: none;">ravenclaw-integration.vercel.app/index.html</a></p>
+                        <h4 style="color: var(--royal-blue); margin-top: 15px; margin-bottom: 6px; font-size: 15px;">🛠️ Access & Technical Notes</h4>
+                        <p>RMIS can be accessed through: <a href="https://ravenclaw-integration.vercel.app/index.html" target="_blank" style="color: var(--sapphire); font-weight: bold; text-decoration: none;">ravenclaw-integration.vercel.app</a></p>
                         <ul class="rules-list">
                             <li><span>👤</span> <div>Users should sign in using the username and password assigned to their respective account. Accounts are personal and must not be shared or used by another person.</div></li>
                             <li><span>💾</span> <div>RMIS uses Local Storage, meaning certain data and session information are stored locally within the user's browser. As a result, the browser may occasionally retain outdated system data or files after an update.</div></li>
                             <li><span>🔄</span> <div>For this reason, users are advised to refresh the page or use <b>Ctrl + F5</b> when first accessing RMIS, after a system update, or whenever a feature does not appear or function as expected.</div></li>
                         </ul>
 
-                        <h4 style="color: var(--royal-blue); margin-top: 25px; margin-bottom: 10px;">⚠️ Login & Access Issues</h4>
+                        <h4 style="color: var(--royal-blue); margin-top: 15px; margin-bottom: 6px; font-size: 15px;">⚠️ Login & Access Issues</h4>
                         <p>If you are unable to log in or encounter an unexpected system issue:</p>
                         <ul class="rules-list">
                             <li><span>1.</span> <div>Check that your username and password are entered correctly.</div></li>
@@ -137,7 +140,8 @@
                             <li><span>4.</span> <div>Alternatively, access RMIS through Incognito/Private Mode to test the system using a fresh browser session.</div></li>
                             <li><span>5.</span> <div>If the issue remains unresolved, report it to the Head of House with your account role and a brief description of the problem.</div></li>
                         </ul>
-                        <p style="color: var(--danger); font-weight: bold; margin-top: 15px; padding: 10px; background-color: #ffebee; border-left: 4px solid var(--danger); border-radius: 4px;">Important: Never share your password when reporting an issue.</p>
+                        <!-- Padding dan margin diperkecil, text di-justify -->
+                        <p style="color: var(--danger); font-weight: bold; margin-top: 12px; margin-bottom: 0; padding: 8px 10px; background-color: #ffebee; border-left: 4px solid var(--danger); border-radius: 4px; text-align: justify; font-size: 13.5px;">Important: Never share your password when reporting an issue.</p>
                     </div>
 
                     <!-- RIGHT: SYSTEM UPDATES (DINAMIS DARI GOOGLE SHEET) -->
