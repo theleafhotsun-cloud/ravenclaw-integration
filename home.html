@@ -12,7 +12,6 @@
         }
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; height: 100vh; overflow: hidden; }
         
-        /* SIDEBAR */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -22,21 +21,16 @@
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
         
-        /* MAIN CONTENT AREA */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; position: relative;}
-        
-        /* TOPBAR */
         .topbar { height: 60px; background-color: #ffffff; border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0;}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;}
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger);}
 
-        /* CONTENT WRAPPER */
         .content-area { display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; }
         .content-wrapper { padding: 30px 40px; flex-grow: 1; display: flex; flex-direction: column; gap: 25px; }
         
-        /* WELCOME BANNER (DIPERBARUI) */
         .welcome-banner {
             background: linear-gradient(135deg, var(--royal-blue) 0%, var(--sapphire) 100%);
             border-radius: 12px;
@@ -49,120 +43,36 @@
             flex-direction: column;
             gap: 15px;
         }
-        .banner-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 15px;
-        }
-        .banner-title-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .banner-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 15px; }
+        .banner-title-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .welcome-banner h1 { margin: 0; font-size: 26px; color: var(--quicksand); }
-        .role-badge {
-            background-color: var(--quicksand);
-            color: var(--royal-blue);
-            font-size: 11px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .datetime-display {
-            text-align: right;
-            color: var(--swan-wing);
-        }
-        .datetime-display #currentTime {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffffff;
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-        .datetime-display #currentDate {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
-        /* Paragraf di-justify */
+        .role-badge { background-color: var(--quicksand); color: var(--royal-blue); font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .datetime-display { text-align: right; color: var(--swan-wing); }
+        .datetime-display #currentTime { font-size: 24px; font-weight: bold; color: #ffffff; font-family: monospace; letter-spacing: 1px; }
+        .datetime-display #currentDate { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-top: 2px; }
         .welcome-banner p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--swan-wing); opacity: 0.95; text-align: justify; }
         
-        /* GRID LAYOUT FOR SECTIONS */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 25px;
-            align-items: start;
-        }
-
-        /* CARD STYLING */
-        .info-card, .updates-container {
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-        .info-card h3, .updates-container h3 {
-            margin: 0 0 20px 0;
-            color: var(--royal-blue);
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid var(--swan-wing);
-            padding-bottom: 12px;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 25px; align-items: start; }
+        .info-card, .updates-container { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .info-card h3, .updates-container h3 { margin: 0 0 20px 0; color: var(--royal-blue); font-size: 18px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--swan-wing); padding-bottom: 12px; }
         
-        /* ABOUT RMIS SECTION */
         .info-card p { font-size: 14px; color: #444; line-height: 1.7; margin-top: 0; margin-bottom: 15px; text-align: justify;}
         .rules-list { padding-left: 0; margin: 0; list-style-type: none;}
         .rules-list li { margin-bottom: 12px; font-size: 13.5px; color: #444; line-height: 1.6; display: flex; align-items: flex-start; gap: 10px;}
         .rules-list li span { font-size: 16px; line-height: 1.2;}
         
-        /* SYSTEM UPDATES TIMELINE */
         .timeline { list-style: none; padding: 0; margin: 0; }
-        .timeline-item {
-            position: relative;
-            padding-left: 25px;
-            margin-bottom: 25px;
-            border-left: 2px solid var(--quicksand);
-        }
+        .timeline-item { position: relative; padding-left: 25px; margin-bottom: 25px; border-left: 2px solid var(--quicksand); }
         .timeline-item:last-child { margin-bottom: 0; }
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 2px;
-            width: 10px;
-            height: 10px;
-            background-color: var(--royal-blue);
-            border-radius: 50%;
-        }
+        .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; background-color: var(--royal-blue); border-radius: 50%; }
         .timeline-date { font-size: 11px; font-weight: bold; color: var(--warning); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;}
         .timeline-title { font-size: 15px; font-weight: bold; color: var(--royal-blue); margin-bottom: 6px; }
-        .timeline-desc { font-size: 13px; color: #555; line-height: 1.6; margin: 0; text-align: justify;}
+        .timeline-desc { font-size: 13px; color: #555; line-height: 1.6; margin: 0; text-align: justify; white-space: pre-wrap;}
         
-        /* FOOTER */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #ffffff;
-            border-top: 1px solid var(--shellstone);
-            color: gray;
-            font-size: 12px;
-            margin-top: auto;
-        }
+        .footer { text-align: center; padding: 20px; background-color: #ffffff; border-top: 1px solid var(--shellstone); color: gray; font-size: 12px; margin-top: auto; }
         .footer i { color: var(--sapphire); font-weight: 500; }
+        
+        #loadingUpdates { font-size: 13px; color: var(--sapphire); font-style: italic; font-weight: bold;}
     </style>
 </head>
 <body>
@@ -186,7 +96,6 @@
         <div class="content-area">
             <div class="content-wrapper">
                 
-                <!-- HEADER WELCOME BANNER DI-UPDATE -->
                 <div class="welcome-banner">
                     <div class="banner-header">
                         <div class="banner-title-group">
@@ -203,7 +112,6 @@
 
                 <div class="dashboard-grid">
                     
-                    <!-- LEFT: TECHNICAL GUIDE -->
                     <div class="info-card">
                         <h3>🦅 Technical Guide & Module Overview</h3>
                         <p><b>RMIS</b> is meticulously designed as an integrated and automated administrative platform. It bridges coordination among the Head of House, Prefects, Vice Prefects, Lead Rooms, and Editors, ensuring high accountability across all management levels.</p>
@@ -219,32 +127,17 @@
                         </ul>
                     </div>
 
-                    <!-- RIGHT: SYSTEM UPDATES (CHANGELOG) -->
+                    <!-- RIGHT: SYSTEM UPDATES (DINAMIS DARI GOOGLE SHEET) -->
                     <div class="updates-container">
                         <h3>🔄 System Updates & Announcements</h3>
-                        
-                        <ul class="timeline">
-                            <li class="timeline-item">
-                                <div class="timeline-date">September 2026</div>
-                                <div class="timeline-title">Central Home Dashboard</div>
-                                <p class="timeline-desc">Launched a centralized Home Dashboard interface. All staff now enter through the same landing page to view updates and technical guidelines before accessing their respective Task Masters.</p>
-                            </li>
-                            <li class="timeline-item">
-                                <div class="timeline-date">September 2026</div>
-                                <div class="timeline-title">Central Document Repository</div>
-                                <p class="timeline-desc">All SOPs and Governance Guidelines are now secured with Role-Based Access Control (RBAC) and rendered in a clean, native HTML document interface.</p>
-                            </li>
-                            <li class="timeline-item">
-                                <div class="timeline-date">September 2026</div>
-                                <div class="timeline-title">Best Room Calculator Update</div>
-                                <p class="timeline-desc">Rank Panel calculation algorithms have been updated to weigh Leadroom points (x2), ensuring the <i>Best Room</i> award is distributed more objectively and fairly.</p>
-                            </li>
+                        <div id="loadingUpdates">Fetching updates from database...</div>
+                        <ul class="timeline" id="updatesTimeline">
+                            <!-- Data akan di-inject ke sini oleh JavaScript -->
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- FOOTER SECTION -->
             <div class="footer">
                 <i>"Wit beyond measure is man's greatest treasure."</i><br>
                 &copy; 2026 Ravenclaw House Management Integration System. All rights reserved.
@@ -254,6 +147,8 @@
     </div>
 
     <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
+
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
         
@@ -262,32 +157,27 @@
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
             
-            // Format Sapaan & Jabatan
             let cleanName = loggedInUser.replace('@', '');
             document.getElementById('bannerName').innerText = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
             document.getElementById('bannerRole').innerText = userRole;
             
             setupDynamicSidebar();
             startLiveClock();
+            fetchSystemUpdates(); // Panggil fungsi penarik pengumuman
         });
 
-        // FUNGSI JAM & TANGGAL REAL-TIME
         function startLiveClock() {
             const timeElement = document.getElementById('currentTime');
             const dateElement = document.getElementById('currentDate');
             
             function updateTime() {
                 const now = new Date();
-                
-                // Format Jam (HH:MM:SS)
                 timeElement.innerText = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                
-                // Format Tanggal (Weekday, DD Month YYYY)
                 dateElement.innerText = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             }
             
-            updateTime(); // Panggil langsung agar tidak delay 1 detik
-            setInterval(updateTime, 1000); // Perbarui setiap detik
+            updateTime(); 
+            setInterval(updateTime, 1000); 
         }
 
         function setupDynamicSidebar() {
@@ -325,22 +215,13 @@
                 allowedMenuIds = allMenus.map(m => m.id);
             } 
             else if (isPrefect) {
-                allowedMenuIds = [
-                    'menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 
-                    'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 
-                    'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'
-                ];
+                allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
             } 
             else if (isLeadroom) {
-                allowedMenuIds = [
-                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 
-                    'menu-classdb', 'menu-librarydb'
-                ];
+                allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
             } 
             else if (isEditor) {
-                allowedMenuIds = [
-                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'
-                ];
+                allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
             }
 
             var sidebarMenu = document.getElementById('sidebarMenu');
@@ -357,25 +238,49 @@
             });
         }
 
+        // FUNGSI UNTUK MENGAMBIL PENGUMUMAN DARI SPREADSHEET
+        function fetchSystemUpdates() {
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "getSystemUpdates" })
+            })
+            .then(response => response.json())
+            .then(res => {
+                document.getElementById('loadingUpdates').style.display = 'none';
+                var timeline = document.getElementById('updatesTimeline');
+                
+                if (res.status === 'success' && res.data && res.data.length > 0) {
+                    timeline.innerHTML = ''; // Kosongkan placeholder
+                    res.data.forEach(item => {
+                        var li = document.createElement('li');
+                        li.className = 'timeline-item';
+                        li.innerHTML = `
+                            <div class="timeline-date">${item.date}</div>
+                            <div class="timeline-title">${item.title}</div>
+                            <div class="timeline-desc">${item.desc}</div>
+                        `;
+                        timeline.appendChild(li);
+                    });
+                } else {
+                    timeline.innerHTML = '<li class="timeline-item"><div class="timeline-desc">No recent updates or announcements at this time.</div></li>';
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingUpdates').innerHTML = `<span style="color:red;">Failed to fetch updates.</span>`;
+            });
+        }
+
         function navigateTaskMaster() {
             var targetPage = 'headhouse'; 
-
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
             else if (userRole.includes('editor')) targetPage = 'editor';
             else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
     </script>
 </body>
 </html>
