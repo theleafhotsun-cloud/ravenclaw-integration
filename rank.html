@@ -304,6 +304,7 @@
                 </div>
             </div>
 
+            <!-- OVERALL LEADERBOARD SECTION -->
             <div class="box-section">
                 <h4>Top 10 Leaderboards (Overview)</h4>
                 <div class="leaderboard-grid">
@@ -795,16 +796,14 @@
             }
             spotlightAlphaBody.innerHTML = alphaRows;
 
-            // 4. BEST ROOM (DIHITUNG DENGAN RUMUS BARU)
+            // 4. BEST ROOM (DIHITUNG DENGAN RUMUS BARU ANTI NaN)
             let rooms = {};
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, memberCount: 0, members: [] };
+                    if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, members: [] };
                     if(!s.isInactive) { // Hanya menghitung anggota aktif
-                        rooms[r].memberCount++;
                         rooms[r].basePts += s.totalPoints;
-                        // Poin Leadroom ditambahkan lagi (dikali 2)
                         if(s.isLeadroom) rooms[r].lrPts += s.totalPoints;
                         rooms[r].members.push(s); 
                     }
@@ -812,7 +811,8 @@
             });
             Object.keys(rooms).forEach(k => {
                 let rm = rooms[k];
-                if(rm.memberCount > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / rm.memberCount) * 100) / 100;
+                let count = rm.members.length; // Hitung jumlah anggota asli secara presisi
+                if(count > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / count) * 100) / 100;
                 else rm.finalPts = 0;
             });
             let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
@@ -822,8 +822,8 @@
 
             if (roomArr.length > 0 && roomArr[0].pts > 0) {
                 let bestRoom = roomArr[0];
-                let splitReward = Math.floor(1000 / bestRoom.memberCount);
-                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ${splitReward} each</span><br><span style="font-size:10px; color:gray;">Score: ${bestRoom.pts} Pts | 1000G divided by ${bestRoom.memberCount} members</span>`;
+                let splitReward = Math.floor(1000 / bestRoom.members.length);
+                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ${splitReward} each</span><br><span style="font-size:10px; color:gray;">Score: ${bestRoom.pts} Pts | 1000G divided by ${bestRoom.members.length} members</span>`;
                 
                 spotlightRoomName.innerText = bestRoom.room + " (" + bestRoom.pts + " Score)";
                 let membersHtml = '';
@@ -909,17 +909,18 @@
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if(!roomsLb[r]) roomsLb[r] = { basePts: 0, lrPts: 0, memberCount: 0 };
+                    if(!roomsLb[r]) roomsLb[r] = { basePts: 0, lrPts: 0, members: [] };
                     if(!s.isInactive) {
-                        roomsLb[r].memberCount++;
                         roomsLb[r].basePts += s.totalPoints;
                         if(s.isLeadroom) roomsLb[r].lrPts += s.totalPoints;
+                        roomsLb[r].members.push(s);
                     }
                 }
             });
             Object.keys(roomsLb).forEach(k => {
                 let rm = roomsLb[k];
-                if(rm.memberCount > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / rm.memberCount) * 100) / 100;
+                let count = rm.members.length;
+                if(count > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / count) * 100) / 100;
                 else rm.finalPts = 0;
             });
             let roomArrLb = Object.keys(roomsLb).map(k => ({ room: k, pts: roomsLb[k].finalPts })).sort((a,b) => b.pts - a.pts).slice(0,10);
