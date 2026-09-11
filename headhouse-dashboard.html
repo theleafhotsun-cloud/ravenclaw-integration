@@ -9,10 +9,7 @@
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
             --swan-wing: #F5F0E9; --shellstone: #D9CBC2; --danger: #c62828;
         }
-
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
-
-        /* Sidebar Styles */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
@@ -21,22 +18,14 @@
         .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
-
-        /* Main Content Styles */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; position: relative; }
-        
-        /* PERBAIKAN HEADER MENYEMPIT */
         .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0; min-height: 60px; }
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s; text-transform: uppercase; }
         .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
-
-        /* PERBAIKAN KONTEN TERPOTONG */
         .content-area { padding: 30px 30px 80px 30px; overflow-y: auto; flex-grow: 1; display: block; box-sizing: border-box; }
         .page-title { color: var(--royal-blue); margin-top: 0; border-bottom: 2px solid var(--quicksand); padding-bottom: 10px; margin-bottom: 20px;}
-
-        /* Performance Section */
         .performance-card { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 25px; display: flex; align-items: center; gap: 20px; }
         .performance-info { flex-grow: 1; }
         .progress-container { background-color: var(--shellstone); height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
@@ -44,8 +33,6 @@
         .performance-text { font-weight: bold; color: var(--royal-blue); }
         .btn-reset { background-color: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-transform: uppercase; transition: background 0.3s; white-space: nowrap; }
         .btn-reset:hover { background-color: #b71c1c; }
-
-        /* Table Styles */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 40px;}
         th, td { padding: 12px 12px; text-align: left; border-bottom: 1px solid var(--shellstone); vertical-align: middle; font-size: 13px; }
         th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 12px; text-transform: uppercase; position: sticky; top: 0; z-index: 1;}
@@ -54,22 +41,17 @@
         input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--sapphire); margin: 0; vertical-align: middle; }
         .completed-text td { color: gray; }
         .completed-text .task-name { text-decoration: line-through; }
-
-        /* Week Badges */
         .week-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block; }
         .week-1 { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
         .week-2 { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
         .week-3 { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
         .week-4 { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
         .week-0 { background-color: #f5f5f5; color: #616161; border: 1px solid #e0e0e0; }
-
         #loadingMsg { text-align: center; color: var(--sapphire); font-weight: bold; margin: 20px 0; }
         .error-message { background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border-left: 5px solid #c62828; margin: 20px 0; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -77,8 +59,6 @@
         </div>
         <ul class="nav-links" id="sidebarMenu"></ul>
     </div>
-
-    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
@@ -86,10 +66,8 @@
                 <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
-
         <div class="content-area">
             <h1 class="page-title">Task Master Overview</h1>
-            
             <div class="performance-card">
                 <div class="performance-info">
                     <div class="performance-text" id="performanceText">Performance: 0% (0 / 0 Tasks)</div>
@@ -97,13 +75,9 @@
                         <div class="progress-bar" id="progressBar"></div>
                     </div>
                 </div>
-                <!-- HANYA TOMBOL RESET, TIDAK ADA TOMBOL KPI -->
                 <button class="btn-reset" onclick="resetAllCheckboxes()">Reset All Tasks</button>
             </div>
-
             <div id="loadingMsg">Fetching tasks from database...</div>
-
-            <!-- Tabel Tugas -->
             <table id="taskTable" style="display: none;">
                 <thead>
                     <tr>
@@ -120,171 +94,100 @@
             </table>
         </div>
     </div>
-
-    <!-- Script Area -->
     <script>
-        // --- 1. SETTING URL API (TERBARU) ---
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
-        
-        // --- 2. AMBIL DATA DARI SESI BROWSER ---
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = localStorage.getItem("session_role") ? localStorage.getItem("session_role").toLowerCase() : 'unknown';
-        
-        if (!loggedInUser) {
-            window.location.href = "index.html";
-        }
-
+        if (!loggedInUser) window.location.href = "index.html";
         let totalTasks = 0;
         let completedTasks = 0;
 
         window.onload = function() {
             document.getElementById("display-username").innerText = loggedInUser;
             setupDynamicSidebar();
-            
             let loadMsg = document.getElementById('loadingMsg');
             var fetchRole = userRole === 'unknown' ? 'headhouse' : userRole;
             loadMsg.innerHTML = "Fetching tasks for role: <b style='text-transform: capitalize;'>" + fetchRole + "</b>... <br><br><small style='color:gray;'>(If stuck, please press <b>F12</b> -> <b>Console</b> tab to view the process)</small>";
-
-            // --- 3. FETCH API UNTUK MENGAMBIL DATA TUGAS ---
             fetch(API_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ 
-                    action: "fetchMyTasks",
-                    role: fetchRole 
-                })
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "fetchMyTasks", role: fetchRole })
             })
             .then(response => response.json())
             .then(result => {
-                if (result.status === "success") {
-                    renderTable(result.data);
-                } else {
-                    throw new Error(result.message);
-                }
+                if (result.status === "success") renderTable(result.data);
+                else throw new Error(result.message);
             })
-            .catch(err => {
-                loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`; 
-            });
+            .catch(err => { loadMsg.innerHTML = `<div class="error-message"><b>Connection Lost:</b> ${err.message}</div>`; });
         };
 
-        // ==========================================
-        // 4. LOGIKA SIDEBAR & NAVIGASI (DIPERBARUI)
-        // ==========================================
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
-
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
             var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
             var isLeadroom = userRole.includes('leadroom');
             var isEditor = userRole.includes('editor');
 
             var sidebarTitle = document.getElementById('sidebarTitle');
-            if (sidebarTitle) {
-                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
-                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
-            }
+            if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
             const allMenus = [
-                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
-                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
-                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
-                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
-                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
-                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
-                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
-                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
-                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
-                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
-                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
-                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
-                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
+                { id: 'menu-home', label: '🏠 Home Dashboard', action: "navigate('home')" },
+                { id: 'menu-taskmaster', label: '📝 Task Master', action: "navigateTaskMaster()" },
+                { id: 'menu-sop', label: '📚 Documents & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-activeroom', label: '📊 Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: '💰 House Finance', action: "navigate('finance')" },
+                { id: 'menu-librarydb', label: '📖 Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: '🏆 Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-workreport', label: '📈 Work Report', action: "navigate('workreport')" },
+                { id: 'menu-salary', label: '💸 Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-studentdb', label: '📁 Student Database', action: "navigate('studentdb')" },
+                { id: 'menu-birthdays', label: '🎂 Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: '🏫 Class Database', action: "navigate('classdb')" },
+                { id: 'menu-roster', label: '📄 Student Roster', action: "navigate('roster')" }
             ];
 
             let allowedMenuIds = [];
-
-            if (isHH) {
-                allowedMenuIds = allMenus.map(m => m.id);
-            } 
-            else if (isPrefect) {
-                allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
-            } 
-            else if (isLeadroom) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
-            } 
-            else if (isEditor) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
-            }
+            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
+            else if (isPrefect) allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+            else if (isLeadroom) allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+            else if (isEditor) allowedMenuIds = ['menu-home', 'menu-taskmaster', 'menu-sop', 'menu-birthdays', 'menu-rank'];
 
             var sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.innerHTML = ''; 
-            
             allMenus.forEach(menu => {
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
-                    
-                    // Highlight active state specifically for this dashboard as it is the "home" dashboard
                     var activeClass = menu.id === 'menu-taskmaster' ? ' class="active"' : '';
-                    
-                    li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '"' + activeClass + '>' + menu.label + '</a>';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
 
-        function navigateHome() {
+        function navigateTaskMaster() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
             var targetPage = 'headhouse';
-
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
             else if (userRole.includes('editor')) targetPage = 'editor';
             else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            
             window.location.href = targetPage + '-dashboard.html';
         }
 
-        function navigate(targetPage) { 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-        // --- FUNGSI TRACKER ---
-        function getStorageKey(taskName, weekNum) {
-            return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`;
-        }
-
-        function checkStorage(key) {
-            try { return localStorage.getItem(key) === 'true'; } 
-            catch (e) { return false; } 
-        }
-
-        function setStorage(key, value) {
-            try { localStorage.setItem(key, value); } 
-            catch (e) { console.warn("Browser cache blocked."); }
-        }
-
-        function clearStoragePrefix(prefix) {
-            try {
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith(prefix)) localStorage.removeItem(key);
-                });
-            } catch (e) { console.warn("Failed to reset browser cache."); }
-        }
+        function getStorageKey(taskName, weekNum) { return `ravenclaw_tracker_${loggedInUser}_${taskName}_W${weekNum}`; }
+        function checkStorage(key) { try { return localStorage.getItem(key) === 'true'; } catch (e) { return false; } }
+        function setStorage(key, value) { try { localStorage.setItem(key, value); } catch (e) { console.warn("Browser cache blocked."); } }
+        function clearStoragePrefix(prefix) { try { Object.keys(localStorage).forEach(key => { if (key.startsWith(prefix)) localStorage.removeItem(key); }); } catch (e) { } }
 
         function renderTable(rawTasks) {
             document.getElementById('loadingMsg').style.display = 'none';
             document.getElementById('taskTable').style.display = 'table';
-            
             const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            completedTasks = 0; 
-            let tasks = [];
+            tbody.innerHTML = ''; completedTasks = 0; let tasks = [];
 
             if(rawTasks && rawTasks.length > 0) {
                 rawTasks.forEach(task => {
@@ -298,30 +201,24 @@
                     }
                 });
             }
-
             tasks.sort((a, b) => a.targetWeek - b.targetWeek);
             totalTasks = tasks.length;
 
             if (tasks.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">No tasks found. Please check your role/database.</td></tr>';
-                updatePerformance();
-                return;
+                updatePerformance(); return;
             }
 
             tasks.forEach((t) => {
                 const tr = document.createElement('tr');
-                
                 let safeCategory = t.category || t.kategori || "-";
                 let safeTaskName = t.taskName || "Untitled Task";
                 let safeDescription = t.description || "-";
-                
                 let escapedName = safeTaskName.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-
                 const storageKey = getStorageKey(escapedName, t.targetWeek);
                 const checked = checkStorage(storageKey); 
                 
                 if (checked) { completedTasks++; tr.classList.add('completed-text'); }
-                
                 if (t.section === "ERROR" || t.section === "DEBUG" || t.category === "INFO") {
                     tbody.innerHTML = `<tr><td colspan="7"><div class="error-message"><b>${safeTaskName}</b><br>${safeDescription}<br>Time/Remarks: ${t.time} | ${t.remarks}</div></td></tr>`;
                     return; 
@@ -331,18 +228,13 @@
                 let weekLabel = t.targetWeek > 0 ? `Week ${t.targetWeek}` : (t.section || '-');
 
                 tr.innerHTML = `
-                    <td class="checkbox-container">
-                        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})">
-                    </td>
+                    <td class="checkbox-container"><input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTask(this, '${escapedName}', ${t.targetWeek})"></td>
                     <td><span class="week-badge ${badgeClass}">${weekLabel}</span></td>
                     <td style="text-align:center; font-weight:bold;">${t.kpi || '-'}</td>
                     <td>${safeCategory}</td>
                     <td class="task-name"><b>${safeTaskName}</b></td>
                     <td style="font-size:12px; line-height:1.4;">${safeDescription}</td>
-                    <td style="font-size:11px; line-height:1.4;">
-                        <b>Time:</b> ${t.time || '-'}<br>
-                        <i style="color:gray;"><b>Notes:</b> ${t.remarks || '-'}</i>
-                    </td>
+                    <td style="font-size:11px; line-height:1.4;"><b>Time:</b> ${t.time || '-'}<br><i style="color:gray;"><b>Notes:</b> ${t.remarks || '-'}</i></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -352,24 +244,14 @@
         function toggleTask(cb, taskName, weekNum) {
             setStorage(getStorageKey(taskName, weekNum), cb.checked); 
             cb.closest('tr').classList.toggle('completed-text', cb.checked);
-            completedTasks += cb.checked ? 1 : -1;
-            updatePerformance();
+            completedTasks += cb.checked ? 1 : -1; updatePerformance();
         }
 
         function resetAllCheckboxes() {
-            const confirmReset = confirm("Are you sure you want to reset all task progress? This action cannot be undone.");
-            if (!confirmReset) return;
-
-            const checkboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
-            checkboxes.forEach(cb => {
-                cb.checked = false;
-                cb.closest('tr').classList.remove('completed-text');
-            });
-
+            if (!confirm("Are you sure you want to reset all task progress? This action cannot be undone.")) return;
+            document.querySelectorAll('#tableBody input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.closest('tr').classList.remove('completed-text'); });
             clearStoragePrefix(`ravenclaw_tracker_${loggedInUser}_`);
-
-            completedTasks = 0;
-            updatePerformance();
+            completedTasks = 0; updatePerformance();
         }
 
         function updatePerformance() {
