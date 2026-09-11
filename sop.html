@@ -1,1 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Document Repository - Ravenclaw</title>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --warning: #f57c00;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #f4f6f9; position: relative;}
+        .topbar { height: 60px; background-color: #ffffff; border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0;}
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        .content-area { padding: 30px 40px; display: block; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--shellstone); padding-bottom: 12px; margin-bottom: 20px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 24px;}
+        
+        .info-banner { background-color: #fffde7; border-left: 4px solid var(--warning); padding: 15px 20px; margin-bottom: 25px; font-size: 13px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
 
+        /* TAB STYLING */
+        .tabs-container { display: flex; gap: 8px; border-bottom: 2px solid var(--shellstone); margin-bottom: 30px; flex-wrap: wrap;}
+        .tab-btn { background-color: transparent; border: none; padding: 12px 24px; font-size: 14px; font-weight: bold; color: gray; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.3s; position: relative; top: 2px;}
+        .tab-btn.active { color: var(--royal-blue); border-bottom: 3px solid var(--royal-blue); }
+        .tab-btn:hover:not(.active) { color: var(--sapphire); background-color: #e8eaf6; }
+        
+        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; flex-direction: column; padding-bottom: 40px;}
+        .tab-content.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* FORMAL DOCUMENT PAPER STYLING */
+        .document-paper { 
+            background: #ffffff; 
+            max-width: 850px; 
+            margin: 0 auto 35px auto; 
+            padding: 50px 60px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            border: 1px solid #e0e0e0; 
+            border-radius: 4px; 
+        }
+        
+        .document-header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 2px solid var(--royal-blue);
+            padding-bottom: 20px;
+        }
+        .document-header img {
+            width: 70px;
+            margin-bottom: 15px;
+        }
+        .document-category {
+            font-size: 12px;
+            color: var(--warning);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .document-title {
+            font-size: 24px;
+            color: var(--royal-blue);
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        
+        /* PRE-WRAP ensures all bullet points and line breaks display perfectly */
+        .document-body { 
+            font-size: 14.5px; 
+            color: #333; 
+            line-height: 1.8; 
+            white-space: pre-wrap; 
+            font-family: inherit;
+            text-align: justify;
+        }
+        
+        .document-footer { 
+            margin-top: 40px; 
+            font-size: 11px; 
+            color: gray; 
+            font-style: italic; 
+            border-top: 1px dashed #ccc; 
+            padding-top: 15px; 
+            text-align: right;
+        }
+
+        #loadingMsg { color: var(--sapphire); font-weight: bold; font-size: 15px; text-align: center; margin-top: 40px;}
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="usernameDisplay">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">📚 Central Document Repository</h1>
+            </div>
+
+            <div class="info-banner">
+                <b>📌 DOCUMENT ACCESS & CONFIDENTIALITY:</b><br>
+                Welcome to the Ravenclaw House central document repository. The guidelines, SOPs, and manuals provided here outline the governance, authorities, and detailed workflows for each division. These documents are <b>strictly for authorized personnel only</b>. 
+            </div>
+
+            <div class="tabs-container" id="tabsContainer"></div>
+
+            <div id="loadingMsg">Fetching official documents from the database...</div>
+
+            <!-- CONTAINER FOR THE FORMAL DOCUMENTS -->
+            <div id="documentContainer"></div>
+
+        </div>
+    </div>
+
+    <script>
+        // GANTI DENGAN LINK WEB APP KAMU YANG BARU DI-DEPLOY
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XE/exec";
+
+        let loggedInUser = localStorage.getItem("session_username");
+        let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+        
+        if (!loggedInUser) window.location.href = "index.html";
+
+        const roleLabels = {
+            'Headhouse': '👑 Head of House',
+            'PVP': '🛡️ Prefect & VP',
+            'Leadroom': '📚 Leadroom',
+            'Editor': '🎨 Editor'
+        };
+
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('usernameDisplay').innerText = loggedInUser;
+            setupDynamicSidebar();
+            fetchDocuments();
+        });
+
+        function setupDynamicSidebar() {
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
+
+            const allMenus = [
+                { id: 'menu-sop', label: 'Documents & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" }
+            ];
+
+            let allowedMenuIds = [];
+            if (isHH) allowedMenuIds = allMenus.map(m => m.id);
+            else if (isPrefect) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-finance', 'menu-librarydb', 'menu-rank'];
+            else if (isLeadroom) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-librarydb'];
+            else if (isEditor) allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-rank'];
+
+            var sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.innerHTML = ''; 
+            allMenus.forEach(menu => {
+                if (allowedMenuIds.includes(menu.id)) {
+                    var li = document.createElement('li'); li.className = menu.id;
+                    var act = menu.id === 'menu-sop' ? ' class="active"' : '';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${act}>${menu.label}</a>`;
+                    sidebarMenu.appendChild(li);
+                }
+            });
+        }
+
+        function fetchDocuments() {
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "getDocumentData", userRole: userRole })
+            })
+            .then(response => response.json())
+            .then(res => {
+                document.getElementById('loadingMsg').style.display = 'none';
+                if (res.status === 'success' || res.success) {
+                    renderDocuments(res.data, res.allowedRoles);
+                } else {
+                    document.getElementById('documentContainer').innerHTML = `<div style="color:var(--danger); font-weight:bold; text-align:center;">❌ Error Loading Data: ${res.message}</div>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').style.display = 'none';
+                document.getElementById('documentContainer').innerHTML = `<div style="color:var(--danger); font-weight:bold; text-align:center;">❌ Connection Error.</div>`;
+            });
+        }
+
+        function renderDocuments(groupedData, allowedRoles) {
+            var tabsContainer = document.getElementById('tabsContainer');
+            var dataContainer = document.getElementById('documentContainer');
+            tabsContainer.innerHTML = '';
+            dataContainer.innerHTML = '';
+
+            if (allowedRoles.length === 0) {
+                dataContainer.innerHTML = '<div style="color:gray; font-weight:bold; text-align:center;">No documents assigned to your role.</div>';
+                return;
+            }
+
+            var isFirstTab = true;
+
+            allowedRoles.forEach(function(roleKey) {
+                var roleTitle = roleLabels[roleKey] || roleKey.toUpperCase();
+                
+                // BUAT TOMBOL TAB
+                var btn = document.createElement('button');
+                btn.className = 'tab-btn' + (isFirstTab ? ' active' : '');
+                btn.innerText = roleTitle;
+                btn.onclick = function() { openTab(roleKey); };
+                tabsContainer.appendChild(btn);
+
+                // BUAT KONTEN TAB
+                var tabContent = document.createElement('div');
+                tabContent.className = 'tab-content' + (isFirstTab ? ' active' : '');
+                tabContent.id = 'content-' + roleKey;
+
+                var roleDataArray = groupedData[roleKey];
+                
+                if (!roleDataArray || roleDataArray.length === 0) {
+                    tabContent.innerHTML = `<div style="color:gray; padding:20px; font-style:italic; text-align:center;">No official documents published for this division yet.</div>`;
+                } else {
+                    // MENGELUARKAN SETIAP DOKUMEN SEBAGAI "KERTAS" (PAPER)
+                    roleDataArray.forEach(function(item) {
+                        var paper = document.createElement('div');
+                        paper.className = 'document-paper';
+                        paper.innerHTML = `
+                            <div class="document-header">
+                                <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
+                                <div class="document-category">${item.category}</div>
+                                <h2 class="document-title">${item.title}</h2>
+                            </div>
+                            <div class="document-body">${item.content}</div>
+                            <div class="document-footer">Document officially synchronized on: ${item.lastUpdated || '-'}</div>
+                        `;
+                        tabContent.appendChild(paper);
+                    });
+                }
+
+                dataContainer.appendChild(tabContent);
+                isFirstTab = false;
+            });
+        }
+
+        function openTab(roleKey) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            var activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.includes(roleKey) || b.getAttribute('onclick').includes(roleKey));
+            if(activeBtn) activeBtn.classList.add('active');
+            
+            var targetContent = document.getElementById('content-' + roleKey);
+            if(targetContent) targetContent.classList.add('active');
+        }
+
+        function navigateHome() {
+            var targetPage = 'headhouse';
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            window.location.href = targetPage + '-dashboard.html';
+        }
+
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    </script>
+</body>
+</html>
