@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOP & Guidelines - Ravenclaw</title>
+    <title>Governance & Accountability Guidelines - Ravenclaw</title>
     <style>
         :root {
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
@@ -32,6 +32,8 @@
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 20px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 24px;}
         
+        .sop-banner { background-color: #fffde7; border-left: 4px solid var(--warning); padding: 12px 15px; margin-bottom: 20px; font-size: 12px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
+
         /* TAB STYLING */
         .tabs-container { display: flex; gap: 5px; border-bottom: 2px solid var(--shellstone); margin-bottom: 25px; flex-wrap: wrap;}
         .tab-btn { background-color: #e0e4eb; border: none; padding: 12px 24px; font-size: 13px; font-weight: bold; color: gray; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.3s; display: none; }
@@ -138,7 +140,7 @@
 
         <div class="content-area">
             <div class="header-actions">
-                <h1 class="page-title">📚 Official SOP & Guidelines</h1>
+                <h1 class="page-title">📚 Governance & Accountability Guidelines</h1>
             </div>
 
             <!-- TAB BUTTONS -->
@@ -155,7 +157,7 @@
                     <div class="doc-header-logo">
                         <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
                         <h2>RAVENCLAW HOUSE</h2>
-                        <p>Standard Operating Procedure</p>
+                        <p>Governance & Accountability Guidelines</p>
                     </div>
                     <div id="docContentHH"></div>
                 </div>
@@ -167,7 +169,7 @@
                     <div class="doc-header-logo">
                         <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
                         <h2>RAVENCLAW HOUSE</h2>
-                        <p>Standard Operating Procedure</p>
+                        <p>Governance & Accountability Guidelines</p>
                     </div>
                     <div id="docContentPVP"></div>
                 </div>
@@ -179,7 +181,7 @@
                     <div class="doc-header-logo">
                         <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
                         <h2>RAVENCLAW HOUSE</h2>
-                        <p>Standard Operating Procedure</p>
+                        <p>Governance & Accountability Guidelines</p>
                     </div>
                     <div id="docContentLR"></div>
                 </div>
@@ -191,7 +193,7 @@
                     <div class="doc-header-logo">
                         <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
                         <h2>RAVENCLAW HOUSE</h2>
-                        <p>Standard Operating Procedure</p>
+                        <p>Governance & Accountability Guidelines</p>
                     </div>
                     <div id="docContentEditor"></div>
                 </div>
@@ -221,7 +223,7 @@
             var container = document.getElementById('docContent' + targetId);
             if (!container) return;
 
-            container.innerHTML = `<div style="text-align: center; color: gray; padding: 40px;">⏳ Compiling Official Document...</div>`;
+            container.innerHTML = `<div style="text-align: center; color: gray; padding: 40px;">⏳ Pulling Official Document from Database...</div>`;
 
             fetch(API_URL, {
                 method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -230,7 +232,7 @@
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'success' || res.success) {
-                    container.innerHTML = res.content || '<div style="text-align: center; color: gray; padding: 40px;">Document is currently empty.</div>';
+                    container.innerHTML = res.content || '<div style="text-align: center; color: gray; padding: 40px;">Document is empty.</div>';
                     loadedTabs[tabId] = true;
                 } else {
                     container.innerHTML = `<div style="color:red; text-align:center;">Failed to load document: ${res.message}</div>`;
@@ -251,7 +253,7 @@
             if (sidebarTitle) sidebarTitle.innerText = (userRole === 'system admin' ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
             const allMenus = [
-                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-sop', label: 'Governance Guidelines', action: "navigate('sop')" },
                 { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
                 { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
                 { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
@@ -317,7 +319,7 @@
             if (firstAvailableTab) {
                 openTab(firstAvailableTab);
             } else {
-                document.querySelector('.tabs-container').innerHTML = '<div style="color:var(--danger); font-weight:bold;">No SOP assigned for your role.</div>';
+                document.querySelector('.tabs-container').innerHTML = '<div style="color:var(--danger); font-weight:bold;">No Guidelines assigned for your role.</div>';
             }
         }
 
