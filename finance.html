@@ -132,7 +132,6 @@
                 <div class="btn-group">
                     <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
                     <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
-                    <!-- SEPARATED BUTTONS FOR HOF AND SCHOOL REWARDS -->
                     <button class="btn-export btn-hof" onclick="openRankPreview('HOF_REWARDS')">🏆 Preview HoF Rewards</button>
                     <button class="btn-export" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;" onclick="openRankPreview('SCHOOL_REWARDS')">🎓 Preview School Ranks Rewards</button>
                     <button class="btn-export btn-spfines" onclick="openRankPreview('SP_FINES')">⚠️ Preview SP Fines</button>
@@ -563,13 +562,12 @@
                 let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
                 let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
 
-                // PERHITUNGAN BEST ROOM (DIBAGI RATA KE SELURUH ANGGOTA KAMAR)
+                // PERHITUNGAN BEST ROOM AMAN & PRESISI (DIBAGI RATA KE JUMLAH ANGGOTA)
                 let rooms = {};
                 rankDataCache.forEach(s => {
                     let r = s.room;
                     if(r && r !== '-' && r !== '' && !s.isInactive) {
-                        if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, memberCount: 0, members: [] };
-                        rooms[r].memberCount++;
+                        if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, members: [] };
                         rooms[r].basePts += s.totalPoints;
                         if(s.isLeadroom) rooms[r].lrPts += s.totalPoints;
                         rooms[r].members.push(s);
@@ -577,7 +575,8 @@
                 });
                 Object.keys(rooms).forEach(k => {
                     let rm = rooms[k];
-                    if(rm.memberCount > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / rm.memberCount) * 100) / 100;
+                    let count = rm.members.length; 
+                    if(count > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / count) * 100) / 100;
                     else rm.finalPts = 0;
                 });
                 let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
@@ -594,7 +593,7 @@
                     }
 
                     if (bestRoom && bestRoom.members.some(m => m.vault === s.vault)) {
-                        let splitRoomReward = Math.floor(1000 / bestRoom.memberCount);
+                        let splitRoomReward = Math.floor(1000 / bestRoom.members.length);
                         addRecord(s.vault, splitRoomReward, `Best Room Reward (${bestRoom.room})`);
                     }
                 });
@@ -653,9 +652,6 @@
             });
         }
 
-        // ==========================================
-        // FITUR PREVIEW SP EXAM REPORTS DARI SHEET
-        // ==========================================
         async function openSpReportFormatModal() {
             var month = document.getElementById('monthSelector').value;
             if (!month) return alert("Please select a valid month first.");
@@ -701,15 +697,10 @@
             }
         }
 
-        function closeSpReportModal() {
-            document.getElementById('spReportModal').style.display = 'none';
-        }
-
+        function closeSpReportModal() { document.getElementById('spReportModal').style.display = 'none'; }
         function copySpReportText() {
             var textarea = document.getElementById('spReportTextarea');
-            textarea.select();
-            document.execCommand('copy');
-            alert("✅ Report text copied to clipboard!");
+            textarea.select(); document.execCommand('copy'); alert("✅ Report text copied to clipboard!");
         }
 
         function downloadSpReportDoc() {
@@ -725,12 +716,8 @@
             var contentHtml = reportLines.map(line => {
                 if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:900; font-size:18px; text-align:center; margin-bottom:6px; color:#112250; letter-spacing: 1px;">${line}</div>`;
                 if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:13px; text-align:center; margin-bottom:25px; color:#3C507D; text-transform: uppercase;">${line}</div>`;
-                if (line.includes('Wit beyond measure')) {
-                    footerText = line;
-                    return '';
-                }
+                if (line.includes('Wit beyond measure')) { footerText = line; return ''; }
                 if (line.trim() === "") return `<div style="height: 10px;"></div>`;
-                
                 return `<div style="font-family:'Courier New', monospace; font-size:13px; font-weight:800; padding:8px 0; border-bottom:1px dashed #e0e0e0; color:#112250;">${line}</div>`;
             }).join('');
 
@@ -738,9 +725,7 @@
             pdfContainer.innerHTML = `
                 <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 40px; color: #112250; width: 720px; min-height: 1050px; display: flex; flex-direction: column; box-sizing: border-box; background-color: #ffffff;">
                     <div>
-                        <div style="text-align: center; margin-bottom: 15px;">
-                            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
-                        </div>
+                        <div style="text-align: center; margin-bottom: 15px;"><img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;"></div>
                         <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 25px;">
                         ${contentHtml}
                     </div>
@@ -750,43 +735,22 @@
                 </div>
             `;
 
-            var opt = {
-                margin:       0.2,
-                filename:     filename,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(pdfContainer).save().then(function() {
-                btn.innerText = "⬇️ Download Document"; btn.disabled = false;
-            }).catch(function() {
-                alert("Failed to generate Document.");
-                btn.innerText = "⬇️ Download Document"; btn.disabled = false;
-            });
+            var opt = { margin: 0.2, filename: filename, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(pdfContainer).save().then(function() { btn.innerText = "⬇️ Download Document"; btn.disabled = false; }).catch(function() { alert("Failed to generate Document."); btn.innerText = "⬇️ Download Document"; btn.disabled = false; });
         }
 
         function openPreview(type) {
             if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
             currentDownloadType = type;
             
-            var title = document.getElementById('previewTitle');
-            var thead = document.getElementById('previewThead');
-            var tbody = document.getElementById('previewTbody');
-            var annotBox = document.getElementById('previewAnnotation');
-            
+            var title = document.getElementById('previewTitle'); var thead = document.getElementById('previewThead'); var tbody = document.getElementById('previewTbody'); var annotBox = document.getElementById('previewAnnotation');
             thead.innerHTML = ''; tbody.innerHTML = ''; annotBox.style.display = 'none';
             
             var headersHtml = "<tr><th style='width:50px;'>No.</th><th>Vault Code</th>";
             var hasFines = false;
             
-            if(type === 'DUES_FINES') {
-                title.innerText = "Preview: Dues & Fines Withdrawal";
-                headersHtml += "<th>Total Amount</th><th>Fines Details</th></tr>";
-            } else if (type === 'REWARDS') {
-                title.innerText = "Preview: Monthly Summaries Reward";
-                headersHtml += "<th>Total Amount</th></tr>";
-            }
+            if(type === 'DUES_FINES') { title.innerText = "Preview: Dues & Fines Withdrawal"; headersHtml += "<th>Total Amount</th><th>Fines Details</th></tr>"; } 
+            else if (type === 'REWARDS') { title.innerText = "Preview: Monthly Summaries Reward"; headersHtml += "<th>Total Amount</th></tr>"; }
             thead.innerHTML = headersHtml;
 
             var counter = 1;
@@ -806,13 +770,11 @@
                     let totalAmount = s.kas + s.denda;
                     let fdText = isFined ? s.finesDetail : '-';
                     rowHtml += `<td style="font-weight:bold;">ʛ${formatMoney(totalAmount)}</td><td style="font-size:10px; color:#555;">${fdText}</td>`; 
-                } 
-                else if (type === 'REWARDS') { 
+                } else if (type === 'REWARDS') { 
                     rowHtml += `<td style="color:var(--success); font-weight:bold;">+ʛ${formatMoney(s.reward)}</td>`; 
                 } 
 
-                tr.innerHTML = rowHtml;
-                tbody.appendChild(tr);
+                tr.innerHTML = rowHtml; tbody.appendChild(tr);
             });
 
             if (hasFines) annotBox.style.display = 'block';
@@ -862,7 +824,6 @@
 
                 var isFined = (currentDownloadType === 'DUES_FINES' && s.denda > 0);
                 if (isFined) hasFines = true;
-                
                 var bgColor = isFined ? "background-color: #ffebee;" : "";
 
                 tableHtml += `<tr class="pdf-row" style="${bgColor}">
@@ -933,7 +894,6 @@
             sortedVaults.forEach(v => {
                 let data = rankAggregator[v];
                 if (data.total <= 0) return;
-
                 tAmount += data.total;
                 
                 let colorClass = currentRankDownloadType === 'SP_FINES' ? 'color:#c62828;' : 'color:#2e7d32;';
@@ -987,15 +947,7 @@
                 </div>
             `;
 
-            var opt = {
-                margin:       0.3, 
-                filename:     filename,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['css', 'legacy'], avoid: '.pdf-row' }
-            };
-
+            var opt = { margin: 0.3, filename: filename, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css', 'legacy'], avoid: '.pdf-row' } };
             html2pdf().set(opt).from(pdfContainer).save().then(function() {
                 btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
                 if (callback) callback();
