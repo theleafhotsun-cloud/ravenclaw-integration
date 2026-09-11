@@ -174,7 +174,7 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ 
-                    action: "loginSystem", // Kita beri nama action khusus agar rapi
+                    action: "loginSystem",
                     username: inputUsername,
                     password: inputPassword
                 })
@@ -189,30 +189,11 @@
                     localStorage.setItem("session_username", result.data.username);
                     localStorage.setItem("session_role", result.data.role);
 
-                    // Logika Penentuan Dashboard berdasarkan Posisi
-                    const rawPosition = result.data.role.toString().toLowerCase();
-                    let targetPage = "";
-
-                    if (rawPosition.includes('headhouse') || rawPosition.includes('system admin')) {
-                        targetPage = "headhouse-dashboard.html";
-                    } else if (rawPosition.includes('vice prefect') || rawPosition.includes('vp')) {
-                        targetPage = "viceprefect-dashboard.html";
-                    } else if (rawPosition.includes('prefect')) {
-                        targetPage = "prefect-dashboard.html";
-                    } else if (rawPosition.includes('lead room') || rawPosition.includes('leadroom')) {
-                        targetPage = "leadroom-dashboard.html";
-                    } else if (rawPosition.includes('editor')) {
-                        targetPage = "editor-dashboard.html";
-                    } else {
-                        status.style.color = '#c62828';
-                        status.innerHTML = 'Access Denied: Your position does not have a dashboard.';
-                        btn.innerHTML = 'Sign In';
-                        btn.disabled = false;
-                        return;
-                    }
-
+                    // ==========================================
+                    // SEMUA USER LANGSUNG DIARAHKAN KE HOME DASHBOARD
+                    // ==========================================
                     setTimeout(() => {
-                        window.location.href = targetPage;
+                        window.location.href = "home.html";
                     }, 1000);
 
                 } else {
