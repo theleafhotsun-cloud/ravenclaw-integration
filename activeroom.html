@@ -1053,7 +1053,8 @@
         }
 
         function resetSync(roomName, index) {
-            if(!confirm("Yakin ingin menghapus edit manual dan mengembalikan data ke hasil form otomatis?")) return;
+            if(!confirm("Are you sure you want to remove the manual edits and revert the data to the automatically generated form results?
+")) return;
             
             var s = fullDataStore.rooms[roomName][index];
             var vault = s.vault;
@@ -1066,7 +1067,7 @@
                 formStatus: act.formStatus, dendaOverride: act.dendaOverride,
                 loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
                 summaries: act.summaries, sumStat: act.sumStat, notes: act.notes,
-                lockSync: false // PERINTAH UNTUK MEMATIKAN MANUAL LOCK
+                lockSync: false 
             };
 
             var month = document.getElementById('monthSelector').value; 
@@ -1078,7 +1079,7 @@
             })
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
-                    showSnack("🔓 Manual Sync Lock dilepas! Mengambil data otomatis..."); 
+                    showSnack("🔓 Manual Sync Lock released! Fetching automatic data..."); 
                     fetchRoomData(); 
                 } else { 
                     alert(res.message); 
