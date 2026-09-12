@@ -1053,8 +1053,7 @@
         }
 
         function resetSync(roomName, index) {
-            if(!confirm("Are you sure you want to remove the manual edits and revert the data to the automatically generated form results?
-")) return;
+            if(!confirm("Are you sure you want to remove the manual edits and revert the data to the automatically generated form results?")) return;
             
             var s = fullDataStore.rooms[roomName][index];
             var vault = s.vault;
