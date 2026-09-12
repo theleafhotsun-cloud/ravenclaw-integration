@@ -1052,10 +1052,54 @@
             cardEl.innerText = "ʛ" + formatMoney(totalSum);
         }
 
+        function resetSync(roomName, index) {
+            if(!confirm("Yakin ingin menghapus edit manual dan mengembalikan data ke hasil form otomatis?")) return;
+            
+            var s = fullDataStore.rooms[roomName][index];
+            var vault = s.vault;
+            var act = s.activity;
+            
+            var payload = {
+                status: act.status, reqOverride: act.reqOverride,
+                attended: act.attended, absences: act.absences, excused: act.excused,
+                replacements: act.replacements, freeClass: act.freeClass,
+                formStatus: act.formStatus, dendaOverride: act.dendaOverride,
+                loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
+                summaries: act.summaries, sumStat: act.sumStat, notes: act.notes,
+                lockSync: false // PERINTAH UNTUK MEMATIKAN MANUAL LOCK
+            };
+
+            var month = document.getElementById('monthSelector').value; 
+            var week = document.getElementById('weekSelector').value;
+            
+            fetch(API_URL, { 
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: vault, payload: payload }) 
+            })
+            .then(r => r.json()).then(res => {
+                if(res.status === 'success' || res.success) { 
+                    showSnack("🔓 Manual Sync Lock dilepas! Mengambil data otomatis..."); 
+                    fetchRoomData(); 
+                } else { 
+                    alert(res.message); 
+                } 
+            }).catch(err => alert("Error: " + err.message));
+        }
+
         function saveInlineActivity(roomName, index) {
             var s = fullDataStore.rooms[roomName][index];
             var vault = s.vault;
             var act = s.activity;
+
+            var uiAtt = Math.max(0, parseInt(document.getElementById('att_'+vault).value) || 0);
+            var uiAbs = Math.max(0, parseInt(document.getElementById('abs_'+vault).value) || 0);
+            var uiExc = Math.max(0, parseInt(document.getElementById('exc_'+vault).value) || 0);
+            var uiRep = Math.max(0, parseInt(document.getElementById('rep_'+vault).value) || 0);
+            var uiFree = Math.max(0, parseInt(document.getElementById('free_'+vault).value) || 0);
+            var uiFs = document.getElementById('fs_'+vault).value;
+            var uiSumAct = Math.max(0, parseInt(document.getElementById('sumAct_'+vault).value) || 0);
+
+            var formIsChanged = (uiAtt !== act.attended || uiAbs !== act.absences || uiExc !== act.excused || uiRep !== act.replacements || uiFree !== act.freeClass || uiFs !== act.formStatus || uiSumAct !== act.summaries);
 
             var notesElement = document.getElementById('not_'+vault);
             var notesContent = notesElement ? (notesElement.innerText || notesElement.textContent || '') : '';
@@ -1063,20 +1107,20 @@
             var payload = {
                 status: act.status, 
                 reqOverride: act.reqOverride,
-                attended: Math.max(0, parseInt(document.getElementById('att_'+vault).value) || 0),
-                absences: Math.max(0, parseInt(document.getElementById('abs_'+vault).value) || 0),
-                excused: Math.max(0, parseInt(document.getElementById('exc_'+vault).value) || 0),
-                replacements: Math.max(0, parseInt(document.getElementById('rep_'+vault).value) || 0),
-                freeClass: Math.max(0, parseInt(document.getElementById('free_'+vault).value) || 0),
-                formStatus: document.getElementById('fs_'+vault).value,
+                attended: uiAtt,
+                absences: uiAbs,
+                excused: uiExc,
+                replacements: uiRep,
+                freeClass: uiFree,
+                formStatus: uiFs,
                 dendaOverride: act.dendaOverride,
                 loaStart: act.loaStart,
                 loaEnd: act.loaEnd,
                 loaLink: act.loaLink,
-                summaries: Math.max(0, parseInt(document.getElementById('sumAct_'+vault).value) || 0),
+                summaries: uiSumAct,
                 sumStat: act.sumStat,
                 notes: notesContent, 
-                lockSync: true 
+                lockSync: act.lockSync || formIsChanged 
             };
 
             var btn = document.getElementById('btnAct_'+vault);
@@ -1108,6 +1152,9 @@
             var vault = s.vault;
             var act = s.activity;
 
+            var uiSum = Math.max(0, parseInt(document.getElementById('sum_'+vault).value) || 0);
+            var sumIsChanged = (uiSum !== act.summaries);
+
             var payload = {
                 status: act.status, 
                 reqOverride: act.reqOverride,
@@ -1121,10 +1168,10 @@
                 loaStart: act.loaStart,
                 loaEnd: act.loaEnd,
                 loaLink: act.loaLink,
-                summaries: Math.max(0, parseInt(document.getElementById('sum_'+vault).value) || 0),
+                summaries: uiSum,
                 sumStat: act.sumStat, 
                 notes: act.notes,
-                lockSync: true 
+                lockSync: act.lockSync || sumIsChanged 
             };
 
             var btn = document.getElementById('btnSum_'+vault);
@@ -1232,9 +1279,12 @@
                                 </select>
                             `;
 
+                            var unlockBtn = act.lockSync ? `<button class="btn-icon" title="Reset & Kembali Pakai Data Form Otomatis" onclick="resetSync('${roomName}', ${idx})">🔓</button>` : '';
+
                             var actCol = isInactive ? `<span style="color:var(--danger); font-weight:bold; font-size:9px;">ARCHIVED / INACTIVE</span>` : `
                                 <div style="display:flex; gap:4px; align-items:center;">
                                     <button class="btn-save-inline" id="btnAct_${s.vault}" onclick="saveInlineActivity('${roomName}', ${idx})">💾 Save</button>
+                                    ${unlockBtn}
                                     <button class="btn-icon" title="Advanced Edit (LOA Dates & Overrides)" onclick="openAdjustModal('${roomName}', ${idx})">⚙️</button>
                                 </div>
                             `;
@@ -1596,7 +1646,7 @@
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
                 notes: act.notes, 
-                lockSync: true 
+                lockSync: act.lockSync 
             };
             
             var btn = document.getElementById('btnSaveAct'); 
@@ -1655,7 +1705,7 @@
             var payload = { 
                 status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: act.summaries, 
                 sumStat: sStat, 
-                lockSync: true 
+                lockSync: act.lockSync 
             };
             
             var btn = document.getElementById('btnSaveSum'); 
