@@ -107,7 +107,7 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
+    <!-- Dynamic Sidebar (Standarized) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
@@ -278,9 +278,6 @@
 
     <!-- SCRIPT AREA -->
     <script>
-        // ==========================================
-        // URL API SUDAH SAYA PERBARUI SESUAI INSTRUKSI KAMU
-        // ==========================================
         const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         let loggedInUser = localStorage.getItem("session_username");
@@ -335,9 +332,10 @@
             if (sidebarTitle) sidebarTitle.innerText = ((userRole === 'system admin') ? 'Headhouse' : userRole).toUpperCase() + " PANEL";
 
             const allMenus = [
+                { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
                 { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
                 { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
-                { id: 'menu-taskmaster', label: 'Task Master / Home', action: "navigateHome()" },
+                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
                 { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
                 { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
                 { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
@@ -355,11 +353,11 @@
             if (isHH) {
                 allowedMenuIds = allMenus.map(m => m.id);
             } else if (isPrefect) {
-                allowedMenuIds = ['menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
+                allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'];
             } else if (isLeadroom) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
+                allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb'];
             } else if (isEditor) {
-                allowedMenuIds = ['menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
+                allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'];
             }
 
             var sidebarMenu = document.getElementById('sidebarMenu');
@@ -372,14 +370,13 @@
                     
                     var activeClass = menu.id === 'menu-salary' ? ' class="active"' : '';
                     
-                    li.innerHTML = '<a href="javascript:void(0)" onclick="' + menu.action + '"' + activeClass + '>' + menu.label + '</a>';
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
 
-        function navigateHome(element) {
-            if(element) element.innerText = "Loading...";
+        function navigateTaskMaster() {
             var targetPage = 'headhouse'; 
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
@@ -388,16 +385,9 @@
             window.location.href = targetPage + "-dashboard.html";
         }
 
-        function navigate(targetPage, element) { 
-            if(element) element.innerText = "Wait..."; 
-            window.location.href = targetPage + ".html"; 
-        }
-        
-        function logout(btnElement) { 
-            if(btnElement) btnElement.innerText = "Wait..."; 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
+        function navigateHome() { navigate('home'); }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
         // ==========================================
         // LOGIKA APLIKASI
