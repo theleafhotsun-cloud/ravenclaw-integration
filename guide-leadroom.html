@@ -98,12 +98,17 @@
         }
 
         .mag-text { 
-            font-family: 'Lora', serif; font-size: 15px; line-height: 1.7; color: #2c313a; 
-            margin-top: 2px; margin-bottom: 8px; 
+            font-family: 'Lora', serif; font-size: 13.5px; line-height: 1.7; color: #2c313a; 
+            margin-top: 0; margin-bottom: 15px; 
             text-align: justify; text-justify: inter-word;
         }
+        
+        /* CLASS PENGANTAR: Menempel rapat ke list di bawahnya */
+        .mag-text.intro {
+            margin-bottom: 4px;
+        }
 
-        /* Drop Cap (Huruf besar di awal kalimat) */
+        /* Drop Cap */
         .drop-cap {
             font-family: 'Cinzel', serif; font-size: 55px; float: left; 
             line-height: 0.8; margin-right: 10px; margin-top: 4px; 
@@ -112,14 +117,20 @@
 
         /* List Styling - Jarak Dirapatkan */
         .mag-list {
-            font-family: 'Lora', serif; font-size: 15px; line-height: 1.5; color: #2c313a;
-            margin: 5px 0 15px 20px; padding-left: 5px; text-align: justify;
+            font-family: 'Lora', serif; font-size: 13.5px; line-height: 1.6; color: #2c313a;
+            margin: 0 0 15px 20px; padding-left: 5px; text-align: justify;
         }
-        .mag-list li { margin-bottom: 3px; padding-left: 0; }
+        .mag-list li { margin-bottom: 4px; padding-left: 0; }
+        
+        /* Untuk list di dalam list (nested) agar tidak terlalu berjarak */
+        .mag-list ul, .mag-list ol {
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
 
         /* Sub-point Styling */
         .mag-subpoint {
-            font-family: 'Lora', serif; font-size: 15px; font-weight: 600; 
+            font-family: 'Lora', serif; font-size: 14px; font-weight: 600; 
             color: var(--royal-blue); margin-top: 20px; margin-bottom: 5px; text-align: justify;
         }
         
@@ -129,18 +140,18 @@
             text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* Pull-quote (Kutipan menonjol ala majalah) */
+        /* Pull-quote (Kutipan menonjol) */
         .pull-quote { 
-            font-family: 'Cinzel', serif; font-size: 20px; color: var(--royal-blue); 
-            text-align: center; font-weight: 600; line-height: 1.5;
+            font-family: 'Cinzel', serif; font-size: 18px; color: var(--royal-blue); 
+            text-align: center; font-weight: 600; line-height: 1.6;
             border-top: 2px solid var(--bronze-dark); border-bottom: 2px solid var(--bronze-dark); 
             padding: 25px 40px; margin: 40px 0; background-color: #fafbfc;
         }
         
-        /* Quotation/Flow Styling for Text block */
+        /* Blockquote Flow Styling */
         .mag-blockquote {
-             font-family: 'Lora', serif; font-size: 15px; line-height: 1.85; color: #4a4a4a; font-style: italic;
-             margin: 15px 0 20px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
+             font-family: 'Lora', serif; font-size: 14.5px; line-height: 1.85; color: #4a4a4a; font-style: italic;
+             margin: 10px 0 20px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
              background-color: #f9f9f9; text-align: justify; text-justify: inter-word;
         }
 
@@ -186,7 +197,7 @@
                 <div class="mag-text"><b><i>Lead Room</i></b> bukan sekadar penyampai instruksi dari <b><i>P-VP</i></b>, tetapi memiliki tanggung jawab untuk mengelola kamar secara aktif dan menggunakan pertimbangan yang wajar dalam menjalankan tugas.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">II. LANDASAN DAN HIERARKI KETENTUAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Dalam menjalankan tugas, <b><i>Lead Room</i></b> berpedoman pada:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Dalam menjalankan tugas, <b><i>Lead Room</i></b> berpedoman pada:</div><span style="display:none;">[cite: 5]</span>
                 <ol class="mag-list">
                     <li>Peraturan dan Kebijakan Asrama;</li><span style="display:none;">[cite: 5]</span>
                     <li>Pedoman Tata Kelola, Wewenang, dan Tanggung Jawab;</li><span style="display:none;">[cite: 5]</span>
@@ -208,7 +219,7 @@
 
                 <div class="mag-subpoint">3. LEAD ROOM</div><span style="display:none;">[cite: 5]</span>
                 <div class="mag-subpoint-italic">ROOM MANAGEMENT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>pengelolaan kamar;</li><span style="display:none;">[cite: 5]</span>
                     <li>pemantauan murid;</li><span style="display:none;">[cite: 5]</span>
@@ -223,12 +234,12 @@
                     <li>pengumpulan data; dan</li><span style="display:none;">[cite: 5]</span>
                     <li>pelaporan kepada <b><i>P-VP</i></b>.</li><span style="display:none;">[cite: 5]</span>
                 </ul>
-                <div class="mag-text"><b><i>Lead Room</i></b> memiliki ruang untuk mengatur pelaksanaan pekerjaan di dalam kamar selama tetap sesuai dengan ketentuan yang berlaku. Pembagian kewenangan tersebut bertujuan memastikan bahwa <b><i>P-VP</i></b> tidak perlu mengatur setiap aktivitas kamar dan <b><i>Lead Room</i></b> tidak perlu meminta persetujuan atas setiap keputusan kecil yang memang menjadi kewenangannya.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text"><b><i>Lead Room</i></b> tetap memiliki ruang untuk memberikan masukan, menyampaikan kendala, mengajukan alternatif, dan meminta klarifikasi. Pembagian tersebut tidak dimaksudkan untuk menciptakan jarak antar jabatan, melainkan untuk memastikan bahwa otoritas, tanggung jawab, dan pelaksanaan pekerjaan tidak saling tumpang tindih.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">IV. TUGAS DAN TANGGUNG JAWAB LEAD ROOM</div><span style="display:none;">[cite: 5]</span>
                 
-                <div class="mag-subpoint">Manajemen Rangkuman</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Tanggung jawab ini meliputi pengelolaan seluruh proses rangkuman kamar sebagai berikut:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">A. Manajemen Rangkuman</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Tanggung jawab ini meliputi pengelolaan seluruh proses rangkuman kamar sebagai berikut:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>Membagikan daftar pembagian rangkuman;</li><span style="display:none;">[cite: 5]</span>
                     <li>Memastikan proses pembagian dan pengerjaan rangkuman berjalan sesuai ketentuan;</li><span style="display:none;">[cite: 5]</span>
@@ -244,8 +255,8 @@
                 </ul>
                 <div class="mag-text"><b><i>Lead Room</i></b> tidak hanya bertugas memastikan rangkuman terkumpul, tetapi juga memastikan rangkuman tersebut memenuhi ketentuan sebelum diteruskan. <b><i>Lead Room</i></b> wajib memperhatikan <b><i>deadline</i></b> yang telah ditetapkan dalam sistem, termasuk batas pengumpulan rangkuman kamar dan batas pengiriman data kepada pihak terkait. Apabila terdapat kendala yang menyebabkan <b><i>deadline</i></b> tidak dapat dipenuhi, <b><i>Lead Room</i></b> wajib menyampaikan kondisi tersebut kepada <b><i>P-VP</i></b> sesegera mungkin.</div><span style="display:none;">[cite: 5]</span>
 
-                <div class="mag-subpoint">PRESENSI DAN KEAKTIFAN MURID</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> melakukan pengawasan langsung terhadap kehadiran dan partisipasi murid melalui:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">B. Presensi dan Keaktifan Murid</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> melakukan pengawasan langsung terhadap kehadiran dan partisipasi murid melalui:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>Memantau presensi kelas;</li><span style="display:none;">[cite: 5]</span>
                     <li>Memantau presensi kegiatan kelas;</li><span style="display:none;">[cite: 5]</span>
@@ -257,8 +268,8 @@
                 </ul>
                 <div class="mag-text"><b><i>Lead Room</i></b> wajib menggunakan data secara objektif dan tidak memberikan perlakuan berbeda kepada murid berdasarkan kedekatan personal.</div><span style="display:none;">[cite: 5]</span>
 
-                <div class="mag-subpoint">ADMINISTRASI KAMAR</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Manajemen administrasi tingkat kamar mencakup pengelolaan data berikut:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">C. Administrasi Kamar</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Manajemen administrasi tingkat kamar mencakup pengelolaan data berikut:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>Memantau dan memastikan kesesuaian database keaktifan serta data kas kamar pada <b><i>RMIS</i></b>;</li><span style="display:none;">[cite: 5]</span>
                     <li>Memberikan laporan keaktifan;</li><span style="display:none;">[cite: 5]</span>
@@ -266,7 +277,7 @@
                     <li>Mengelola data rangkuman dan cuti; dan</li><span style="display:none;">[cite: 5]</span>
                     <li>Mengelola dokumen lain yang menjadi tanggung jawab kamar.</li><span style="display:none;">[cite: 5]</span>
                 </ul>
-                <div class="mag-text">Ketentuan Data:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Ketentuan Data:</div><span style="display:none;">[cite: 5]</span>
                 <ol class="mag-list">
                     <li>Data harus akurat, lengkap, mutakhir, dapat ditelusuri, dan disimpan pada sistem yang telah ditentukan;</li><span style="display:none;">[cite: 5]</span>
                     <li>Setiap perubahan informasi murid atau anggota kamar wajib disampaikan kepada <b><i>P-VP/Head House</i></b> melalui <b><i>Grey Room</i></b>;</li><span style="display:none;">[cite: 5]</span>
@@ -275,8 +286,8 @@
                 </ol>
                 <div class="mag-text"><b><i>Lead Room</i></b> bertanggung memastikan data kamar terpantau dan diperbarui melalui jalur yang sesuai agar dapat digunakan <b><i>P-VP/Head House</i></b> untuk kebutuhan <b><i>monitoring</i></b> dan administrasi asrama.</div><span style="display:none;">[cite: 5]</span>
 
-                <div class="mag-subpoint">PEMBINAAN DAN PENGELOLAAN MURID</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Sebagai pihak terdekat dengan murid, <b><i>Lead Room</i></b> menjalankan fungsi pembinaan melalui:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">D. Pembinaan dan Pengelolaan Murid</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Sebagai pihak terdekat dengan murid, <b><i>Lead Room</i></b> menjalankan fungsi pembinaan melalui:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>Mengenali kondisi dan kebutuhan anggota kamar;</li><span style="display:none;">[cite: 5]</span>
                     <li>Membantu murid memahami dan memenuhi kewajibannya;</li><span style="display:none;">[cite: 5]</span>
@@ -289,8 +300,8 @@
                 </ul>
                 <div class="mag-text"><b><i>Lead Room</i></b> tidak bertugas menjadi polisi kamar. Pendekatan yang digunakan harus mengutamakan pembinaan, komunikasi, dan penyelesaian masalah, sementara tindakan disipliner yang berada di luar kewenangan <b><i>Lead Room</i></b> diteruskan kepada <b><i>P-VP</i></b>.</div><span style="display:none;">[cite: 5]</span>
 
-                <div class="mag-subpoint">AKTIVASI DAN SUASANA KAMAR</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Aspek aktivasi bertujuan menjaga lingkungan kamar tetap:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">E. Aktivasi dan Suasana Kamar</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Aspek aktivasi bertujuan menjaga lingkungan kamar tetap:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>aktif;</li><span style="display:none;">[cite: 5]</span>
                     <li>nyaman;</li><span style="display:none;">[cite: 5]</span>
@@ -318,7 +329,7 @@
                 <div class="mag-text">Komunikasi publik di Tenda Biru digunakan terbatas untuk informasi umum dan koordinasi massal. Masalah individual dan eskalasi operasional dilakukan secara tertutup melalui <b><i>Grey Room</i></b> sebagai ruang koordinasi internal antara Kepala Asrama, <b><i>P-VP</i></b>, dan <b><i>Lead Room</i></b>.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">VII. HUBUNGAN DENGAN MURID</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> harus mampu menjaga keseimbangan antara kedekatan dan kewenangan. <b><i>Lead Room</i></b> boleh menjadi tempat murid bertanya, meminta bantuan, menyampaikan kendala, atau mencari arahan. Namun, kedekatan dengan murid tidak boleh menyebabkan:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> harus mampu menjaga keseimbangan antara kedekatan dan kewenangan. <b><i>Lead Room</i></b> boleh menjadi tempat murid bertanya, meminta bantuan, menyampaikan kendala, atau mencari arahan. Namun, kedekatan dengan murid tidak boleh menyebabkan:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>favoritisme;</li><span style="display:none;">[cite: 5]</span>
                     <li>pemberian perlakuan khusus;</li><span style="display:none;">[cite: 5]</span>
@@ -326,11 +337,11 @@
                     <li>penyalahgunaan informasi pribadi; atau</li><span style="display:none;">[cite: 5]</span>
                     <li>konflik kepentingan.</li><span style="display:none;">[cite: 5]</span>
                 </ul>
-                <div class="mag-text">Sebaliknya, posisi <b><i>Lead Room</i></b> juga tidak boleh membuat murid merasa tidak dapat berbicara atau menyampaikan kendala. <b><i>Lead Room</i></b> harus menciptakan lingkungan kamar yang memungkinkan murid merasa:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Sebaliknya, posisi <b><i>Lead Room</i></b> juga tidak boleh membuat murid merasa tidak dapat berbicara atau menyampaikan kendala. <b><i>Lead Room</i></b> harus menciptakan lingkungan kamar yang memungkinkan murid merasa:</div><span style="display:none;">[cite: 5]</span>
                 <div class="mag-blockquote">didengar, diarahkan, dan tetap bertanggung jawab atas kewajibannya.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">VIII. OBJEKTIVITAS DAN KONFLIK KEPENTINGAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> wajib mengambil keputusan berdasarkan:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> wajib mengambil keputusan berdasarkan:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>ketentuan;</li><span style="display:none;">[cite: 5]</span>
                     <li>fakta;</li><span style="display:none;">[cite: 5]</span>
@@ -342,7 +353,7 @@
                 <div class="mag-text"><b><i>Lead Room</i></b> tidak boleh menggunakan kedekatan dengan murid sebagai alasan untuk memberikan perlakuan berbeda. Apabila terdapat hubungan personal yang berpotensi mengganggu objektivitas, <b><i>Lead Room</i></b> wajib menyampaikan kondisi tersebut kepada <b><i>P-VP</i></b> dan, apabila diperlukan, meminta bantuan Kepala Asrama dalam melakukan penilaian.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">IX. AKUNTABILITAS DAN DOKUMENTASI</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> bertanggung jawab atas tindakan dan keputusan yang diambil dalam lingkup kewenangannya. Hal-hal penting yang berkaitan dengan:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> bertanggung jawab atas tindakan dan keputusan yang diambil dalam lingkup kewenangannya. Hal-hal penting yang berkaitan dengan:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>keterlambatan;</li><span style="display:none;">[cite: 5]</span>
                     <li>konflik;</li><span style="display:none;">[cite: 5]</span>
@@ -356,7 +367,7 @@
                 <div class="mag-text">harus dapat ditelusuri apabila diperlukan. Dokumentasi diperlukan agar informasi tidak hanya bergantung pada ingatan individu dan dapat diteruskan kepada <b><i>Lead Room</i></b> berikutnya.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">X. KOORDINASI DAN PERBEDAAN PENDAPAT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> memiliki hak untuk:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> memiliki hak untuk:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>bertanya;</li><span style="display:none;">[cite: 5]</span>
                     <li>menyampaikan keberatan;</li><span style="display:none;">[cite: 5]</span>
@@ -368,7 +379,7 @@
                 <div class="mag-text">Perbedaan pendapat tidak dianggap sebagai pembangkangan selama disampaikan secara profesional. Namun, setelah keputusan yang sah ditetapkan oleh pihak yang berwenang, <b><i>Lead Room</i></b> wajib melaksanakannya sepanjang keputusan tersebut tidak bertentangan dengan ketentuan Asrama.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">XI. EVALUASI KINERJA LEAD ROOM</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Evaluasi <b><i>Lead Room</i></b> dilakukan dengan mempertimbangkan:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Evaluasi <b><i>Lead Room</i></b> dilakukan dengan mempertimbangkan:</div><span style="display:none;">[cite: 5]</span>
                 <ol class="mag-list">
                     <li>ketepatan waktu;</li><span style="display:none;">[cite: 5]</span>
                     <li>akurasi data;</li><span style="display:none;">[cite: 5]</span>
@@ -386,7 +397,7 @@
                 <div class="mag-text">Penilaian tidak hanya berdasarkan banyaknya pekerjaan yang selesai, tetapi juga berdasarkan cara pekerjaan tersebut dikelola dan dampaknya terhadap anggota kamar.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">XII. PENGUNDURAN DIRI</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> yang bermaksud mengundurkan diri wajib menyampaikan pengunduran diri secara resmi kepada <b><i>P-VP</i></b> dan/atau Kepala Asrama sesuai mekanisme yang berlaku, paling lambat 1 (satu) bulan sebelum tanggal efektif pengunduran diri. Selama masa pemberitahuan, <b><i>Lead Room</i></b> tetap berkewajiban untuk:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Leadroom</i></b> yang bermaksud mengundurkan diri wajib menyampaikan pengunduran diri secara resmi kepada <b><i>P-VP</i></b> dan/atau Kepala Asrama sesuai mekanisme yang berlaku, paling lambat 1 (satu) bulan sebelum tanggal efektif pengunduran diri. Selama masa pemberitahuan, <b><i>Leadroom</i></b> tetap berkewajiban untuk:</div><span style="display:none;">[cite: 5]</span>
                 <ol class="mag-list">
                     <li>menjalankan tugas dan tanggung jawabnya;</li><span style="display:none;">[cite: 5]</span>
                     <li>menyelesaikan pekerjaan yang masih memungkinkan untuk diselesaikan;</li><span style="display:none;">[cite: 5]</span>
@@ -398,61 +409,64 @@
                     <li>memberikan informasi mengenai kondisi dan kebutuhan anggota kamar; dan</li><span style="display:none;">[cite: 5]</span>
                     <li>membantu proses serah terima dan peralihan tanggung jawab.</li><span style="display:none;">[cite: 5]</span>
                 </ol>
-                <div class="mag-text">Penyampaian niat mengundurkan diri secara informal tidak secara otomatis mengakhiri kewenangan dan tanggung jawab <b><i>Lead Room</i></b>. Pengakhiran tugas sebelum berakhirnya masa pemberitahuan hanya dapat dilakukan berdasarkan persetujuan <b><i>P-VP</i></b> dan/atau Kepala Asrama.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Ketentuan masa pemberitahuan dapat dikecualikan apabila terjadi keadaan kahar (<b><i>force majeure</i></b>) atau kondisi lain yang secara objektif menyebabkan <b><i>Lead Room</i></b> tidak dapat memenuhi masa pemberitahuan. Kondisi tersebut wajib disampaikan kepada <b><i>P-VP</i></b> dan/atau Kepala Asrama serta dapat dipertanggungjawabkan kebenarannya.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Penyampaian niat mengundurkan diri secara informal tidak secara otomatis mengakhiri kewenangan dan tanggung jawab <b><i>Leadroom</i></b>. Pengakhiran tugas sebelum berakhirnya masa pemberitahuan hanya dapat dilakukan berdasarkan persetujuan <b><i>P-VP</i></b> dan/atau Kepala Asrama.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Ketentuan masa pemberitahuan dapat dikecualikan apabila terjadi keadaan kahar (<b><i>force majeure</i></b>) atau kondisi lain yang secara objektif menyebabkan <b><i>Leadroom</i></b> tidak dapat memenuhi masa pemberitahuan. Kondisi tersebut wajib disampaikan kepada <b><i>P-VP</i></b> dan/atau Kepala Asrama serta dapat dipertanggungjawabkan kebenarannya.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">XIII. PURNA TUGAS DAN SERAH TERIMA</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Serah terima <b><i>Lead Room</i></b> sekurang-kurangnya mencakup:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Serah terima <b><i>Lead Room</i></b> sekurang-kurangnya mencakup:</div><span style="display:none;">[cite: 5]</span>
                 
-                <div class="mag-subpoint">Administrasi</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>database keaktifan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>database kas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data anggota;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data rangkuman;</li><span style="display:none;">[cite: 5]</span>
-                    <li>arsip; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>Laporan.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">Operasional</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>tugas berjalan;</li><span style="display:none;">[cite: 5]</span>
-                    <li><b><i>deadline</i></b>;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kegiatan mendatang;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pembagian tugas; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>pekerjaan yang belum selesai.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">Kondisi Kamar</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>kondisi anggota;</li><span style="display:none;">[cite: 5]</span>
-                    <li>murid yang membutuhkan perhatian;</li><span style="display:none;">[cite: 5]</span>
-                    <li>permasalahan berjalan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kondisi keaktifan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>rekomendasi tindak lanjut.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">Sistem</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>akses;</li><span style="display:none;">[cite: 5]</span>
-                    <li>thread;</li><span style="display:none;">[cite: 5]</span>
-                    <li>database;</li><span style="display:none;">[cite: 5]</span>
-                    <li>dokumen; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>mekanisme kerja.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
+                <ol type="A" class="mag-list">
+                    <li><b>ADMINISTRASI</b>
+                        <ul>
+                            <li>database keaktifan;</li>
+                            <li>database kas;</li>
+                            <li>data anggota;</li>
+                            <li>data rangkuman;</li>
+                            <li>arsip; dan</li>
+                            <li>laporan.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 5]</span>
+                    <li><b>OPERASIONAL</b>
+                        <ul>
+                            <li>tugas berjalan;</li>
+                            <li><b><i>deadline</i></b>;</li>
+                            <li>kegiatan mendatang;</li>
+                            <li>pembagian tugas; dan</li>
+                            <li>pekerjaan yang belum selesai.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 5]</span>
+                    <li><b>KONDISI KAMAR</b>
+                        <ul>
+                            <li>kondisi anggota;</li>
+                            <li>murid yang membutuhkan perhatian;</li>
+                            <li>permasalahan berjalan;</li>
+                            <li>kondisi keaktifan; dan</li>
+                            <li>rekomendasi tindak lanjut.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 5]</span>
+                    <li><b>SISTEM</b>
+                        <ul>
+                            <li>akses;</li>
+                            <li>thread;</li>
+                            <li>database;</li>
+                            <li>dokumen; dan</li>
+                            <li>mekanisme kerja.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 5]</span>
+                </ol>
                 <div class="mag-text">Serah terima harus memastikan bahwa <b><i>Lead Room</i></b> berikutnya dapat memahami kondisi kamar tanpa harus memulai seluruh proses dari awal.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">XIV. KEKOSONGAN JABATAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Apabila <b><i>Lead Room</i></b> kosong sebelum pengganti ditetapkan, <b><i>P-VP</i></b> dengan izin dari Kepala Asrama, dapat menunjuk:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
+                <div class="mag-text intro">Apabila <b><i>Lead Room</i></b> kosong sebelum pengganti ditetapkan, <b><i>P-VP</i></b> dengan izin dari Kepala Asrama, dapat menunjuk:</div><span style="display:none;">[cite: 5]</span>
+                <ol class="mag-list">
                     <li>Pelaksana Tugas;</li><span style="display:none;">[cite: 5]</span>
                     <li><b><i>Lead Room</i></b> sementara; atau</li><span style="display:none;">[cite: 5]</span>
                     <li>mekanisme pembagian tugas sementara.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
+                </ol>
                 <div class="mag-text">Pihak yang menjalankan fungsi sementara hanya memiliki kewenangan yang diperlukan untuk menjaga operasional kamar dan tidak secara otomatis memperoleh kewenangan untuk mengubah kebijakan Asrama.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">XV. KEBERLANJUTAN KAMAR</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> wajib memastikan bahwa pengelolaan kamar tidak bergantung sepenuhnya pada satu individu. Informasi mengenai:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro"><b><i>Lead Room</i></b> wajib memastikan bahwa pengelolaan kamar tidak bergantung sepenuhnya pada satu individu. Informasi mengenai:</div><span style="display:none;">[cite: 5]</span>
                 <ul class="mag-list">
                     <li>anggota kamar;</li><span style="display:none;">[cite: 5]</span>
                     <li>administrasi;</li><span style="display:none;">[cite: 5]</span>
@@ -466,14 +480,17 @@
                 <div class="mag-blockquote"><b><i>Lead Room</i></b> mengelola kamar untuk asrama, bukan memiliki kamar atas nama dirinya sendiri.</div><span style="display:none;">[cite: 5]</span>
 
                 <div class="mag-section-title">XVI. KETENTUAN PENUTUP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><b><i>Lead Room</i></b> merupakan pengelola pada tingkat unit yang memiliki mandat untuk memastikan kamar berjalan secara tertib, aktif, dan berkelanjutan. <b><i>Lead Room</i></b> diharapkan mampu menggunakan kewenangannya secara mandiri tanpa menunggu arahan untuk setiap persoalan kecil, tetapi tetap memahami batas ketika suatu persoalan harus disampaikan kepada <b><i>P-VP</i></b>. Prinsip utama <b><i>Lead Room</i></b> adalah:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>Dekat dengan murid tanpa kehilangan objektivitas.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Tegas terhadap kewajiban tanpa merendahkan.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Mandiri dalam mengelola kamar tanpa melampaui kewenangan.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Terbuka terhadap masukan tanpa kehilangan arah.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Bertanggung jawab terhadap kamar tanpa menjadikan kamar sebagai milik pribadi.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
+                <div class="mag-text"><b><i>Lead Room</i></b> merupakan pengelola pada tingkat unit yang memiliki mandat untuk memastikan kamar berjalan secara tertib, aktif, dan berkelanjutan. <b><i>Lead Room</i></b> diharapkan mampu menggunakan kewenangannya secara mandiri tanpa menunggu arahan untuk setiap persoalan kecil, tetapi tetap memahami batas ketika suatu persoalan harus disampaikan kepada <b><i>P-VP</i></b>.</div><span style="display:none;">[cite: 5]</span>
+                
+                <div class="mag-section-title" style="text-align: center; border: none; margin-top: 50px;">PRINSIP UTAMA LEAD ROOM</div>
+                <div class="pull-quote">
+                    Dekat dengan murid tanpa kehilangan objektivitas.<br>
+                    Tegas terhadap kewajiban tanpa merendahkan.<br>
+                    Mandiri dalam mengelola kamar tanpa melampaui kewenangan.<br>
+                    Terbuka terhadap masukan tanpa kehilangan arah.<br>
+                    Bertanggung jawab terhadap kamar tanpa menjadikan kamar sebagai milik pribadi.
+                </div><span style="display:none;">[cite: 5]</span>
+                
                 <div class="mag-text">Dengan demikian, <b><i>Lead Room</i></b> bukan sekadar penyampai informasi atau pengumpul tugas, melainkan pengelola unit yang bertanggung jawab memastikan kebutuhan, kewajiban, komunikasi, dan keberlangsungan kamar dapat berjalan dengan baik.</div><span style="display:none;">[cite: 5]</span>
 
             </div>
