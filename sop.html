@@ -27,81 +27,37 @@
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        .content-area { padding: 30px 40px; display: block; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        .content-area { padding: 40px 50px; display: block; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
         
         .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--shellstone); padding-bottom: 12px; margin-bottom: 20px;}
         .page-title { color: var(--royal-blue); margin: 0; font-size: 24px;}
         
-        .info-banner { background-color: #fffde7; border-left: 4px solid var(--warning); padding: 15px 20px; margin-bottom: 25px; font-size: 13px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
+        .info-banner { background-color: #fffde7; border-left: 4px solid var(--warning); padding: 15px 20px; margin-bottom: 30px; font-size: 13.5px; color: var(--royal-blue); border-radius: 4px; line-height: 1.6;}
 
-        /* TAB STYLING */
-        .tabs-container { display: flex; gap: 8px; border-bottom: 2px solid var(--shellstone); margin-bottom: 30px; flex-wrap: wrap;}
-        .tab-btn { background-color: transparent; border: none; padding: 12px 24px; font-size: 14px; font-weight: bold; color: gray; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.3s; position: relative; top: 2px;}
-        .tab-btn.active { color: var(--royal-blue); border-bottom: 3px solid var(--royal-blue); }
-        .tab-btn:hover:not(.active) { color: var(--sapphire); background-color: #e8eaf6; }
+        .doc-directory { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         
-        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; flex-direction: column; padding-bottom: 40px;}
-        .tab-content.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .doc-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .doc-card:hover {
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+            border-color: var(--sapphire);
+        }
+        .doc-category { font-size: 11px; font-weight: bold; color: var(--warning); text-transform: uppercase; letter-spacing: 1.5px; }
+        .doc-title { margin: 0; font-size: 18px; color: var(--royal-blue); }
+        .doc-desc { margin: 0; font-size: 13px; color: gray; line-height: 1.5; flex-grow: 1; }
+        .doc-btn { margin-top: 10px; font-size: 13px; font-weight: bold; color: var(--sapphire); display: flex; align-items: center; gap: 5px; }
 
-        /* FORMAL DOCUMENT PAPER STYLING */
-        .document-paper { 
-            background: #ffffff; 
-            max-width: 850px; 
-            margin: 0 auto 35px auto; 
-            padding: 50px 60px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            border: 1px solid #e0e0e0; 
-            border-radius: 4px; 
-        }
-        
-        .document-header {
-            text-align: center;
-            margin-bottom: 35px;
-            border-bottom: 2px solid var(--royal-blue);
-            padding-bottom: 20px;
-        }
-        .document-header img {
-            width: 70px;
-            margin-bottom: 15px;
-        }
-        .document-category {
-            font-size: 12px;
-            color: var(--warning);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-        .document-title {
-            font-size: 24px;
-            color: var(--royal-blue);
-            text-transform: uppercase;
-            margin: 0;
-            letter-spacing: 0.5px;
-        }
-        
-        /* PRE-WRAP ensures all bullet points and line breaks display perfectly */
-        .document-body { 
-            font-size: 14.5px; 
-            color: #333; 
-            line-height: 1.8; 
-            white-space: pre-wrap; 
-            font-family: inherit;
-            text-align: justify;
-        }
-        
-        .document-footer { 
-            margin-top: 40px; 
-            font-size: 11px; 
-            color: gray; 
-            font-style: italic; 
-            border-top: 1px dashed #ccc; 
-            padding-top: 15px; 
-            text-align: right;
-        }
-
-        #loadingMsg { color: var(--sapphire); font-weight: bold; font-size: 15px; text-align: center; margin-top: 40px;}
     </style>
 </head>
 <body>
@@ -111,7 +67,6 @@
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
-        <!-- Sidebar Menu Dinamis -->
         <ul class="nav-links" id="sidebarMenu"></ul>
     </div>
 
@@ -133,13 +88,10 @@
                 Welcome to the Ravenclaw House central document repository. The guidelines, SOPs, and manuals provided here outline the governance, authorities, and detailed workflows for each division. These documents are <b>strictly for authorized personnel only</b>. 
             </div>
 
-            <div class="tabs-container" id="tabsContainer"></div>
-
-            <div id="loadingMsg">Fetching official documents from the database...</div>
-
-            <!-- CONTAINER FOR THE FORMAL DOCUMENTS -->
-            <div id="documentContainer"></div>
-
+            <!-- Tempat memunculkan kartu-kartu dokumen -->
+            <div class="doc-directory" id="documentDirectory">
+                <!-- Data akan di-render oleh JavaScript di bawah -->
+            </div>
         </div>
     </div>
 
@@ -152,22 +104,10 @@
             window.location.replace("index.html");
         }
 
-        // ========================================================
-        // 1. MASUKKAN LINK WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
-        // ========================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
-
-        const roleLabels = {
-            'Headhouse': 'Head of House',
-            'PVP': 'Prefect & VP',
-            'Leadroom': 'Leadroom',
-            'Editor': 'Editor'
-        };
-
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('usernameDisplay').innerText = loggedInUser;
             setupDynamicSidebar();
-            fetchDocuments();
+            renderDocumentDirectory();
         });
 
         // ==========================================
@@ -248,93 +188,70 @@
         }
 
         // ==========================================
-        // LOGIKA PENARIKAN DATA DOKUMEN DARI API
+        // LOGIKA KATALOG DOKUMEN (TANPA API BACKEND)
         // ==========================================
-        function fetchDocuments() {
-            fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: "getDocumentData", userRole: userRole })
-            })
-            .then(response => response.json())
-            .then(res => {
-                document.getElementById('loadingMsg').style.display = 'none';
-                if (res.status === 'success' || res.success) {
-                    renderDocuments(res.data, res.allowedRoles);
-                } else {
-                    document.getElementById('documentContainer').innerHTML = `<div style="color:var(--danger); font-weight:bold; text-align:center;">❌ Error Loading Data: ${res.message}</div>`;
+        function renderDocumentDirectory() {
+            var directory = document.getElementById('documentDirectory');
+            
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            // Daftar seluruh dokumen fisik yang ada di Vercel
+            const allDocs = [
+                { 
+                    roleAuth: isHH, 
+                    link: 'sop-headhouse.html', 
+                    category: 'STRATEGIC GOVERNANCE', 
+                    title: 'Head of House Guidelines', 
+                    desc: 'Pedoman utama mengenai fungsi strategis, pengambilan keputusan, dan akuntabilitas Kepala Asrama.'
+                },
+                { 
+                    roleAuth: isHH || isPrefect, 
+                    link: 'sop-pvp.html', 
+                    category: 'OPERATIONAL GOVERNANCE', 
+                    title: 'P-VP Guidelines', 
+                    desc: 'Panduan tata kelola operasional, batas wewenang, dan manajemen data untuk Prefect & Vice Prefect.'
+                },
+                { 
+                    roleAuth: isHH || isPrefect || isLeadroom, 
+                    link: 'sop-leadroom.html', 
+                    category: 'ROOM MANAGEMENT', 
+                    title: 'Lead Room Guidelines', 
+                    desc: 'Standar operasional manajemen kamar, monitoring keaktifan, dan pembinaan murid tingkat kamar.'
+                },
+                { 
+                    roleAuth: isHH || isPrefect || isEditor, 
+                    link: 'sop-editor.html', 
+                    category: 'SUPPORTING FUNCTION', 
+                    title: 'Editor Guidelines', 
+                    desc: 'Prosedur komunikasi visual, etika pengerjaan materi, dan ketentuan publikasi untuk Editor.'
                 }
-            })
-            .catch(err => {
-                document.getElementById('loadingMsg').style.display = 'none';
-                document.getElementById('documentContainer').innerHTML = `<div style="color:var(--danger); font-weight:bold; text-align:center;">❌ Connection Error. Silakan periksa koneksi internet Anda atau link API.</div>`;
+                // Anda bisa menambahkan link ke dokumen HTML SOP teknis lainnya di sini nanti
+            ];
+
+            directory.innerHTML = '';
+            
+            // Loop dokumen dan tampilkan yang sesuai hak akses
+            let docCount = 0;
+            allDocs.forEach(doc => {
+                if (doc.roleAuth) {
+                    directory.innerHTML += `
+                        <a href="${doc.link}" class="doc-card">
+                            <div class="doc-category">${doc.category}</div>
+                            <h3 class="doc-title">${doc.title}</h3>
+                            <p class="doc-desc">${doc.desc}</p>
+                            <div class="doc-btn">Read Document ➔</div>
+                        </a>
+                    `;
+                    docCount++;
+                }
             });
-        }
 
-        function renderDocuments(groupedData, allowedRoles) {
-            var tabsContainer = document.getElementById('tabsContainer');
-            var dataContainer = document.getElementById('documentContainer');
-            tabsContainer.innerHTML = '';
-            dataContainer.innerHTML = '';
-
-            if (allowedRoles.length === 0) {
-                dataContainer.innerHTML = '<div style="color:gray; font-weight:bold; text-align:center;">No documents assigned to your role.</div>';
-                return;
+            if (docCount === 0) {
+                directory.innerHTML = '<div style="color:gray; font-weight:bold; grid-column: 1 / -1; text-align:center;">No documents assigned to your role.</div>';
             }
-
-            var isFirstTab = true;
-
-            allowedRoles.forEach(function(roleKey) {
-                var roleTitle = roleLabels[roleKey] || roleKey.toUpperCase();
-                
-                // BUAT TOMBOL TAB
-                var btn = document.createElement('button');
-                btn.className = 'tab-btn' + (isFirstTab ? ' active' : '');
-                btn.innerText = roleTitle;
-                btn.onclick = function() { openTab(roleKey); };
-                tabsContainer.appendChild(btn);
-
-                // BUAT KONTEN TAB
-                var tabContent = document.createElement('div');
-                tabContent.className = 'tab-content' + (isFirstTab ? ' active' : '');
-                tabContent.id = 'content-' + roleKey;
-
-                var roleDataArray = groupedData[roleKey];
-                
-                if (!roleDataArray || roleDataArray.length === 0) {
-                    tabContent.innerHTML = `<div style="color:gray; padding:20px; font-style:italic; text-align:center;">No official documents published for this division yet.</div>`;
-                } else {
-                    // MENGELUARKAN SETIAP DOKUMEN SEBAGAI "KERTAS" (PAPER)
-                    // Jika ada 3 dokumen di database untuk role ini, perulangan ini akan mencetak 3 kertas
-                    roleDataArray.forEach(function(item) {
-                        var paper = document.createElement('div');
-                        paper.className = 'document-paper';
-                        paper.innerHTML = `
-                            <div class="document-header">
-                                <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
-                                <div class="document-category">${item.category}</div>
-                                <h2 class="document-title">${item.title}</h2>
-                            </div>
-                            <div class="document-body">${item.content}</div>
-                            <div class="document-footer">Document officially synchronized on: ${item.lastUpdated || '-'}</div>
-                        `;
-                        tabContent.appendChild(paper);
-                    });
-                }
-
-                dataContainer.appendChild(tabContent);
-                isFirstTab = false;
-            });
-        }
-
-        function openTab(roleKey) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            
-            var activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.includes(roleKey) || b.getAttribute('onclick').includes(roleKey));
-            if(activeBtn) activeBtn.classList.add('active');
-            
-            var targetContent = document.getElementById('content-' + roleKey);
-            if(targetContent) targetContent.classList.add('active');
         }
 
         function logout() { 
