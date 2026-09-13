@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Governance - Ravenclaw</title>
+    
+    <!-- PROTEKSI FRONTEND -->
+    <script>
+        let sessionRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+        let isHH = sessionRole.includes('headhouse') || sessionRole === 'system admin';
+        let isPrefect = sessionRole.includes('prefect') || sessionRole.includes('vp') || sessionRole.includes('vice');
+        let isEditor = sessionRole.includes('editor');
+        
+        if (!(isHH || isPrefect || isEditor)) {
+            alert("Access Denied: Anda tidak memiliki otoritas untuk mengakses dokumen Tata Kelola Editor.");
+            window.location.replace("index.html"); 
+        }
+    </script>
+
+    <!-- IMPORT GOOGLE FONTS UNTUK GAYA MAJALAH -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+    </style>
+
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --bronze-dark: #B8965A;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* ================= SIDEBAR & TOPBAR ================= */
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; font-family: 'Cinzel', serif;}
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #eef1f6; position: relative;}
+        .topbar { height: 60px; background-color: #ffffff; border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        .content-area { padding: 40px; display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; align-items: center;}
+        
+        /* ================= MAGAZINE LAYOUT ================= */
+        .editorial-paper {
+            background: #ffffff;
+            width: 100%;
+            max-width: 850px; 
+            margin: 0 auto 40px auto;
+            padding: 70px 85px; 
+            box-shadow: 0 15px 40px rgba(17, 34, 80, 0.08);
+            border-top: 10px solid var(--royal-blue);
+            border-bottom: 10px solid var(--quicksand);
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .editorial-paper::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(184, 150, 90, 0.2); pointer-events: none; margin: 10px;
+        }
+
+        .mag-header-logo { text-align: center; margin-bottom: 40px; }
+        .mag-header-logo img { width: 70px; margin-bottom: 15px; }
+        
+        .mag-category {
+            font-family: 'Lora', serif; font-style: italic; color: var(--bronze-dark);
+            text-transform: uppercase; font-size: 13px; letter-spacing: 3px;
+            margin-bottom: 10px; text-align: center;
+        }
+
+        .mag-title { 
+            font-family: 'Cinzel', serif; font-size: 32px; font-weight: 800; color: var(--royal-blue); 
+            text-align: center; margin: 0 0 20px 0; line-height: 1.3;
+        }
+
+        .mag-divider {
+            display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 40px;
+        }
+        .mag-divider::before, .mag-divider::after {
+            content: ''; height: 1px; width: 60px; background-color: var(--shellstone);
+        }
+        .mag-divider span { color: var(--bronze-dark); font-size: 12px; }
+
+        /* Typography & Body Text */
+        .mag-section-title { 
+            font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600; color: var(--royal-blue); 
+            margin-top: 45px; margin-bottom: 15px; text-transform: uppercase;
+            border-bottom: 1px solid rgba(184, 150, 90, 0.4); padding-bottom: 5px;
+        }
+
+        .mag-text { 
+            font-family: 'Lora', serif; font-size: 15px; line-height: 1.85; color: #2c313a; 
+            margin-top: 0; margin-bottom: 18px; 
+            text-align: justify; text-justify: inter-word;
+        }
+
+        /* Drop Cap (Huruf besar di awal kalimat) */
+        .drop-cap {
+            font-family: 'Cinzel', serif; font-size: 55px; float: left; 
+            line-height: 0.8; margin-right: 10px; margin-top: 4px; 
+            color: var(--royal-blue); font-weight: 800;
+        }
+
+        /* List Styling */
+        .mag-list {
+            font-family: 'Lora', serif; font-size: 15px; line-height: 1.8; color: #2c313a;
+            margin: 0 0 20px 20px; padding-left: 20px; text-align: justify;
+        }
+        .mag-list li { margin-bottom: 8px; padding-left: 5px; }
+
+        /* Sub-point Styling */
+        .mag-subpoint {
+            font-family: 'Lora', serif; font-size: 15px; font-weight: 600; 
+            color: var(--royal-blue); margin-top: 20px; margin-bottom: 5px; text-align: justify;
+        }
+        
+        .mag-subpoint-italic {
+            font-family: 'Lora', serif; font-size: 14px; font-weight: 600; font-style: italic;
+            color: var(--bronze-dark); margin-top: 15px; margin-bottom: 5px; text-align: justify;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Pull-quote (Kutipan menonjol ala majalah) */
+        .pull-quote { 
+            font-family: 'Cinzel', serif; font-size: 20px; color: var(--royal-blue); 
+            text-align: center; font-weight: 600; line-height: 1.5;
+            border-top: 2px solid var(--bronze-dark); border-bottom: 2px solid var(--bronze-dark); 
+            padding: 25px 40px; margin: 40px 0; background-color: #fafbfc;
+        }
+        
+        /* Quotation Styling for Text block */
+        .mag-blockquote {
+             font-family: 'Lora', serif; font-size: 15px; line-height: 1.85; color: #4a4a4a; font-style: italic;
+             margin: 15px 0 20px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
+             background-color: #f9f9f9; text-align: justify; text-justify: inter-word;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2>Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="usernameDisplay">Editor</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            
+            <div class="editorial-paper">
+                
+                <div class="mag-header-logo">
+                    <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
+                </div>
+                
+                <div class="mag-category">PEDOMAN TATA KELOLA, WEWENANG, DAN TANGGUNG JAWAB EDITOR</div>
+                <div class="mag-title">EDITOR<br>Governance, Authority & Accountability Framework</div>
+                
+                <div class="mag-divider"><span>✦</span></div>
+
+                <div class="mag-section-title">I. KEDUDUKAN DAN FUNGSI EDITOR</div>
+                <div class="mag-text"><span class="drop-cap">E</span>ditor merupakan bagian dari kepengurusan Asrama yang memiliki fungsi khusus dalam pengerjaan dan penyuntingan materi visual berdasarkan brief, data, dan arahan yang diberikan oleh P-VP atau Kepala Asrama.</div>
+                <div class="mag-text">Editor berkedudukan sebagai <i>supporting function</i> dalam kepengurusan Asrama. Editor tidak memiliki kewenangan manajerial, tidak mengatur pengurus lain, dan tidak bertanggung jawab atas pelaksanaan operasional Asrama, termasuk namun tidak terbatas pada publikasi, penentuan waktu publikasi, pembuatan caption, penyampaian pengumuman, maupun keputusan penggunaan materi.</div>
+                <div class="mag-text">Fungsi utama Editor adalah mengerjakan editing. Dalam menjalankan tugasnya, Editor bertanggung jawab untuk:</div>
+                <ul class="mag-list">
+                    <li>menerima dan memahami brief;</li>
+                    <li>mengerjakan materi sesuai arahan;</li>
+                    <li>melakukan penyuntingan visual sesuai kebutuhan;</li>
+                    <li>memastikan hasil editing sesuai dengan brief yang diberikan;</li>
+                    <li>melakukan revisi apabila terdapat koreksi;</li>
+                    <li>menyampaikan kendala dalam pengerjaan;</li>
+                    <li>menyelesaikan pekerjaan sesuai tenggat;</li>
+                    <li>menyerahkan hasil editing kepada P-VP atau Kepala Asrama; dan</li>
+                    <li>menjaga file pekerjaan agar dapat digunakan dan diteruskan apabila diperlukan.</li>
+                </ul>
+                <div class="mag-text">Editor tidak bertanggung jawab atas publikasi, penentuan waktu publikasi, pembuatan caption, penyampaian pengumuman, maupun keputusan mengenai kapan dan bagaimana suatu materi digunakan. Dengan demikian:</div>
+                <div class="mag-blockquote">Editor mengerjakan editan. P-VP dan/atau Kepala Asrama mengurus penggunaan dan publikasinya.</div>
+
+                <div class="mag-section-title">II. KEDUDUKAN EDITOR DALAM STRUKTUR ASRAMA</div>
+                <div class="mag-text">Editor hanya memiliki hubungan kerja langsung dengan:</div>
+                <ul class="mag-list">
+                    <li>Kepala Asrama; dan</li>
+                    <li>P-VP.</li>
+                </ul>
+                <div class="mag-text">Editor tidak memiliki hubungan koordinatif langsung dengan Lead Room maupun murid dalam pelaksanaan tugas editing. Apabila Editor membutuhkan informasi, data, atau materi dari pihak lain, kebutuhan tersebut disampaikan kepada P-VP atau Kepala Asrama untuk dikoordinasikan.</div>
+                <div class="mag-text">Pihak lain tidak dapat memberikan instruksi pekerjaan secara langsung kepada Editor tanpa melalui P-VP atau Kepala Asrama yang perlu diketahui secara transparan oleh semua pihak. Hal ini bertujuan agar:</div>
+                <ul class="mag-list">
+                    <li>jalur instruksi tetap jelas;</li>
+                    <li>tanggung jawab pekerjaan tidak tumpang tindih;</li>
+                    <li>Editor tidak menerima brief yang saling bertentangan; dan</li>
+                    <li>P-VP serta Kepala Asrama tetap mengetahui pekerjaan yang sedang diberikan kepada Editor.</li>
+                </ul>
+
+                <div class="mag-section-title">III. RUANG LINGKUP TUGAS EDITOR</div>
+                
+                <div class="mag-subpoint">A. Tugas Rutin</div>
+                <ul class="mag-list">
+                    <li>Editing Rank Mading Asrama (Headthread, Rank O.W.L, Rank S.P, Gamers of the Month, Room of the Month, Alpha Aquilae);</li>
+                    <li>Editing materi ulang tahun bulanan;</li>
+                    <li>Editing materi pengenalan Newizzy (Kepala Asrama, P-VP, Lead Room, Editor, accounts, rules, format biodata);</li>
+                </ul>
+
+                <div class="mag-subpoint">B. Tugas Berkala & Tambahan</div>
+                <ul class="mag-list">
+                    <li>Editing file penyebaran presensi (apabila terdapat perubahan format);</li>
+                    <li>Editing Tiket Terjun, sertifikat, dan merchandise pengurus;</li>
+                    <li>Editing kebutuhan games bulanan dan event tertentu; dan</li>
+                    <li>Kebutuhan editing lain yang secara resmi diberikan oleh P-VP atau Kepala Asrama.</li>
+                </ul>
+                <div class="mag-text">Editor tidak bertugas melakukan pekerjaan di luar ruang lingkup editing tersebut kecuali diberikan penugasan tambahan secara jelas.</div>
+
+                <div class="mag-section-title">IV. JADWAL PENGERJAAN</div>
+                <ul class="mag-list">
+                    <li>Rank Mading & Ulang Tahun: Akhir minggu kedua setiap bulan;</li>
+                    <li>Pengenalan Newizzy: Maksimal 3 hari sebelum Sorting Ceremony;</li>
+                    <li>Tiket Terjun & Sertifikat: Hari H Wisuda hingga H+3;</li>
+                    <li>Merchandise: Template (Minggu III bulan kelulusan), Final (H+3 Wisuda).</li>
+                </ul>
+
+                <div class="mag-section-title">V. MEKANISME REVISI</div>
+                <div class="mag-text">Editor wajib melakukan revisi terhadap hasil editing apabila terdapat koreksi yang berkaitan dengan brief atau kebutuhan teknis. Revisi dapat mencakup perubahan tata letak, elemen visual, perbaikan informasi, ukuran, format, atau penyesuaian lain sesuai brief. Apabila revisi mengubah substansi materi secara signifikan dari brief awal, Editor berhak meminta klarifikasi terlebih dahulu. Editor tidak diperkenankan menolak revisi secara personal, namun tidak diwajibkan menerima instruksi yang tidak jelas tanpa meminta penjelasan.</div>
+
+                <div class="mag-section-title">VI. PENYERAHAN HASIL EDITING</div>
+                <div class="mag-text">Setelah pekerjaan selesai, Editor menyerahkan hasil editing kepada P-VP atau Kepala Asrama. Penyerahan dapat berupa:</div>
+                <ul class="mag-list">
+                    <li>file final;</li>
+                    <li>file sesuai format yang diminta;</li>
+                    <li>file mentah apabila diperlukan; atau</li>
+                    <li>bentuk lain yang telah ditentukan dalam brief.</li>
+                </ul>
+                <div class="mag-text">Setelah hasil editing diserahkan, tanggung jawab Editor atas penggunaan dan publikasi materi berakhir, kecuali Editor kemudian menerima permintaan revisi atau perubahan tambahan. P-VP atau Kepala Asrama bertanggung jawab menentukan tindak lanjut setelah materi diterima. Dengan demikian, Editor tidak dibebani tanggung jawab atas:</div>
+                <ul class="mag-list">
+                    <li>apakah materi digunakan;</li>
+                    <li>kapan materi digunakan;</li>
+                    <li>di mana materi digunakan;</li>
+                    <li>bagaimana materi diumumkan;</li>
+                    <li>caption;</li>
+                    <li>publikasi; atau</li>
+                    <li>respons pihak lain terhadap publikasi.</li>
+                </ul>
+
+                <div class="mag-section-title">VII. KOMUNIKASI DAN ETIKA KERJA</div>
+                <div class="mag-text">Editor wajib berkomunikasi secara jelas, sopan, dan profesional. Seluruh koordinasi dilakukan melalui Black Room sebagai jalur resmi antara Kepala Asrama, P-VP, dan Editor. Hubungan kerja mencakup:</div>
+                <ul class="mag-list">
+                    <li><b>Kepala Asrama & P-VP:</b> Jalur instruksi, brief, data, evaluasi, dan keputusan teknis.</li>
+                    <li><b>Sesama Editor (Peer Collaboration):</b> Koordinasi teknis horizontal tanpa hierarki, bantuan cross-check, dan kolaborasi konstruktif tanpa memaksakan selera pribadi.</li>
+                </ul>
+
+                <div class="mag-section-title">VIII. AKUNTABILITAS DAN TRANSISI TUGAS</div>
+                <div class="mag-text">Editor bertanggung jawab atas kualitas teknis, ketepatan waktu, dan kesesuaian brief. Pada akhir masa jabatan atau pengunduran diri (notice 1 bulan), Editor wajib melakukan serah terima yang mencakup file final, file mentah, template, aset desain, serta daftar pekerjaan berjalan beserta statusnya. Seluruh aset pekerjaan adalah milik asrama dan wajib disimpan dalam mekanisme penyimpanan yang telah ditentukan.</div>
+
+                <div class="mag-section-title">IX. KETENTUAN PENUTUP</div>
+                <div class="mag-text">Pedoman ini menjadi dasar pelaksanaan fungsi, kewenangan teknis, tanggung jawab, komunikasi, dan akuntabilitas Editor. Prinsip utama Editor adalah:</div>
+                <div class="pull-quote">“Brief diberikan oleh P-VP atau Kepala Asrama, editan dikerjakan oleh Editor, dan publikasi menjadi tanggung jawab pihak yang memiliki kewenangan.”</div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIKA RBAC UNTUK SIDEBAR DINAMIS -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+            let userName = localStorage.getItem("session_username") || "User";
+            
+            let userDisplay = document.getElementById('usernameDisplay');
+            if(userDisplay) userDisplay.innerText = userName;
+
+            let sidebarMenu = document.getElementById('sidebarMenu');
+            
+            let isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            let isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            let isLeadroom = userRole.includes('leadroom') || userRole.includes('lr');
+            let isEditor = userRole.includes('editor');
+
+            sidebarMenu.innerHTML = '';
+            
+            // Render menu berdasarkan hak akses
+            if (isHH) {
+                sidebarMenu.innerHTML += `<li><a href="guide-headhouse.html">HoH Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-pvp.html">P-VP Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-editor.html" class="active">Editor Guidelines</a></li>`;
+            } else if (isPrefect) {
+                sidebarMenu.innerHTML += `<li><a href="guide-pvp.html">P-VP Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-editor.html" class="active">Editor Guidelines</a></li>`;
+            } else if (isLeadroom) {
+                sidebarMenu.innerHTML += `<li><a href="guide-leadroom.html">Leadroom Guidelines</a></li>`;
+            } else if (isEditor) {
+                sidebarMenu.innerHTML += `<li><a href="guide-editor.html" class="active">Editor Guidelines</a></li>`;
+            }
+
+            // Tombol kembali ke Dashboard (Sesuai Role)
+            let homeLink = 'index.html';
+            if (isHH) homeLink = 'headhouse-dashboard.html';
+            else if (isPrefect && userRole.includes('vice')) homeLink = 'viceprefect-dashboard.html';
+            else if (isPrefect) homeLink = 'prefect-dashboard.html';
+            else if (isLeadroom) homeLink = 'leadroom-dashboard.html';
+            else if (isEditor) homeLink = 'editor-dashboard.html';
+
+            sidebarMenu.innerHTML += `<li style="margin-top: 20px;"><a href="${homeLink}">➔ Back to Dashboard</a></li>`;
+        });
+
+        function logout() { 
+            localStorage.clear(); 
+            window.location.replace("index.html"); 
+        }
+    </script>
+</body>
+</html>
