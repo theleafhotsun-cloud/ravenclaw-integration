@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central Document Repository - Ravenclaw</title>
+    <title>SOP & Guidelines - Ravenclaw</title>
     <style>
         :root {
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
@@ -106,12 +106,12 @@
 </head>
 <body>
 
-    <!-- Sidebar Dinamis yang telah dirapikan (List Menu Di-Render via JS) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2 id="sidebarTitle">Ravenclaw Panel</h2>
         </div>
+        <!-- Sidebar Menu Dinamis -->
         <ul class="nav-links" id="sidebarMenu"></ul>
     </div>
 
@@ -144,13 +144,18 @@
     </div>
 
     <script>
-        // GANTI DENGAN LINK WEB APP KAMU YANG BARU DI-DEPLOY
-        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
-
+        // PROTEKSI DASAR: Cek apakah user sudah login
         let loggedInUser = localStorage.getItem("session_username");
         let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
         
-        if (!loggedInUser) window.location.href = "index.html";
+        if (!loggedInUser) {
+            window.location.replace("index.html");
+        }
+
+        // ========================================================
+        // 1. MASUKKAN LINK WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+        // ========================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
 
         const roleLabels = {
             'Headhouse': 'Head of House',
@@ -166,7 +171,7 @@
         });
 
         // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI (DIPERBARUI)
+        // LOGIKA SIDEBAR & NAVIGASI (VERCEL-READY)
         // ==========================================
         function setupDynamicSidebar() {
             var isHH = userRole.includes('headhouse') || userRole === 'system admin';
@@ -181,20 +186,20 @@
             }
 
             const allMenus = [
-                { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
-                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
-                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
-                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
-                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
-                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
-                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
-                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
-                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
-                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
-                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
-                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
-                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
-                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
+                { id: 'menu-home', label: 'Home Dashboard', link: 'home.html' },
+                { id: 'menu-sop', label: 'SOP & Guidelines', link: 'sop.html' },
+                { id: 'menu-taskdirectory', label: 'Task Directory', link: 'task-directory.html' },
+                { id: 'menu-taskmaster', label: 'Task Master', link: getTaskMasterLink() },
+                { id: 'menu-salary', label: 'Salary Master', link: 'salary-master.html' },
+                { id: 'menu-workreport', label: 'Work Report', link: 'workreport.html' },
+                { id: 'menu-studentdb', label: 'Student Main Database', link: 'studentdb.html' },
+                { id: 'menu-activeroom', label: 'Active Room Database', link: 'activeroom.html' },
+                { id: 'menu-finance', label: 'House Finance', link: 'finance.html' },
+                { id: 'menu-birthdays', label: 'Staff & Birthdays', link: 'birthdays.html' },
+                { id: 'menu-classdb', label: 'Class Database', link: 'classdb.html' },
+                { id: 'menu-librarydb', label: 'Library Database', link: 'librarydb.html' },
+                { id: 'menu-rank', label: 'Rank Panel', link: 'rank.html' },
+                { id: 'menu-roster', label: 'Student Roster Exporter', link: 'roster.html' }
             ];
 
             let allowedMenuIds = [];
@@ -227,17 +232,24 @@
             allMenus.forEach(menu => {
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
-                    li.className = menu.id;
-                    
-                    // Highlight active state khusus untuk SOP
                     var activeClass = menu.id === 'menu-sop' ? ' class="active"' : '';
-                    
-                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
+                    li.innerHTML = `<a href="${menu.link}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
             });
         }
 
+        function getTaskMasterLink() {
+            if (userRole.includes('vp') || userRole.includes('vice')) return 'viceprefect-dashboard.html';
+            if (userRole.includes('prefect')) return 'prefect-dashboard.html';
+            if (userRole.includes('editor')) return 'editor-dashboard.html';
+            if (userRole.includes('leadroom')) return 'leadroom-dashboard.html';
+            return 'headhouse-dashboard.html';
+        }
+
+        // ==========================================
+        // LOGIKA PENARIKAN DATA DOKUMEN DARI API
+        // ==========================================
         function fetchDocuments() {
             fetch(API_URL, {
                 method: 'POST',
@@ -254,7 +266,7 @@
             })
             .catch(err => {
                 document.getElementById('loadingMsg').style.display = 'none';
-                document.getElementById('documentContainer').innerHTML = `<div style="color:var(--danger); font-weight:bold; text-align:center;">❌ Connection Error.</div>`;
+                document.getElementById('documentContainer').innerHTML = `<div style="color:var(--danger); font-weight:bold; text-align:center;">❌ Connection Error. Silakan periksa koneksi internet Anda atau link API.</div>`;
             });
         }
 
@@ -292,6 +304,7 @@
                     tabContent.innerHTML = `<div style="color:gray; padding:20px; font-style:italic; text-align:center;">No official documents published for this division yet.</div>`;
                 } else {
                     // MENGELUARKAN SETIAP DOKUMEN SEBAGAI "KERTAS" (PAPER)
+                    // Jika ada 3 dokumen di database untuk role ini, perulangan ini akan mencetak 3 kertas
                     roleDataArray.forEach(function(item) {
                         var paper = document.createElement('div');
                         paper.className = 'document-paper';
@@ -324,18 +337,10 @@
             if(targetContent) targetContent.classList.add('active');
         }
 
-        function navigateTaskMaster() {
-            var targetPage = 'headhouse';
-            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
-            else if (userRole.includes('prefect')) targetPage = 'prefect';
-            else if (userRole.includes('editor')) targetPage = 'editor';
-            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            window.location.href = targetPage + '-dashboard.html';
+        function logout() { 
+            localStorage.clear(); 
+            window.location.replace("index.html"); 
         }
-
-        function navigateHome() { navigate('home'); }
-        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
     </script>
 </body>
 </html>
