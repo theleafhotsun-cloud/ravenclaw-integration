@@ -3,118 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Head of House Guidelines - Ravenclaw</title>
+    <title>Head of House Governance - Ravenclaw</title>
     
+    <!-- PROTEKSI FRONTEND -->
     <script>
-        // PROTEKSI FRONTEND: Hanya Headhouse yang bisa akses
         let sessionRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
         let isHH = sessionRole.includes('headhouse') || sessionRole === 'system admin';
         
         if (!isHH) {
-            alert("Access Denied: Anda tidak memiliki otoritas untuk mengakses dokumen Head of House.");
+            alert("Access Denied: Anda tidak memiliki otoritas untuk mengakses dokumen Tata Kelola Head of House.");
             window.location.replace("index.html"); 
         }
     </script>
+
+    <!-- IMPORT GOOGLE FONTS UNTUK GAYA MAJALAH -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+    </style>
 
     <style>
         :root {
             --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
             --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --bronze-dark: #B8965A;
         }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; height: 100vh; overflow: hidden; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; display: flex; height: 100vh; overflow: hidden; }
         
+        /* ================= SIDEBAR & TOPBAR ================= */
         .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
         .sidebar-header img { width: 80px; margin-bottom: 10px; }
-        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; font-family: 'Cinzel', serif;}
         .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
         .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
         .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
         .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
         
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #f0f2f5; position: relative;}
-        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0;}
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #eef1f6; position: relative;}
+        .topbar { height: 60px; background-color: #ffffff; border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink:0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
         .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
         .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        .content-area { padding: 30px; display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; align-items: center;}
+        .content-area { padding: 40px; display: flex; flex-direction: column; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box; align-items: center;}
         
-        /* ========================================= */
-        /* KERTAS DOKUMEN A4 (STANDAR RESMI)         */
-        /* ========================================= */
-        .official-document {
+        /* ================= MAGAZINE LAYOUT ================= */
+        .editorial-paper {
             background: #ffffff;
             width: 100%;
             max-width: 850px; 
             margin: 0 auto 40px auto;
-            padding: 60px 80px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            border-radius: 4px;
-            border: 1px solid #e0e0e0;
-            font-family: Arial, Helvetica, sans-serif; 
+            padding: 70px 85px; 
+            box-shadow: 0 15px 40px rgba(17, 34, 80, 0.08);
+            border-top: 10px solid var(--royal-blue);
+            border-bottom: 10px solid var(--quicksand);
             box-sizing: border-box;
-        }
-
-        .doc-header-logo { 
-            text-align: center; 
-            margin-bottom: 40px; 
-            border-bottom: 3px solid var(--royal-blue); 
-            padding-bottom: 20px;
-        }
-        .doc-header-logo img { width: 90px; margin-bottom: 10px; }
-        .doc-header-logo h2 { margin: 0 0 5px 0; color: var(--royal-blue); font-size: 22px; font-weight: 800; letter-spacing: 1px; font-family: 'Segoe UI', Tahoma, sans-serif;}
-        .doc-header-logo p { margin: 0; color: gray; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Segoe UI', Tahoma, sans-serif;}
-
-        /* ========================================= */
-        /* PENGATURAN SPASI & JUSTIFY KETAT          */
-        /* ========================================= */
-        .doc-main-title { 
-            font-size: 20px; font-weight: bold; color: var(--royal-blue); 
-            text-align: center; margin: 0 0 15px 0; 
-            text-transform: uppercase; border-bottom: 2px solid var(--quicksand); 
-            padding-bottom: 12px; font-family: 'Segoe UI', Tahoma, sans-serif;
-        }
-
-        .doc-section-separator {
-            border-top: 2px solid var(--shellstone);
-            margin: 30px 0 15px 0;
+            position: relative;
         }
         
-        .doc-roman { 
-            font-size: 15px; font-weight: bold; color: var(--royal-blue); 
-            margin-top: 25px; margin-bottom: 0px; 
-            text-transform: uppercase; text-align: justify;
+        .editorial-paper::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(184, 150, 90, 0.2); pointer-events: none; margin: 10px;
         }
 
-        .doc-number { 
-            font-size: 14px; font-weight: bold; color: #112250; 
-            margin-top: 15px; margin-bottom: 0px; 
-            text-align: justify;
-        }
-
-        .doc-text { 
-            font-size: 13.5px; line-height: 1.6; color: #222; 
-            margin-top: 2px; margin-bottom: 8px; 
-            text-align: justify; text-justify: inter-word;
-            font-weight: normal; 
-        }
-
-        .doc-list-item { 
-            font-size: 13.5px; line-height: 1.5; color: #222; 
-            margin-top: 0px; margin-bottom: 0px; padding-left: 18px; 
-            text-indent: -12px; 
-            text-align: justify; text-justify: inter-word;
-            font-weight: normal; 
-        }
+        .mag-header-logo { text-align: center; margin-bottom: 40px; }
+        .mag-header-logo img { width: 70px; margin-bottom: 15px; }
         
-        .doc-quote { 
-            font-size: 13.5px; line-height: 1.6; color: #444; font-style: italic; 
-            background: #f8f9fa; border-left: 4px solid var(--sapphire); 
-            padding: 10px 15px; margin: 5px 0 10px 0; 
-            text-align: justify; text-justify: inter-word;
-            font-weight: normal;
+        .mag-category {
+            font-family: 'Lora', serif; font-style: italic; color: var(--bronze-dark);
+            text-transform: uppercase; font-size: 13px; letter-spacing: 3px;
+            margin-bottom: 10px; text-align: center;
         }
+
+        .mag-title { 
+            font-family: 'Cinzel', serif; font-size: 32px; font-weight: 800; color: var(--royal-blue); 
+            text-align: center; margin: 0 0 20px 0; line-height: 1.3;
+        }
+
+        .mag-divider {
+            display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 40px;
+        }
+        .mag-divider::before, .mag-divider::after {
+            content: ''; height: 1px; width: 60px; background-color: var(--shellstone);
+        }
+        .mag-divider span { color: var(--bronze-dark); font-size: 12px; }
+
+        /* Typography & Body Text */
+        .mag-section-title { 
+            font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600; color: var(--royal-blue); 
+            margin-top: 45px; margin-bottom: 15px; text-transform: uppercase;
+            border-bottom: 1px solid rgba(184, 150, 90, 0.4); padding-bottom: 5px;
+        }
+
+        .mag-text { 
+            font-family: 'Lora', serif; font-size: 15px; line-height: 1.85; color: #2c313a; 
+            margin-top: 0; margin-bottom: 18px; 
+            text-align: justify; text-justify: inter-word;
+        }
+
+        /* Drop Cap (Huruf besar di awal kalimat) */
+        .drop-cap {
+            font-family: 'Cinzel', serif; font-size: 55px; float: left; 
+            line-height: 0.8; margin-right: 10px; margin-top: 4px; 
+            color: var(--royal-blue); font-weight: 800;
+        }
+
+        /* List Styling */
+        .mag-list {
+            font-family: 'Lora', serif; font-size: 15px; line-height: 1.8; color: #2c313a;
+            margin: 0 0 20px 20px; padding-left: 20px; text-align: justify;
+        }
+        .mag-list li { margin-bottom: 8px; padding-left: 5px; }
+
+        /* Sub-point Styling */
+        .mag-subpoint {
+            font-family: 'Lora', serif; font-size: 15px; font-weight: 600; 
+            color: var(--royal-blue); margin-top: 20px; margin-bottom: 5px; text-align: justify;
+        }
+
+        /* Pull-quote (Kutipan menonjol ala majalah) */
+        .pull-quote { 
+            font-family: 'Cinzel', serif; font-size: 20px; color: var(--royal-blue); 
+            text-align: center; font-weight: 600; line-height: 1.5;
+            border-top: 2px solid var(--bronze-dark); border-bottom: 2px solid var(--bronze-dark); 
+            padding: 25px 40px; margin: 40px 0; background-color: #fafbfc;
+        }
+
     </style>
 </head>
 <body>
@@ -124,211 +138,91 @@
             <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
             <h2>Ravenclaw Panel</h2>
         </div>
-        <!-- MENU DINAMIS AKAN DI-RENDER OLEH JAVASCRIPT -->
         <ul class="nav-links" id="sidebarMenu"></ul>
     </div>
 
     <div class="main-content">
         <div class="topbar">
             <div class="user-profile">
-                Welcome, <span id="usernameDisplay">Loading...</span>
+                Welcome, <span id="usernameDisplay">Head of House</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
 
         <div class="content-area">
-            <div class="official-document">
-                <div class="doc-header-logo">
+            
+            <div class="editorial-paper">
+                
+                <div class="mag-header-logo">
                     <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
-                    <h2>RAVENCLAW HOUSE</h2>
-                    <p>Governance & Accountability Guidelines</p>
+                </div>
+                
+                <div class="mag-category">Dokumen Tata Kelola & Wewenang</div>
+                <div class="mag-title">HEAD OF HOUSE GOVERNANCE & ACCOUNTABILITY FRAMEWORK</div>
+                
+                <div class="mag-divider"><span>✦</span></div>
+                
+                <div class="mag-section-title">I. KEDUDUKAN DAN FUNGSI STRATEGIS</div>
+                <div class="mag-text"><span class="drop-cap">K</span>epala Asrama adalah otoritas strategis tertinggi yang bertanggung jawab atas visi, integritas, dan keberlangsungan Asrama. Berada pada level <b><i>strategic governance</i></b>, jabatan ini memastikan sistem berjalan efektif melalui pengawasan koordinasi antara <b><i>P-VP</i></b> (operasional), <b><i>Lead Room</i></b> (manajemen kamar), dan <b><i>Editor</i></b> (komunikasi publik). Fokus utamanya adalah menjamin kebijakan berbasis data, akuntabilitas pengurus, serta keberlanjutan asrama yang tidak bergantung pada figur individu tertentu.</div>
+
+                <div class="mag-section-title">II. PRINSIP KEPEMIMPINAN</div>
+                <div class="mag-text">Dalam menjalankan kepengurusan asrama, Kepala Asrama wajib menjalankan mandat berdasarkan prinsip-prinsip berikut:</div>
+                
+                <div class="mag-subpoint">1. Strategic Oversight</div>
+                <div class="mag-text">Menentukan arah jangka panjang dan prioritas strategis tanpa mengambil alih tugas teknis-administratif unit di bawahnya.</div>
+                
+                <div class="mag-subpoint">2. Accountability & Fairness</div>
+                <div class="mag-text">Mengambil keputusan objektif berdasarkan fakta dan regulasi, serta menjamin keadilan tanpa dipengaruhi hubungan personal.</div>
+                
+                <div class="mag-subpoint">3. Empowerment & Continuity</div>
+                <div class="mag-text">Mendelegasikan kewenangan secara proporsional kepada pengurus dan memelihara sistem informasi agar kepemimpinan tetap berkelanjutan.</div>
+                
+                <div class="mag-subpoint">4. Shared Leadership</div>
+                <div class="mag-text">Menghormati kesetaraan posisi apabila jabatan dipegang secara kolektif melalui musyawarah dan transparansi.</div>
+
+                <div class="mag-section-title">III. TUGAS DAN TANGGUNG JAWAB UTAMA</div>
+                <div class="mag-text">Tugas rutin Kepala Asrama mencakup tujuh dimensi utama dalam operasional asrama, yakni:</div>
+                <ul class="mag-list">
+                    <li>Kepemimpinan murid sebagai figur orang tua dan pembina.</li>
+                    <li>Koordinasi, evaluasi, dan pembinaan berkala bagi seluruh jajaran pengurus.</li>
+                    <li>Manajemen kebutuhan sumber daya, sistem, dan fasilitas Asrama.</li>
+                    <li><b><i>Monitoring</i></b> operasional ruang komunikasi minimal satu kali sepekan.</li>
+                    <li>Penyelesaian persoalan kompleks yang melampaui kewenangan unit atau operasional tingkat bawah.</li>
+                    <li>Pengambilan keputusan strategis terkait kebijakan dan struktur asrama.</li>
+                    <li>Inisiasi program pengembangan dan inovasi budaya Asrama.</li>
+                </ul>
+
+                <div class="mag-section-title">IV. TUGAS MINGGUAN KEPALA ASRAMA</div>
+                <div class="mag-text">Sebagai bagian dari pelaksanaan fungsi <b><i>all-week</i></b>, Kepala Asrama sekurang-kurangnya memastikan berjalannya:</div>
+                
+                <div class="mag-subpoint">Kepemimpinan & Pemantauan</div>
+                <div class="mag-text">Melakukan komunikasi aktif dengan murid, memantau kondisi umum kehidupan Asrama, serta melakukan <b><i>monitoring</i></b> terhadap seluruh ruang komunikasi dan kondisi operasional.</div>
+                
+                <div class="mag-subpoint">Koordinasi & Manajemen</div>
+                <div class="mag-text">Berkoordinasi dengan <b><i>P-VP</i></b> dan pengurus untuk mengetahui perkembangan pekerjaan dan kendala. Meninjau kebutuhan administrasi, sumber daya, kegiatan, maupun sistem yang membutuhkan perhatian khusus.</div>
+                
+                <div class="mag-subpoint">Pengambilan Keputusan</div>
+                <div class="mag-text">Menyelenggarakan diskusi apabila terdapat persoalan yang memerlukan penyelarasan, serta memberikan persetujuan, penolakan, arahan, atau keputusan strategis terhadap perkara tingkat atas.</div>
+
+                <div class="mag-section-title">V. EVALUASI DAN KEBERLANJUTAN</div>
+                <div class="mag-text">Akuntabilitas kepemimpinan tidak hanya diukur dari penyelesaian pekerjaan, tetapi juga dari kemampuan membangun sistem yang dapat berjalan secara berkelanjutan. Kepemimpinan perlu memastikan:</div>
+                <ul class="mag-list">
+                    <li>Sistem dan keputusan penting terdokumentasi dengan baik.</li>
+                    <li>Pengetahuan dan informasi krusial dibagikan secara merata.</li>
+                    <li>Tanggung jawab kepengurusan tidak bergantung hanya pada satu pihak.</li>
+                    <li>Terdapat persiapan penerus yang memadai.</li>
+                </ul>
+                
+                <div class="pull-quote">
+                    "Keberhasilan Kepala Asrama tidak diukur dari seberapa banyak pekerjaan yang diambil alih, melainkan dari seberapa baik seluruh Asrama menjalankan fungsinya secara mandiri."
                 </div>
 
-                <div class="doc-main-title">HEAD OF HOUSE GOVERNANCE, AUTHORITY & ACCOUNTABILITY FRAMEWORK</div>
-                
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">I. KEDUDUKAN DAN FUNGSI STRATEGIS</div>
-                <div class="doc-text">Kepala Asrama adalah otoritas strategis tertinggi yang bertanggung jawab atas visi, integritas, dan keberlangsungan Asrama. Berada pada level <b><i>strategic governance</i></b>, jabatan ini memastikan sistem berjalan efektif melalui pengawasan koordinasi antara <b><i>P-VP</i></b> (operasional), <b><i>Lead Room</i></b> (manajemen kamar), dan <b><i>Editor</i></b> (komunikasi publik). Fokus utamanya adalah menjamin kebijakan berbasis data, akuntabilitas pengurus, serta keberlanjutan asrama yang tidak bergantung pada figur individu tertentu.</div>
+                <div class="mag-section-title">VI. ETIKA KOMUNIKASI DAN KOREKSI</div>
+                <div class="mag-text">Komunikasi jabatan wajib mencerminkan ketegasan yang dibarengi penghormatan martabat. Prinsip utamanya adalah: <b>“Tegas terhadap persoalan, tetap menghormati orangnya.”</b> Koreksi harus diarahkan kepada pekerjaan atau tindakan, bukan kepada karakter pribadi. Setiap pesan di ruang publik maupun internal harus objektif dan berorientasi pada penyelesaian.</div>
 
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">II. PRINSIP KEPEMIMPINAN</div>
-                <div class="doc-text">Kepala Asrama wajib menjalankan mandat berdasarkan prinsip:</div>
-                
-                <div class="doc-number">1. Strategic Oversight</div>
-                <div class="doc-text">Menentukan arah jangka panjang dan prioritas strategis tanpa mengambil alih tugas teknis-administratif unit di bawahnya.</div>
-                
-                <div class="doc-number">2. Accountability & Fairness</div>
-                <div class="doc-text">Mengambil keputusan objektif berdasarkan fakta dan regulasi, serta menjamin keadilan tanpa dipengaruhi hubungan personal.</div>
-                
-                <div class="doc-number">3. Empowerment & Continuity</div>
-                <div class="doc-text">Mendelegasikan kewenangan secara proporsional kepada pengurus dan memelihara sistem informasi agar kepemimpinan tetap berkelanjutan.</div>
-                
-                <div class="doc-number">4. Shared Leadership</div>
-                <div class="doc-text">Menghormati kesetaraan posisi apabila jabatan dipegang secara kolektif melalui musyawarah dan transparansi.</div>
+                <div class="mag-section-title">VII. KERAHASIAAN INFORMASI</div>
+                <div class="mag-text">Kepala Asrama wajib menjaga informasi yang diperoleh karena jabatannya, terutama informasi mengenai persoalan internal, evaluasi pengurus, data pribadi, keputusan yang belum diumumkan, serta perkara lain yang secara wajar bersifat terbatas. Kerahasiaan melindungi informasi yang perlu dibatasi, bukan untuk melindungi penyalahgunaan kewenangan.</div>
 
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">III. TUGAS DAN TANGGUNG JAWAB UTAMA</div>
-                <div class="doc-text">Tugas rutin Kepala Asrama mencakup tujuh dimensi utama:</div>
-                <div class="doc-list-item">• Kepemimpinan murid (figur orang tua dan pembina);</div>
-                <div class="doc-list-item">• Koordinasi, evaluasi, dan pembinaan berkala bagi seluruh jajaran pengurus;</div>
-                <div class="doc-list-item">• Manajemen kebutuhan sumber daya, sistem, dan fasilitas Asrama;</div>
-                <div class="doc-list-item">• <b><i>Monitoring</i></b> operasional ruang komunikasi minimal satu kali sepekan;</div>
-                <div class="doc-list-item">• Penyelesaian persoalan kompleks yang melampaui kewenangan unit atau operasional;</div>
-                <div class="doc-list-item">• Pengambilan keputusan strategis terkait kebijakan dan struktur asrama; serta</div>
-                <div class="doc-list-item">• Inisiasi program pengembangan dan inovasi budaya Asrama.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">IV. TUGAS MINGGUAN KEPALA ASRAMA</div>
-                <div class="doc-text">Sebagai bagian dari pelaksanaan fungsi <b><i>all-week</i></b>, Kepala Asrama sekurang-kurangnya melakukan:</div>
-                
-                <div class="doc-number">1. Kepemimpinan Murid</div>
-                <div class="doc-text">Melakukan komunikasi aktif dengan murid dan memantau kondisi umum kehidupan Asrama.</div>
-                
-                <div class="doc-number">2. Koordinasi Pengurus</div>
-                <div class="doc-text">Melakukan koordinasi dengan <b><i>P-VP</i></b> dan pengurus untuk mengetahui perkembangan pekerjaan, kendala, dan kebutuhan.</div>
-                
-                <div class="doc-number">3. Manajemen Asrama</div>
-                <div class="doc-text">Meninjau kebutuhan administrasi, sumber daya, kegiatan, maupun sistem yang membutuhkan perhatian.</div>
-                
-                <div class="doc-number">4. Monitoring</div>
-                <div class="doc-text">Melakukan <b><i>monitoring</i></b> terhadap seluruh ruang komunikasi dan kondisi umum operasional Asrama.</div>
-                
-                <div class="doc-number">5. Koordinasi</div>
-                <div class="doc-text">Menyelenggarakan diskusi atau rapat apabila terdapat persoalan yang memerlukan penyelarasan.</div>
-                
-                <div class="doc-number">6. Pembinaan</div>
-                <div class="doc-text">Memberikan bantuan kepada pengurus yang menghadapi persoalan yang membutuhkan dukungan kepemimpinan.</div>
-                
-                <div class="doc-number">7. Pengambilan Keputusan</div>
-                <div class="doc-text">Memberikan persetujuan, penolakan, arahan, atau keputusan strategis terhadap perkara yang memang memerlukan kewenangan Kepala Asrama.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">V. TUGAS BULANAN KEPALA ASRAMA</div>
-                
-                <div class="doc-number">1. Penggajian Pengurus</div>
-                <div class="doc-text">Kepala Asrama melakukan atau memastikan proses penghitungan gaji pengurus berdasarkan ketentuan dan hasil evaluasi kinerja.</div>
-                
-                <div class="doc-number">2. Evaluasi Kepengurusan</div>
-                <div class="doc-text">Kepala Asrama melakukan evaluasi berkala terhadap:</div>
-                <div class="doc-list-item">• kinerja diri sendiri;</div>
-                <div class="doc-list-item">• sesama Kepala Asrama;</div>
-                <div class="doc-list-item">• <b><i>P-VP</i></b>;</div>
-                <div class="doc-list-item">• <b><i>Lead Room</i></b>;</div>
-                <div class="doc-list-item">• <b><i>Editor</i></b>; dan</div>
-                <div class="doc-list-item">• pengurus lain sesuai kebutuhan.</div>
-                <div class="doc-text">Evaluasi diarahkan bukan hanya untuk menentukan hasil kinerja, tetapi untuk menemukan:</div>
-                <div class="doc-list-item">• masalah;</div>
-                <div class="doc-list-item">• kebutuhan pembinaan;</div>
-                <div class="doc-list-item">• kebutuhan perubahan sistem;</div>
-                <div class="doc-list-item">• potensi pengembangan; dan</div>
-                <div class="doc-list-item">• risiko keberlangsungan Asrama.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">VI. TUGAS BERKALA KEPALA ASRAMA</div>
-                <div class="doc-text">Kepala Asrama dapat menginisiasi, merancang, atau mendukung:</div>
-                <div class="doc-list-item">• permainan Asrama;</div>
-                <div class="doc-list-item">• <b><i>event</i></b> internal;</div>
-                <div class="doc-list-item">• program pembinaan;</div>
-                <div class="doc-list-item">• kegiatan kebersamaan;</div>
-                <div class="doc-list-item">• inovasi sistem;</div>
-                <div class="doc-list-item">• program pengembangan Asrama; dan</div>
-                <div class="doc-list-item">• kegiatan lain berdasarkan kalender maupun kebutuhan aktual Asrama.</div>
-                <div class="doc-text">Setiap program yang melibatkan pengurus lain harus memiliki pembagian tanggung jawab yang jelas agar Kepala Asrama tidak menjadi satu-satunya pelaksana.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">VII. KEPEMIMPINAN DAN PEMBINAAN MURID</div>
-                <div class="doc-text">Sebagai figur orang tua Asrama, Kepala Asrama wajib membangun komunikasi dua arah yang aktif untuk mendengarkan aspirasi dan memberikan pendampingan. Pembinaan difokuskan pada pengenalan kondisi murid dan penciptaan lingkungan aman untuk berpendapat, tanpa melakukan intervensi personal yang berlebihan atau penyalahgunaan data pribadi. Interaksi dilakukan secara inklusif melalui forum bersama maupun pemantauan aktivitas rutin di Tenda Biru.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">VIII. HUBUNGAN KERJA DAN OPERASIONAL</div>
-                <div class="doc-text">Kepala Asrama memimpin melalui arahan strategis dan kepercayaan manajerial:</div>
-                <div class="doc-list-item">• <b><i>P-VP</i></b>: Hubungan berdasarkan delegasi penuh pada ranah operasional. Kepala Asrama tidak mengubah keputusan rutin <b><i>P-VP</i></b> kecuali jika terdapat pelanggaran serius atau risiko asrama.</div>
-                <div class="doc-list-item">• <b><i>Lead Room</i></b> & <b><i>Editor</i></b>: Koordinasi bersifat fungsional dan pembinaan. Kepala Asrama menghormati otonomi kamar dan ruang profesional editorial <b><i>Editor</i></b> sesuai mandat masing-masing.</div>
-                <div class="doc-list-item">• Ruang Komunikasi: Penggunaan <b><i>Grey Room</i></b> (koordinasi operasional), <b><i>Red Room</i></b> (pembahasan terbatas/sensitif), dan <b><i>Black Room</i></b> (strategi komunikasi) secara proporsional sesuai relevansi informasi.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">IX. ETIKA KOMUNIKASI DAN PROFESIONALITAS</div>
-                <div class="doc-text">Komunikasi jabatan wajib mencerminkan ketegasan yang dibarengi penghormatan martabat. Prinsip utamanya adalah: “Tegas terhadap persoalan, tetap menghormati orangnya.” Setiap pesan di ruang publik (Tenda Biru) maupun internal harus jelas, objektif, dan berorientasi pada penyelesaian. Dilarang menggunakan komunikasi yang bersifat intimidatif, merendahkan, atau menyerang karakter pribadi dalam bentuk apa pun.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">X. AKUNTABILITAS DAN KEBERLANJUTAN</div>
-                <div class="doc-text">Setiap keputusan strategis, terutama yang berkaitan dengan sanksi, anggaran dan penggajian, serta perubahan kebijakan, wajib didokumentasikan untuk menjamin transparansi, konsistensi, dan kemudahan penelusuran.</div>
-                <div class="doc-text">Kepala Asrama bertanggung jawab mengidentifikasi dan memitigasi potensi konflik kepentingan dalam pengambilan keputusan guna menjaga objektivitas dan keadilan.</div>
-                <div class="doc-text">Akuntabilitas kepemimpinan tidak hanya diukur dari penyelesaian pekerjaan, tetapi juga dari kemampuan membangun sistem yang dapat berjalan secara berkelanjutan. Oleh karena itu, kepemimpinan perlu memastikan:</div>
-                <div class="doc-list-item">• sistem dan keputusan terdokumentasi dengan baik;</div>
-                <div class="doc-list-item">• pengetahuan dan informasi dibagikan secara merata;</div>
-                <div class="doc-list-item">• tanggung jawab tidak bergantung pada satu pihak;</div>
-                <div class="doc-list-item">• proses kerja dapat dipahami dan dilanjutkan oleh pihak lain; dan</div>
-                <div class="doc-list-item">• terdapat persiapan penerus yang memadai.</div>
-                <div class="doc-text">Dengan demikian, keberhasilan kepemimpinan tercermin dari kemampuan Asrama untuk tetap berjalan secara tertib dan mandiri, termasuk ketika terjadi pergantian pengurus.</div>
-                <div class="doc-text">Prinsip akuntabilitas tersebut juga berlaku dalam komunikasi dan pemberian koreksi. Koreksi ditujukan untuk memastikan pekerjaan berjalan sesuai ketentuan, bukan untuk merendahkan pihak yang melakukan kesalahan.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">XI. GAYA BICARA DALAM MEMBERIKAN KOREKSI</div>
-                <div class="doc-text">Koreksi harus diarahkan kepada pekerjaan, tindakan, proses, atau hasil, bukan kepada karakter pribadi. Kepala Asrama dapat menyampaikan:</div>
-                <div class="doc-list-item">• kesalahan;</div>
-                <div class="doc-list-item">• keterlambatan;</div>
-                <div class="doc-list-item">• ketidaklengkapan;</div>
-                <div class="doc-list-item">• pelanggaran;</div>
-                <div class="doc-list-item">• ketidaksesuaian;</div>
-                <div class="doc-list-item">• kebutuhan perbaikan; dan</div>
-                <div class="doc-list-item">• konsekuensi berdasarkan ketentuan yang berlaku.</div>
-                <div class="doc-text">Penyampaian koreksi harus dilakukan secara profesional dan proporsional. Kepala Asrama tidak diperkenankan menggunakan:</div>
-                <div class="doc-list-item">• penghinaan;</div>
-                <div class="doc-list-item">• ejekan;</div>
-                <div class="doc-list-item">• sindiran yang merendahkan;</div>
-                <div class="doc-list-item">• pelabelan terhadap karakter pribadi;</div>
-                <div class="doc-list-item">• ancaman personal;</div>
-                <div class="doc-list-item">• pelecehan verbal;</div>
-                <div class="doc-list-item">• tindakan yang mempermalukan pihak lain; atau</div>
-                <div class="doc-list-item">• pengungkitan persoalan pribadi yang tidak relevan dengan pekerjaan.</div>
-                <div class="doc-quote">“Masa hal seperti ini masih harus diingatkan? Tolong jangan membuat semuanya jadi harus dikerjakan ulang.”</div>
-                <div class="doc-text">sebaiknya dihindari karena berfokus pada penilaian terhadap pihak yang melakukan kesalahan, bukan pada penyelesaian masalah. Sebagai gantinya, koreksi diarahkan pada fakta dan tindakan yang perlu diperbaiki dengan pola:</div>
-                <div class="doc-quote">Fakta -> Ketentuan -> Dampak -> Perbaikan -> Tindak lanjut.</div>
-                <div class="doc-text">Pendekatan ini memungkinkan koreksi tetap tegas, jelas, dan dapat dipertanggungjawabkan, tanpa mengurangi rasa hormat dalam komunikasi kepemimpinan.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">XII. KOMUNIKASI DENGAN PIHAK DI LUAR ASRAMA — EXTERNAL REPRESENTATION</div>
-                <div class="doc-text">Kepala Asrama dapat menjadi salah satu pihak yang mewakili Asrama dalam komunikasi dengan pihak di luar struktur internal Asrama. Pihak eksternal dapat mencakup:</div>
-                <div class="doc-list-item">• asrama lain;</div>
-                <div class="doc-list-item">• pengurus dari unit atau komunitas lain;</div>
-                <div class="doc-list-item">• pihak penyelenggara kegiatan;</div>
-                <div class="doc-list-item">• mitra;</div>
-                <div class="doc-list-item">• pihak yang bekerja sama dengan Asrama;</div>
-                <div class="doc-list-item">• pihak yang memiliki kepentingan terhadap kegiatan Asrama; atau</div>
-                <div class="doc-list-item">• pihak lain yang secara sah berhubungan dengan Asrama.</div>
-                <div class="doc-text">Dalam komunikasi eksternal, Kepala Asrama wajib menjaga:</div>
-                <div class="doc-number">1. Nama Baik Asrama</div>
-                <div class="doc-number">2. Profesionalitas</div>
-                <div class="doc-number">3. Ketepatan Informasi</div>
-                <div class="doc-number">4. Konsistensi Posisi Asrama</div>
-                <div class="doc-number">5. Kerahasiaan Informasi Internal</div>
-                <div class="doc-number">6. Batas Kewenangan</div>
-                <div class="doc-number">7. Etika Komunikasi</div>
-                <div class="doc-number">8. Komitmen yang Realistis</div>
-                <div class="doc-text">Kepala Asrama tidak boleh membuat pernyataan, janji, komitmen, kesepakatan, atau keputusan atas nama Asrama apabila perkara tersebut berada di luar kewenangannya. Apabila komunikasi eksternal berpotensi mengikat Asrama, Kepala Asrama wajib melakukan koordinasi internal terlebih dahulu sesuai kebutuhan.</div>
-                <div class="doc-quote">Atas nama pribadi, bertanggung jawab sebagai pribadi. Atas nama Asrama, bertanggung jawab sebagai representasi asrama.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">XIII. KERAHASIAAN INFORMASI</div>
-                <div class="doc-text">Kepala Asrama wajib menjaga informasi yang diperoleh karena jabatan, terutama informasi mengenai persoalan internal, evaluasi pengurus, konflik, data pribadi, keputusan yang belum diumumkan, pembahasan <b><i>White Room</i></b> dan <b><i>Red Room</i></b>, informasi <b><i>Black Room</i></b> yang belum dipublikasikan, strategi asrama, dan perkara lain yang secara wajar bersifat terbatas.</div>
-                <div class="doc-quote">Kerahasiaan melindungi informasi yang perlu dibatasi, bukan melindungi penyalahgunaan kewenangan.</div>
-
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">XIV. HAK UNTUK MENYAMPAIKAN PENDAPAT, KEBERATAN, DAN EVALUASI</div>
-                <div class="doc-text">Setiap anggota Asrama dan pengurus berhak menyampaikan pendapat, masukan, keberatan, maupun evaluasi terhadap kebijakan, keputusan, pelayanan, atau pelaksanaan tugas di lingkungan Asrama melalui mekanisme komunikasi yang tersedia.</div>
-                <div class="doc-text">Penyampaian pendapat dan keberatan harus dilakukan secara bertanggung jawab, berdasarkan fakta, serta melalui jalur yang sesuai. Setiap pendapat, keberatan, atau evaluasi wajib diterima dan dipertimbangkan secara objektif sesuai dengan konteks dan kewenangan yang berlaku.</div>
-                
-                <div class="doc-section-separator"></div>
-                <div class="doc-roman">XX. PRINSIP UTAMA KEPALA ASRAMA</div>
-                <div class="doc-list-item">• Memimpin tanpa mendominasi.</div>
-                <div class="doc-list-item">• Mengarahkan tanpa <b><i>micromanagement</i></b>.</div>
-                <div class="doc-list-item">• Mendengar tanpa kehilangan ketegasan.</div>
-                <div class="doc-list-item">• Memutuskan tanpa keberpihakan.</div>
-                <div class="doc-list-item">• Membina tanpa merendahkan.</div>
-                <div class="doc-list-item">• Mendelegasikan tanpa melepaskan tanggung jawab.</div>
-                <div class="doc-list-item">• Mengawasi tanpa mengambil alih.</div>
-                <div class="doc-list-item">• Membangun Asrama yang tetap berjalan bahkan setelah dirinya tidak lagi menjabat.</div>
-                <div class="doc-text">Keberhasilan Kepala Asrama tidak diukur dari seberapa banyak pekerjaan yang diambil alih, melainkan dari seberapa baik seluruh bagian Asrama dapat menjalankan fungsinya dengan jelas, terkoordinasi, dan berkelanjutan.</div>
             </div>
         </div>
     </div>
@@ -339,7 +233,6 @@
             let userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
             let userName = localStorage.getItem("session_username") || "User";
             
-            // Tampilkan nama user di Topbar
             let userDisplay = document.getElementById('usernameDisplay');
             if(userDisplay) userDisplay.innerText = userName;
 
@@ -350,33 +243,25 @@
             let isLeadroom = userRole.includes('leadroom') || userRole.includes('lr');
             let isEditor = userRole.includes('editor');
 
-            // Deteksi halaman yang sedang dibuka untuk class active
-            let currentPath = window.location.pathname;
-            let activeHH = currentPath.includes('headhouse') ? 'class="active"' : '';
-            let activePVP = currentPath.includes('pvp') ? 'class="active"' : '';
-            let activeLR = currentPath.includes('leadroom') ? 'class="active"' : '';
-            let activeEd = currentPath.includes('editor') ? 'class="active"' : '';
-
-            // Hapus menu lama
             sidebarMenu.innerHTML = '';
             
             // Render menu berdasarkan hak akses
             if (isHH) {
-                sidebarMenu.innerHTML += `<li><a href="sop-headhouse.html" ${activeHH}>Head of House SOP</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="sop-pvp.html" ${activePVP}>P-VP SOP</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="sop-leadroom.html" ${activeLR}>Leadroom SOP</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="sop-editor.html" ${activeEd}>Editor SOP</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-headhouse.html" class="active">HoH Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-pvp.html">P-VP Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-editor.html">Editor Guidelines</a></li>`;
             } else if (isPrefect) {
-                sidebarMenu.innerHTML += `<li><a href="sop-pvp.html" ${activePVP}>P-VP SOP</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="sop-leadroom.html" ${activeLR}>Leadroom SOP</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="sop-editor.html" ${activeEd}>Editor SOP</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-pvp.html">P-VP Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-editor.html">Editor Guidelines</a></li>`;
             } else if (isLeadroom) {
-                sidebarMenu.innerHTML += `<li><a href="sop-leadroom.html" ${activeLR}>Leadroom SOP</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-leadroom.html">Leadroom Guidelines</a></li>`;
             } else if (isEditor) {
-                sidebarMenu.innerHTML += `<li><a href="sop-editor.html" ${activeEd}>Editor SOP</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="panduan-editor.html">Editor Guidelines</a></li>`;
             }
 
-            // Tambahkan tombol kembali ke home sesuai role
+            // Tombol kembali ke Dashboard (Sesuai Role)
             let homeLink = 'index.html';
             if (isHH) homeLink = 'headhouse-dashboard.html';
             else if (isPrefect && userRole.includes('vice')) homeLink = 'viceprefect-dashboard.html';
@@ -384,8 +269,13 @@
             else if (isLeadroom) homeLink = 'leadroom-dashboard.html';
             else if (isEditor) homeLink = 'editor-dashboard.html';
 
-            sidebarMenu.innerHTML += `<li><a href="${homeLink}">Back to Dashboard</a></li>`;
+            sidebarMenu.innerHTML += `<li style="margin-top: 20px;"><a href="${homeLink}">➔ Back to Dashboard</a></li>`;
         });
+
+        function logout() { 
+            localStorage.clear(); 
+            window.location.replace("index.html"); 
+        }
     </script>
 </body>
 </html>
