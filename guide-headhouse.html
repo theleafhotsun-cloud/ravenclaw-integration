@@ -612,18 +612,18 @@
             
             // Render menu berdasarkan hak akses
             if (isHH) {
-                sidebarMenu.innerHTML += `<li><a href="panduan-headhouse.html" class="active">HoH Guidelines</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="panduan-pvp.html">P-VP Guidelines</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="panduan-leadroom.html">Leadroom Guidelines</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="panduan-editor.html">Editor Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-headhouse.html" class="active">HoH Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-pvp.html">P-VP Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-editor.html">Editor Guidelines</a></li>`;
             } else if (isPrefect) {
-                sidebarMenu.innerHTML += `<li><a href="panduan-pvp.html">P-VP Guidelines</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="panduan-leadroom.html">Leadroom Guidelines</a></li>`;
-                sidebarMenu.innerHTML += `<li><a href="panduan-editor.html">Editor Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-pvp.html">P-VP Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-editor.html">Editor Guidelines</a></li>`;
             } else if (isLeadroom) {
-                sidebarMenu.innerHTML += `<li><a href="panduan-leadroom.html">Leadroom Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-leadroom.html">Leadroom Guidelines</a></li>`;
             } else if (isEditor) {
-                sidebarMenu.innerHTML += `<li><a href="panduan-editor.html">Editor Guidelines</a></li>`;
+                sidebarMenu.innerHTML += `<li><a href="guide-editor.html">Editor Guidelines</a></li>`;
             }
 
             // Tombol kembali ke Dashboard (Sesuai Role)
