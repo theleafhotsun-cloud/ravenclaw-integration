@@ -97,38 +97,43 @@
         }
 
         .mag-text { 
-            font-family: 'Lora', serif; font-size: 15px; line-height: 1.85; color: #2c313a; 
-            margin-top: 0; margin-bottom: 18px; 
+            font-family: 'Lora', serif; font-size: 13.5px; line-height: 1.7; color: #2c313a; 
+            margin-top: 0; margin-bottom: 15px; 
             text-align: justify; text-justify: inter-word;
         }
+        
+        /* CLASS PENGANTAR: Menempel rapat ke list di bawahnya */
+        .mag-text.intro {
+            margin-bottom: 4px;
+        }
 
-        /* Drop Cap (Huruf besar di awal kalimat) */
+        /* Drop Cap */
         .drop-cap {
             font-family: 'Cinzel', serif; font-size: 55px; float: left; 
             line-height: 0.8; margin-right: 10px; margin-top: 4px; 
             color: var(--royal-blue); font-weight: 800;
         }
 
-        /* List Styling - Spasi Dirapatkan secara Ekstrem */
+        /* List Styling - Jarak Dirapatkan */
         .mag-list {
-            font-family: 'Lora', serif; font-size: 15px; line-height: 1.5; color: #2c313a;
-            margin: 5px 0 15px 20px; padding-left: 5px; text-align: justify;
+            font-family: 'Lora', serif; font-size: 13.5px; line-height: 1.6; color: #2c313a;
+            margin: 0 0 15px 20px; padding-left: 5px; text-align: justify;
         }
-        .mag-list li { margin-bottom: 3px; padding-left: 0; }
+        .mag-list li { margin-bottom: 4px; padding-left: 0; }
+        
+        /* Untuk list di dalam list (nested) agar tidak terlalu berjarak */
+        .mag-list ul, .mag-list ol {
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
 
         /* Sub-point Styling */
         .mag-subpoint {
-            font-family: 'Lora', serif; font-size: 15px; font-weight: 600; 
+            font-family: 'Lora', serif; font-size: 14px; font-weight: 600; 
             color: var(--royal-blue); margin-top: 20px; margin-bottom: 5px; text-align: justify;
         }
-        
-        .mag-subpoint-italic {
-            font-family: 'Lora', serif; font-size: 14px; font-weight: 600; font-style: italic;
-            color: var(--bronze-dark); margin-top: 15px; margin-bottom: 5px; text-align: justify;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
 
-        /* Pull-quote (Kutipan menonjol ala majalah) */
+        /* Pull-quote (Kutipan menonjol) */
         .pull-quote { 
             font-family: 'Cinzel', serif; font-size: 20px; color: var(--royal-blue); 
             text-align: center; font-weight: 600; line-height: 1.5;
@@ -136,10 +141,10 @@
             padding: 25px 40px; margin: 40px 0; background-color: #fafbfc;
         }
         
-        /* Quotation/Flow Styling for Text block */
+        /* Blockquote Flow Styling */
         .mag-blockquote {
-             font-family: 'Lora', serif; font-size: 15px; line-height: 1.85; color: #4a4a4a; font-style: italic;
-             margin: 15px 0 20px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
+             font-family: 'Lora', serif; font-size: 14.5px; line-height: 1.85; color: #4a4a4a; font-style: italic;
+             margin: 10px 0 20px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
              background-color: #f9f9f9; text-align: justify; text-justify: inter-word;
         }
 
@@ -171,632 +176,622 @@
                     <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
                 </div>
                 
-                <div class="mag-category">PEDOMAN TATA KELOLA, WEWENANG, DAN TANGGUNG JAWAB PREFECT DAN VICE PREFECT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-title">PREFECT AND VICE PREFECT<br>GOVERNANCE, AUTHORITY & ACCOUNTABILITY FRAMEWORK</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-category">PEDOMAN TATA KELOLA, WEWENANG, DAN TANGGUNG JAWAB PREFECT DAN VICE PREFECT</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-title">PREFECT AND VICE PREFECT<br>GOVERNANCE, AUTHORITY & ACCOUNTABILITY FRAMEWORK</div><span style="display:none;">[cite: 4]</span>
                 
                 <div class="mag-divider"><span>✦</span></div>
                 
-                <div class="mag-section-title">I. KEDUDUKAN DAN FUNGSI P-VP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text"><span class="drop-cap">P</span>refect dan Vice Prefect (selanjutnya disebut P-VP) merupakan bagian dari kepengurusan inti Asrama yang memiliki mandat untuk mengelola, mengoordinasikan, mengawasi, dan mengevaluasi pelaksanaan operasional Asrama.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP berkedudukan sebagai <i>middle management</i> yang menjembatani arah strategis Kepala Asrama dengan pelaksanaan operasional pada tingkat Lead Room dan murid.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Dalam menjalankan kedudukannya, P-VP tidak semata-mata berfungsi sebagai pelaksana instruksi, melainkan memiliki mandat manajerial dan kewenangan operasional untuk memastikan kebijakan yang telah ditetapkan dapat diterapkan secara konsisten.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP memiliki ruang untuk mengambil keputusan secara mandiri dalam perkara yang telah memiliki dasar ketentuan dan berada dalam lingkup kewenangannya. P-VP tidak diwajibkan meminta persetujuan Kepala Asrama atas setiap keputusan rutin, sepanjang keputusan tersebut tidak mengubah kebijakan, struktur, sistem, atau menciptakan pengecualian baru.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Dengan demikian, P-VP bukan merupakan perpanjangan tangan Kepala Asrama yang bersifat pasif, melainkan pengelola operasional yang memiliki mandat untuk mengambil keputusan dalam batas kewenangan yang diberikan asrama.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">I. KEDUDUKAN DAN FUNGSI P-VP</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text"><span class="drop-cap">P</span>refect dan Vice Prefect (selanjutnya disebut P-VP) merupakan bagian dari kepengurusan inti Asrama yang memiliki mandat untuk mengelola, mengoordinasikan, mengawasi, dan mengevaluasi pelaksanaan operasional Asrama.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">P-VP berkedudukan sebagai <i>middle management</i> yang menjembatani arah strategis Kepala Asrama dengan pelaksanaan operasional pada tingkat Lead Room dan murid.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Dalam menjalankan kedudukannya, P-VP tidak semata-mata berfungsi sebagai pelaksana instruksi, melainkan memiliki mandat manajerial dan kewenangan operasional untuk memastikan kebijakan yang telah ditetapkan dapat diterapkan secara konsisten.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">P-VP memiliki ruang untuk mengambil keputusan secara mandiri dalam perkara yang telah memiliki dasar ketentuan dan berada dalam lingkup kewenangannya. P-VP tidak diwajibkan meminta persetujuan Kepala Asrama atas setiap keputusan rutin, sepanjang keputusan tersebut tidak mengubah kebijakan, struktur, sistem, atau menciptakan pengecualian baru.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Dengan demikian, P-VP bukan merupakan perpanjangan tangan Kepala Asrama yang bersifat pasif, melainkan pengelola operasional yang memiliki mandat untuk mengambil keputusan dalam batas kewenangan yang diberikan asrama.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">II. LANDASAN DAN HIERARKI KETENTUAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Dalam melaksanakan tugas, P-VP berpedoman pada hierarki ketentuan sebagai berikut:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">II. LANDASAN DAN HIERARKI KETENTUAN</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam melaksanakan tugas, P-VP berpedoman pada hierarki ketentuan sebagai berikut:</div><span style="display:none;">[cite: 4]</span>
                 <ol class="mag-list">
-                    <li>Peraturan dan Kebijakan Asrama, sebagai dasar yang mengatur prinsip, hak, kewajiban, larangan, persyaratan, dan konsekuensi yang berlaku;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Pedoman Tata Kelola, Wewenang, dan Tanggung Jawab, sebagai dasar pembagian fungsi, kewenangan, tanggung jawab, serta hubungan kerja antarjabatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Standar Operasional Prosedur (SOP), sebagai pedoman teknis mengenai tata cara pelaksanaan pekerjaan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Keputusan Resmi Kepala Asrama, untuk perkara yang secara sah berada dalam kewenangan strategis Kepala Asrama; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>Ketentuan resmi lainnya yang ditetapkan melalui mekanisme asrama.</li><span style="display:none;">[cite: 5]</span>
+                    <li>Peraturan dan Kebijakan Asrama, sebagai dasar yang mengatur prinsip, hak, kewajiban, larangan, persyaratan, dan konsekuensi yang berlaku;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Pedoman Tata Kelola, Wewenang, dan Tanggung Jawab, sebagai dasar pembagian fungsi, kewenangan, tanggung jawab, serta hubungan kerja antarjabatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Standar Operasional Prosedur (SOP), sebagai pedoman teknis mengenai tata cara pelaksanaan pekerjaan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Keputusan Resmi Kepala Asrama, untuk perkara yang secara sah berada dalam kewenangan strategis Kepala Asrama; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>Ketentuan resmi lainnya yang ditetapkan melalui mekanisme asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ol>
                 
-                <div class="mag-subpoint">Prinsip Hierarki</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Pedoman ini tidak menggantikan Peraturan Asrama maupun SOP. Pedoman menjawab pertanyaan:</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-blockquote">“Siapa yang memiliki kewenangan untuk melakukan atau memutuskan?”</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Sementara SOP menjawab:</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-blockquote">“Bagaimana pekerjaan tersebut harus dilakukan?”</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Contoh:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">Prinsip Hierarki</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Pedoman ini tidak menggantikan Peraturan Asrama maupun SOP. Pedoman menjawab pertanyaan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-blockquote">“Siapa yang memiliki kewenangan untuk melakukan atau memutuskan?”</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Sementara SOP menjawab:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-blockquote">“Bagaimana pekerjaan tersebut harus dilakukan?”</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Contoh:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>Peraturan: Murid yang memenuhi kondisi tertentu dapat dikenakan SP.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Pedoman P-VP: Prefect memiliki kewenangan memproses dan menerbitkan SP sesuai ketentuan.</li><span style="display:none;">[cite: 5]</span>
-                    <li>SOP: Mengatur tahapan verifikasi, pemeriksaan, pembuatan, distribusi, dan pengarsipan SP.</li><span style="display:none;">[cite: 5]</span>
+                    <li>Peraturan: Murid yang memenuhi kondisi tertentu dapat dikenakan SP.</li><span style="display:none;">[cite: 4]</span>
+                    <li>Pedoman P-VP: Prefect memiliki kewenangan memproses dan menerbitkan SP sesuai ketentuan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>SOP: Mengatur tahapan verifikasi, pemeriksaan, pembuatan, distribusi, dan pengarsipan SP.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Apabila suatu pekerjaan belum memiliki SOP khusus, pekerjaan tetap dilaksanakan berdasarkan ketentuan yang berlaku dengan memperhatikan:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Apabila suatu pekerjaan belum memiliki SOP khusus, pekerjaan tetap dilaksanakan berdasarkan ketentuan yang berlaku dengan memperhatikan:</div><span style="display:none;">[cite: 4]</span>
                 <ol class="mag-list">
-                    <li>kehati-hatian;</li><span style="display:none;">[cite: 5]</span>
-                    <li>konsistensi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>objektivitas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kebutuhan operasional;</li><span style="display:none;">[cite: 5]</span>
-                    <li>akuntabilitas; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kepentingan keberlangsungan asrama.</li><span style="display:none;">[cite: 5]</span>
+                    <li>kehati-hatian;</li><span style="display:none;">[cite: 4]</span>
+                    <li>konsistensi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>objektivitas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kebutuhan operasional;</li><span style="display:none;">[cite: 4]</span>
+                    <li>akuntabilitas; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>kepentingan keberlangsungan asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ol>
-                <div class="mag-text">Apabila ditemukan pertentangan, kekosongan, atau ketidakjelasan ketentuan, P-VP wajib melakukan eskalasi kepada Kepala Asrama sebelum mengambil keputusan yang berpotensi menjadi preseden baru.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Apabila ditemukan pertentangan, kekosongan, atau ketidakjelasan ketentuan, P-VP wajib melakukan eskalasi kepada Kepala Asrama sebelum mengambil keputusan yang berpotensi menjadi preseden baru.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">III. PRINSIP PEMBAGIAN KEWENANGAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Pembagian kewenangan dalam kepengurusan Asrama didasarkan pada prinsip bahwa setiap keputusan harus diambil pada tingkat kewenangan yang tepat.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">III. PRINSIP PEMBAGIAN KEWENANGAN</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Pembagian kewenangan dalam kepengurusan Asrama didasarkan pada prinsip bahwa setiap keputusan harus diambil pada tingkat kewenangan yang tepat.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">1. Kepala Asrama</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-subpoint-italic">STRATEGIC GOVERNANCE</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Kepala Asrama bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">1. Kepala Asrama</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>arah strategis Asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>penetapan kebijakan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>struktur asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pembentukan atau perubahan jabatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan sistem;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan yang berdampak luas atau permanen;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengawasan terhadap kepengurusan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan akhir atas perkara strategis.</li><span style="display:none;">[cite: 5]</span>
+                    <li>arah strategis Asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>penetapan kebijakan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>struktur asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pembentukan atau perubahan jabatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan sistem;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan yang berdampak luas atau permanen;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengawasan terhadap kepengurusan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan akhir atas perkara strategis.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Kepala Asrama berfungsi sebagai pemegang arah dan otoritas strategis, bukan sebagai pelaksana seluruh pekerjaan operasional.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Kepala Asrama berfungsi sebagai pemegang arah dan otoritas strategis, bukan sebagai pelaksana seluruh pekerjaan operasional.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">2. P-VP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-subpoint-italic">OPERATIONAL GOVERNANCE</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">2. P-VP</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>pelaksanaan kebijakan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengelolaan operasional;</li><span style="display:none;">[cite: 5]</span>
-                    <li>koordinasi pengurus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>monitoring dan evaluasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>penyelesaian masalah operasional;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengawasan pelaksanaan tugas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tindakan korektif;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengelolaan informasi dan data operasional; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>pelaporan kepada Kepala Asrama.</li><span style="display:none;">[cite: 5]</span>
+                    <li>pelaksanaan kebijakan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengelolaan operasional;</li><span style="display:none;">[cite: 4]</span>
+                    <li>koordinasi pengurus;</li><span style="display:none;">[cite: 4]</span>
+                    <li>monitoring dan evaluasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>penyelesaian masalah operasional;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengawasan pelaksanaan tugas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tindakan korektif;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengelolaan informasi dan data operasional; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>pelaporan kepada Kepala Asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">3. LEADROOM</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-subpoint-italic">ROOM MANAGEMENT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Lead Room bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">3. LEADROOM</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Lead Room bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>pengelolaan kamar;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemantauan murid;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pelaksanaan kegiatan kamar;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengumpulan dan penyampaian data;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pelaksanaan tugas yang telah ditetapkan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>pelaporan kepada P-VP.</li><span style="display:none;">[cite: 5]</span>
+                    <li>pengelolaan kamar;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemantauan murid;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pelaksanaan kegiatan kamar;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengumpulan dan penyampaian data;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pelaksanaan tugas yang telah ditetapkan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>pelaporan kepada P-VP.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Lead Room tetap memiliki ruang untuk memberikan masukan, menyampaikan kendala, mengajukan alternatif, dan meminta klarifikasi. Pembagian tersebut tidak dimaksudkan untuk menciptakan jarak antar jabatan, melainkan untuk memastikan bahwa otoritas, tanggung jawab, dan pelaksanaan pekerjaan tidak saling tumpang tindih.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Lead Room tetap memiliki ruang untuk memberikan masukan, menyampaikan kendala, mengajukan alternatif, dan meminta klarifikasi. Pembagian tersebut tidak dimaksudkan untuk menciptakan jarak antar jabatan, melainkan untuk memastikan bahwa otoritas, tanggung jawab, dan pelaksanaan pekerjaan tidak saling tumpang tindih.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">4. EDITOR</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-subpoint-italic">SUPPORTING FUNCTION</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Editor bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">4. EDITOR</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Editor bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>pengerjaan dan penyuntingan materi visual berdasarkan brief;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan hasil sesuai arahan dan kebutuhan teknis;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyelesaikan pekerjaan sesuai tenggat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>melakukan revisi yang diperlukan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyerahkan hasil editing kepada P-VP atau Kepala Asrama.</li><span style="display:none;">[cite: 5]</span>
+                    <li>pengerjaan dan penyuntingan materi visual berdasarkan brief;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan hasil sesuai arahan dan kebutuhan teknis;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyelesaikan pekerjaan sesuai tenggat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>melakukan revisi yang diperlukan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyerahkan hasil editing kepada P-VP atau Kepala Asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Editor tidak memiliki kewenangan manajerial maupun operasional dan tidak bertanggung jawab atas publikasi, caption, waktu penggunaan, atau keputusan penggunaan materi. Editor berfungsi sebagai <i>supporting function</i> yang mendukung kebutuhan Asrama sesuai arahan pihak yang memiliki kewenangan.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Editor tidak memiliki kewenangan manajerial maupun operasional dan tidak bertanggung jawab atas publikasi, caption, waktu penggunaan, atau keputusan penggunaan materi. Editor berfungsi sebagai <i>supporting function</i> yang mendukung kebutuhan Asrama sesuai arahan pihak yang memiliki kewenangan.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">IV. TUGAS DAN TANGGUNG JAWAB BERSAMA P-VP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect dan Vice Prefect secara bersama-sama bertanggung jawab memastikan operasional Asrama berjalan secara tertib, konsisten, terdokumentasi, dan berkelanjutan.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">IV. TUGAS DAN TANGGUNG JAWAB BERSAMA P-VP</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Prefect dan Vice Prefect secara bersama-sama bertanggung jawab memastikan operasional Asrama berjalan secara tertib, konsisten, terdokumentasi, dan berkelanjutan.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">1. Manajemen Data Murid</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP bertanggung jawab atas pengelolaan dan pengawasan data yang diperlukan untuk operasional Asrama, meliputi:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">1. Manajemen Data Murid</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP bertanggung jawab atas pengelolaan dan pengawasan data yang diperlukan untuk operasional Asrama, meliputi:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>data N.E.W.T. Grade 7;</li><span style="display:none;">[cite: 5]</span>
-                    <li>registrasi ulang Oldwizzies;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Primary Data Form;</li><span style="display:none;">[cite: 5]</span>
-                    <li>alokasi Kelas dan Instansi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pendataan Newizzy pasca-SC; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>data administrasi lain yang ditetapkan oleh Asrama.</li><span style="display:none;">[cite: 5]</span>
+                    <li>data N.E.W.T. Grade 7;</li><span style="display:none;">[cite: 4]</span>
+                    <li>registrasi ulang Oldwizzies;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Primary Data Form;</li><span style="display:none;">[cite: 4]</span>
+                    <li>alokasi Kelas dan Instansi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pendataan Newizzy pasca-SC; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>data administrasi lain yang ditetapkan oleh Asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Seluruh data administrasi tersebut dikelola dan dapat dipantau melalui RMIS, kecuali data N.E.W.T. Grade 7 yang dikelola melalui mekanisme atau sistem yang ditetapkan khusus untuk data N.E.W.T. P-VP bertanggung jawab memastikan data:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Seluruh data administrasi tersebut dikelola dan dapat dipantau melalui RMIS, kecuali data N.E.W.T. Grade 7 yang dikelola melalui mekanisme atau sistem yang ditetapkan khusus untuk data N.E.W.T. P-VP bertanggung jawab memastikan data:</div><span style="display:none;">[cite: 4]</span>
                 <ol class="mag-list">
-                    <li>dikumpulkan sesuai mekanisme;</li><span style="display:none;">[cite: 5]</span>
-                    <li>lengkap dan akurat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>diperbarui apabila terdapat perubahan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>dapat ditelusuri sumbernya;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tersimpan pada sistem yang sesuai; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>dapat digunakan oleh pihak yang memiliki kewenangan.</li><span style="display:none;">[cite: 5]</span>
+                    <li>dikumpulkan sesuai mekanisme;</li><span style="display:none;">[cite: 4]</span>
+                    <li>lengkap dan akurat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>diperbarui apabila terdapat perubahan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>dapat ditelusuri sumbernya;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tersimpan pada sistem yang sesuai; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>dapat digunakan oleh pihak yang memiliki kewenangan.</li><span style="display:none;">[cite: 4]</span>
                 </ol>
-                <div class="mag-text">Teknis pengumpulan dan pengolahan data mengikuti SOP masing-masing.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Teknis pengumpulan dan pengolahan data mengikuti SOP masing-masing.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">2. Presensi dan Keaktifan</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP mengawasi:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">2. Presensi dan Keaktifan</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP mengawasi:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>presensi harian dan mingguan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemenuhan tugas tambahan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>presensi Quidditch;</li><span style="display:none;">[cite: 5]</span>
-                    <li>publikasi papan presensi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data keaktifan murid;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data kolektif murid;</li><span style="display:none;">[cite: 5]</span>
-                    <li>ketidakhadiran;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keterlambatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemenuhan kewajiban; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>tindak lanjut terhadap data keaktifan.</li><span style="display:none;">[cite: 5]</span>
+                    <li>presensi harian dan mingguan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemenuhan tugas tambahan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>presensi Quidditch;</li><span style="display:none;">[cite: 4]</span>
+                    <li>publikasi papan presensi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>data keaktifan murid;</li><span style="display:none;">[cite: 4]</span>
+                    <li>data kolektif murid;</li><span style="display:none;">[cite: 4]</span>
+                    <li>ketidakhadiran;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keterlambatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemenuhan kewajiban; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>tindak lanjut terhadap data keaktifan.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">P-VP tidak hanya bertugas mengumpulkan data, tetapi memastikan data tersebut ditindaklanjuti apabila menunjukkan adanya pelanggaran, ketidaksesuaian, atau masalah keaktifan.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">P-VP tidak hanya bertugas mengumpulkan data, tetapi memastikan data tersebut ditindaklanjuti apabila menunjukkan adanya pelanggaran, ketidaksesuaian, atau masalah keaktifan.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">3. Pengawasan Akademik</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP mengawasi pelaksanaan:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">3. Pengawasan Akademik</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP mengawasi pelaksanaan:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>rangkuman mingguan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Proses mapping di RMIS dan Academic Portal;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kisi-kisi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Rangkuman Sekolah;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Rangkuman Ujian; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>administrasi akademik lainnya.</li><span style="display:none;">[cite: 5]</span>
+                    <li>rangkuman mingguan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Proses mapping di RMIS dan Academic Portal;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kisi-kisi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Rangkuman Sekolah;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Rangkuman Ujian; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>administrasi akademik lainnya.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">P-VP bertanggung jawab memastikan pekerjaan terlaksana sesuai tenggat, sedangkan pemeriksaan teknis mengikuti SOP yang berlaku.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">P-VP bertanggung jawab memastikan pekerjaan terlaksana sesuai tenggat, sedangkan pemeriksaan teknis mengikuti SOP yang berlaku.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">4. Kegiatan dan Operasional Asrama</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP melakukan pengawasan terhadap:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">4. Kegiatan dan Operasional Asrama</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP melakukan pengawasan terhadap:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>pembagian kamar;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Perkenalan Pengurus Baru;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Tradisi Newizzy;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kegiatan internal;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kegiatan rutin;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memimpin evaluasi bulanan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kebutuhan operasional periodik; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kegiatan lain yang diberikan kepada kepengurusan Asrama.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">5. Monitoring Pengurus</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP melakukan monitoring terhadap pelaksanaan tugas Lead Room dan pengurus terkait dengan memperhatikan:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>ketepatan waktu;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kelengkapan pekerjaan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kualitas hasil;</li><span style="display:none;">[cite: 5]</span>
-                    <li>komunikasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kepatuhan terhadap ketentuan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tindak lanjut;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kendala; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kebutuhan dukungan.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">Monitoring bukan semata-mata pengawasan kesalahan, tetapi merupakan mekanisme untuk memastikan pekerjaan dapat selesai dan masalah dapat ditangani sebelum berkembang menjadi gangguan operasional.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-section-title">V. PEMBAGIAN TUGAS KHUSUS PREFECT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect memiliki fokus utama pada kedisiplinan, administrasi, evaluasi, dokumentasi, dan pengawasan sistem.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-subpoint">1. Kedisiplinan</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect berwenang:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>memproses Surat Peringatan (SP);</li><span style="display:none;">[cite: 5]</span>
-                    <li>memproses Surat Drop Out (DO);</li><span style="display:none;">[cite: 5]</span>
-                    <li>melakukan verifikasi administrasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan dasar pemberian sanksi terpenuhi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan prosedur telah dilaksanakan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>melakukan tindak lanjut terhadap sanksi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mengoordinasikan penyelesaian masalah kedisiplinan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan dokumentasi sanksi tersimpan dengan baik.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">Penerbitan dan distribusi surat mengikuti SOP.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-subpoint">2. Administrasi</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect mengelola:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>Data Gringotts;</li><span style="display:none;">[cite: 5]</span>
-                    <li>header thread surat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>arsip surat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data kelulusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data alumni; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>administrasi lain yang didelegasikan.</li><span style="display:none;">[cite: 5]</span>
+                    <li>pembagian kamar;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Perkenalan Pengurus Baru;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Tradisi Newizzy;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kegiatan internal;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kegiatan rutin;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memimpin evaluasi bulanan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kebutuhan operasional periodik; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>kegiatan lain yang diberikan kepada kepengurusan Asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">3. Evaluasi Akademik</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">5. Monitoring Pengurus</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP melakukan monitoring terhadap pelaksanaan tugas Lead Room dan pengurus terkait dengan memperhatikan:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>pengelolaan Report Card;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemeriksaan kelengkapan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemantauan revisi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tindak lanjut revisi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemantauan penyelesaian revisi; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengarsipan.</li><span style="display:none;">[cite: 5]</span>
+                    <li>ketepatan waktu;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kelengkapan pekerjaan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kualitas hasil;</li><span style="display:none;">[cite: 4]</span>
+                    <li>komunikasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kepatuhan terhadap ketentuan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tindak lanjut;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kendala; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>kebutuhan dukungan.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text">Monitoring bukan semata-mata pengawasan kesalahan, tetapi merupakan mekanisme untuk memastikan pekerjaan dapat selesai dan masalah dapat ditangani sebelum berkembang menjadi gangguan operasional.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-section-title">V. PEMBAGIAN TUGAS KHUSUS PREFECT</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Prefect memiliki fokus utama pada kedisiplinan, administrasi, evaluasi, dokumentasi, dan pengawasan sistem.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-subpoint">1. Kedisiplinan</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Prefect berwenang:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>memproses Surat Peringatan (SP);</li><span style="display:none;">[cite: 4]</span>
+                    <li>memproses Surat Drop Out (DO);</li><span style="display:none;">[cite: 4]</span>
+                    <li>melakukan verifikasi administrasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan dasar pemberian sanksi terpenuhi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan prosedur telah dilaksanakan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>melakukan tindak lanjut terhadap sanksi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengoordinasikan penyelesaian masalah kedisiplinan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan dokumentasi sanksi tersimpan dengan baik.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text">Penerbitan dan distribusi surat mengikuti SOP.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-subpoint">2. Administrasi</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Prefect mengelola:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>Data Gringotts;</li><span style="display:none;">[cite: 4]</span>
+                    <li>header thread surat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>arsip surat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>data kelulusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>data alumni; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>administrasi lain yang didelegasikan.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">4. Prestasi dan Aset</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect mengelola kebutuhan terkait:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">3. Evaluasi Akademik</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Prefect bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>upgrade sapu Asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>upgrade hewan Asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>sertifikasi Quidditch;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pencatatan prestasi; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>aset yang berada dalam tanggung jawabnya.</li><span style="display:none;">[cite: 5]</span>
+                    <li>pengelolaan Report Card;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemeriksaan kelengkapan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemantauan revisi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tindak lanjut revisi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemantauan penyelesaian revisi; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengarsipan.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">5. Monitoring Keaktifan</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Prefect melakukan sweeping keaktifan anak asrama bersama Vice Prefect dan Lead Room serta memastikan hasil monitoring ditindaklanjuti sesuai ketentuan dan dilaporkan kepada Kepala Asrama.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-section-title">VI. PEMBAGIAN TUGAS KHUSUS VICE PREFECT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Vice Prefect memiliki fokus utama pada data operasional, keuangan, denda, verifikasi, perizinan, penghargaan, dan pengendalian administrasi operasional.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-subpoint">1. Kas dan Denda</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Vice Prefect bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">4. Prestasi dan Aset</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Prefect mengelola kebutuhan terkait:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>laporan kas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>laporan denda;</li><span style="display:none;">[cite: 5]</span>
-                    <li>denda kelas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>denda keterlambatan rangkuman Lead Room;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pencatatan transaksi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>verifikasi transaksi yang menjadi kewenangannya; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>pelaporan kepada pihak terkait.</li><span style="display:none;">[cite: 5]</span>
+                    <li>upgrade sapu Asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>upgrade hewan Asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>sertifikasi Quidditch;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pencatatan prestasi; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>aset yang berada dalam tanggung jawabnya.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">2. Verifikasi Data</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Vice Prefect bertanggung jawab atas:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">5. Monitoring Keaktifan</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Prefect melakukan sweeping keaktifan anak asrama bersama Vice Prefect dan Lead Room serta memastikan hasil monitoring ditindaklanjuti sesuai ketentuan dan dilaporkan kepada Kepala Asrama.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-section-title">VI. PEMBAGIAN TUGAS KHUSUS VICE PREFECT</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Vice Prefect memiliki fokus utama pada data operasional, keuangan, denda, verifikasi, perizinan, penghargaan, dan pengendalian administrasi operasional.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-subpoint">1. Kas dan Denda</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Vice Prefect bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>pemeriksaan Data Aktif (Daktif);</li><span style="display:none;">[cite: 5]</span>
-                    <li>validasi izin;</li><span style="display:none;">[cite: 5]</span>
-                    <li>cross-check data RMIS dan Leadroom;</li><span style="display:none;">[cite: 5]</span>
-                    <li>rekapitulasi SP Minimal Kelas; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>penyampaian hasil verifikasi.</li><span style="display:none;">[cite: 5]</span>
+                    <li>laporan kas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>laporan denda;</li><span style="display:none;">[cite: 4]</span>
+                    <li>denda kelas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>denda keterlambatan rangkuman Lead Room;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pencatatan transaksi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>verifikasi transaksi yang menjadi kewenangannya; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>pelaporan kepada pihak terkait.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">3. Rewards</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Vice Prefect mengelola:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">2. Verifikasi Data</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Vice Prefect bertanggung jawab atas:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>Reward Rangkuman;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Reward Rank bulanan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Reward Hall of Fame;</li><span style="display:none;">[cite: 5]</span>
-                    <li>Reward kegiatan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>Administrasi penerima penghargaan.</li><span style="display:none;">[cite: 5]</span>
+                    <li>pemeriksaan Data Aktif (Daktif);</li><span style="display:none;">[cite: 4]</span>
+                    <li>validasi izin;</li><span style="display:none;">[cite: 4]</span>
+                    <li>cross-check data RMIS dan Leadroom;</li><span style="display:none;">[cite: 4]</span>
+                    <li>rekapitulasi SP Minimal Kelas; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>penyampaian hasil verifikasi.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-section-title">VII. WEWENANG OPERASIONAL P-VP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP memiliki kewenangan mengambil keputusan secara mandiri apabila seluruh kondisi berikut terpenuhi:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">3. Rewards</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Vice Prefect mengelola:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>Reward Rangkuman;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Reward Rank bulanan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Reward Hall of Fame;</li><span style="display:none;">[cite: 4]</span>
+                    <li>Reward kegiatan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>Administrasi penerima penghargaan.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+
+                <div class="mag-section-title">VII. WEWENANG OPERASIONAL P-VP</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP memiliki kewenangan mengambil keputusan secara mandiri apabila seluruh kondisi berikut terpenuhi:</div><span style="display:none;">[cite: 4]</span>
                 <ol class="mag-list">
-                    <li>perkara berada dalam lingkup tugas P-VP;</li><span style="display:none;">[cite: 5]</span>
-                    <li>terdapat dasar dalam peraturan, kebijakan, pedoman, SOP, atau keputusan yang telah berlaku;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan merupakan pelaksanaan sistem yang sudah ditetapkan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perkara bersifat rutin atau operasional;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan tidak mengubah struktur asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan tidak mengubah kewenangan jabatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan tidak menciptakan kebijakan baru; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan tidak memberikan pengecualian yang belum memiliki dasar.</li><span style="display:none;">[cite: 5]</span>
+                    <li>perkara berada dalam lingkup tugas P-VP;</li><span style="display:none;">[cite: 4]</span>
+                    <li>terdapat dasar dalam peraturan, kebijakan, pedoman, SOP, atau keputusan yang telah berlaku;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan merupakan pelaksanaan sistem yang sudah ditetapkan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perkara bersifat rutin atau operasional;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan tidak mengubah struktur asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan tidak mengubah kewenangan jabatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan tidak menciptakan kebijakan baru; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan tidak memberikan pengecualian yang belum memiliki dasar.</li><span style="display:none;">[cite: 4]</span>
                 </ol>
-                <div class="mag-text">Kewenangan operasional tersebut mencakup antara lain:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">Kewenangan operasional tersebut mencakup antara lain:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>memberikan instruksi rutin kepada Lead Room;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menetapkan tenggat operasional dalam ruang kewenangannya;</li><span style="display:none;">[cite: 5]</span>
-                    <li>meminta laporan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>meminta data;</li><span style="display:none;">[cite: 5]</span>
-                    <li>meminta klarifikasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>melakukan koreksi administratif;</li><span style="display:none;">[cite: 5]</span>
-                    <li>melakukan tindak lanjut;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menerapkan sanksi yang seluruh persyaratannya telah terpenuhi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mengatur pelaksanaan tugas berdasarkan sistem yang telah ditetapkan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>meminta perbaikan pekerjaan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mengambil tindakan korektif; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan pekerjaan yang tertunda segera ditindaklanjuti.</li><span style="display:none;">[cite: 5]</span>
+                    <li>memberikan instruksi rutin kepada Lead Room;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menetapkan tenggat operasional dalam ruang kewenangannya;</li><span style="display:none;">[cite: 4]</span>
+                    <li>meminta laporan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>meminta data;</li><span style="display:none;">[cite: 4]</span>
+                    <li>meminta klarifikasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>melakukan koreksi administratif;</li><span style="display:none;">[cite: 4]</span>
+                    <li>melakukan tindak lanjut;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menerapkan sanksi yang seluruh persyaratannya telah terpenuhi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengatur pelaksanaan tugas berdasarkan sistem yang telah ditetapkan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>meminta perbaikan pekerjaan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengambil tindakan korektif; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan pekerjaan yang tertunda segera ditindaklanjuti.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">P-VP tidak perlu meminta persetujuan Kepala Asrama untuk setiap tindakan rutin yang secara jelas telah diberikan kepada P-VP oleh ketentuan yang berlaku.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">P-VP tidak perlu meminta persetujuan Kepala Asrama untuk setiap tindakan rutin yang secara jelas telah diberikan kepada P-VP oleh ketentuan yang berlaku.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">VIII. WEWENANG, PENGAMBILAN KEPUTUSAN, DAN ESKALASI</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP menggunakan alur:</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-blockquote">Identifikasi → Verifikasi → Pertimbangan → Keputusan → Pelaksanaan → Evaluasi.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP memiliki kewenangan mengambil keputusan secara mandiri sepanjang perkara bersifat rutin dan tidak mengubah kebijakan. Namun, P-VP wajib melakukan eskalasi kepada Kepala Asrama apabila keputusan tersebut:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">VIII. WEWENANG, PENGAMBILAN KEPUTUSAN, DAN ESKALASI</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP menggunakan alur:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-blockquote">Identifikasi → Verifikasi → Pertimbangan → Keputusan → Pelaksanaan → Evaluasi.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP memiliki kewenangan mengambil keputusan secara mandiri sepanjang perkara bersifat rutin dan tidak mengubah kebijakan. Namun, P-VP wajib melakukan eskalasi kepada Kepala Asrama apabila keputusan tersebut:</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-subpoint">1. Mengubah Ketentuan</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Meliputi:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">1. Mengubah Ketentuan</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Meliputi:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>perubahan Peraturan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan SOP;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan mekanisme kerja;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan sistem;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan jadwal yang telah ditetapkan sebagai kebijakan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan standar; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>penghapusan ketentuan yang telah berlaku.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">2. Bersifat Struktural</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Meliputi:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>perubahan struktur asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pembukaan atau penutupan jabatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan kewenangan jabatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan struktur Lead Room;</li><span style="display:none;">[cite: 5]</span>
-                    <li>penetapan jabatan baru; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan lain yang memberikan dampak permanen terhadap asrama.</li><span style="display:none;">[cite: 5]</span>
+                    <li>perubahan Peraturan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan SOP;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan mekanisme kerja;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan sistem;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan jadwal yang telah ditetapkan sebagai kebijakan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan standar; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>penghapusan ketentuan yang telah berlaku.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">3. Merupakan Grey Area</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Grey area mencakup persoalan yang:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">2. Bersifat Struktural</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Meliputi:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>belum memiliki dasar aturan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memiliki lebih dari satu interpretasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>berpotensi menjadi preseden;</li><span style="display:none;">[cite: 5]</span>
-                    <li>membutuhkan pengecualian;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tidak dapat diselesaikan hanya dengan menerapkan ketentuan yang ada; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>berpotensi menimbulkan ketidakkonsistenan apabila diputuskan secara sepihak.</li><span style="display:none;">[cite: 5]</span>
+                    <li>perubahan struktur asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pembukaan atau penutupan jabatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan kewenangan jabatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan struktur Lead Room;</li><span style="display:none;">[cite: 4]</span>
+                    <li>penetapan jabatan baru; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan lain yang memberikan dampak permanen terhadap asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">4. Berdampak Luas</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Termasuk keputusan yang dapat memengaruhi:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">3. Merupakan Grey Area</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Grey area mencakup persoalan yang:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>banyak murid;</li><span style="display:none;">[cite: 5]</span>
-                    <li>lebih dari satu kamar;</li><span style="display:none;">[cite: 5]</span>
-                    <li>lebih dari satu bidang;</li><span style="display:none;">[cite: 5]</span>
-                    <li>struktur kepengurusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>sistem asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>reputasi Asrama; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>keberlangsungan operasional.</li><span style="display:none;">[cite: 5]</span>
+                    <li>belum memiliki dasar aturan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memiliki lebih dari satu interpretasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>berpotensi menjadi preseden;</li><span style="display:none;">[cite: 4]</span>
+                    <li>membutuhkan pengecualian;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tidak dapat diselesaikan hanya dengan menerapkan ketentuan yang ada; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>berpotensi menimbulkan ketidakkonsistenan apabila diputuskan secara sepihak.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-subpoint">5. Berkaitan dengan Keuangan Khusus</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Termasuk:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">4. Berdampak Luas</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Termasuk keputusan yang dapat memengaruhi:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>penggunaan dana di luar anggaran;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pencairan dana khusus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengalokasian dana yang belum memiliki mekanisme;</li><span style="display:none;">[cite: 5]</span>
-                    <li>penghapusan kewajiban finansial; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan finansial lain yang tidak bersifat rutin.</li><span style="display:none;">[cite: 5]</span>
+                    <li>banyak murid;</li><span style="display:none;">[cite: 4]</span>
+                    <li>lebih dari satu kamar;</li><span style="display:none;">[cite: 4]</span>
+                    <li>lebih dari satu bidang;</li><span style="display:none;">[cite: 4]</span>
+                    <li>struktur kepengurusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>sistem asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>reputasi Asrama; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>keberlangsungan operasional.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-section-title">IX. TATA KELOLA HUBUNGAN KERJA DAN KOMUNIKASI</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">5. Berkaitan dengan Keuangan Khusus</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Termasuk:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>penggunaan dana di luar anggaran;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pencairan dana khusus;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengalokasian dana yang belum memiliki mekanisme;</li><span style="display:none;">[cite: 4]</span>
+                    <li>penghapusan kewajiban finansial; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan finansial lain yang tidak bersifat rutin.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+
+                <div class="mag-section-title">IX. TATA KELOLA HUBUNGAN KERJA DAN KOMUNIKASI</div><span style="display:none;">[cite: 4]</span>
                 
-                <div class="mag-subpoint">1. Prinsip Umum Hubungan Kerja dan Komunikasi</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Seluruh interaksi dalam kepengurusan wajib berlandaskan pada profesionalitas, kejelasan instruksi, objektivitas, dan penghormatan terhadap martabat setiap pihak. Komunikasi harus terukur, berorientasi pada penyelesaian, dan bebas dari intimidasi atau tekanan personal. Prinsip dasar tata kelola hubungan kerja adalah:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">1. Prinsip Umum Hubungan Kerja dan Komunikasi</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Seluruh interaksi dalam kepengurusan wajib berlandaskan pada profesionalitas, kejelasan instruksi, objektivitas, dan penghormatan terhadap martabat setiap pihak. Komunikasi harus terukur, berorientasi pada penyelesaian, dan bebas dari intimidasi atau tekanan personal. Prinsip dasar tata kelola hubungan kerja adalah:</div><span style="display:none;">[cite: 4]</span>
                 
-                <div class="mag-subpoint-italic">Respect Upward</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Menghormati kewenangan strategis atasan dengan tetap berani menyampaikan pertimbangan profesional.</div><span style="display:none;">[cite: 5]</span>
-                
-                <div class="mag-subpoint-italic">Accountability Downward</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Memberikan arahan jelas, dukungan, serta ruang bagi bawahan untuk menjalankan mandatnya tanpa micromanagement.</div><span style="display:none;">[cite: 5]</span>
-                
-                <div class="mag-subpoint-italic">Functional & Professional Collaboration</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Berkoordinasi secara horizontal berdasarkan fungsi jabatan masing-masing demi kepentingan asrama.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-subpoint">2. Interaksi Spesifik Antar Jabatan</div><span style="display:none;">[cite: 5]</span>
-                
-                <div class="mag-subpoint-italic">A. P-VP dengan Kepala Asrama</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP berfungsi sebagai penerjemah kebijakan strategis menjadi langkah operasional. P-VP wajib memberikan laporan jujur, identifikasi risiko, dan rekomendasi solusi. Perbedaan pendapat diperbolehkan dalam tahap diskusi, namun keputusan strategis yang telah ditetapkan Kepala Asrama wajib dihormati dan dilaksanakan.</div><span style="display:none;">[cite: 5]</span>
-                
-                <div class="mag-subpoint-italic">B. P-VP dengan Leadroom</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP bertindak sebagai koordinator operasional Lead Room dengan memberikan instruksi rutin, menetapkan target, dan melakukan monitoring. P-VP dilarang menghambat ruang pengambilan keputusan Lead Room pada tingkat kamar sepanjang berada dalam kewenangannya.</div><span style="display:none;">[cite: 5]</span>
-                
-                <div class="mag-subpoint-italic">C. P-VP dengan Editor</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP memastikan substansi informasi asrama, sementara Editor mengelola aspek editorial, gaya bahasa, dan risiko komunikasi. P-VP wajib menghormati pertimbangan profesional Editor mengenai keterbacaan dan penyajian pesan tanpa mengubah mandat kebijakan.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-subpoint">3. Manajemen Ruang Komunikasi Internal</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Penggunaan ruang internal didasarkan pada prinsip need-to-know dan efektivitas koordinasi:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>Grey Room (Kepala Asrama, P-VP, Leadroom): Ruang utama koordinasi, evaluasi, dan penyelesaian kendala operasional harian di tingkat kamar.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Red Room (Kepala Asrama, P-VP): Ruang pembahasan perkara strategis, kebijakan sensitif, evaluasi internal P-VP dan Kepala Asrama, serta konsultasi otoritas tertinggi.</li><span style="display:none;">[cite: 5]</span>
-                    <li>Black Room (Kepala Asrama, P-VP, Editor): Ruang penyelarasan informasi, publikasi resmi, dan manajemen representasi asrama sebelum disampaikan ke publik.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-section-title">X. MUSYAWARAH DAN PERBEDAAN PENDAPAT</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP memiliki hak untuk menyampaikan:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>pendapat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kritik;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keberatan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>evaluasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pertimbangan operasional; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>alternatif penyelesaian</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">kepada Kepala Asrama. Dalam pembentukan kebijakan baru atau keputusan strategis, Kepala Asrama diharapkan memberikan ruang konsultasi kepada P-VP karena P-VP memiliki pengetahuan langsung mengenai kondisi operasional dan dampak implementasi kebijakan.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Perbedaan pendapat tidak dianggap sebagai bentuk pembangkangan selama disampaikan secara profesional dan berdasarkan kepentingan asrama. Apabila musyawarah tidak menghasilkan kesepakatan, keputusan akhir atas perkara strategis tetap berada pada Kepala Asrama sesuai kewenangan jabatannya.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-section-title">XI. OBJEKTIVITAS DAN KONFLIK KEPENTINGAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Setiap keputusan P-VP wajib didasarkan pada:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>kebutuhan asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>ketentuan yang berlaku;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data atau fakta yang dapat diverifikasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>konsistensi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pertimbangan yang dapat dipertanggungjawabkan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kepentingan keberlangsungan Asrama.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">Keputusan tidak boleh didasarkan pada:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>favoritisme;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kedekatan personal;</li><span style="display:none;">[cite: 5]</span>
-                    <li>konflik pribadi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tekanan pihak tertentu;</li><span style="display:none;">[cite: 5]</span>
-                    <li>intimidasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kepentingan kelompok; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>keuntungan pribadi.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">Kedekatan personal dengan pihak tertentu tidak secara otomatis dianggap sebagai konflik kepentingan. Namun, apabila hubungan tersebut berpotensi memengaruhi objektivitas atau menimbulkan persepsi ketidakberpihakan, P-VP wajib mengambil langkah mitigasi yang diperlukan, termasuk meminta pihak lain melakukan verifikasi atau mengambil bagian dalam keputusan tersebut.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-section-title">XII. AKUNTABILITAS DAN DOKUMENTASI</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP bertanggung jawab terhadap keputusan dan tindakan yang diambil dalam lingkup kewenangannya. Keputusan penting harus dapat ditelusuri sekurang-kurangnya berdasarkan:</div><span style="display:none;">[cite: 5]</span>
-                <ol class="mag-list">
-                    <li>dasar keputusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pihak yang mengambil keputusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>waktu keputusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>fakta atau data yang digunakan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pertimbangan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>hasil keputusan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>tindak lanjut.</li><span style="display:none;">[cite: 5]</span>
+                <ol type="A" class="mag-list" style="margin-top: 10px;">
+                    <li><b>Respect Upward</b><br>Menghormati kewenangan strategis atasan dengan tetap berani menyampaikan pertimbangan profesional.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>Accountability Downward</b><br>Memberikan arahan jelas, dukungan, serta ruang bagi bawahan untuk menjalankan mandatnya tanpa micromanagement.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>Functional & Professional Collaboration</b><br>Berkoordinasi secara horizontal berdasarkan fungsi jabatan masing-masing demi kepentingan asrama.</li><span style="display:none;">[cite: 4]</span>
                 </ol>
-                <div class="mag-text">Dokumentasi wajib diprioritaskan untuk keputusan yang:</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>berdampak luas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>merupakan pengecualian;</li><span style="display:none;">[cite: 5]</span>
-                    <li>berkaitan dengan sanksi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memerlukan eskalasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyangkut keuangan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>berpotensi menjadi preseden; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>membutuhkan tindak lanjut kepengurusan berikutnya.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">Dokumentasi tidak hanya berfungsi sebagai arsip, tetapi juga sebagai mekanisme akuntabilitas dan perlindungan asrama terhadap kesalahpahaman di kemudian hari.</div><span style="display:none;">[cite: 5]</span>
 
-                <div class="mag-section-title">XIII. EVALUASI KINERJA P-VP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Evaluasi P-VP dilakukan oleh Kepala Asrama secara berkala dengan mempertimbangkan:</div><span style="display:none;">[cite: 5]</span>
-                <ol class="mag-list">
-                    <li>pelaksanaan tugas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>ketepatan waktu;</li><span style="display:none;">[cite: 5]</span>
-                    <li>akurasi administrasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kemampuan koordinasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kemampuan menyelesaikan masalah;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kualitas komunikasi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>objektivitas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kepatuhan terhadap ketentuan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kemampuan mengambil keputusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kemampuan melakukan eskalasi secara tepat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kemampuan menjaga keberlangsungan operasional; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kemampuan membangun sistem yang dapat diteruskan.</li><span style="display:none;">[cite: 5]</span>
+                <div class="mag-subpoint">2. Interaksi Spesifik Antar Jabatan</div><span style="display:none;">[cite: 4]</span>
+                <ol type="A" class="mag-list" style="margin-top: 10px;">
+                    <li><b>P-VP dengan Kepala Asrama</b><br>P-VP berfungsi sebagai penerjemah kebijakan strategis menjadi langkah operasional. P-VP wajib memberikan laporan jujur, identifikasi risiko, dan rekomendasi solusi. Perbedaan pendapat diperbolehkan dalam tahap diskusi, namun keputusan strategis yang telah ditetapkan Kepala Asrama wajib dihormati dan dilaksanakan.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>P-VP dengan Leadroom</b><br>P-VP bertindak sebagai koordinator operasional Lead Room dengan memberikan instruksi rutin, menetapkan target, dan melakukan monitoring. P-VP dilarang menghambat ruang pengambilan keputusan Lead Room pada tingkat kamar sepanjang berada dalam kewenangannya.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>P-VP dengan Editor</b><br>P-VP memastikan substansi informasi asrama, sementara Editor mengelola aspek editorial, gaya bahasa, dan risiko komunikasi. P-VP wajib menghormati pertimbangan profesional Editor mengenai keterbacaan dan penyajian pesan tanpa mengubah mandat kebijakan.</li><span style="display:none;">[cite: 4]</span>
                 </ol>
-                <div class="mag-text">Evaluasi tidak semata-mata didasarkan pada jumlah tugas yang selesai, tetapi juga pada:</div><span style="display:none;">[cite: 5]</span>
+
+                <div class="mag-subpoint">3. Manajemen Ruang Komunikasi Internal</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Penggunaan ruang internal didasarkan pada prinsip need-to-know dan efektivitas koordinasi:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>kualitas pelaksanaan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>ketepatan pengambilan keputusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>dampak terhadap pengurus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>konsistensi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>efisiensi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>dokumentasi; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>keberlanjutan sistem.</li><span style="display:none;">[cite: 5]</span>
+                    <li>Grey Room (Kepala Asrama, P-VP, Leadroom): Ruang utama koordinasi, evaluasi, dan penyelesaian kendala operasional harian di tingkat kamar.</li><span style="display:none;">[cite: 4]</span>
+                    <li>Red Room (Kepala Asrama, P-VP): Ruang pembahasan perkara strategis, kebijakan sensitif, evaluasi internal P-VP dan Kepala Asrama, serta konsultasi otoritas tertinggi.</li><span style="display:none;">[cite: 4]</span>
+                    <li>Black Room (Kepala Asrama, P-VP, Editor): Ruang penyelarasan informasi, publikasi resmi, dan manajemen representasi asrama sebelum disampaikan ke publik.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
 
-                <div class="mag-section-title">XIV. MASA JABATAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Masa jabatan P-VP berlaku sejak pengangkatan atau penetapan resmi sampai dengan berakhirnya periode kepengurusan, yaitu sampai P-VP dinyatakan lulus dari Asrama Hogwarts, atau berakhir lebih awal karena:</div><span style="display:none;">[cite: 5]</span>
-                <ol class="mag-list">
-                    <li>memasuki masa fokus ujian kelulusan, yaitu periode ketika P-VP memprioritaskan persiapan dan pelaksanaan N.E.W.T yang menjadi bagian dari proses kelulusan dari Asrama Hogwarts. P-VP yang memasuki masa tersebut dapat mengundurkan diri dari jabatan sebelum dinyatakan lulus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pengunduran diri atas alasan lain yang telah diterima secara resmi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pemberhentian berdasarkan ketentuan yang berlaku;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perubahan struktur yang secara resmi mengakhiri jabatan; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>kondisi lain yang ditetapkan secara sah.</li><span style="display:none;">[cite: 5]</span>
-                </ol>
-                <div class="mag-text">Pengunduran diri karena memasuki masa fokus ujian kelulusan wajib disampaikan secara resmi kepada pihak yang berwenang. Setelah pengunduran diri diterima, kewenangan dan tanggung jawab sebagai P-VP berakhir sesuai dengan tanggal efektif yang ditetapkan, dan proses peralihan tanggung jawab wajib dilakukan.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Selama belum terdapat penetapan resmi mengenai berakhirnya jabatan, P-VP tetap memiliki kewenangan, tanggung jawab, dan kewajiban yang melekat pada jabatannya. Penyampaian niat untuk berhenti, ketidakaktifan sementara, atau pemberitahuan informal kepada pihak lain tidak dengan sendirinya mengakhiri kewenangan jabatan.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">X. MUSYAWARAH DAN PERBEDAAN PENDAPAT</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP memiliki hak untuk menyampaikan:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>pendapat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kritik;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keberatan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>evaluasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pertimbangan operasional; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>alternatif penyelesaian</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text">kepada Kepala Asrama. Dalam pembentukan kebijakan baru atau keputusan strategis, Kepala Asrama diharapkan memberikan ruang konsultasi kepada P-VP karena P-VP memiliki pengetahuan langsung mengenai kondisi operasional dan dampak implementasi kebijakan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Perbedaan pendapat tidak dianggap sebagai bentuk pembangkangan selama disampaikan secara profesional dan berdasarkan kepentingan asrama. Apabila musyawarah tidak menghasilkan kesepakatan, keputusan akhir atas perkara strategis tetap berada pada Kepala Asrama sesuai kewenangan jabatannya.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">XV. PENGUNDURAN DIRI</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP yang bermaksud mengundurkan diri wajib menyampaikan pengunduran diri secara resmi kepada Kepala Asrama paling lambat 1 (satu) bulan sebelum tanggal efektif pengunduran diri. Pengajuan sekurang-kurangnya memuat:</div><span style="display:none;">[cite: 5]</span>
-                <ol class="mag-list">
-                    <li>pernyataan pengunduran diri;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tanggal efektif yang diusulkan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>alasan pengunduran diri apabila bersedia disampaikan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kesediaan mengikuti proses transisi dan serah terima.</li><span style="display:none;">[cite: 5]</span>
-                </ol>
-                <div class="mag-text">Selama masa pemberitahuan, P-VP tetap berkewajiban:</div><span style="display:none;">[cite: 5]</span>
-                <ol class="mag-list">
-                    <li>menjalankan tugas dan tanggung jawab;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyelesaikan pekerjaan yang masih dapat diselesaikan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mendokumentasikan pekerjaan berjalan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyusun daftar pekerjaan yang belum selesai;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mempersiapkan serah terima;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyerahkan data dan akses yang relevan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan tidak terjadi terputusnya informasi penting.</li><span style="display:none;">[cite: 5]</span>
-                </ol>
-                <div class="mag-text">Pengunduran diri yang hanya disampaikan secara informal, melalui pihak ketiga, atau tanpa penetapan resmi belum dianggap sebagai pengunduran diri yang efektif. Dalam keadaan khusus yang menyebabkan jangka waktu satu bulan tidak dapat dipenuhi, Kepala Asrama dapat mempertimbangkan pengecualian berdasarkan alasan yang disampaikan, kondisi individu, dan kebutuhan Asrama.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">XI. OBJEKTIVITAS DAN KONFLIK KEPENTINGAN</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Setiap keputusan P-VP wajib didasarkan pada:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>kebutuhan asrama;</li><span style="display:none;">[cite: 4]</span>
+                    <li>ketentuan yang berlaku;</li><span style="display:none;">[cite: 4]</span>
+                    <li>data atau fakta yang dapat diverifikasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>konsistensi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pertimbangan yang dapat dipertanggungjawabkan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>kepentingan keberlangsungan Asrama.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text intro">Keputusan tidak boleh didasarkan pada:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>favoritisme;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kedekatan personal;</li><span style="display:none;">[cite: 4]</span>
+                    <li>konflik pribadi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tekanan pihak tertentu;</li><span style="display:none;">[cite: 4]</span>
+                    <li>intimidasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kepentingan kelompok; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>keuntungan pribadi.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text">Kedekatan personal dengan pihak tertentu tidak secara otomatis dianggap sebagai konflik kepentingan. Namun, apabila hubungan tersebut berpotensi memengaruhi objektivitas atau menimbulkan persepsi ketidakberpihakan, P-VP wajib mengambil langkah mitigasi yang diperlukan, termasuk meminta pihak lain melakukan verifikasi atau mengambil bagian dalam keputusan tersebut.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">XVI. AKHIR JABATAN, TRANSISI, DAN SERAH TERIMA</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Proses akhir jabatan dirancang untuk menjaga kesinambungan tata kelola (<i>continuity of governance</i>). Alur kronologis dimulai dari pemberitahuan pemberhentian/pengunduran diri, diikuti masa transisi untuk transfer pengetahuan, dan diakhiri dengan serah terima seluruh aset serta akses asrama secara resmi.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">XII. AKUNTABILITAS DAN DOKUMENTASI</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP bertanggung jawab terhadap keputusan dan tindakan yang diambil dalam lingkup kewenangannya. Keputusan penting harus dapat ditelusuri sekurang-kurangnya berdasarkan:</div><span style="display:none;">[cite: 4]</span>
+                <ol class="mag-list">
+                    <li>dasar keputusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pihak yang mengambil keputusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>waktu keputusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>fakta atau data yang digunakan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pertimbangan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>hasil keputusan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>tindak lanjut.</li><span style="display:none;">[cite: 4]</span>
+                </ol>
+                <div class="mag-text intro">Dokumentasi wajib diprioritaskan untuk keputusan yang:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>berdampak luas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>merupakan pengecualian;</li><span style="display:none;">[cite: 4]</span>
+                    <li>berkaitan dengan sanksi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memerlukan eskalasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyangkut keuangan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>berpotensi menjadi preseden; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>membutuhkan tindak lanjut kepengurusan berikutnya.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text">Dokumentasi tidak hanya berfungsi sebagai arsip, tetapi juga sebagai mekanisme akuntabilitas dan perlindungan asrama terhadap kesalahpahaman di kemudian hari.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-section-title">XIII. EVALUASI KINERJA P-VP</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Evaluasi P-VP dilakukan oleh Kepala Asrama secara berkala dengan mempertimbangkan:</div><span style="display:none;">[cite: 4]</span>
+                <ol class="mag-list">
+                    <li>pelaksanaan tugas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>ketepatan waktu;</li><span style="display:none;">[cite: 4]</span>
+                    <li>akurasi administrasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kemampuan koordinasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kemampuan menyelesaikan masalah;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kualitas komunikasi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>objektivitas;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kepatuhan terhadap ketentuan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kemampuan mengambil keputusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kemampuan melakukan eskalasi secara tepat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kemampuan menjaga keberlangsungan operasional; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>kemampuan membangun sistem yang dapat diteruskan.</li><span style="display:none;">[cite: 4]</span>
+                </ol>
+                <div class="mag-text intro">Evaluasi tidak semata-mata didasarkan pada jumlah tugas yang selesai, tetapi juga pada:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>kualitas pelaksanaan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>ketepatan pengambilan keputusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>dampak terhadap pengurus;</li><span style="display:none;">[cite: 4]</span>
+                    <li>konsistensi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>efisiensi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>dokumentasi; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>keberlanjutan sistem.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+
+                <div class="mag-section-title">XIV. MASA JABATAN</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Masa jabatan P-VP berlaku sejak pengangkatan atau penetapan resmi sampai dengan berakhirnya periode kepengurusan, yaitu sampai P-VP dinyatakan lulus dari Asrama Hogwarts, atau berakhir lebih awal karena:</div><span style="display:none;">[cite: 4]</span>
+                <ol class="mag-list">
+                    <li>memasuki masa fokus ujian kelulusan, yaitu periode ketika P-VP memprioritaskan persiapan dan pelaksanaan N.E.W.T yang menjadi bagian dari proses kelulusan dari Asrama Hogwarts. P-VP yang memasuki masa tersebut dapat mengundurkan diri dari jabatan sebelum dinyatakan lulus;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pengunduran diri atas alasan lain yang telah diterima secara resmi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>pemberhentian berdasarkan ketentuan yang berlaku;</li><span style="display:none;">[cite: 4]</span>
+                    <li>perubahan struktur yang secara resmi mengakhiri jabatan; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>kondisi lain yang ditetapkan secara sah.</li><span style="display:none;">[cite: 4]</span>
+                </ol>
+                <div class="mag-text">Pengunduran diri karena memasuki masa fokus ujian kelulusan wajib disampaikan secara resmi kepada pihak yang berwenang. Setelah pengunduran diri diterima, kewenangan dan tanggung jawab sebagai P-VP berakhir sesuai dengan tanggal efektif yang ditetapkan, dan proses peralihan tanggung jawab wajib dilakukan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Selama belum terdapat penetapan resmi mengenai berakhirnya jabatan, P-VP tetap memiliki kewenangan, tanggung jawab, dan kewajiban yang melekat pada jabatannya. Penyampaian niat untuk berhenti, ketidakaktifan sementara, atau pemberitahuan informal kepada pihak lain tidak dengan sendirinya mengakhiri kewenangan jabatan.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-section-title">XV. PENGUNDURAN DIRI</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">P-VP yang bermaksud mengundurkan diri wajib menyampaikan pengunduran diri secara resmi kepada Kepala Asrama paling lambat 1 (satu) bulan sebelum tanggal efektif pengunduran diri. Pengajuan sekurang-kurangnya memuat:</div><span style="display:none;">[cite: 4]</span>
+                <ol class="mag-list">
+                    <li>pernyataan pengunduran diri;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tanggal efektif yang diusulkan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>alasan pengunduran diri apabila bersedia disampaikan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>kesediaan mengikuti proses transisi dan serah terima.</li><span style="display:none;">[cite: 4]</span>
+                </ol>
+                <div class="mag-text intro">Selama masa pemberitahuan, P-VP tetap berkewajiban:</div><span style="display:none;">[cite: 4]</span>
+                <ul class="mag-list">
+                    <li>menjalankan tugas dan tanggung jawab;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyelesaikan pekerjaan yang masih dapat diselesaikan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mendokumentasikan pekerjaan berjalan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyusun daftar pekerjaan yang belum selesai;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mempersiapkan serah terima;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyerahkan data dan akses yang relevan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan tidak terjadi terputusnya informasi penting.</li><span style="display:none;">[cite: 4]</span>
+                </ul>
+                <div class="mag-text">Pengunduran diri yang hanya disampaikan secara informal, melalui pihak ketiga, atau tanpa penetapan resmi belum dianggap sebagai pengunduran diri yang efektif. Dalam keadaan khusus yang menyebabkan jangka waktu satu bulan tidak dapat dipenuhi, Kepala Asrama dapat mempertimbangkan pengecualian berdasarkan alasan yang disampaikan, kondisi individu, dan kebutuhan Asrama.</div><span style="display:none;">[cite: 4]</span>
+
+                <div class="mag-section-title">XVI. AKHIR JABATAN, TRANSISI, DAN SERAH TERIMA</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Proses akhir jabatan dirancang untuk menjaga kesinambungan tata kelola (<i>continuity of governance</i>). Alur kronologis dimulai dari pemberitahuan pemberhentian/pengunduran diri, diikuti masa transisi untuk transfer pengetahuan, dan diakhiri dengan serah terima seluruh aset serta akses asrama secara resmi. Serah terima tersebut mencakup:</div><span style="display:none;">[cite: 4]</span>
                 
-                <div class="mag-subpoint">A. ADMINISTRASI</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>database;</li><span style="display:none;">[cite: 5]</span>
-                    <li>formulir;</li><span style="display:none;">[cite: 5]</span>
-                    <li>arsip;</li><span style="display:none;">[cite: 5]</span>
-                    <li>surat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>laporan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>dokumen kebijakan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>dokumen kerja; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>catatan administrasi lainnya.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">B. OPERASIONAL</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>jadwal;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tugas rutin;</li><span style="display:none;">[cite: 5]</span>
-                    <li>pekerjaan berjalan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tenggat waktu;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kegiatan mendatang;</li><span style="display:none;">[cite: 5]</span>
-                    <li>agenda yang belum selesai; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kebutuhan operasional.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">C. PERSONALIA</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>kondisi Leadroom;</li><span style="display:none;">[cite: 5]</span>
-                    <li>posisi kosong;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kondisi pengurus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>permasalahan pengurus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>evaluasi berjalan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kebutuhan tindak lanjut.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">D. KEUANGAN DAN ASET</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>laporan kas;</li><span style="display:none;">[cite: 5]</span>
-                    <li>data Gringotts;</li><span style="display:none;">[cite: 5]</span>
-                    <li>inventaris;</li><span style="display:none;">[cite: 5]</span>
-                    <li>aset; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>kewajiban finansial yang masih berjalan.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">E. SISTEM</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>akun;</li><span style="display:none;">[cite: 5]</span>
-                    <li>akses;</li><span style="display:none;">[cite: 5]</span>
-                    <li>formulir;</li><span style="display:none;">[cite: 5]</span>
-                    <li>thread;</li><span style="display:none;">[cite: 5]</span>
-                    <li>database;</li><span style="display:none;">[cite: 5]</span>
-                    <li>sistem administrasi; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>mekanisme kerja yang digunakan.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-
-                <div class="mag-subpoint">F. PERMASALAHAN BERJALAN</div><span style="display:none;">[cite: 5]</span>
-                <ul class="mag-list">
-                    <li>kasus belum selesai;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan yang masih menunggu;</li><span style="display:none;">[cite: 5]</span>
-                    <li>perkara yang membutuhkan perhatian Kepala Asrama;</li><span style="display:none;">[cite: 5]</span>
-                    <li>potensi risiko;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tenggat penting; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>rekomendasi penyelesaian.</li><span style="display:none;">[cite: 5]</span>
-                </ul>
-                <div class="mag-text">Serah terima dinyatakan selesai setelah informasi dan akses yang diperlukan telah diterima oleh pihak yang ditunjuk.</div><span style="display:none;">[cite: 5]</span>
-
-                <div class="mag-section-title">XVII. KEKOSONGAN JABATAN</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Apabila jabatan P-VP menjadi kosong sebelum pengganti definitif ditetapkan, Kepala Asrama dapat:</div><span style="display:none;">[cite: 5]</span>
-                <ol class="mag-list">
-                    <li>menunjuk Pelaksana Tugas (Plt.);</li><span style="display:none;">[cite: 5]</span>
-                    <li>menunjuk P-VP sementara; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>menetapkan mekanisme pembagian tugas sementara.</li><span style="display:none;">[cite: 5]</span>
+                <ol type="A" class="mag-list">
+                    <li><b>ADMINISTRASI</b>
+                        <ul>
+                            <li>database;</li>
+                            <li>formulir;</li>
+                            <li>arsip;</li>
+                            <li>surat;</li>
+                            <li>laporan;</li>
+                            <li>dokumen kebijakan;</li>
+                            <li>dokumen kerja; dan</li>
+                            <li>catatan administrasi lainnya.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 4]</span>
+                    <li><b>OPERASIONAL</b>
+                        <ul>
+                            <li>jadwal;</li>
+                            <li>tugas rutin;</li>
+                            <li>pekerjaan berjalan;</li>
+                            <li>tenggat waktu;</li>
+                            <li>kegiatan mendatang;</li>
+                            <li>agenda yang belum selesai; dan</li>
+                            <li>kebutuhan operasional.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 4]</span>
+                    <li><b>PERSONALIA</b>
+                        <ul>
+                            <li>kondisi Leadroom;</li>
+                            <li>posisi kosong;</li>
+                            <li>kondisi pengurus;</li>
+                            <li>permasalahan pengurus;</li>
+                            <li>evaluasi berjalan; dan</li>
+                            <li>kebutuhan tindak lanjut.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 4]</span>
+                    <li><b>KEUANGAN DAN ASET</b>
+                        <ul>
+                            <li>laporan kas;</li>
+                            <li>data Gringotts;</li>
+                            <li>inventaris;</li>
+                            <li>aset; dan</li>
+                            <li>kewajiban finansial yang masih berjalan.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 4]</span>
+                    <li><b>SISTEM</b>
+                        <ul>
+                            <li>akun;</li>
+                            <li>akses;</li>
+                            <li>formulir;</li>
+                            <li>thread;</li>
+                            <li>database;</li>
+                            <li>sistem administrasi; dan</li>
+                            <li>mekanisme kerja yang digunakan.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 4]</span>
+                    <li><b>PERMASALAHAN BERJALAN</b>
+                        <ul>
+                            <li>kasus belum selesai;</li>
+                            <li>keputusan yang masih menunggu;</li>
+                            <li>perkara yang membutuhkan perhatian Kepala Asrama;</li>
+                            <li>potensi risiko;</li>
+                            <li>tenggat penting; dan</li>
+                            <li>rekomendasi penyelesaian.</li>
+                        </ul>
+                    </li><span style="display:none;">[cite: 4]</span>
                 </ol>
-                <div class="mag-text">Penunjukan sementara bertujuan menjaga keberlangsungan operasional dan tidak secara otomatis memberikan kewenangan untuk mengubah struktur, kebijakan, atau sistem asrama secara permanen.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Kecuali diberikan mandat khusus, Plt. membatasi kewenangannya pada:</div><span style="display:none;">[cite: 5]</span>
+
+                <div class="mag-section-title">XVII. KEKOSONGAN JABATAN</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Apabila jabatan P-VP menjadi kosong sebelum pengganti definitif ditetapkan, Kepala Asrama dapat:</div><span style="display:none;">[cite: 4]</span>
+                <ol class="mag-list">
+                    <li>menunjuk Pelaksana Tugas (Plt.);</li><span style="display:none;">[cite: 4]</span>
+                    <li>menunjuk P-VP sementara; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>menetapkan mekanisme pembagian tugas sementara.</li><span style="display:none;">[cite: 4]</span>
+                </ol>
+                <div class="mag-text intro">Penunjukan sementara bertujuan menjaga keberlangsungan operasional dan tidak secara otomatis memberikan kewenangan untuk mengubah struktur, kebijakan, atau sistem asrama secara permanen. Kecuali diberikan mandat khusus, Plt. membatasi kewenangannya pada:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>operasional rutin;</li><span style="display:none;">[cite: 5]</span>
-                    <li>penyelesaian pekerjaan berjalan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>kebutuhan mendesak;</li><span style="display:none;">[cite: 5]</span>
-                    <li>tindakan untuk mencegah gangguan operasional; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan lain yang secara jelas telah memiliki dasar.</li><span style="display:none;">[cite: 5]</span>
+                    <li>operasional rutin;</li><span style="display:none;">[cite: 4]</span>
+                    <li>penyelesaian pekerjaan berjalan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>kebutuhan mendesak;</li><span style="display:none;">[cite: 4]</span>
+                    <li>tindakan untuk mencegah gangguan operasional; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan lain yang secara jelas telah memiliki dasar.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Perubahan struktural dan kebijakan permanen tetap harus memperoleh kewenangan strategis yang sesuai.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Perubahan struktural dan kebijakan permanen tetap harus memperoleh kewenangan strategis yang sesuai.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">XVIII. KEBERLANJUTAN ASRAMA</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP wajib memastikan sistem operasional tidak bergantung pada individu tertentu. Data, prosedur, dokumentasi, pengetahuan, akses, dan mekanisme kerja harus dikelola secara sistematis sehingga dapat diteruskan kepada kepengurusan berikutnya.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">P-VP tidak hanya bertanggung jawab untuk: menjalankan sistem, tetapi juga: memastikan sistem dapat tetap berjalan setelah dirinya tidak lagi menjabat.</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Jabatan merupakan fungsi dan amanah asrama, bukan kepemilikan pribadi atas sistem, kewenangan, data, akses, maupun sumber daya Asrama. Tidak seorang pun yang sedang atau pernah menjabat P-VP berhak menganggap data, sistem, akses, atau kewenangan asrama sebagai milik pribadi.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">XVIII. KEBERLANJUTAN ASRAMA</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">P-VP wajib memastikan sistem operasional tidak bergantung pada individu tertentu. Data, prosedur, dokumentasi, pengetahuan, akses, dan mekanisme kerja harus dikelola secara sistematis sehingga dapat diteruskan kepada kepengurusan berikutnya.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">P-VP tidak hanya bertanggung jawab untuk: menjalankan sistem, tetapi juga: memastikan sistem dapat tetap berjalan setelah dirinya tidak lagi menjabat.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Jabatan merupakan fungsi dan amanah asrama, bukan kepemilikan pribadi atas sistem, kewenangan, data, akses, maupun sumber daya Asrama. Tidak seorang pun yang sedang atau pernah menjabat P-VP berhak menganggap data, sistem, akses, atau kewenangan asrama sebagai milik pribadi.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title">XIX. KETENTUAN PENUTUP</div><span style="display:none;">[cite: 5]</span>
-                <div class="mag-text">Pedoman ini menjadi dasar pelaksanaan fungsi, kewenangan, tanggung jawab, koordinasi, dan akuntabilitas Prefect dan Vice Prefect. Hal-hal teknis yang belum diatur secara rinci dapat dituangkan dalam:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title">XIX. KETENTUAN PENUTUP</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Pedoman ini menjadi dasar pelaksanaan fungsi, kewenangan, tanggung jawab, koordinasi, dan akuntabilitas Prefect dan Vice Prefect. Hal-hal teknis yang belum diatur secara rinci dapat dituangkan dalam:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>SOP;</li><span style="display:none;">[cite: 5]</span>
-                    <li>petunjuk teknis;</li><span style="display:none;">[cite: 5]</span>
-                    <li>keputusan resmi;</li><span style="display:none;">[cite: 5]</span>
-                    <li>ketentuan operasional; atau</li><span style="display:none;">[cite: 5]</span>
-                    <li>dokumen pendukung lainnya.</li><span style="display:none;">[cite: 5]</span>
+                    <li>SOP;</li><span style="display:none;">[cite: 4]</span>
+                    <li>petunjuk teknis;</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan resmi;</li><span style="display:none;">[cite: 4]</span>
+                    <li>ketentuan operasional; atau</li><span style="display:none;">[cite: 4]</span>
+                    <li>dokumen pendukung lainnya.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">Apabila terdapat ketidaksesuaian antara pelaksanaan operasional dan pedoman ini, P-VP wajib melakukan evaluasi dan, apabila diperlukan, melakukan eskalasi kepada Kepala Asrama. Setiap perubahan terhadap pedoman wajib ditetapkan melalui mekanisme yang sah dan dikomunikasikan kepada pihak yang terdampak.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">Apabila terdapat ketidaksesuaian antara pelaksanaan operasional dan pedoman ini, P-VP wajib melakukan evaluasi dan, apabila diperlukan, melakukan eskalasi kepada Kepala Asrama. Setiap perubahan terhadap pedoman wajib ditetapkan melalui mekanisme yang sah dan dikomunikasikan kepada pihak yang terdampak.</div><span style="display:none;">[cite: 4]</span>
 
-                <div class="mag-section-title" style="text-align: center; border: none; margin-top: 50px;">PRINSIP UTAMA P-VP</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-section-title" style="text-align: center; border: none; margin-top: 50px;">PRINSIP UTAMA P-VP</div><span style="display:none;">[cite: 4]</span>
                 <div class="pull-quote">
                     “Mandat tanpa micromanagement, otonomi tanpa kesewenang-wenangan, koordinasi tanpa tumpang tindih, keputusan tanpa keberpihakan, dan akuntabilitas tanpa menghilangkan ruang untuk bertindak.”
-                </div><span style="display:none;">[cite: 5]</span>
+                </div><span style="display:none;">[cite: 4]</span>
                 
-                <div class="mag-text">P-VP merupakan penghubung antara arah strategis Kepala Asrama dan pelaksanaan operasional Lead Room. Keberhasilan P-VP tidak hanya diukur dari banyaknya tugas yang diselesaikan, tetapi dari kemampuannya untuk:</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text intro">P-VP merupakan penghubung antara arah strategis Kepala Asrama dan pelaksanaan operasional Lead Room. Keberhasilan P-VP tidak hanya diukur dari banyaknya tugas yang diselesaikan, tetapi dari kemampuannya untuk:</div><span style="display:none;">[cite: 4]</span>
                 <ul class="mag-list">
-                    <li>memastikan sistem berjalan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan ketentuan diterapkan secara konsisten;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mengambil keputusan pada tingkat yang tepat;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menyelesaikan masalah secara objektif;</li><span style="display:none;">[cite: 5]</span>
-                    <li>menjaga koordinasi antar pengurus;</li><span style="display:none;">[cite: 5]</span>
-                    <li>mendokumentasikan keputusan;</li><span style="display:none;">[cite: 5]</span>
-                    <li>melakukan eskalasi ketika diperlukan; dan</li><span style="display:none;">[cite: 5]</span>
-                    <li>memastikan asrama tetap berjalan setelah masa jabatannya berakhir.</li><span style="display:none;">[cite: 5]</span>
+                    <li>memastikan sistem berjalan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan ketentuan diterapkan secara konsisten;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengambil keputusan pada tingkat yang tepat;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyelesaikan masalah secara objektif;</li><span style="display:none;">[cite: 4]</span>
+                    <li>menjaga koordinasi antar pengurus;</li><span style="display:none;">[cite: 4]</span>
+                    <li>mendokumentasikan keputusan;</li><span style="display:none;">[cite: 4]</span>
+                    <li>melakukan eskalasi ketika diperlukan; dan</li><span style="display:none;">[cite: 4]</span>
+                    <li>memastikan asrama tetap berjalan setelah masa jabatannya berakhir.</li><span style="display:none;">[cite: 4]</span>
                 </ul>
-                <div class="mag-text">P-VP bukan sekadar pelaksana kebijakan. P-VP adalah pengelola operasional yang diberi mandat untuk memastikan kebijakan benar-benar berjalan.</div><span style="display:none;">[cite: 5]</span>
+                <div class="mag-text">P-VP bukan sekadar pelaksana kebijakan. P-VP adalah pengelola operasional yang diberi mandat untuk memastikan kebijakan benar-benar berjalan.</div><span style="display:none;">[cite: 4]</span>
 
             </div>
         </div>
