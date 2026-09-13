@@ -96,12 +96,17 @@
         }
 
         .mag-text { 
-            font-family: 'Lora', serif; font-size: 15px; line-height: 1.7; color: #2c313a; 
-            margin-top: 0; margin-bottom: 12px; 
+            font-family: 'Lora', serif; font-size: 13.5px; line-height: 1.7; color: #2c313a; 
+            margin-top: 0; margin-bottom: 15px; 
             text-align: justify; text-justify: inter-word;
         }
+        
+        /* CLASS PENGANTAR: Menempel rapat ke list di bawahnya */
+        .mag-text.intro {
+            margin-bottom: 4px;
+        }
 
-        /* Drop Cap (Huruf besar di awal kalimat) */
+        /* Drop Cap */
         .drop-cap {
             font-family: 'Cinzel', serif; font-size: 55px; float: left; 
             line-height: 0.8; margin-right: 10px; margin-top: 4px; 
@@ -110,12 +115,24 @@
 
         /* List Styling - Jarak Dirapatkan */
         .mag-list {
-            font-family: 'Lora', serif; font-size: 15px; line-height: 1.6; color: #2c313a;
-            margin: 5px 0 15px 15px; padding-left: 15px; text-align: justify;
+            font-family: 'Lora', serif; font-size: 13.5px; line-height: 1.6; color: #2c313a;
+            margin: 0 0 15px 20px; padding-left: 5px; text-align: justify;
         }
-        .mag-list li { margin-bottom: 2px; padding-left: 0; }
+        .mag-list li { margin-bottom: 4px; padding-left: 0; }
+        
+        /* Untuk list di dalam list (nested) agar tidak terlalu berjarak */
+        .mag-list ul, .mag-list ol {
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
 
-        /* Pull-quote (Kutipan menonjol ala majalah) */
+        /* Sub-point Styling */
+        .mag-subpoint {
+            font-family: 'Lora', serif; font-size: 14px; font-weight: 600; 
+            color: var(--royal-blue); margin-top: 20px; margin-bottom: 5px; text-align: justify;
+        }
+
+        /* Pull-quote (Kutipan menonjol) */
         .pull-quote { 
             font-family: 'Cinzel', serif; font-size: 20px; color: var(--royal-blue); 
             text-align: center; font-weight: 600; line-height: 1.5;
@@ -123,10 +140,10 @@
             padding: 25px 40px; margin: 40px 0; background-color: #fafbfc;
         }
         
-        /* Quotation Styling for Text block */
+        /* Blockquote Flow Styling */
         .mag-blockquote {
-             font-family: 'Lora', serif; font-size: 15px; line-height: 1.7; color: #4a4a4a; font-style: italic;
-             margin: 10px 0 15px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
+             font-family: 'Lora', serif; font-size: 14.5px; line-height: 1.85; color: #4a4a4a; font-style: italic;
+             margin: 10px 0 20px 20px; padding: 10px 15px; border-left: 4px solid var(--bronze-dark);
              background-color: #f9f9f9; text-align: justify; text-justify: inter-word;
         }
 
@@ -158,334 +175,335 @@
                     <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Ravenclaw Logo">
                 </div>
                 
-                <div class="mag-category">PEDOMAN TATA KELOLA, WEWENANG, DAN TANGGUNG JAWAB HEAD OF HOUSE</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-title">HEAD OF HOUSE GOVERNANCE, AUTHORITY & ACCOUNTABILITY FRAMEWORK</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-category">PEDOMAN TATA KELOLA, WEWENANG, DAN TANGGUNG JAWAB HEAD OF HOUSE</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-title">HEAD OF HOUSE GOVERNANCE, AUTHORITY & ACCOUNTABILITY FRAMEWORK</div><span style="display:none;">[cite: 3]</span>
                 
                 <div class="mag-divider"><span>✦</span></div>
                 
                 <div class="mag-section-title">I. KEDUDUKAN DAN FUNGSI STRATEGIS</div>
-                <div class="mag-text"><span class="drop-cap">K</span>epala Asrama adalah otoritas strategis tertinggi yang bertanggung jawab atas visi, integritas, dan keberlangsungan Asrama. Berada pada level <b><i>strategic governance</i></b>, jabatan ini memastikan sistem berjalan efektif melalui pengawasan koordinasi antara <b><i>P-VP</i></b> (operasional), <b><i>Lead Room</i></b> (manajemen kamar), dan <b><i>Editor</i></b> (komunikasi publik). Fokus utamanya adalah menjamin kebijakan berbasis data, akuntabilitas pengurus, serta keberlanjutan asrama yang tidak bergantung pada figur individu tertentu.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text"><span class="drop-cap">K</span>epala Asrama adalah otoritas strategis tertinggi yang bertanggung jawab atas visi, integritas, dan keberlangsungan Asrama. Berada pada level <i>strategic governance</i>, jabatan ini memastikan sistem berjalan efektif melalui pengawasan koordinasi antara P-VP (operasional), Lead Room (manajemen kamar), dan Editor (komunikasi publik). Fokus utamanya adalah menjamin kebijakan berbasis data, akuntabilitas pengurus, serta keberlanjutan asrama yang tidak bergantung pada figur individu tertentu.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">II. PRINSIP KEPEMIMPINAN</div>
-                <div class="mag-text">Kepala Asrama wajib menjalankan mandat berdasarkan prinsip:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama wajib menjalankan mandat berdasarkan prinsip:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li><b><i>Strategic Oversight</i></b><br>Menentukan arah jangka panjang dan prioritas strategis tanpa mengambil alih tugas teknis-administratif unit di bawahnya.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Accountability & Fairness</i></b><br>Mengambil keputusan objektif berdasarkan fakta dan regulasi, serta menjamin keadilan tanpa dipengaruhi hubungan personal.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Empowerment & Continuity</i></b><br>Mendelegasikan kewenangan secara proporsional kepada pengurus dan memelihara sistem informasi agar kepemimpinan tetap berkelanjutan.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Shared Leadership</i></b><br>Menghormati kesetaraan posisi apabila jabatan dipegang secara kolektif melalui musyawarah dan transparansi.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b><i>Strategic Oversight</i></b><br>Menentukan arah jangka panjang dan prioritas strategis tanpa mengambil alih tugas teknis-administratif unit di bawahnya.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Accountability & Fairness</i></b><br>Mengambil keputusan objektif berdasarkan fakta dan regulasi, serta menjamin keadilan tanpa dipengaruhi hubungan personal.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Empowerment & Continuity</i></b><br>Mendelegasikan kewenangan secara proporsional kepada pengurus dan memelihara sistem informasi agar kepemimpinan tetap berkelanjutan.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Shared Leadership</i></b><br>Menghormati kesetaraan posisi apabila jabatan dipegang secara kolektif melalui musyawarah dan transparansi.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
 
                 <div class="mag-section-title">III. TUGAS DAN TANGGUNG JAWAB UTAMA</div>
-                <div class="mag-text">Tugas rutin Kepala Asrama mencakup tujuh dimensi utama:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Tugas rutin Kepala Asrama mencakup tujuh dimensi utama:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>Kepemimpinan murid (figur orang tua dan pembina);</li><span style="display:none;">[cite: 4]</span>
-                    <li>Koordinasi, evaluasi, dan pembinaan berkala bagi seluruh jajaran pengurus;</li><span style="display:none;">[cite: 4]</span>
-                    <li>Manajemen kebutuhan sumber daya, sistem, dan fasilitas Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Monitoring</i></b> operasional ruang komunikasi minimal satu kali sepekan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>Penyelesaian persoalan kompleks yang melampaui kewenangan unit atau operasional;</li><span style="display:none;">[cite: 4]</span>
-                    <li>Pengambilan keputusan strategis terkait kebijakan dan struktur asrama; serta</li><span style="display:none;">[cite: 4]</span>
-                    <li>Inisiasi program pengembangan dan inovasi budaya Asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>Kepemimpinan murid (figur orang tua dan pembina);</li><span style="display:none;">[cite: 3]</span>
+                    <li>Koordinasi, evaluasi, dan pembinaan berkala bagi seluruh jajaran pengurus;</li><span style="display:none;">[cite: 3]</span>
+                    <li>Manajemen kebutuhan sumber daya, sistem, dan fasilitas Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Monitoring</i></b> operasional ruang komunikasi minimal satu kali sepekan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>Penyelesaian persoalan kompleks yang melampaui kewenangan unit atau operasional;</li><span style="display:none;">[cite: 3]</span>
+                    <li>Pengambilan keputusan strategis terkait kebijakan dan struktur asrama; serta</li><span style="display:none;">[cite: 3]</span>
+                    <li>Inisiasi program pengembangan dan inovasi budaya Asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
 
                 <div class="mag-section-title">IV. TUGAS MINGGUAN KEPALA ASRAMA</div>
-                <div class="mag-text">Sebagai bagian dari pelaksanaan fungsi <b><i>all-week</i></b>, Kepala Asrama sekurang-kurangnya melakukan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Sebagai bagian dari pelaksanaan fungsi <b><i>all-week</i></b>, Kepala Asrama sekurang-kurangnya melakukan:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li><b>Kepemimpinan Murid</b><br>Melakukan komunikasi aktif dengan murid dan memantau kondisi umum kehidupan Asrama.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Koordinasi Pengurus</b><br>Melakukan koordinasi dengan <b><i>P-VP</i></b> dan pengurus untuk mengetahui perkembangan pekerjaan, kendala, dan kebutuhan.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Manajemen Asrama</b><br>Meninjau kebutuhan administrasi, sumber daya, kegiatan, maupun sistem yang membutuhkan perhatian.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Monitoring</b><br>Melakukan <b><i>monitoring</i></b> terhadap seluruh ruang komunikasi dan kondisi umum operasional Asrama.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Koordinasi</b><br>Menyelenggarakan diskusi atau rapat apabila terdapat persoalan yang memerlukan penyelarasan.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Pembinaan</b><br>Memberikan bantuan kepada pengurus yang menghadapi persoalan yang membutuhkan dukungan kepemimpinan.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Pengambilan Keputusan</b><br>Memberikan persetujuan, penolakan, arahan, atau keputusan strategis terhadap perkara yang memang memerlukan kewenangan Kepala Asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>Kepemimpinan Murid</b><br>Melakukan komunikasi aktif dengan murid dan memantau kondisi umum kehidupan Asrama.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Koordinasi Pengurus</b><br>Melakukan koordinasi dengan P-VP dan pengurus untuk mengetahui perkembangan pekerjaan, kendala, dan kebutuhan.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Manajemen Asrama</b><br>Meninjau kebutuhan administrasi, sumber daya, kegiatan, maupun sistem yang membutuhkan perhatian.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Monitoring</b><br>Melakukan <b><i>monitoring</i></b> terhadap seluruh ruang komunikasi dan kondisi umum operasional Asrama.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Koordinasi</b><br>Menyelenggarakan diskusi atau rapat apabila terdapat persoalan yang memerlukan penyelarasan.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Pembinaan</b><br>Memberikan bantuan kepada pengurus yang menghadapi persoalan yang membutuhkan dukungan kepemimpinan.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Pengambilan Keputusan</b><br>Memberikan persetujuan, penolakan, arahan, atau keputusan strategis terhadap perkara yang memang memerlukan kewenangan Kepala Asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
 
                 <div class="mag-section-title">V. TUGAS BULANAN KEPALA ASRAMA</div>
                 <ol class="mag-list">
-                    <li><b>Penggajian Pengurus</b><br>Kepala Asrama melakukan atau memastikan proses penghitungan gaji pengurus berdasarkan ketentuan dan hasil evaluasi kinerja.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b>Evaluasi Kepengurusan</b><br>Kepala Asrama melakukan evaluasi berkala terhadap:
-                        <ol class="mag-list" style="margin-top: 5px; margin-bottom: 5px; list-style-type: lower-alpha;">
-                            <li>kinerja diri sendiri;</li><span style="display:none;">[cite: 4]</span>
-                            <li>sesama Kepala Asrama;</li><span style="display:none;">[cite: 4]</span>
-                            <li><b><i>P-VP</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                            <li><b><i>Lead Room</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                            <li><b><i>Editor</i></b>; dan</li><span style="display:none;">[cite: 4]</span>
-                            <li>pengurus lain sesuai kebutuhan.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>Penggajian Pengurus</b><br>Kepala Asrama melakukan atau memastikan proses penghitungan gaji pengurus berdasarkan ketentuan dan hasil evaluasi kinerja.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Evaluasi Kepengurusan</b><br>
+                        <div class="mag-text intro" style="margin-top: 8px;">Kepala Asrama melakukan evaluasi berkala terhadap:</div><span style="display:none;">[cite: 3]</span>
+                        <ol type="a" class="mag-list">
+                            <li>kinerja diri sendiri;</li><span style="display:none;">[cite: 3]</span>
+                            <li>sesama Kepala Asrama;</li><span style="display:none;">[cite: 3]</span>
+                            <li>P-VP;</li><span style="display:none;">[cite: 3]</span>
+                            <li>Leadroom;</li><span style="display:none;">[cite: 3]</span>
+                            <li>Editor; dan</li><span style="display:none;">[cite: 3]</span>
+                            <li>pengurus lain sesuai kebutuhan.</li><span style="display:none;">[cite: 3]</span>
                         </ol>
-                        Evaluasi diarahkan bukan hanya untuk menentukan hasil kinerja, tetapi untuk menemukan:
-                        <ul class="mag-list" style="margin-top: 5px; margin-bottom: 5px;">
-                            <li>masalah;</li><span style="display:none;">[cite: 4]</span>
-                            <li>kebutuhan pembinaan;</li><span style="display:none;">[cite: 4]</span>
-                            <li>kebutuhan perubahan sistem;</li><span style="display:none;">[cite: 4]</span>
-                            <li>potensi pengembangan; dan</li><span style="display:none;">[cite: 4]</span>
-                            <li>risiko keberlangsungan Asrama</li><span style="display:none;">[cite: 4]</span>
+                        <div class="mag-text intro">Evaluasi diarahkan bukan hanya untuk menentukan hasil kinerja, tetapi untuk menemukan:</div><span style="display:none;">[cite: 3]</span>
+                        <ul class="mag-list">
+                            <li>masalah;</li><span style="display:none;">[cite: 3]</span>
+                            <li>kebutuhan pembinaan;</li><span style="display:none;">[cite: 3]</span>
+                            <li>kebutuhan perubahan sistem;</li><span style="display:none;">[cite: 3]</span>
+                            <li>potensi pengembangan; dan</li><span style="display:none;">[cite: 3]</span>
+                            <li>risiko keberlangsungan Asrama.</li><span style="display:none;">[cite: 3]</span>
                         </ul>
                     </li>
                 </ol>
 
                 <div class="mag-section-title">VI. TUGAS BERKALA KEPALA ASRAMA</div>
-                <div class="mag-text">Kepala Asrama dapat menginisiasi, merancang, atau mendukung:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama dapat menginisiasi, merancang, atau mendukung:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>permainan Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>event</i></b> internal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>program pembinaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kegiatan kebersamaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>inovasi sistem;</li><span style="display:none;">[cite: 4]</span>
-                    <li>program pengembangan Asrama; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>kegiatan lain berdasarkan kalender maupun kebutuhan aktual Asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>permainan Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>event</i></b> internal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>program pembinaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kegiatan kebersamaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>inovasi sistem;</li><span style="display:none;">[cite: 3]</span>
+                    <li>program pengembangan Asrama; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>kegiatan lain berdasarkan kalender maupun kebutuhan aktual Asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Setiap program yang melibatkan pengurus lain harus memiliki pembagian tanggung jawab yang jelas agar Kepala Asrama tidak menjadi satu-satunya pelaksana.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Setiap program yang melibatkan pengurus lain harus memiliki pembagian tanggung jawab yang jelas agar Kepala Asrama tidak menjadi satu-satunya pelaksana.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">VII. KEPEMIMPINAN DAN PEMBINAAN MURID</div>
-                <div class="mag-text">Sebagai figur orang tua Asrama, Kepala Asrama wajib membangun komunikasi dua arah yang aktif untuk mendengarkan aspirasi dan memberikan pendampingan. Pembinaan difokuskan pada pengenalan kondisi murid dan penciptaan lingkungan aman untuk berpendapat, tanpa melakukan intervensi personal yang berlebihan atau penyalahgunaan data pribadi. Interaksi dilakukan secara inklusif melalui forum bersama maupun pemantauan aktivitas rutin di Tenda Biru.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Sebagai figur orang tua Asrama, Kepala Asrama wajib membangun komunikasi dua arah yang aktif untuk mendengarkan aspirasi dan memberikan pendampingan. Pembinaan difokuskan pada pengenalan kondisi murid dan penciptaan lingkungan aman untuk berpendapat, tanpa melakukan intervensi personal yang berlebihan atau penyalahgunaan data pribadi. Interaksi dilakukan secara inklusif melalui forum bersama maupun pemantauan aktivitas rutin di Tenda Biru.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">VIII. HUBUNGAN KERJA DAN OPERASIONAL</div>
-                <div class="mag-text">Kepala Asrama memimpin melalui arahan strategis dan kepercayaan manajerial:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama memimpin melalui arahan strategis dan kepercayaan manajerial:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li><b><i>P-VP:</i></b> Hubungan berdasarkan delegasi penuh pada ranah operasional. Kepala Asrama tidak mengubah keputusan rutin <b><i>P-VP</i></b> kecuali jika terdapat pelanggaran serius atau risiko asrama.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Lead Room & Editor:</i></b> Koordinasi bersifat fungsional dan pembinaan. Kepala Asrama menghormati otonomi kamar dan ruang profesional editorial <b><i>Editor</i></b> sesuai mandat masing-masing.</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Ruang Komunikasi:</i></b> Penggunaan <b><i>Grey Room</i></b> (koordinasi operasional), <b><i>Red Room</i></b> (pembahasan terbatas/sensitif), dan <b><i>Black Room</i></b> (strategi komunikasi) secara proporsional sesuai relevansi informasi.</li><span style="display:none;">[cite: 4]</span>
+                    <li><b>P-VP:</b> Hubungan berdasarkan delegasi penuh pada ranah operasional. Kepala Asrama tidak mengubah keputusan rutin P-VP kecuali jika terdapat pelanggaran serius atau risiko asrama.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Lead Room & Editor:</b> Koordinasi bersifat fungsional dan pembinaan. Kepala Asrama menghormati otonomi kamar dan ruang profesional editorial Editor sesuai mandat masing-masing.</li><span style="display:none;">[cite: 3]</span>
+                    <li><b>Ruang Komunikasi:</b> Penggunaan <b><i>Grey Room</i></b> (koordinasi operasional), <b><i>Red Room</i></b> (pembahasan terbatas/sensitif), dan <b><i>Black Room</i></b> (strategi komunikasi) secara proporsional sesuai relevansi informasi.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
 
                 <div class="mag-section-title">IX. ETIKA KOMUNIKASI DAN PROFESIONALITAS</div>
-                <div class="mag-text">Komunikasi jabatan wajib mencerminkan ketegasan yang dibarengi penghormatan martabat. Prinsip utamanya adalah: “Tegas terhadap persoalan, tetap menghormati orangnya.” Setiap pesan di ruang publik (Tenda Biru) maupun internal harus jelas, objektif, dan berorientasi pada penyelesaian. Dilarang menggunakan komunikasi yang bersifat intimidatif, merendahkan, atau menyerang karakter pribadi dalam bentuk apa pun.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Komunikasi jabatan wajib mencerminkan ketegasan yang dibarengi penghormatan martabat. Prinsip utamanya adalah: “Tegas terhadap persoalan, tetap menghormati orangnya.” Setiap pesan di ruang publik (Tenda Biru) maupun internal harus jelas, objektif, dan berorientasi pada penyelesaian. Dilarang menggunakan komunikasi yang bersifat intimidatif, merendahkan, atau menyerang karakter pribadi dalam bentuk apa pun.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">X. AKUNTABILITAS DAN KEBERLANJUTAN</div>
-                <div class="mag-text">Setiap keputusan strategis, terutama yang berkaitan dengan sanksi, anggaran dan penggajian, serta perubahan kebijakan, wajib didokumentasikan untuk menjamin transparansi, konsistensi, dan kemudahan penelusuran.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Kepala Asrama bertanggung jawab mengidentifikasi dan memitigasi potensi konflik kepentingan dalam pengambilan keputusan guna menjaga objektivitas dan keadilan.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Akuntabilitas kepemimpinan tidak hanya diukur dari penyelesaian pekerjaan, tetapi juga dari kemampuan membangun sistem yang dapat berjalan secara berkelanjutan. Oleh karena itu, kepemimpinan perlu memastikan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Setiap keputusan strategis, terutama yang berkaitan dengan sanksi, anggaran dan penggajian, serta perubahan kebijakan, wajib didokumentasikan untuk menjamin transparansi, konsistensi, dan kemudahan penelusuran.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Kepala Asrama bertanggung jawab mengidentifikasi dan memitigasi potensi konflik kepentingan dalam pengambilan keputusan guna menjaga objektivitas dan keadilan.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Akuntabilitas kepemimpinan tidak hanya diukur dari penyelesaian pekerjaan, tetapi juga dari kemampuan membangun sistem yang dapat berjalan secara berkelanjutan. Oleh karena itu, kepemimpinan perlu memastikan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>sistem dan keputusan terdokumentasi dengan baik;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengetahuan dan informasi dibagikan secara merata;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tanggung jawab tidak bergantung pada satu pihak;</li><span style="display:none;">[cite: 4]</span>
-                    <li>proses kerja dapat dipahami dan dilanjutkan oleh pihak lain; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>terdapat persiapan penerus yang memadai.</li><span style="display:none;">[cite: 4]</span>
+                    <li>sistem dan keputusan terdokumentasi dengan baik;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengetahuan dan informasi dibagikan secara merata;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tanggung jawab tidak bergantung pada satu pihak;</li><span style="display:none;">[cite: 3]</span>
+                    <li>proses kerja dapat dipahami dan dilanjutkan oleh pihak lain; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>terdapat persiapan penerus yang memadai.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Dengan demikian, keberhasilan kepemimpinan tercermin dari kemampuan Asrama untuk tetap berjalan secara tertib dan mandiri, termasuk ketika terjadi pergantian pengurus.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Prinsip akuntabilitas tersebut juga berlaku dalam komunikasi dan pemberian koreksi. Koreksi ditujukan untuk memastikan pekerjaan berjalan sesuai ketentuan, bukan untuk merendahkan pihak yang melakukan kesalahan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Dengan demikian, keberhasilan kepemimpinan tercermin dari kemampuan Asrama untuk tetap berjalan secara tertib dan mandiri, termasuk ketika terjadi pergantian pengurus.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Prinsip akuntabilitas tersebut juga berlaku dalam komunikasi dan pemberian koreksi. Koreksi ditujukan untuk memastikan pekerjaan berjalan sesuai ketentuan, bukan untuk merendahkan pihak yang melakukan kesalahan.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XI. GAYA BICARA DALAM MEMBERIKAN KOREKSI</div>
-                <div class="mag-text">Koreksi harus diarahkan kepada pekerjaan, tindakan, proses, atau hasil, bukan kepada karakter pribadi. Kepala Asrama dapat menyampaikan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Koreksi harus diarahkan kepada pekerjaan, tindakan, proses, atau hasil, bukan kepada karakter pribadi. Kepala Asrama dapat menyampaikan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>kesalahan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>keterlambatan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ketidaklengkapan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pelanggaran;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ketidaksesuaian;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kebutuhan perbaikan; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>konsekuensi berdasarkan ketentuan yang berlaku.</li><span style="display:none;">[cite: 4]</span>
+                    <li>kesalahan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>keterlambatan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ketidaklengkapan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pelanggaran;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ketidaksesuaian;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kebutuhan perbaikan; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>konsekuensi berdasarkan ketentuan yang berlaku.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Penyampaian koreksi harus dilakukan secara profesional dan proporsional. Kepala Asrama tidak diperkenankan menggunakan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Penyampaian koreksi harus dilakukan secara profesional dan proporsional. Kepala Asrama tidak diperkenankan menggunakan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>penghinaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ejekan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>sindiran yang merendahkan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pelabelan terhadap karakter pribadi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ancaman personal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pelecehan verbal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tindakan yang mempermalukan pihak lain; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengungkitan persoalan pribadi yang tidak relevan dengan pekerjaan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>penghinaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ejekan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>sindiran yang merendahkan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pelabelan terhadap karakter pribadi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ancaman personal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pelecehan verbal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tindakan yang mempermalukan pihak lain; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengungkitan persoalan pribadi yang tidak relevan dengan pekerjaan.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Sebagai contoh, teguran seperti:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">“Masa hal seperti ini masih harus diingatkan? Tolong jangan membuat semuanya jadi harus dikerjakan ulang.”</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">sebaiknya dihindari karena berfokus pada penilaian terhadap pihak yang melakukan kesalahan, bukan pada penyelesaian masalah. Sebagai gantinya, koreksi diarahkan pada fakta dan tindakan yang perlu diperbaiki dengan pola:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">Fakta → Ketentuan → Dampak → Perbaikan → Tindak lanjut.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Pendekatan ini memungkinkan koreksi tetap tegas, jelas, dan dapat dipertanggungjawabkan, tanpa mengurangi rasa hormat dalam komunikasi kepemimpinan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Sebagai contoh, teguran seperti:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">“Masa hal seperti ini masih harus diingatkan? Tolong jangan membuat semuanya jadi harus dikerjakan ulang.”</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">sebaiknya dihindari karena berfokus pada penilaian terhadap pihak yang melakukan kesalahan, bukan pada penyelesaian masalah. Sebagai gantinya, koreksi diarahkan pada fakta dan tindakan yang perlu diperbaiki dengan pola:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">Fakta → Ketentuan → Dampak → Perbaikan → Tindak lanjut.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Pendekatan ini memungkinkan koreksi tetap tegas, jelas, dan dapat dipertanggungjawabkan, tanpa mengurangi rasa hormat dalam komunikasi kepemimpinan.</div><span style="display:none;">[cite: 3]</span>
 
-                <div class="mag-section-title">XII. KOMUNIKASI DENGAN PIHAK DI LUAR ASRAMA — <b><i>EXTERNAL REPRESENTATION</i></b></div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Kepala Asrama dapat menjadi salah satu pihak yang mewakili Asrama dalam komunikasi dengan pihak di luar struktur internal Asrama. Pihak eksternal dapat mencakup:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-section-title">XII. KOMUNIKASI DENGAN PIHAK DI LUAR ASRAMA — <i>EXTERNAL REPRESENTATION</i></div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Kepala Asrama dapat menjadi salah satu pihak yang mewakili Asrama dalam komunikasi dengan pihak di luar struktur internal Asrama. Pihak eksternal dapat mencakup:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>asrama lain;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengurus dari unit atau komunitas lain;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pihak penyelenggara kegiatan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mitra;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pihak yang bekerja sama dengan Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pihak yang memiliki kepentingan terhadap kegiatan Asrama; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>pihak lain yang secara sah berhubungan dengan Asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>asrama lain;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengurus dari unit atau komunitas lain;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pihak penyelenggara kegiatan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mitra;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pihak yang bekerja sama dengan Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pihak yang memiliki kepentingan terhadap kegiatan Asrama; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>pihak lain yang secara sah berhubungan dengan Asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Dalam komunikasi eksternal, Kepala Asrama wajib menjaga:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam komunikasi eksternal, Kepala Asrama wajib menjaga:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>nama baik Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>profesionalitas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ketepatan informasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>konsistensi posisi asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kerahasiaan informasi internal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>batas kewenangan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>etika komunikasi; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>komitmen yang realistis untuk dipenuhi.</li><span style="display:none;">[cite: 4]</span>
+                    <li>nama baik Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>profesionalitas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ketepatan informasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>konsistensi posisi asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kerahasiaan informasi internal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>batas kewenangan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>etika komunikasi; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>komitmen yang realistis untuk dipenuhi.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Kepala Asrama tidak boleh membuat pernyataan, janji, komitmen, kesepakatan, atau keputusan atas nama Asrama apabila perkara tersebut berada di luar kewenangannya. Apabila komunikasi eksternal berpotensi:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama tidak boleh membuat pernyataan, janji, komitmen, kesepakatan, atau keputusan atas nama Asrama apabila perkara tersebut berada di luar kewenangannya. Apabila komunikasi eksternal berpotensi:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>mengikat Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menciptakan kerja sama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menimbulkan kewajiban;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengubah hubungan antarasrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memengaruhi reputasi Asrama secara signifikan; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>membawa konsekuensi jangka panjang,</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengikat Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menciptakan kerja sama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menimbulkan kewajiban;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengubah hubungan antarasrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memengaruhi reputasi Asrama secara signifikan; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>membawa konsekuensi jangka panjang,</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Kepala Asrama wajib melakukan koordinasi internal terlebih dahulu sesuai kebutuhan. Representasi eksternal tidak boleh digunakan untuk:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama wajib melakukan koordinasi internal terlebih dahulu sesuai kebutuhan. Representasi eksternal tidak boleh digunakan untuk:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>menyelesaikan konflik pribadi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menyerang pihak lain atas nama Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menyebarkan persoalan internal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>membuka informasi rahasia;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mencari dukungan untuk konflik internal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>membentuk opini terhadap pengurus atau murid;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memberikan kesan bahwa pendapat pribadi merupakan keputusan resmi Asrama; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>menggunakan nama dan posisi Asrama untuk kepentingan pribadi.</li><span style="display:none;">[cite: 4]</span>
+                    <li>menyelesaikan konflik pribadi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menyerang pihak lain atas nama Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menyebarkan persoalan internal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>membuka informasi rahasia;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mencari dukungan untuk konflik internal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>membentuk opini terhadap pengurus atau murid;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memberikan kesan bahwa pendapat pribadi merupakan keputusan resmi Asrama; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>menggunakan nama dan posisi Asrama untuk kepentingan pribadi.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Apabila Kepala Asrama menyampaikan pendapat pribadi, harus terdapat pembedaan yang jelas antara pendapat pribadi dan posisi resmi Asrama.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Prinsipnya:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">Atas nama pribadi, bertanggung jawab sebagai pribadi. Atas nama Asrama, bertanggung jawab sebagai representasi asrama.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Apabila Kepala Asrama menyampaikan pendapat pribadi, harus terdapat pembedaan yang jelas antara pendapat pribadi dan posisi resmi Asrama.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Prinsipnya:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">Atas nama pribadi, bertanggung jawab sebagai pribadi. Atas nama Asrama, bertanggung jawab sebagai representasi asrama.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XIII. KERAHASIAAN INFORMASI</div>
-                <div class="mag-text">Kepala Asrama wajib menjaga informasi yang diperoleh karena jabatan, terutama informasi mengenai:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama wajib menjaga informasi yang diperoleh karena jabatan, terutama informasi mengenai:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>persoalan internal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>evaluasi pengurus;</li><span style="display:none;">[cite: 4]</span>
-                    <li>konflik;</li><span style="display:none;">[cite: 4]</span>
-                    <li>data pribadi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>keputusan yang belum diumumkan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pembahasan <b><i>White Room</i></b> dan <b><i>Red Room</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                    <li>informasi <b><i>Black Room</i></b> yang belum dipublikasikan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>strategi asrama; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>perkara lain yang secara wajar bersifat terbatas.</li><span style="display:none;">[cite: 4]</span>
+                    <li>persoalan internal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>evaluasi pengurus;</li><span style="display:none;">[cite: 3]</span>
+                    <li>konflik;</li><span style="display:none;">[cite: 3]</span>
+                    <li>data pribadi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>keputusan yang belum diumumkan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pembahasan <b><i>White Room</i></b> dan <b><i>Red Room</i></b>;</li><span style="display:none;">[cite: 3]</span>
+                    <li>informasi <b><i>Black Room</i></b> yang belum dipublikasikan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>strategi asrama; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>perkara lain yang secara wajar bersifat terbatas.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Informasi hanya boleh disampaikan kepada pihak yang memiliki kepentingan dan kewenangan untuk mengetahuinya. Kerahasiaan tidak boleh digunakan sebagai alasan untuk menutup informasi yang memang menjadi hak pihak terkait untuk diketahui.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Prinsipnya:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">Kerahasiaan melindungi informasi yang perlu dibatasi, bukan melindungi penyalahgunaan kewenangan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Informasi hanya boleh disampaikan kepada pihak yang memiliki kepentingan dan kewenangan untuk mengetahuinya. Kerahasiaan tidak boleh digunakan sebagai alasan untuk menutup informasi yang memang menjadi hak pihak terkait untuk diketahui.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Prinsipnya:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">Kerahasiaan melindungi informasi yang perlu dibatasi, bukan melindungi penyalahgunaan kewenangan.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XIV. HAK UNTUK MENYAMPAIKAN PENDAPAT, KEBERATAN, DAN EVALUASI</div>
-                <div class="mag-text">Setiap anggota Asrama dan pengurus berhak menyampaikan pendapat, masukan, keberatan, maupun evaluasi terhadap kebijakan, keputusan, pelayanan, atau pelaksanaan tugas di lingkungan Asrama melalui mekanisme komunikasi yang tersedia.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Penyampaian pendapat dan keberatan harus dilakukan secara bertanggung jawab, berdasarkan fakta, serta melalui jalur yang sesuai. Setiap pendapat, keberatan, atau evaluasi wajib diterima dan dipertimbangkan secara objektif sesuai dengan konteks dan kewenangan yang berlaku.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Setiap anggota Asrama dan pengurus yang menyampaikan pendapat, keberatan, atau evaluasi tidak boleh mendapatkan tekanan, intimidasi, perlakuan berbeda, atau tindakan pembalasan karena menggunakan hak tersebut.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Setiap anggota Asrama dan pengurus berhak menyampaikan pendapat, masukan, keberatan, maupun evaluasi terhadap kebijakan, keputusan, pelayanan, atau pelaksanaan tugas di lingkungan Asrama melalui mekanisme komunikasi yang tersedia.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Penyampaian pendapat dan keberatan harus dilakukan secara bertanggung jawab, berdasarkan fakta, serta melalui jalur yang sesuai. Setiap pendapat, keberatan, atau evaluasi wajib diterima dan dipertimbangkan secara objektif sesuai dengan konteks dan kewenangan yang berlaku.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Setiap anggota Asrama dan pengurus yang menyampaikan pendapat, keberatan, atau evaluasi tidak boleh mendapatkan tekanan, intimidasi, perlakuan berbeda, atau tindakan pembalasan karena menggunakan hak tersebut.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XV. KOMUNIKASI DALAM KONFLIK</div>
-                <div class="mag-text">Dalam menghadapi konflik atau keberatan, Kepala Asrama wajib mengutamakan penyelesaian yang objektif, proporsional, dan berorientasi pada masalah dengan tahapan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam menghadapi konflik atau keberatan, Kepala Asrama wajib mengutamakan penyelesaian yang objektif, proporsional, dan berorientasi pada masalah dengan tahapan:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>mengklarifikasi fakta;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memisahkan fakta dari asumsi atau interpretasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memberikan kesempatan kepada pihak terkait untuk menyampaikan penjelasan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengidentifikasi pokok persoalan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menentukan dan mengupayakan penyelesaian;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mendokumentasikan proses atau hasil apabila diperlukan; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>melakukan eskalasi atau mengambil keputusan sesuai dengan tingkat kewenangan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengklarifikasi fakta;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memisahkan fakta dari asumsi atau interpretasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memberikan kesempatan kepada pihak terkait untuk menyampaikan penjelasan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengidentifikasi pokok persoalan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menentukan dan mengupayakan penyelesaian;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mendokumentasikan proses atau hasil apabila diperlukan; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>melakukan eskalasi atau mengambil keputusan sesuai dengan tingkat kewenangan.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Dalam proses tersebut, Kepala Asrama tidak diperkenankan menggunakan konflik untuk:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam proses tersebut, Kepala Asrama tidak diperkenankan menggunakan konflik untuk:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>mempermalukan pihak lain;</li><span style="display:none;">[cite: 4]</span>
-                    <li>membentuk opini atau mendiskreditkan individu tertentu;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengajak atau mendorong pihak lain untuk memusuhi seseorang;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menggunakan jabatan untuk memenangkan konflik pribadi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memberikan perlakuan berbeda sebagai bentuk pembalasan; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>memanfaatkan informasi internal untuk menekan, mengintimidasi, atau merugikan pihak tertentu.</li><span style="display:none;">[cite: 4]</span>
+                    <li>mempermalukan pihak lain;</li><span style="display:none;">[cite: 3]</span>
+                    <li>membentuk opini atau mendiskreditkan individu tertentu;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengajak atau mendorong pihak lain untuk memusuhi seseorang;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menggunakan jabatan untuk memenangkan konflik pribadi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memberikan perlakuan berbeda sebagai bentuk pembalasan; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>memanfaatkan informasi internal untuk menekan, mengintimidasi, atau merugikan pihak tertentu.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Apabila Kepala Asrama memiliki keterlibatan pribadi dalam suatu konflik yang berpotensi memengaruhi objektivitas, mitigasi konflik kepentingan wajib dilakukan, termasuk dengan melibatkan pihak lain yang memiliki kewenangan dalam proses klarifikasi atau pengambilan keputusan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Apabila Kepala Asrama memiliki keterlibatan pribadi dalam suatu konflik yang berpotensi memengaruhi objektivitas, mitigasi konflik kepentingan wajib dilakukan, termasuk dengan melibatkan pihak lain yang memiliki kewenangan dalam proses klarifikasi atau pengambilan keputusan.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XVI. KOMUNIKASI TERTULIS</div>
-                <div class="mag-text">Dalam komunikasi tertulis, Kepala Asrama wajib mempertimbangkan bahwa pesan dapat dibaca tanpa konteks nada bicara. Karena itu, Kepala Asrama dianjurkan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam komunikasi tertulis, Kepala Asrama wajib mempertimbangkan bahwa pesan dapat dibaca tanpa konteks nada bicara. Karena itu, Kepala Asrama dianjurkan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>menghindari kalimat ambigu;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mencantumkan konteks apabila diperlukan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menggunakan bahasa yang jelas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mencantumkan tenggat secara spesifik;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memisahkan fakta dari opini;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menghindari penggunaan huruf kapital secara berlebihan sebagai bentuk tekanan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menghindari respons impulsif ketika sedang emosional; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>melakukan klarifikasi apabila pesan berpotensi menimbulkan salah tafsir.</li><span style="display:none;">[cite: 4]</span>
+                    <li>menghindari kalimat ambigu;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mencantumkan konteks apabila diperlukan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menggunakan bahasa yang jelas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mencantumkan tenggat secara spesifik;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memisahkan fakta dari opini;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menghindari penggunaan huruf kapital secara berlebihan sebagai bentuk tekanan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menghindari respons impulsif ketika sedang emosional; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>melakukan klarifikasi apabila pesan berpotensi menimbulkan salah tafsir.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Komunikasi yang mengandung keputusan, arahan penting, persetujuan, penolakan, teguran, atau konsekuensi harus dapat ditelusuri apabila diperlukan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Komunikasi yang mengandung keputusan, arahan penting, persetujuan, penolakan, teguran, atau konsekuensi harus dapat ditelusuri apabila diperlukan.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XVII. AKUNTABILITAS KOMUNIKASI</div>
-                <div class="mag-text">Kepala Asrama bertanggung jawab atas komunikasi yang dilakukan dalam kapasitas jabatannya. Komunikasi yang memiliki dampak signifikan harus dapat ditelusuri sekurang-kurangnya berdasarkan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama bertanggung jawab atas komunikasi yang dilakukan dalam kapasitas jabatannya. Komunikasi yang memiliki dampak signifikan harus dapat ditelusuri sekurang-kurangnya berdasarkan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>siapa yang menyampaikan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kepada siapa;</li><span style="display:none;">[cite: 4]</span>
-                    <li>waktu penyampaian;</li><span style="display:none;">[cite: 4]</span>
-                    <li>konteks;</li><span style="display:none;">[cite: 4]</span>
-                    <li>dasar komunikasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>keputusan atau arahan yang diberikan; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>tindak lanjut.</li><span style="display:none;">[cite: 4]</span>
+                    <li>siapa yang menyampaikan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kepada siapa;</li><span style="display:none;">[cite: 3]</span>
+                    <li>waktu penyampaian;</li><span style="display:none;">[cite: 3]</span>
+                    <li>konteks;</li><span style="display:none;">[cite: 3]</span>
+                    <li>dasar komunikasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>keputusan atau arahan yang diberikan; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>tindak lanjut.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Dokumentasi diperlukan terutama untuk komunikasi yang berkaitan dengan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dokumentasi diperlukan terutama untuk komunikasi yang berkaitan dengan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>keputusan strategis;</li><span style="display:none;">[cite: 4]</span>
-                    <li>sanksi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>konflik;</li><span style="display:none;">[cite: 4]</span>
-                    <li>perubahan kebijakan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>perkara eksternal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>keuangan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>perubahan struktur;</li><span style="display:none;">[cite: 4]</span>
-                    <li>informasi sensitif; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>perkara yang berpotensi menjadi preseden.</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan strategis;</li><span style="display:none;">[cite: 3]</span>
+                    <li>sanksi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>konflik;</li><span style="display:none;">[cite: 3]</span>
+                    <li>perubahan kebijakan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>perkara eksternal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>keuangan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>perubahan struktur;</li><span style="display:none;">[cite: 3]</span>
+                    <li>informasi sensitif; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>perkara yang berpotensi menjadi preseden.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
 
                 <div class="mag-section-title">XVIII. BATAS ANTARA GAYA BICARA DAN PELANGGARAN ETIKA</div>
-                <div class="mag-text">Perbedaan karakter komunikasi tidak dengan sendirinya merupakan pelanggaran. Kepala Asrama dapat memiliki gaya komunikasi yang:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Perbedaan karakter komunikasi tidak dengan sendirinya merupakan pelanggaran. Kepala Asrama dapat memiliki gaya komunikasi yang:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>formal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>santai;</li><span style="display:none;">[cite: 4]</span>
-                    <li>singkat;</li><span style="display:none;">[cite: 4]</span>
-                    <li>lugas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tegas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>hangat; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>komunikatif.</li><span style="display:none;">[cite: 4]</span>
+                    <li>formal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>santai;</li><span style="display:none;">[cite: 3]</span>
+                    <li>singkat;</li><span style="display:none;">[cite: 3]</span>
+                    <li>lugas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tegas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>hangat; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>komunikatif.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Namun, gaya tersebut tetap harus memenuhi standar:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Namun, gaya tersebut tetap harus memenuhi standar:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>profesionalitas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kewajaran;</li><span style="display:none;">[cite: 4]</span>
-                    <li>penghormatan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>objektivitas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>proporsionalitas; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>kepentingan asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>profesionalitas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kewajaran;</li><span style="display:none;">[cite: 3]</span>
+                    <li>penghormatan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>objektivitas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>proporsionalitas; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>kepentingan asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Penilaian komunikasi mempertimbangkan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Penilaian komunikasi mempertimbangkan:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>konteks;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tujuan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pilihan kata;</li><span style="display:none;">[cite: 4]</span>
-                    <li>forum;</li><span style="display:none;">[cite: 4]</span>
-                    <li>hubungan kewenangan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pihak yang menerima;</li><span style="display:none;">[cite: 4]</span>
-                    <li>dampak komunikasi; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>relevansinya terhadap kepentingan asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>konteks;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tujuan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pilihan kata;</li><span style="display:none;">[cite: 3]</span>
+                    <li>forum;</li><span style="display:none;">[cite: 3]</span>
+                    <li>hubungan kewenangan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pihak yang menerima;</li><span style="display:none;">[cite: 3]</span>
+                    <li>dampak komunikasi; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>relevansinya terhadap kepentingan asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Dengan demikian:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">Kepala Asrama tidak diwajibkan memiliki gaya bicara yang seragam, tetapi wajib memiliki standar etika komunikasi yang sama.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dengan demikian:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">Kepala Asrama tidak diwajibkan memiliki gaya bicara yang seragam, tetapi wajib memiliki standar etika komunikasi yang sama.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XIX. LARANGAN KOMUNIKASI YANG BERSIFAT PERSONAL ATAU INTIMIDATIF</div>
-                <div class="mag-text">Dalam menjalankan jabatan, Kepala Asrama dilarang menggunakan komunikasi yang secara wajar dapat dipahami sebagai:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam menjalankan jabatan, Kepala Asrama dilarang menggunakan komunikasi yang secara wajar dapat dipahami sebagai:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>penghinaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pelecehan verbal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ancaman personal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>intimidasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pemaksaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>perendahan martabat;</li><span style="display:none;">[cite: 4]</span>
-                    <li>serangan terhadap karakter;</li><span style="display:none;">[cite: 4]</span>
-                    <li>penyebaran informasi pribadi yang tidak relevan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pembalasan terhadap kritik;</li><span style="display:none;">[cite: 4]</span>
-                    <li>upaya membungkam pihak lain; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>penggunaan jabatan untuk kepentingan pribadi.</li><span style="display:none;">[cite: 4]</span>
+                    <li>penghinaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pelecehan verbal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ancaman personal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>intimidasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pemaksaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>perendahan martabat;</li><span style="display:none;">[cite: 3]</span>
+                    <li>serangan terhadap karakter;</li><span style="display:none;">[cite: 3]</span>
+                    <li>penyebaran informasi pribadi yang tidak relevan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pembalasan terhadap kritik;</li><span style="display:none;">[cite: 3]</span>
+                    <li>upaya membungkam pihak lain; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>penggunaan jabatan untuk kepentingan pribadi.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Larangan ini berlaku dalam:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Larangan ini berlaku dalam:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>percakapan langsung;</li><span style="display:none;">[cite: 4]</span>
-                    <li>grup;</li><span style="display:none;">[cite: 4]</span>
-                    <li>chat pribadi;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>White Room</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Grey Room</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Red Room</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>Black Room</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                    <li>Tenda Biru;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengumuman;</li><span style="display:none;">[cite: 4]</span>
-                    <li>dokumen;</li><span style="display:none;">[cite: 4]</span>
-                    <li>media sosial asrama; maupun</li><span style="display:none;">[cite: 4]</span>
-                    <li>komunikasi eksternal.</li><span style="display:none;">[cite: 4]</span>
+                    <li>percakapan langsung;</li><span style="display:none;">[cite: 3]</span>
+                    <li>grup;</li><span style="display:none;">[cite: 3]</span>
+                    <li>chat pribadi;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>White Room</i></b>;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Grey Room</i></b>;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Red Room</i></b>;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>Black Room</i></b>;</li><span style="display:none;">[cite: 3]</span>
+                    <li>Tenda Biru;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengumuman;</li><span style="display:none;">[cite: 3]</span>
+                    <li>dokumen;</li><span style="display:none;">[cite: 3]</span>
+                    <li>media sosial asrama; maupun</li><span style="display:none;">[cite: 3]</span>
+                    <li>komunikasi eksternal.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
 
                 <div class="mag-section-title">XX. PRINSIP UTAMA KOMUNIKASI KEPALA ASRAMA</div>
-                <div class="mag-text">Dalam seluruh hubungan komunikasi, Kepala Asrama berpedoman pada:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam seluruh hubungan komunikasi, Kepala Asrama berpedoman pada:</div><span style="display:none;">[cite: 3]</span>
                 <div class="mag-blockquote">
                     Kepada sesama Kepala Asrama: setara dalam kedudukan.<br>
                     Kepada <b><i>P-VP</i></b>: memberi arah tanpa <b><i>micromanagement</i></b>.<br>
@@ -494,206 +512,206 @@
                     Kepada pengurus: memimpin tanpa merendahkan.<br>
                     Kepada murid: membina tanpa menakut-nakuti.<br>
                     Kepada pihak luar: mewakili tanpa melampaui kewenangan.
-                </div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Pada akhirnya, kualitas kepemimpinan Kepala Asrama tidak hanya diukur dari kemampuan membuat keputusan, tetapi juga dari cara keputusan tersebut dikomunikasikan, bagaimana pihak lain diperlakukan, dan apakah struktur asrama menjadi lebih sehat setelah keputusan tersebut dijalankan.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Kepala Asrama bukan sekadar pihak yang memiliki kewenangan tertinggi. Kepala Asrama merupakan penjaga arah, pengambil keputusan strategis, pembina pengurus, orang tua Asrama bagi murid, sekaligus representasi asrama.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Karena itu, kewenangan Kepala Asrama harus selalu berjalan bersama:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">ketegasan, penghormatan, objektivitas, komunikasi dua arah, batas kewenangan, dan akuntabilitas.</div><span style="display:none;">[cite: 4]</span>
+                </div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Pada akhirnya, kualitas kepemimpinan Kepala Asrama tidak hanya diukur dari kemampuan membuat keputusan, tetapi juga dari cara keputusan tersebut dikomunikasikan, bagaimana pihak lain diperlakukan, dan apakah struktur asrama menjadi lebih sehat setelah keputusan tersebut dijalankan.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Kepala Asrama bukan sekadar pihak yang memiliki kewenangan tertinggi. Kepala Asrama merupakan penjaga arah, pengambil keputusan strategis, pembina pengurus, orang tua Asrama bagi murid, sekaligus representasi asrama.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Karena itu, kewenangan Kepala Asrama harus selalu berjalan bersama:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">ketegasan, penghormatan, objektivitas, komunikasi dua arah, batas kewenangan, dan akuntabilitas.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXI. EVALUASI KEPENGURUSAN</div>
-                <div class="mag-text">Kepala Asrama bertanggung jawab melakukan evaluasi terhadap kepengurusan secara berkala. Evaluasi mencakup:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama bertanggung jawab melakukan evaluasi terhadap kepengurusan secara berkala. Evaluasi mencakup:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>pelaksanaan tugas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>ketepatan waktu;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kualitas pekerjaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>koordinasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>komunikasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kepatuhan terhadap ketentuan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kemampuan menyelesaikan masalah;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tanggung jawab;</li><span style="display:none;">[cite: 4]</span>
-                    <li>objektivitas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kontribusi terhadap sistem; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>keberlanjutan pekerjaan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>pelaksanaan tugas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>ketepatan waktu;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kualitas pekerjaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>koordinasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>komunikasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kepatuhan terhadap ketentuan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kemampuan menyelesaikan masalah;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tanggung jawab;</li><span style="display:none;">[cite: 3]</span>
+                    <li>objektivitas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kontribusi terhadap sistem; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>keberlanjutan pekerjaan.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Evaluasi tidak hanya digunakan untuk menentukan nilai atau kompensasi, tetapi juga untuk:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Evaluasi tidak hanya digunakan untuk menentukan nilai atau kompensasi, tetapi juga untuk:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>mengetahui kebutuhan pembinaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menemukan masalah;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menentukan dukungan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memperbaiki sistem;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengidentifikasi kebutuhan pengembangan; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>memastikan Asrama tetap berjalan dengan baik.</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengetahui kebutuhan pembinaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menemukan masalah;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menentukan dukungan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memperbaiki sistem;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengidentifikasi kebutuhan pengembangan; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>memastikan Asrama tetap berjalan dengan baik.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
 
                 <div class="mag-section-title">XXII. PENGGAJIAN PENGURUS</div>
-                <div class="mag-text">Kepala Asrama bertanggung jawab melakukan atau mengoordinasikan proses penggajian pengurus sesuai ketentuan yang berlaku. Penghitungan dilakukan berdasarkan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama bertanggung jawab melakukan atau mengoordinasikan proses penggajian pengurus sesuai ketentuan yang berlaku. Penghitungan dilakukan berdasarkan:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>ketentuan penggajian;</li><span style="display:none;">[cite: 4]</span>
-                    <li>hasil evaluasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kinerja;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kehadiran apabila menjadi komponen penilaian;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tanggung jawab jabatan; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>faktor lain yang telah ditetapkan secara resmi.</li><span style="display:none;">[cite: 4]</span>
+                    <li>ketentuan penggajian;</li><span style="display:none;">[cite: 3]</span>
+                    <li>hasil evaluasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kinerja;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kehadiran apabila menjadi komponen penilaian;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tanggung jawab jabatan; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>faktor lain yang telah ditetapkan secara resmi.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Proses penggajian harus dapat dipertanggungjawabkan dan tidak boleh digunakan sebagai alat:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Proses penggajian harus dapat dipertanggungjawabkan dan tidak boleh digunakan sebagai alat:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>penghukuman personal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pembalasan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>favoritisme; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>tekanan terhadap pengurus.</li><span style="display:none;">[cite: 4]</span>
+                    <li>penghukuman personal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pembalasan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>favoritisme; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>tekanan terhadap pengurus.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Apabila terdapat ketidaksesuaian atau sengketa mengenai penghitungan, Kepala Asrama wajib memberikan penjelasan berdasarkan data dan ketentuan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Apabila terdapat ketidaksesuaian atau sengketa mengenai penghitungan, Kepala Asrama wajib memberikan penjelasan berdasarkan data dan ketentuan.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXIII. PENGEMBANGAN ASRAMA</div>
-                <div class="mag-text">Kepala Asrama bertanggung jawab menjaga perkembangan Asrama melalui program, kegiatan, maupun inovasi yang sesuai dengan kebutuhan Asrama. Pengembangan dapat berupa:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama bertanggung jawab menjaga perkembangan Asrama melalui program, kegiatan, maupun inovasi yang sesuai dengan kebutuhan Asrama. Pengembangan dapat berupa:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>permainan;</li><span style="display:none;">[cite: 4]</span>
-                    <li><b><i>event</i></b>;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kegiatan internal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>program pembinaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengembangan sistem;</li><span style="display:none;">[cite: 4]</span>
-                    <li>peningkatan kualitas komunikasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengembangan budaya Asrama; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>inovasi lain yang mendukung kehidupan Asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>permainan;</li><span style="display:none;">[cite: 3]</span>
+                    <li><b><i>event</i></b>;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kegiatan internal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>program pembinaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengembangan sistem;</li><span style="display:none;">[cite: 3]</span>
+                    <li>peningkatan kualitas komunikasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengembangan budaya Asrama; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>inovasi lain yang mendukung kehidupan Asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Program dapat:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Program dapat:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>diinisiasi langsung oleh Kepala Asrama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>diusulkan oleh P-VP;</li><span style="display:none;">[cite: 4]</span>
-                    <li>diusulkan oleh Lead Room;</li><span style="display:none;">[cite: 4]</span>
-                    <li>diusulkan oleh Editor; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>berasal dari aspirasi murid.</li><span style="display:none;">[cite: 4]</span>
+                    <li>diinisiasi langsung oleh Kepala Asrama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>diusulkan oleh P-VP;</li><span style="display:none;">[cite: 3]</span>
+                    <li>diusulkan oleh Lead Room;</li><span style="display:none;">[cite: 3]</span>
+                    <li>diusulkan oleh Editor; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>berasal dari aspirasi murid.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Kepala Asrama bertugas memastikan bahwa program yang dijalankan memiliki:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama bertugas memastikan bahwa program yang dijalankan memiliki:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>tujuan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>penanggung jawab;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mekanisme;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kebutuhan sumber daya;</li><span style="display:none;">[cite: 4]</span>
-                    <li>jadwal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>evaluasi; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>dokumentasi apabila diperlukan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>tujuan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>penanggung jawab;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mekanisme;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kebutuhan sumber daya;</li><span style="display:none;">[cite: 3]</span>
+                    <li>jadwal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>evaluasi; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>dokumentasi apabila diperlukan.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Kepala Asrama tidak harus menjadi pelaksana teknis setiap program.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Kepala Asrama tidak harus menjadi pelaksana teknis setiap program.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXIV. PENGAMBILAN KEPUTUSAN DALAM KONDISI MENDESAK</div>
-                <div class="mag-text">Dalam keadaan yang membutuhkan tindakan segera untuk mencegah gangguan serius terhadap operasional Asrama, Kepala Asrama dapat mengambil keputusan sementara.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Keputusan tersebut harus:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Dalam keadaan yang membutuhkan tindakan segera untuk mencegah gangguan serius terhadap operasional Asrama, Kepala Asrama dapat mengambil keputusan sementara.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Keputusan tersebut harus:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>didasarkan pada kebutuhan mendesak;</li><span style="display:none;">[cite: 4]</span>
-                    <li>memiliki tujuan yang jelas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>bersifat proporsional;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tidak melebihi kebutuhan keadaan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>didokumentasikan; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>dievaluasi setelah kondisi memungkinkan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>didasarkan pada kebutuhan mendesak;</li><span style="display:none;">[cite: 3]</span>
+                    <li>memiliki tujuan yang jelas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>bersifat proporsional;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tidak melebihi kebutuhan keadaan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>didokumentasikan; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>dievaluasi setelah kondisi memungkinkan.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Keputusan sementara tidak boleh digunakan sebagai cara untuk menciptakan kebijakan permanen secara informal. Apabila keputusan tersebut perlu menjadi ketentuan tetap, mekanisme penetapan kebijakan harus dilakukan sesuai prosedur Asrama.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Keputusan sementara tidak boleh digunakan sebagai cara untuk menciptakan kebijakan permanen secara informal. Apabila keputusan tersebut perlu menjadi ketentuan tetap, mekanisme penetapan kebijakan harus dilakukan sesuai prosedur Asrama.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXV. AKUNTABILITAS KEPUTUSAN KEPALA ASRAMA</div>
-                <div class="mag-text">Keputusan strategis Kepala Asrama harus dapat ditelusuri apabila diperlukan. Dokumentasi sekurang-kurangnya mencakup:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Keputusan strategis Kepala Asrama harus dapat ditelusuri apabila diperlukan. Dokumentasi sekurang-kurangnya mencakup:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>pokok persoalan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>dasar keputusan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>fakta yang digunakan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pihak yang terlibat;</li><span style="display:none;">[cite: 4]</span>
-                    <li>keputusan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>alasan utama;</li><span style="display:none;">[cite: 4]</span>
-                    <li>dampak;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tindak lanjut; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>status penyelesaian.</li><span style="display:none;">[cite: 4]</span>
+                    <li>pokok persoalan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>dasar keputusan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>fakta yang digunakan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pihak yang terlibat;</li><span style="display:none;">[cite: 3]</span>
+                    <li>keputusan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>alasan utama;</li><span style="display:none;">[cite: 3]</span>
+                    <li>dampak;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tindak lanjut; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>status penyelesaian.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Tidak setiap keputusan kecil harus didokumentasikan secara formal. Namun, dokumentasi sangat dianjurkan untuk keputusan yang:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Tidak setiap keputusan kecil harus didokumentasikan secara formal. Namun, dokumentasi sangat dianjurkan untuk keputusan yang:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>mengubah kebijakan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengubah struktur;</li><span style="display:none;">[cite: 4]</span>
-                    <li>berdampak luas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>berkaitan dengan sanksi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menyangkut keuangan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menyangkut personel;</li><span style="display:none;">[cite: 4]</span>
-                    <li>membingungkan informasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>berpotensi menjadi preseden; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>memerlukan tindak lanjut kepengurusan berikutnya.</li><span style="display:none;">[cite: 4]</span>
+                    <li>mengubah kebijakan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengubah struktur;</li><span style="display:none;">[cite: 3]</span>
+                    <li>berdampak luas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>berkaitan dengan sanksi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menyangkut keuangan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menyangkut personel;</li><span style="display:none;">[cite: 3]</span>
+                    <li>membingungkan informasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>berpotensi menjadi preseden; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>memerlukan tindak lanjut kepengurusan berikutnya.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
 
                 <div class="mag-section-title">XXVI. KONFLIK KEPENTINGAN</div>
-                <div class="mag-text">Kepala Asrama wajib menjaga objektivitas dalam mengambil keputusan. Apabila Kepala Asrama memiliki hubungan personal, konflik, atau kepentingan tertentu yang dapat memengaruhi keputusan, Kepala Asrama wajib mempertimbangkan mitigasi.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Mitigasi dapat berupa:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Kepala Asrama wajib menjaga objektivitas dalam mengambil keputusan. Apabila Kepala Asrama memiliki hubungan personal, konflik, atau kepentingan tertentu yang dapat memengaruhi keputusan, Kepala Asrama wajib mempertimbangkan mitigasi.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Mitigasi dapat berupa:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>meminta <b><i>P-VP</i></b> melakukan pemeriksaan awal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>meminta pihak lain memberikan second opinion;</li><span style="display:none;">[cite: 4]</span>
-                    <li>membuka dasar keputusan secara lebih lengkap;</li><span style="display:none;">[cite: 4]</span>
-                    <li>tidak mengambil bagian dalam aspek tertentu dari keputusan; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>menggunakan mekanisme lain yang dianggap sesuai.</li><span style="display:none;">[cite: 4]</span>
+                    <li>meminta <b><i>P-VP</i></b> melakukan pemeriksaan awal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>meminta pihak lain memberikan second opinion;</li><span style="display:none;">[cite: 3]</span>
+                    <li>membuka dasar keputusan secara lebih lengkap;</li><span style="display:none;">[cite: 3]</span>
+                    <li>tidak mengambil bagian dalam aspek tertentu dari keputusan; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>menggunakan mekanisme lain yang dianggap sesuai.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Jabatan Kepala Asrama tidak boleh digunakan untuk memberikan keuntungan kepada pihak yang memiliki kedekatan personal.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Jabatan Kepala Asrama tidak boleh digunakan untuk memberikan keuntungan kepada pihak yang memiliki kedekatan personal.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXVII. AKUNTABILITAS DAN KEBERLANJUTAN</div>
-                <div class="mag-text">Kepala Asrama memiliki tanggung jawab tertinggi untuk memastikan Asrama dapat terus berjalan setelah masa kepengurusannya berakhir. Oleh karena itu, Kepala Asrama wajib mendorong:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama memiliki tanggung jawab tertinggi untuk memastikan Asrama dapat terus berjalan setelah masa kepengurusannya berakhir. Oleh karena itu, Kepala Asrama wajib mendorong:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>dokumentasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pembagian pengetahuan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>sistem kerja yang jelas;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pembagian kewenangan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengarsipan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengembangan penerus;</li><span style="display:none;">[cite: 4]</span>
-                    <li>serah terima; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>evaluasi sistem.</li><span style="display:none;">[cite: 4]</span>
+                    <li>dokumentasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pembagian pengetahuan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>sistem kerja yang jelas;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pembagian kewenangan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengarsipan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengembangan penerus;</li><span style="display:none;">[cite: 3]</span>
+                    <li>serah terima; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>evaluasi sistem.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Kepala Asrama tidak boleh menciptakan sistem yang hanya dapat berjalan apabila dirinya terus berada di dalam Asrama.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Kepala Asrama tidak boleh menciptakan sistem yang hanya dapat berjalan apabila dirinya terus berada di dalam Asrama.</div><span style="display:none;">[cite: 3]</span>
                 <div class="pull-quote">
                     Keberhasilan Kepala Asrama bukan ketika seluruh hal bergantung kepadanya, melainkan ketika Asrama tetap dapat berjalan dengan baik tanpa dirinya.
-                </div><span style="display:none;">[cite: 4]</span>
+                </div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXVIII. PRINSIP KEBERLANJUTAN KEPEMIMPINAN</div>
-                <div class="mag-text">Dalam menjalankan jabatan, Kepala Asrama wajib memastikan:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Dalam menjalankan jabatan, Kepala Asrama wajib memastikan:</div><span style="display:none;">[cite: 3]</span>
                 <ol class="mag-list">
-                    <li>keputusan penting memiliki dasar;</li><span style="display:none;">[cite: 4]</span>
-                    <li>sistem terdokumentasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pengurus memahami kewenangannya;</li><span style="display:none;">[cite: 4]</span>
-                    <li>pekerjaan tidak bergantung pada satu orang;</li><span style="display:none;">[cite: 4]</span>
-                    <li>akses Asrama dapat dialihkan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>informasi penting tidak hanya tersimpan secara personal;</li><span style="display:none;">[cite: 4]</span>
-                    <li>penerus dapat memahami kondisi Asrama; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>pergantian kepengurusan dapat berlangsung tanpa kekosongan fungsi.</li><span style="display:none;">[cite: 4]</span>
+                    <li>keputusan penting memiliki dasar;</li><span style="display:none;">[cite: 3]</span>
+                    <li>sistem terdokumentasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pengurus memahami kewenangannya;</li><span style="display:none;">[cite: 3]</span>
+                    <li>pekerjaan tidak bergantung pada satu orang;</li><span style="display:none;">[cite: 3]</span>
+                    <li>akses Asrama dapat dialihkan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>informasi penting tidak hanya tersimpan secara personal;</li><span style="display:none;">[cite: 3]</span>
+                    <li>penerus dapat memahami kondisi Asrama; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>pergantian kepengurusan dapat berlangsung tanpa kekosongan fungsi.</li><span style="display:none;">[cite: 3]</span>
                 </ol>
-                <div class="mag-text">Jabatan Kepala Asrama merupakan amanah Asrama, bukan kepemilikan pribadi atas:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Jabatan Kepala Asrama merupakan amanah Asrama, bukan kepemilikan pribadi atas:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>data;</li><span style="display:none;">[cite: 4]</span>
-                    <li>sistem;</li><span style="display:none;">[cite: 4]</span>
-                    <li>akses;</li><span style="display:none;">[cite: 4]</span>
-                    <li>informasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>kewenangan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>dokumen; atau</li><span style="display:none;">[cite: 4]</span>
-                    <li>sumber daya Asrama.</li><span style="display:none;">[cite: 4]</span>
+                    <li>data;</li><span style="display:none;">[cite: 3]</span>
+                    <li>sistem;</li><span style="display:none;">[cite: 3]</span>
+                    <li>akses;</li><span style="display:none;">[cite: 3]</span>
+                    <li>informasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>kewenangan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>dokumen; atau</li><span style="display:none;">[cite: 3]</span>
+                    <li>sumber daya Asrama.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
 
                 <div class="mag-section-title">XXIX. HUBUNGAN ANTARA KEWENANGAN DAN TANGGUNG JAWAB</div>
-                <div class="mag-text">Kepala Asrama tidak dapat memberikan tanggung jawab tanpa memberikan kewenangan yang sesuai. Sebaliknya, kewenangan tidak boleh diberikan tanpa adanya pertanggungjawaban.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Prinsip yang digunakan:</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">Authority must follow responsibility, and responsibility must follow authority.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Apabila <b><i>P-VP</i></b> diberikan tanggung jawab atas suatu pekerjaan, <b><i>P-VP</i></b> harus memiliki ruang yang cukup untuk mengambil keputusan dalam pelaksanaannya sesuai batas kewenangannya.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Apabila <b><i>Lead Room</i></b> diberikan tanggung jawab atas suatu kamar, <b><i>Lead Room</i></b> harus memiliki ruang untuk mengelola kamar tersebut dalam batas ketentuan dan kewenangan yang telah ditentukan.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Apabila <b><i>Editor</i></b> diberikan tanggung jawab atas suatu pekerjaan editorial, komunikasi, atau publikasi, <b><i>Editor</i></b> harus memiliki ruang profesional untuk menentukan cara penyajian, struktur, bahasa, dan aspek editorial dari materi tersebut, sepanjang tidak mengubah substansi kebijakan atau keputusan yang telah ditetapkan oleh pihak yang berwenang.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text"><b><i>Editor</i></b> berhak menyampaikan pertimbangan apabila suatu materi berpotensi menimbulkan ambiguitas, salah tafsir, ketidaksesuaian gaya komunikasi, atau persoalan editorial lainnya. Pertimbangan tersebut wajib dihormati sebagai bagian dari fungsi profesional <b><i>Editor</i></b> dan dibahas melalui koordinasi apabila terdapat perbedaan pandangan.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Kepala Asrama bertugas menjaga keseimbangan tersebut dengan memastikan bahwa setiap pengurus memiliki ruang yang memadai untuk menjalankan fungsi dan tanggung jawabnya, tanpa membiarkan kewenangan menjadi tumpang tindih, tanpa mengambil alih fungsi bawahan, dan tanpa membiarkan suatu jabatan kehilangan ruang untuk bertindak.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Dengan demikian, pemberian tanggung jawab kepada <b><i>P-VP</i></b>, <b><i>Leadroom</i></b>, maupun <b><i>Editor</i></b> tidak boleh hanya berarti memberikan beban pekerjaan, tetapi juga harus disertai kepercayaan, ruang pengambilan keputusan, dan batas kewenangan yang jelas agar masing-masing dapat menjalankan fungsinya secara efektif.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Kepala Asrama tidak dapat memberikan tanggung jawab tanpa memberikan kewenangan yang sesuai. Sebaliknya, kewenangan tidak boleh diberikan tanpa adanya pertanggungjawaban.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text intro">Prinsip yang digunakan:</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">Authority must follow responsibility, and responsibility must follow authority.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Apabila <b><i>P-VP</i></b> diberikan tanggung jawab atas suatu pekerjaan, <b><i>P-VP</i></b> harus memiliki ruang yang cukup untuk mengambil keputusan dalam pelaksanaannya sesuai batas kewenangannya.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Apabila <b><i>Lead Room</i></b> diberikan tanggung jawab atas suatu kamar, <b><i>Lead Room</i></b> harus memiliki ruang untuk mengelola kamar tersebut dalam batas ketentuan dan kewenangan yang telah ditentukan.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Apabila <b><i>Editor</i></b> diberikan tanggung jawab atas suatu pekerjaan editorial, komunikasi, atau publikasi, <b><i>Editor</i></b> harus memiliki ruang profesional untuk menentukan cara penyajian, struktur, bahasa, dan aspek editorial dari materi tersebut, sepanjang tidak mengubah substansi kebijakan atau keputusan yang telah ditetapkan oleh pihak yang berwenang.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text"><b><i>Editor</i></b> berhak menyampaikan pertimbangan apabila suatu materi berpotensi menimbulkan ambiguitas, salah tafsir, ketidaksesuaian gaya komunikasi, atau persoalan editorial lainnya. Pertimbangan tersebut wajib dihormati sebagai bagian dari fungsi profesional <b><i>Editor</i></b> dan dibahas melalui koordinasi apabila terdapat perbedaan pandangan.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Kepala Asrama bertugas menjaga keseimbangan tersebut dengan memastikan bahwa setiap pengurus memiliki ruang yang memadai untuk menjalankan fungsi dan tanggung jawabnya, tanpa membiarkan kewenangan menjadi tumpang tindih, tanpa mengambil alih fungsi bawahan, dan tanpa membiarkan suatu jabatan kehilangan ruang untuk bertindak.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Dengan demikian, pemberian tanggung jawab kepada <b><i>P-VP</i></b>, <b><i>Leadroom</i></b>, maupun <b><i>Editor</i></b> tidak boleh hanya berarti memberikan beban pekerjaan, tetapi juga harus disertai kepercayaan, ruang pengambilan keputusan, dan batas kewenangan yang jelas agar masing-masing dapat menjalankan fungsinya secara efektif.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title">XXX. KETENTUAN PENUTUP</div>
-                <div class="mag-text">Kepala Asrama merupakan pemegang mandat strategis yang bertanggung jawab memastikan Asrama memiliki arah, sistem, kepemimpinan, dan keberlanjutan yang jelas. Kepala Asrama tidak hanya bertugas memutuskan, tetapi juga:</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text intro">Kepala Asrama merupakan pemegang mandat strategis yang bertanggung jawab memastikan Asrama memiliki arah, sistem, kepemimpinan, dan keberlanjutan yang jelas. Kepala Asrama tidak hanya bertugas memutuskan, tetapi juga:</div><span style="display:none;">[cite: 3]</span>
                 <ul class="mag-list">
-                    <li>mendengar;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengarahkan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>membina;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengawasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>melindungi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengevaluasi;</li><span style="display:none;">[cite: 4]</span>
-                    <li>menyelesaikan persoalan;</li><span style="display:none;">[cite: 4]</span>
-                    <li>mengembangkan Asrama; dan</li><span style="display:none;">[cite: 4]</span>
-                    <li>menyiapkan keberlanjutan.</li><span style="display:none;">[cite: 4]</span>
+                    <li>mendengar;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengarahkan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>membina;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengawasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>melindungi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengevaluasi;</li><span style="display:none;">[cite: 3]</span>
+                    <li>menyelesaikan persoalan;</li><span style="display:none;">[cite: 3]</span>
+                    <li>mengembangkan Asrama; dan</li><span style="display:none;">[cite: 3]</span>
+                    <li>menyiapkan keberlanjutan.</li><span style="display:none;">[cite: 3]</span>
                 </ul>
-                <div class="mag-text">Dalam menjalankan seluruh fungsi tersebut, Kepala Asrama wajib menjaga keseimbangan antara otoritas dan kepercayaan, ketegasan dan empati, pengawasan dan otonomi, serta kepemimpinan dan akuntabilitas.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-blockquote">Kepala Asrama bukan pusat dari seluruh pekerjaan Asrama. Kepala Asrama adalah penjaga arah, sistem, dan keberlangsungan Asrama.</div><span style="display:none;">[cite: 4]</span>
-                <div class="mag-text">Keberhasilan Kepala Asrama tidak diukur dari seberapa banyak pekerjaan yang diambil alih, melainkan dari seberapa baik seluruh bagian Asrama dapat menjalankan fungsinya dengan jelas, terkoordinasi, dan berkelanjutan.</div><span style="display:none;">[cite: 4]</span>
+                <div class="mag-text">Dalam menjalankan seluruh fungsi tersebut, Kepala Asrama wajib menjaga keseimbangan antara otoritas dan kepercayaan, ketegasan dan empati, pengawasan dan otonomi, serta kepemimpinan dan akuntabilitas.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-blockquote">Kepala Asrama bukan pusat dari seluruh pekerjaan Asrama. Kepala Asrama adalah penjaga arah, sistem, dan keberlangsungan Asrama.</div><span style="display:none;">[cite: 3]</span>
+                <div class="mag-text">Keberhasilan Kepala Asrama tidak diukur dari seberapa banyak pekerjaan yang diambil alih, melainkan dari seberapa baik seluruh bagian Asrama dapat menjalankan fungsinya dengan jelas, terkoordinasi, dan berkelanjutan.</div><span style="display:none;">[cite: 3]</span>
 
                 <div class="mag-section-title" style="text-align: center; border: none; margin-top: 50px;">PRINSIP UTAMA KEPALA ASRAMA</div>
                 <div class="pull-quote">
@@ -705,7 +723,7 @@
                     Mendelegasikan tanpa melepaskan tanggung jawab.<br>
                     Mengawasi tanpa mengambil alih.<br>
                     Dan membangun Asrama yang tetap berjalan bahkan setelah dirinya tidak lagi menjabat.
-                </div><span style="display:none;">[cite: 4]</span>
+                </div><span style="display:none;">[cite: 3]</span>
 
             </div>
         </div>
