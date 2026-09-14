@@ -1238,13 +1238,28 @@
                             var isInactive = s.isInactive;
                             var trClass = isInactive ? 'row-inactive' : '';
 
+                            // FIX: Tampilan LOA dengan link dan tombol Selesai
                             var loaLabel = '<span class="status-loa">HIATUS / LOA</span>';
                             if (act.status === 'Leave of Absence') {
                                 var sDate = act.loaStart ? act.loaStart : '...'; 
                                 var eDate = act.loaEnd ? act.loaEnd : '...';
-                                loaLabel = '<div style="display:flex; flex-direction:column; gap:3px;"><span class="status-loa" style="text-align:center;">HIATUS / LOA</span><span style="font-size:9px; color:gray; font-weight:bold; text-align:center;">' + sDate + ' to ' + eDate + '</span></div>';
+                                
+                                // Memunculkan link Surat Cuti yang diinput
+                                var linkSuratHtml = act.loaLink ? `<a href="${act.loaLink}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Surat Cuti</a>` : '';
+                                
+                                // Tombol selesai
+                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%;">✅ Selesai</button>`;
+
+                                loaLabel = `<div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
+                                                <span class="status-loa" style="text-align:center; width:100%; box-sizing:border-box;">HIATUS / LOA</span>
+                                                <span style="font-size:9px; color:gray; font-weight:bold; text-align:center;">${sDate} to ${eDate}</span>
+                                                ${linkSuratHtml}
+                                            </div>`;
+                                            
                                 if (act.loaWarning) { 
-                                    loaLabel += '<span class="status-loa" style="background:#ffebee; color:#c62828; border-color:#ef9a9a; margin-top:2px; text-align:center;">⚠️ Return: ' + act.loaDaysText + '</span>'; 
+                                    loaLabel += `<div style="display:flex; flex-direction:column; gap:3px; margin-top:3px;"><span class="status-loa" style="background:#ffebee; color:#c62828; border-color:#ef9a9a; text-align:center; width:100%; box-sizing:border-box;">⚠️ Return: ${act.loaDaysText}</span>${btnSelesai}</div>`; 
+                                } else {
+                                    loaLabel += `<div style="margin-top:3px; width:100%;">${btnSelesai}</div>`;
                                 }
                             }
                             
@@ -1765,6 +1780,54 @@
                     if(mainBtn) { mainBtn.innerHTML = "✅ Report Sent"; mainBtn.style.backgroundColor = "gray"; }
                 } else { alert("❌ Failed to send report: " + res.message); }
             }).catch(err => { resetBtn('btnConfirmReport', originalText); alert("❌ Failed to send report: " + err.message); });
+        }
+        
+        function finishLoa(roomName, index) {
+            var link = prompt("Enter the link to the Return from Leave / Active Status Letter (leave blank if not applicable):");
+            if (link === null) return; 
+            
+            var s = fullDataStore.rooms[roomName][index];
+            var vault = s.vault;
+            var act = s.activity;
+            
+            var month = document.getElementById('monthSelector').value; 
+            var week = document.getElementById('weekSelector').value;
+            
+            var newNotes = act.notes || "";
+            if(link.trim() !== "") {
+                newNotes = (newNotes ? newNotes + "\n" : "") + "[Return from Leave Letter: " + link.trim() + "]";
+            }
+            
+            var payload = {
+                status: 'Active', 
+                reqOverride: act.reqOverride,
+                attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass,
+                formStatus: act.formStatus, dendaOverride: act.dendaOverride,
+                loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
+                summaries: act.summaries, sumStat: act.sumStat, 
+                notes: newNotes,
+                lockSync: true 
+            };
+            
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Updating status to Active...";
+            
+            fetch(API_URL, { 
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+                body: JSON.stringify({ action: "saveRoomActivityOverride", month: month.trim(), week: week.trim(), vault: vault, payload: payload }) 
+            })
+            .then(r => r.json()).then(res => {
+                if(res.status === 'success' || res.success) { 
+                    showSnack("✅ Student is back Active!"); 
+                    fetchRoomData(); 
+                } else { 
+                    alert(res.message); 
+                    document.getElementById('loadingMsg').style.display = 'none';
+                } 
+            }).catch(err => {
+                alert("Error: " + err.message);
+                document.getElementById('loadingMsg').style.display = 'none';
+            });
         }
     </script>
 </body>
