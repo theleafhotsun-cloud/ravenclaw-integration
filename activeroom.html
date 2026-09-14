@@ -708,7 +708,10 @@
                     <div class="form-group"><label>LoA Start Date</label><input type="date" id="adjLoaStart"></div>
                     <div class="form-group"><label>LoA End Date</label><input type="date" id="adjLoaEnd"></div>
                 </div>
-                <div class="form-group"><label>LoA Letter Link</label><input type="text" id="adjLoaLink" placeholder="https://..."></div>
+                <div class="form-row">
+                    <div class="form-group"><label>LoA Letter Link</label><input type="text" id="adjLoaLink" placeholder="https://..."></div>
+                    <div class="form-group"><label>Extension Letter (Opt)</label><input type="text" id="adjLoaExtLink" placeholder="https://..."></div>
+                </div>
             </div>
 
             <div class="modal-actions">
@@ -1238,13 +1241,23 @@
                             var isInactive = s.isInactive;
                             var trClass = isInactive ? 'row-inactive' : '';
 
-                            // FIX: Tampilan LOA dengan link dan tombol Mark Active (Bahasa Inggris)
                             var loaLabel = '<span class="status-loa">HIATUS / LOA</span>';
                             if (act.status === 'Leave of Absence') {
                                 var sDate = act.loaStart ? act.loaStart : '...'; 
                                 var eDate = act.loaEnd ? act.loaEnd : '...';
                                 
-                                var linkSuratHtml = act.loaLink ? `<a href="${act.loaLink}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 LoA Letter</a>` : '';
+                                var linkSuratHtml = '';
+                                if (act.loaLink) {
+                                    var links = act.loaLink.split('|');
+                                    if (links[0] && links[0].trim()) {
+                                        var safeLnk1 = links[0].trim().indexOf('http') === 0 ? links[0].trim() : 'https://' + links[0].trim();
+                                        linkSuratHtml += `<a href="${safeLnk1}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 LoA Letter</a>`;
+                                    }
+                                    if (links[1] && links[1].trim()) {
+                                        var safeLnk2 = links[1].trim().indexOf('http') === 0 ? links[1].trim() : 'https://' + links[1].trim();
+                                        linkSuratHtml += `<a href="${safeLnk2}" target="_blank" style="font-size:9px; color:#e65100; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Ext. Letter</a>`;
+                                    }
+                                }
                                 
                                 var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%;">✅ Mark Active</button>`;
 
@@ -1629,7 +1642,10 @@
             document.getElementById('adjMandatory').innerText = student.mandatory; 
             document.getElementById('adjLoaStart').value = act.loaStart; 
             document.getElementById('adjLoaEnd').value = act.loaEnd; 
-            document.getElementById('adjLoaLink').value = act.loaLink; 
+            
+            var links = (act.loaLink || '').split('|');
+            document.getElementById('adjLoaLink').value = links[0] ? links[0].trim() : ''; 
+            document.getElementById('adjLoaExtLink').value = links[1] ? links[1].trim() : ''; 
             
             toggleLoaFields();
         }
@@ -1643,6 +1659,11 @@
         function saveAdvancedSettings() {
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
             var act = s.activity;
+            
+            var link1 = document.getElementById('adjLoaLink').value.trim();
+            var link2 = document.getElementById('adjLoaExtLink').value.trim();
+            var combinedLink = link2 ? (link1 + ' | ' + link2) : link1;
+
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
@@ -1655,7 +1676,7 @@
                 dendaOverride: act.dendaOverride, 
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
-                loaLink: document.getElementById('adjLoaLink').value, 
+                loaLink: combinedLink, 
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
                 notes: act.notes, 
@@ -1780,10 +1801,9 @@
             }).catch(err => { resetBtn('btnConfirmReport', originalText); alert("❌ Failed to send report: " + err.message); });
         }
         
-        // FIX: Fungsi baru untuk memproses tombol Mark Active
         function finishLoa(roomName, index) {
             var link = prompt("Enter the link for the LoA Return Letter (leave blank if none):");
-            if (link === null) return; // Dibatalkan oleh user
+            if (link === null) return; 
             
             var s = fullDataStore.rooms[roomName][index];
             var vault = s.vault;
@@ -1792,13 +1812,11 @@
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
             
-            // Menambahkan catatan surat kembali aktif di kolom Notes
             var newNotes = act.notes || "";
             if(link.trim() !== "") {
                 newNotes = (newNotes ? newNotes + "\n" : "") + "[Return Letter: " + link.trim() + "]";
             }
             
-            // Overriding status menjadi Active
             var payload = {
                 status: 'Active', 
                 reqOverride: act.reqOverride,
@@ -1807,7 +1825,7 @@
                 loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
                 summaries: act.summaries, sumStat: act.sumStat, 
                 notes: newNotes,
-                lockSync: true // Dikunci agar tidak ketimpa form otomatis
+                lockSync: true 
             };
             
             document.getElementById('loadingMsg').style.display = 'block';
@@ -1820,7 +1838,7 @@
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ Student is back Active!"); 
-                    fetchRoomData(); // Render ulang tabel otomatis
+                    fetchRoomData(); 
                 } else { 
                     alert(res.message); 
                     document.getElementById('loadingMsg').style.display = 'none';
