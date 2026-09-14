@@ -1238,17 +1238,15 @@
                             var isInactive = s.isInactive;
                             var trClass = isInactive ? 'row-inactive' : '';
 
-                            // FIX: Tampilan LOA dengan link dan tombol Selesai
+                            // FIX: Tampilan LOA dengan link dan tombol Mark Active (Bahasa Inggris)
                             var loaLabel = '<span class="status-loa">HIATUS / LOA</span>';
                             if (act.status === 'Leave of Absence') {
                                 var sDate = act.loaStart ? act.loaStart : '...'; 
                                 var eDate = act.loaEnd ? act.loaEnd : '...';
                                 
-                                // Memunculkan link Surat Cuti yang diinput
-                                var linkSuratHtml = act.loaLink ? `<a href="${act.loaLink}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Surat Cuti</a>` : '';
+                                var linkSuratHtml = act.loaLink ? `<a href="${act.loaLink}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 LoA Letter</a>` : '';
                                 
-                                // Tombol selesai
-                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%;">✅ Selesai</button>`;
+                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%;">✅ Mark Active</button>`;
 
                                 loaLabel = `<div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
                                                 <span class="status-loa" style="text-align:center; width:100%; box-sizing:border-box;">HIATUS / LOA</span>
@@ -1782,9 +1780,10 @@
             }).catch(err => { resetBtn('btnConfirmReport', originalText); alert("❌ Failed to send report: " + err.message); });
         }
         
+        // FIX: Fungsi baru untuk memproses tombol Mark Active
         function finishLoa(roomName, index) {
-            var link = prompt("Enter the link to the Return from Leave / Active Status Letter (leave blank if not applicable):");
-            if (link === null) return; 
+            var link = prompt("Enter the link for the LoA Return Letter (leave blank if none):");
+            if (link === null) return; // Dibatalkan oleh user
             
             var s = fullDataStore.rooms[roomName][index];
             var vault = s.vault;
@@ -1793,11 +1792,13 @@
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
             
+            // Menambahkan catatan surat kembali aktif di kolom Notes
             var newNotes = act.notes || "";
             if(link.trim() !== "") {
-                newNotes = (newNotes ? newNotes + "\n" : "") + "[Return from Leave Letter: " + link.trim() + "]";
+                newNotes = (newNotes ? newNotes + "\n" : "") + "[Return Letter: " + link.trim() + "]";
             }
             
+            // Overriding status menjadi Active
             var payload = {
                 status: 'Active', 
                 reqOverride: act.reqOverride,
@@ -1806,7 +1807,7 @@
                 loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
                 summaries: act.summaries, sumStat: act.sumStat, 
                 notes: newNotes,
-                lockSync: true 
+                lockSync: true // Dikunci agar tidak ketimpa form otomatis
             };
             
             document.getElementById('loadingMsg').style.display = 'block';
@@ -1819,7 +1820,7 @@
             .then(r => r.json()).then(res => {
                 if(res.status === 'success' || res.success) { 
                     showSnack("✅ Student is back Active!"); 
-                    fetchRoomData(); 
+                    fetchRoomData(); // Render ulang tabel otomatis
                 } else { 
                     alert(res.message); 
                     document.getElementById('loadingMsg').style.display = 'none';
