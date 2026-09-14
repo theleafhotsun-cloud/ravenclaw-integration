@@ -1,1 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Finance - Ravenclaw</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --sapphire: #3C507D; --royal-blue: #112250; --quicksand: #E0C58F;
+            --swan-wing: #F5F0E9; --shellstone: #D9CBC2;
+            --success: #2e7d32; --danger: #c62828; --warning: #f57f17;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--swan-wing); display: flex; height: 100vh; overflow: hidden; }
+        
+        .sidebar { width: 250px; background-color: var(--royal-blue); color: var(--swan-wing); display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10;}
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--sapphire); }
+        .sidebar-header img { width: 80px; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: var(--quicksand); text-transform: uppercase; }
+        
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; }
+        .nav-links li { border-bottom: 1px solid rgba(60, 80, 125, 0.3); }
+        .nav-links a { display: block; padding: 15px 20px; color: var(--swan-wing); text-decoration: none; font-size: 14px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--sapphire); color: var(--quicksand); border-left: 4px solid var(--quicksand); }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #ffffff; }
+        .topbar { height: 60px; background-color: var(--swan-wing); border-bottom: 1px solid var(--shellstone); display: flex; justify-content: flex-end; align-items: center; padding: 0 30px; flex-shrink: 0;}
+        .user-profile { font-weight: 600; color: var(--royal-blue); display: flex; align-items: center; gap: 15px; }
+        .user-profile span { background-color: var(--sapphire); color: var(--swan-wing); padding: 5px 12px; border-radius: 20px; font-size: 14px; text-transform: capitalize; }
+        .btn-logout { background-color: var(--shellstone); color: var(--royal-blue); border: 1px solid var(--sapphire); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
+        .btn-logout:hover { background-color: var(--danger); color: white; border-color: var(--danger); }
+        
+        .content-area { padding: 25px; display: block; height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;}
+        
+        .header-actions { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--quicksand); padding-bottom: 12px; margin-bottom: 15px;}
+        .page-title { color: var(--royal-blue); margin: 0; font-size: 22px;}
+        
+        .period-controller { background-color: var(--royal-blue); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;}
+        .filter-group { display: flex; gap: 10px; align-items: center; }
+        .selector-box { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--shellstone); font-size: 13px; font-weight: bold; color: var(--royal-blue); background-color: white; cursor: pointer;}
+        
+        .dashboard-cards { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;}
+        .card { background-color: white; border: 1px solid var(--shellstone); padding: 15px; border-radius: 8px; flex: 1; min-width: 150px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .card h5 { margin: 0 0 5px 0; font-size: 12px; color: var(--sapphire); text-transform: uppercase; }
+        .card .amount { font-size: 22px; font-weight: bold; color: var(--royal-blue); }
 
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
+        .btn-export { flex: 1; min-width: 150px; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;}
+        
+        .btn-dues-fines { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;} .btn-dues-fines:hover { background-color: #c8e6c9; }
+        .btn-rewards { background-color: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7;} .btn-rewards:hover { background-color: #e1bee7; }
+        .btn-hof { background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;} .btn-hof:hover { background-color: #ffe0b2; }
+        .btn-spfines { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;} .btn-spfines:hover { background-color: #ffcdd2; }
+        .btn-sp-format { background-color: #e0f2f1; color: #00695c; border: 1px solid #b2dfdb;} .btn-sp-format:hover { background-color: #b2dfdb; }
+
+        .toggle-dues { font-size: 12px; font-weight: bold; color: var(--royal-blue); background-color: #fff9c4; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--warning); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+        .table-container { overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid var(--shellstone); margin-bottom: 30px;}
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead { position: sticky; top: 0; z-index: 1;}
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--shellstone); font-size: 12px; vertical-align: middle;}
+        th { background-color: var(--royal-blue); color: var(--swan-wing); font-size: 11px; text-transform: uppercase; }
+        tr:hover { background-color: var(--swan-wing); }
+        
+        .vault-tag { font-weight: bold; color: var(--royal-blue); font-family: monospace; font-size: 14px;}
+        .money { font-family: monospace; font-weight: bold; font-size: 13px;}
+        .plus { color: var(--success); }
+        .minus { color: var(--danger); }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
+        .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 850px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 15px;}
+        
+        .preview-table-container { overflow-y: auto; border: 1px solid var(--shellstone); border-radius: 4px; flex-grow: 1; margin-bottom: 10px;}
+        .preview-table-container table { width: 100%; border-collapse: collapse; }
+        .preview-table-container th { background-color: var(--sapphire); color: white; font-size: 11px; padding: 10px; text-transform: uppercase; position: sticky; top: 0;}
+        .preview-table-container td { font-size: 12px; padding: 10px; border-bottom: 1px solid #eee;}
+
+        .preview-annotation { font-size: 11px; color: var(--danger); font-style: italic; margin-bottom: 15px; display: none; background-color: #ffebee; padding: 8px; border-radius: 4px; border-left: 3px solid var(--danger);}
+
+        .modal-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--shellstone); padding-top: 15px;}
+        .btn-cancel { background-color: var(--shellstone); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--royal-blue); text-transform: uppercase;}
+        .btn-download { background-color: var(--success); border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-transform: uppercase; display: flex; gap: 8px; align-items: center;}
+        .btn-download:disabled { background-color: gray; cursor: not-allowed; }
+
+        .report-textarea { width: 100%; height: 260px; font-family: monospace; font-size: 12px; padding: 12px; border: 1px solid var(--shellstone); border-radius: 6px; box-sizing: border-box; resize: none; background: #fafafa; color: var(--royal-blue); line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" alt="Logo">
+            <h2 id="sidebarTitle">Ravenclaw Panel</h2>
+        </div>
+        <ul class="nav-links" id="sidebarMenu"></ul>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="user-profile">
+                Welcome, <span id="displayUsername">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-actions">
+                <h1 class="page-title">House Finance Master</h1>
+            </div>
+
+            <div class="period-controller">
+                <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                    <label>Select Financial Period:</label>
+                    <div class="filter-group">
+                        <select id="monthSelector" class="selector-box" onchange="onMonthChange()"></select>
+                        <select id="weekSelector" class="selector-box" onchange="fetchFinanceData()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loadingMsg" style="color: var(--sapphire); font-weight:bold; margin-bottom:15px;">Compiling financial records across all rooms...</div>
+            
+            <div id="financeContent" style="display:none; display:flex; flex-direction:column; flex-grow:1;">
+                
+                <div class="dashboard-cards">
+                    <div class="card"><h5>Total Petty Cash (Dues)</h5><div class="amount" id="sumDues">ʛ0</div></div>
+                    <div class="card"><h5>Total Fines Collected</h5><div class="amount plus" id="sumFines">ʛ0</div></div>
+                    <div class="card"><h5>Total Monthly Rewards<br>(Minus from Petty Cash)</h5><div class="amount minus" id="sumRewards">ʛ0</div></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-export btn-dues-fines" onclick="openPreview('DUES_FINES')">💰 Preview Dues & Fines</button>
+                    <button class="btn-export btn-rewards" onclick="openPreview('REWARDS')">✨ Preview Monthly Summaries</button>
+                    <button class="btn-export btn-hof" onclick="openRankPreview('HOF_REWARDS')">🏆 Preview HoF Rewards</button>
+                    <button class="btn-export" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;" onclick="openRankPreview('SCHOOL_REWARDS')">🎓 Preview School Ranks Rewards</button>
+                    <button class="btn-export btn-spfines" onclick="openRankPreview('SP_FINES')">⚠️ Preview SP Fines</button>
+                    <button class="btn-export btn-sp-format" onclick="openSpReportFormatModal()">📜 Preview SP Exam Reports</button>
+                    
+                    <label class="toggle-dues">
+                        <input type="checkbox" id="hideKasFilter" onchange="renderMasterTable()">
+                        Focus Mode: Hide Monthly Dues
+                    </label>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Vault Code</th>
+                                <th>Username</th>
+                                <th>Room</th>
+                                <th>Petty Cash</th>
+                                <th>Fines</th>
+                                <th>Fines Details</th>
+                                <th>Monthly Summaries Reward</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREVIEW MODAL BIASA -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal-box" style="width: 700px;">
+            <h3 id="previewTitle">Preview Data</h3>
+            
+            <div class="preview-table-container">
+                <table id="previewTable">
+                    <thead id="previewThead"></thead>
+                    <tbody id="previewTbody"></tbody>
+                </table>
+            </div>
+
+            <div id="previewAnnotation" class="preview-annotation">
+                * ⚠️ <b>Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePreview()">Cancel</button>
+                <button class="btn-download" onclick="downloadPDF()" id="btnDownload">⬇️ Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KHUSUS RANKING (HOF REWARDS, SCHOOL REWARDS, & SP FINES) -->
+    <div class="modal-overlay" id="rankModal">
+        <div class="modal-box">
+            <h3 id="rankModalTitle">🏆 Rewards Preview</h3>
+            
+            <div id="rankLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Compiling Rank Data... Please wait.</div>
+            
+            <div id="rankContent" style="display:none; flex-direction:column; flex-grow:1; overflow:hidden;">
+                <div class="preview-table-container" style="max-height: 50vh;">
+                    <table id="rankTable">
+                        <thead id="rankThead">
+                            <tr><th>Vault</th><th>Amount</th><th>Details</th></tr>
+                        </thead>
+                        <tbody id="rankTbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeRankPreview()">Cancel</button>
+                    <button class="btn-download" onclick="downloadRankPDF()" id="btnDownloadRank">⬇️ Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KHUSUS SP EXAM REPORT FORMAT -->
+    <div class="modal-overlay" id="spReportModal">
+        <div class="modal-box" style="width: 650px;">
+            <h3>📜 Ravenclaw O.W.L Student Point Report</h3>
+            <div id="spReportLoading" style="color:var(--sapphire); font-weight:bold; margin-bottom:10px;">Fetching SP Report Format...</div>
+            
+            <div id="spReportContent" style="display:none; flex-direction:column; flex-grow:1;">
+                <textarea id="spReportTextarea" class="report-textarea" readonly></textarea>
+                
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeSpReportModal()">Close</button>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-cancel" style="background-color:var(--sapphire); color:white;" onclick="copySpReportText()">📋 Copy Text</button>
+                        <button class="btn-download" onclick="downloadSpReportDoc()" id="btnDownloadSpDoc">⬇️ Download Document</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
+        
+        let loggedInUser = localStorage.getItem('session_username') || "Guest";
+        let userRole = (localStorage.getItem('session_role') || "unknown").toLowerCase();
+        
+        var periodConfigStore = {}; 
+        var masterFinanceList = []; 
+        var rankDataCache = [];
+        var rankAggregator = {};
+        var spReportDataCache = [];
+        
+        var currentDownloadType = "";
+        var currentRankDownloadType = ""; 
+        let currentFetchId = 0; 
+
+        window.onload = function() {
+            document.getElementById("displayUsername").innerText = loggedInUser;
+            setupDynamicSidebar();
+            initPeriodConfig();
+        };
+
+        // ==========================================
+        // LOGIKA SIDEBAR & NAVIGASI (DIPERBARUI)
+        // ==========================================
+        function setupDynamicSidebar() {
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+
+            var isHH = userRole.includes('headhouse') || userRole === 'system admin';
+            var isPrefect = userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice');
+            var isLeadroom = userRole.includes('leadroom');
+            var isEditor = userRole.includes('editor');
+
+            var sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                var positionName = (userRole === 'system admin') ? 'Headhouse' : userRole;
+                sidebarTitle.innerText = positionName.toUpperCase() + " PANEL";
+            }
+
+            const allMenus = [
+                { id: 'menu-home', label: 'Home Dashboard', action: "navigate('home')" },
+                { id: 'menu-sop', label: 'SOP & Guidelines', action: "navigate('sop')" },
+                { id: 'menu-taskdirectory', label: 'Task Directory', action: "navigate('task-directory')" },
+                { id: 'menu-taskmaster', label: 'Task Master', action: "navigateTaskMaster()" },
+                { id: 'menu-salary', label: 'Salary Master', action: "navigate('salary-master')" },
+                { id: 'menu-workreport', label: 'Work Report', action: "navigate('workreport')" },
+                { id: 'menu-studentdb', label: 'Student Main Database', action: "navigate('studentdb')" },
+                { id: 'menu-activeroom', label: 'Active Room Database', action: "navigate('activeroom')" },
+                { id: 'menu-finance', label: 'House Finance', action: "navigate('finance')" },
+                { id: 'menu-birthdays', label: 'Staff & Birthdays', action: "navigate('birthdays')" },
+                { id: 'menu-classdb', label: 'Class Database', action: "navigate('classdb')" },
+                { id: 'menu-librarydb', label: 'Library Database', action: "navigate('librarydb')" },
+                { id: 'menu-rank', label: 'Rank Panel', action: "navigate('rank')" },
+                { id: 'menu-roster', label: 'Student Roster Exporter', action: "navigate('roster')" }
+            ];
+
+            let allowedMenuIds = [];
+
+            if (isHH) {
+                allowedMenuIds = allMenus.map(m => m.id);
+            } 
+            else if (isPrefect) {
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 
+                    'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 
+                    'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'
+                ];
+            } 
+            else if (isLeadroom) {
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 
+                    'menu-classdb', 'menu-librarydb'
+                ];
+            } 
+            else if (isEditor) {
+                allowedMenuIds = [
+                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'
+                ];
+            }
+
+            var sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.innerHTML = ''; 
+            
+            allMenus.forEach(menu => {
+                if (allowedMenuIds.includes(menu.id)) {
+                    var li = document.createElement('li');
+                    li.className = menu.id;
+                    
+                    var activeClass = menu.id === 'menu-finance' ? ' class="active"' : '';
+                    
+                    li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
+                    sidebarMenu.appendChild(li);
+                }
+            });
+        }
+
+        function navigateTaskMaster() {
+            var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
+            var targetPage = 'headhouse';
+
+            if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
+            else if (userRole.includes('prefect')) targetPage = 'prefect';
+            else if (userRole.includes('editor')) targetPage = 'editor';
+            else if (userRole.includes('leadroom')) targetPage = 'leadroom';
+            
+            window.location.href = targetPage + '-dashboard.html';
+        }
+
+        function navigateHome() { navigate('home'); }
+        function navigate(targetPage) { window.location.href = targetPage + ".html"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
+        async function initPeriodConfig() {
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('financeContent').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: "getPeriodConfig", username: loggedInUser })
+                });
+                const res = await response.json();
+                
+                if (res.status === "success") {
+                    periodConfigStore = res.data; 
+                    populateMonthDropdown();
+                } else throw new Error(res.message);
+            } catch (error) {
+                document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Initialization Error: " + error.message + "</span>";
+            }
+        }
+
+        function populateMonthDropdown() {
+            var monthSel = document.getElementById('monthSelector'); monthSel.innerHTML = '';
+            if(periodConfigStore.activeMonth) {
+                var m = periodConfigStore.activeMonth;
+                var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Active)"; opt.selected = true;
+                monthSel.appendChild(opt);
+            }
+            var archs = periodConfigStore.archivedMonths || [];
+            archs.forEach(function(m) {
+                var opt = document.createElement('option'); opt.value = m.monthLabel; opt.innerText = m.monthLabel + " (Archive)";
+                monthSel.appendChild(opt);
+            });
+            onMonthChange();
+        }
+
+        function onMonthChange() {
+            var selectedMonth = document.getElementById('monthSelector').value; 
+            if(!selectedMonth) { 
+                document.getElementById('weekSelector').innerHTML = ''; 
+                return; 
+            }
+            var weekSel = document.getElementById('weekSelector'); 
+            weekSel.innerHTML = '';
+
+            var tWeeks = 4;
+            if (periodConfigStore.activeMonth && periodConfigStore.activeMonth.monthLabel === selectedMonth) {
+                tWeeks = periodConfigStore.activeMonth.totalWeeks;
+            } else if (periodConfigStore.archivedMonths) {
+                var am = periodConfigStore.archivedMonths.find(m => m.monthLabel === selectedMonth);
+                if (am) tWeeks = am.totalWeeks;
+            }
+
+            for (var i = 1; i <= tWeeks; i++) { 
+                var opt = document.createElement('option'); 
+                opt.value = "Week " + i; 
+                opt.innerText = "Period: Week " + i; 
+                weekSel.appendChild(opt); 
+            }
+            fetchFinanceData();
+        }
+
+        async function fetchFinanceData() {
+            var month = document.getElementById('monthSelector').value;
+            var currentWeek = document.getElementById('weekSelector').value;
+            if(!month) return; 
+            
+            let fetchId = ++currentFetchId; 
+            
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('loadingMsg').innerText = "Loading.... this may take a moment.";
+            document.getElementById('financeContent').style.display = 'none';
+
+            try {
+                var tWeeks = 4;
+                if (periodConfigStore.activeMonth && periodConfigStore.activeMonth.monthLabel === month) {
+                    tWeeks = periodConfigStore.activeMonth.totalWeeks;
+                } else if (periodConfigStore.archivedMonths) {
+                    var am = periodConfigStore.archivedMonths.find(m => m.monthLabel === month);
+                    if (am) tWeeks = am.totalWeeks;
+                }
+
+                let promises = [];
+                for(let i = 1; i <= tWeeks; i++) {
+                    promises.push(fetch(API_URL, {
+                        method: 'POST', body: JSON.stringify({ action: "getActiveRoomData", month: month, week: "Week " + i })
+                    }).then(r => r.json()));
+                }
+
+                const results = await Promise.all(promises);
+                
+                if (fetchId !== currentFetchId) return;
+
+                masterFinanceList = []; 
+                rankDataCache = [];
+                
+                let aggregatedRewards = {};
+                let currentWeekData = null;
+
+                results.forEach((res, idx) => {
+                    let weekName = "Week " + (idx + 1);
+                    if (res.status === "success" && res.data) {
+                        if (weekName === currentWeek) {
+                            currentWeekData = res.data; 
+                        }
+                        var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
+                        rooms.forEach(rName => {
+                            var students = res.data.rooms[rName] || [];
+                            students.forEach(s => {
+                                if (!aggregatedRewards[s.vault]) aggregatedRewards[s.vault] = 0;
+                                aggregatedRewards[s.vault] += (s.reward || 0);
+                            });
+                        });
+                    } else {
+                        throw new Error(res.message || "Error fetching " + weekName);
+                    }
+                });
+
+                if (currentWeekData) {
+                    var data = currentWeekData;
+                    var rooms = ["Eternclaw", "Ravelynx", "Ravenion", "Ravenrow", "Velaclaw"];
+                    var seenVaults = new Set(); 
+
+                    rooms.forEach(function(rName) {
+                        var students = data.rooms[rName] || [];
+                        students.forEach(function(s) {
+                            let totalMonthlyReward = aggregatedRewards[s.vault] || 0;
+                            if ((s.kas > 0 || s.denda > 0 || totalMonthlyReward > 0) && !seenVaults.has(s.vault)) {
+                                seenVaults.add(s.vault);
+                                masterFinanceList.push({
+                                    vault: s.vault, username: s.username, room: rName,
+                                    kas: s.kas || 0, denda: s.denda || 0, reward: totalMonthlyReward,
+                                    finesDetail: s.finesDetail || '-'
+                                });
+                            }
+                        });
+                    });
+
+                    masterFinanceList.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
+                    renderMasterTable();
+                } else {
+                    throw new Error("Current week data not found.");
+                }
+
+            } catch (error) {
+                if (fetchId === currentFetchId) {
+                    document.getElementById('loadingMsg').innerHTML = "<span style='color:red;'>Database Error: " + error.message + "</span>";
+                }
+            }
+        }
+
+        function formatMoney(num) { return Number(num).toLocaleString('id-ID'); }
+
+        function renderMasterTable() {
+            document.getElementById('loadingMsg').style.display = 'none';
+            document.getElementById('financeContent').style.display = 'flex';
+
+            var tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            var sumKas = 0, sumFines = 0, sumRewards = 0;
+            var hideKas = document.getElementById('hideKasFilter').checked;
+
+            if (masterFinanceList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:gray; padding: 20px;">No financial records found for this period.</td></tr>';
+            } else {
+                masterFinanceList.forEach(function(s) {
+                    sumKas += s.kas; sumFines += s.denda; sumRewards += s.reward;
+                    
+                    if (hideKas && s.denda <= 0 && s.reward <= 0) return;
+
+                    var tr = document.createElement('tr');
+                    var fdDisplay = s.denda > 0 ? s.finesDetail : '-';
+                    
+                    tr.innerHTML = `
+                        <td class="vault-tag">${s.vault}</td>
+                        <td><b>${s.username}</b></td>
+                        <td style="color:var(--sapphire); font-weight:bold;">${s.room}</td>
+                        <td class="money ${hideKas ? 'minus' : ''}">${hideKas ? '<span style="font-size:10px; color:#ccc;">Hidden</span>' : 'ʛ'+formatMoney(s.kas)}</td>
+                        <td class="money ${s.denda > 0 ? 'plus':''}">${s.denda > 0 ? '+ʛ'+formatMoney(s.denda) : 'ʛ0'}</td>
+                        <td style="font-size: 10px; color: gray;">${fdDisplay}</td>
+                        <td class="money ${s.reward > 0 ? 'plus':''}">${s.reward > 0 ? '+ʛ'+formatMoney(s.reward) : 'ʛ0'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            document.getElementById('sumDues').innerText = 'ʛ' + formatMoney(sumKas);
+            document.getElementById('sumFines').innerText = '+ʛ' + formatMoney(sumFines);
+            document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
+        }
+
+        async function openRankPreview(type) {
+            var month = document.getElementById('monthSelector').value;
+            if (!month) return alert("Please select a valid month first.");
+
+            currentRankDownloadType = type;
+            document.getElementById('rankModal').style.display = 'flex';
+            document.getElementById('rankLoading').style.display = 'block';
+            document.getElementById('rankContent').style.display = 'none';
+
+            let titleStr = "Preview";
+            if (type === 'HOF_REWARDS') titleStr = "🏆 Hall of Fame Rewards Preview";
+            else if (type === 'SCHOOL_REWARDS') titleStr = "🎓 School Ranks (O.W.L & SP) Preview";
+            else titleStr = "⚠️ SP Fines Preview";
+            
+            document.getElementById('rankModalTitle').innerText = titleStr;
+
+            if (rankDataCache.length === 0) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST', body: JSON.stringify({ action: "getRankData", month: month })
+                    });
+                    const res = await response.json();
+                    
+                    if (res.status === "success" && res.data) {
+                        rankDataCache = res.data;
+                    } else throw new Error(res.message);
+                } catch (error) {
+                    document.getElementById('rankLoading').innerHTML = "<span style='color:red;'>Failed to load Rank Data: " + error.message + "</span>";
+                    return;
+                }
+            }
+
+            buildRankPreviewTable();
+            document.getElementById('rankLoading').style.display = 'none';
+            document.getElementById('rankContent').style.display = 'flex';
+        }
+
+        function closeRankPreview() {
+            document.getElementById('rankModal').style.display = 'none';
+        }
+
+        function buildRankPreviewTable() {
+            rankAggregator = {};
+            
+            function addRecord(v, amt, desc) {
+                if (!rankAggregator[v]) rankAggregator[v] = { vault: v, total: 0, details: [] };
+                rankAggregator[v].total += amt;
+                
+                let color = currentRankDownloadType === 'SP_FINES' ? 'var(--danger)' : 'var(--success)';
+                let sign = currentRankDownloadType === 'SP_FINES' ? '-' : '+';
+                rankAggregator[v].details.push(`<span style="color:${color}; font-weight:bold;">${desc} (${sign}ʛ${formatMoney(amt)})</span>`);
+            }
+
+            if (currentRankDownloadType === 'HOF_REWARDS') {
+                let maxGames = 0;
+                rankDataCache.forEach(s => { let g = Number(s.games) || 0; if (g > maxGames) maxGames = g; });
+                let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
+                let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
+
+                // PERHITUNGAN BEST ROOM AMAN & PRESISI (DIBAGI RATA KE JUMLAH ANGGOTA)
+                let rooms = {};
+                rankDataCache.forEach(s => {
+                    let r = s.room;
+                    if(r && r !== '-' && r !== '' && !s.isInactive) {
+                        if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, members: [] };
+                        rooms[r].basePts += s.totalPoints;
+                        if(s.isLeadroom) rooms[r].lrPts += s.totalPoints;
+                        rooms[r].members.push(s);
+                    }
+                });
+                Object.keys(rooms).forEach(k => {
+                    let rm = rooms[k];
+                    let count = rm.members.length; 
+                    if(count > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / count) * 100) / 100;
+                    else rm.finalPts = 0;
+                });
+                let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
+                let bestRoom = roomArr.length > 0 && roomArr[0].pts > 0 ? roomArr[0] : null;
+
+                rankDataCache.forEach(s => {
+                    if (s.isInactive) return;
+
+                    if (s.award === 'Alpha') addRecord(s.vault, 500, 'Alpha of The Month');
+                    if (s.award === 'Aquilae') addRecord(s.vault, 500, 'Aquilae of The Month');
+                    
+                    if (gamers.some(g => g.vault === s.vault)) {
+                        addRecord(s.vault, gamerReward, 'Gamers of The Month');
+                    }
+
+                    if (bestRoom && bestRoom.members.some(m => m.vault === s.vault)) {
+                        let splitRoomReward = Math.floor(1000 / bestRoom.members.length);
+                        addRecord(s.vault, splitRoomReward, `Best Room Reward (${bestRoom.room})`);
+                    }
+                });
+            } 
+            else if (currentRankDownloadType === 'SCHOOL_REWARDS') {
+                rankDataCache.forEach(s => {
+                    if (s.isInactive) return;
+                    if (Number(s.owlRank) >= 1 && Number(s.owlRank) <= 10) addRecord(s.vault, 300, `Rank O.W.L (#${s.owlRank})`);
+                    if (Number(s.spRank) >= 1 && Number(s.spRank) <= 10) addRecord(s.vault, 300, `Rank SP (#${s.spRank})`);
+                });
+            }
+            else if (currentRankDownloadType === 'SP_FINES') {
+                rankDataCache.forEach(s => {
+                    if (s.isInactive || s.grade === 'G7') return;
+                    let spScore = Number(s.spScore) || 0;
+                    let minSp = s.minSp !== undefined && s.minSp !== '' ? Number(s.minSp) : 600;
+                    if (spScore < minSp) {
+                        let fine = minSp - spScore;
+                        addRecord(s.vault, fine, `SP Shortage (${spScore}/${minSp})`);
+                    }
+                });
+            }
+
+            let tbody = document.getElementById('rankTbody');
+            let thead = document.getElementById('rankThead');
+            tbody.innerHTML = '';
+            
+            let amountTitle = currentRankDownloadType === 'SP_FINES' ? 'Fine Amount' : 'Reward Amount';
+            thead.innerHTML = `<tr><th style='width:50px;'>No.</th><th>Vault Code</th><th>${amountTitle}</th><th>Details</th></tr>`;
+            
+            let sortedVaults = Object.keys(rankAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
+            
+            if (sortedVaults.length === 0) {
+                let emptyMsg = 'No rewards or fines assigned yet.';
+                if (currentRankDownloadType === 'SP_FINES') emptyMsg = 'All active students met their Min SP! 🎉';
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:gray; padding:20px;">${emptyMsg}</td></tr>`;
+                return;
+            }
+
+            let counter = 1;
+            sortedVaults.forEach(v => {
+                let data = rankAggregator[v];
+                if (data.total <= 0) return;
+
+                let tr = document.createElement('tr');
+                let colorClass = currentRankDownloadType === 'SP_FINES' ? 'color:var(--danger);' : 'color:var(--success);';
+                let sign = currentRankDownloadType === 'SP_FINES' ? '-' : '+';
+
+                tr.innerHTML = `
+                    <td style="text-align:center;">${counter++}</td>
+                    <td style="font-family:monospace; font-weight:bold; font-size:14px;">${data.vault}</td>
+                    <td style="${colorClass} font-weight:bold; font-size:13px;">${sign}ʛ${formatMoney(data.total)}</td>
+                    <td style="font-size:10px; line-height:1.6;">${data.details.join('<br>')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function openSpReportFormatModal() {
+            var month = document.getElementById('monthSelector').value;
+            if (!month) return alert("Please select a valid month first.");
+
+            document.getElementById('spReportModal').style.display = 'flex';
+            document.getElementById('spReportLoading').style.display = 'block';
+            document.getElementById('spReportContent').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormat", month: month })
+                });
+                const res = await response.json();
+                
+                if (res.status === "success" && res.data) {
+                    spReportDataCache = res.data;
+                    
+                    spReportDataCache.sort((a, b) => parseInt(String(a.vault).replace(/\D/g, '') || '0') - parseInt(String(b.vault).replace(/\D/g, '') || '0'));
+                    
+                    let lines = [
+                        "RAVENCLAW O.W.L STUDENT POINT REPORT",
+                        "Period: " + month,
+                        ""
+                    ];
+                    
+                    if (spReportDataCache.length === 0) {
+                        lines.push("No SP Reports found for this period.");
+                    } else {
+                        spReportDataCache.forEach(item => {
+                            lines.push(item.report);
+                        });
+                    }
+                    
+                    lines.push("");
+                    lines.push("\"Wit beyond measure is man's greatest treasure.\"");
+                    
+                    document.getElementById('spReportTextarea').value = lines.join("\n");
+                    document.getElementById('spReportLoading').style.display = 'none';
+                    document.getElementById('spReportContent').style.display = 'flex';
+                } else throw new Error(res.message);
+            } catch (err) {
+                document.getElementById('spReportLoading').innerHTML = "<span style='color:red;'>Failed to load SP Reports: " + err.message + "</span>";
+            }
+        }
+
+        function closeSpReportModal() { document.getElementById('spReportModal').style.display = 'none'; }
+        function copySpReportText() {
+            var textarea = document.getElementById('spReportTextarea');
+            textarea.select(); document.execCommand('copy'); alert("✅ Report text copied to clipboard!");
+        }
+
+        function downloadSpReportDoc() {
+            var btn = document.getElementById('btnDownloadSpDoc');
+            btn.innerText = "⏳ Generating..."; btn.disabled = true;
+
+            var month = document.getElementById('monthSelector').value;
+            var filename = "Ravenclaw_OWL_SP_Report_" + month.replace(/\s+/g, '_') + ".pdf";
+
+            var reportLines = document.getElementById('spReportTextarea').value.split('\n');
+            var footerText = "";
+            
+            var contentHtml = reportLines.map(line => {
+                if (line.includes('RAVENCLAW O.W.L')) return `<div style="font-weight:900; font-size:18px; text-align:center; margin-bottom:6px; color:#112250; letter-spacing: 1px;">${line}</div>`;
+                if (line.includes('Period:')) return `<div style="font-weight:bold; font-size:13px; text-align:center; margin-bottom:25px; color:#3C507D; text-transform: uppercase;">${line}</div>`;
+                if (line.includes('Wit beyond measure')) { footerText = line; return ''; }
+                if (line.trim() === "") return `<div style="height: 10px;"></div>`;
+                return `<div style="font-family:'Courier New', monospace; font-size:13px; font-weight:800; padding:8px 0; border-bottom:1px dashed #e0e0e0; color:#112250;">${line}</div>`;
+            }).join('');
+
+            var pdfContainer = document.createElement('div');
+            pdfContainer.innerHTML = `
+                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 40px; color: #112250; width: 720px; min-height: 1050px; display: flex; flex-direction: column; box-sizing: border-box; background-color: #ffffff;">
+                    <div>
+                        <div style="text-align: center; margin-bottom: 15px;"><img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;"></div>
+                        <hr style="border: 0; border-top: 2px solid #112250; margin-bottom: 25px;">
+                        ${contentHtml}
+                    </div>
+                    <div style="margin-top: auto; padding-top: 30px; text-align: center;">
+                        <div style="font-family: 'Georgia', serif; font-style:italic; font-weight:bold; font-size:14px; color:#3C507D; letter-spacing: 0.5px;">${footerText}</div>
+                    </div>
+                </div>
+            `;
+
+            var opt = { margin: 0.2, filename: filename, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(pdfContainer).save().then(function() { btn.innerText = "⬇️ Download Document"; btn.disabled = false; }).catch(function() { alert("Failed to generate Document."); btn.innerText = "⬇️ Download Document"; btn.disabled = false; });
+        }
+
+        function openPreview(type) {
+            if(masterFinanceList.length === 0) { alert("No data to export!"); return; }
+            currentDownloadType = type;
+            
+            var title = document.getElementById('previewTitle'); var thead = document.getElementById('previewThead'); var tbody = document.getElementById('previewTbody'); var annotBox = document.getElementById('previewAnnotation');
+            thead.innerHTML = ''; tbody.innerHTML = ''; annotBox.style.display = 'none';
+            
+            var headersHtml = "<tr><th style='width:50px;'>No.</th><th>Vault Code</th>";
+            var hasFines = false;
+            
+            if(type === 'DUES_FINES') { title.innerText = "Preview: Dues & Fines Withdrawal"; headersHtml += "<th>Total Amount</th><th>Fines Details</th></tr>"; } 
+            else if (type === 'REWARDS') { title.innerText = "Preview: Monthly Summaries Reward"; headersHtml += "<th>Total Amount</th></tr>"; }
+            thead.innerHTML = headersHtml;
+
+            var counter = 1;
+            masterFinanceList.forEach(function(s) {
+                if(type === 'DUES_FINES' && s.kas <= 0 && s.denda <= 0) return;
+                if(type === 'REWARDS' && s.reward <= 0) return;
+
+                var isFined = (type === 'DUES_FINES' && s.denda > 0);
+                if (isFined) hasFines = true;
+
+                var tr = document.createElement('tr');
+                if (isFined) tr.style.backgroundColor = "#ffebee"; 
+
+                var rowHtml = `<td style="text-align:center;">${counter++}</td><td style="font-family:monospace; font-weight:bold; font-size:14px;">${s.vault}</td>`;
+
+                if(type === 'DUES_FINES') { 
+                    let totalAmount = s.kas + s.denda;
+                    let fdText = isFined ? s.finesDetail : '-';
+                    rowHtml += `<td style="font-weight:bold;">ʛ${formatMoney(totalAmount)}</td><td style="font-size:10px; color:#555;">${fdText}</td>`; 
+                } else if (type === 'REWARDS') { 
+                    rowHtml += `<td style="color:var(--success); font-weight:bold;">+ʛ${formatMoney(s.reward)}</td>`; 
+                } 
+
+                tr.innerHTML = rowHtml; tbody.appendChild(tr);
+            });
+
+            if (hasFines) annotBox.style.display = 'block';
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+
+        function closePreview() { document.getElementById('previewModal').style.display = 'none'; }
+
+        function downloadPDF() {
+            var btn = document.getElementById('btnDownload');
+            btn.innerText = "⏳ Generating..."; btn.disabled = true;
+
+            var month = document.getElementById('monthSelector').value.replace(/\s+/g, '_');
+            var week = document.getElementById('weekSelector').value.replace(/\s+/g, '');
+            var monthLabel = document.getElementById('monthSelector').value;
+            var weekLabel = document.getElementById('weekSelector').value;
+            
+            var filename = "Ravenclaw_Finance_" + currentDownloadType + "_" + month + "_" + week + ".pdf";
+            
+            var today = new Date();
+            var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
+
+            var subjectStr = "";
+            if(currentDownloadType === 'DUES_FINES') subjectStr = "House Dues & Fines Withdrawal - " + monthLabel + " " + weekLabel;
+            else if (currentDownloadType === 'REWARDS') subjectStr = "Monthly Summaries Reward - " + monthLabel;
+
+            var tKas = 0, tFines = 0, tRewards = 0;
+            var hasFines = false;
+
+            var tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                    <thead>
+                        <tr class="pdf-row">
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 10%;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; width: 25%;">Total Amount</th>
+            `;
+            if (currentDownloadType === 'DUES_FINES') tableHtml += `<th style="background-color: #112250; color: white; padding: 10px; border: 1px solid #ddd; text-align: left; width: 40%;">Fines Details</th>`;
+            tableHtml += `</tr></thead><tbody>`;
+
+            var counter = 1;
+            masterFinanceList.forEach(s => {
+                if(currentDownloadType === 'DUES_FINES' && s.kas <= 0 && s.denda <= 0) return;
+                if(currentDownloadType === 'REWARDS' && s.reward <= 0) return;
+
+                tKas += s.kas; tFines += s.denda; tRewards += s.reward;
+
+                var isFined = (currentDownloadType === 'DUES_FINES' && s.denda > 0);
+                if (isFined) hasFines = true;
+                var bgColor = isFined ? "background-color: #ffebee;" : "";
+
+                tableHtml += `<tr class="pdf-row" style="${bgColor}">
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size:13px;">${s.vault}</td>`;
+                    
+                if(currentDownloadType === 'DUES_FINES') {
+                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: bold;">ʛ${formatMoney(s.kas + s.denda)}</td>
+                                  <td style="padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 10px; color: #555;">${isFined ? s.finesDetail : '-'}</td>`;
+                }
+                else if (currentDownloadType === 'REWARDS') {
+                    tableHtml += `<td style="padding: 10px; border: 1px solid #ddd; text-align: center; color: #2e7d32; font-weight: bold;">+ʛ${formatMoney(s.reward)}</td>`;
+                }
+                tableHtml += `</tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+
+            var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
+            if (hasFines && currentDownloadType === 'DUES_FINES') {
+                footerHtml += `<div style="font-size: 11px; color: #c62828; margin-bottom: 15px;"><i><b>* ⚠️ Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.</i></div>`;
+            }
+            footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
+            if (currentDownloadType === 'DUES_FINES') {
+                footerHtml += `<tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #112250;">Total House Dues</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #112250;">+ʛ${formatMoney(tKas)}</td></tr>
+                               <tr><td style="padding: 10px 20px; font-weight: bold; font-size: 12px; color: #1b5e20;">Total Fines Collected</td><td style="padding: 10px 20px; text-align: right; font-weight: bold; font-size: 12px; color: #1b5e20;">+ʛ${formatMoney(tFines)}</td></tr>
+                               <tr style="border-top: 2px solid #3C507D; background-color: #c5cae9;"><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Grand Total Withdrawn</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tKas + tFines)} to Ravenclaw's Petty Cash</td></tr>`;
+            } else if (currentDownloadType === 'REWARDS') {
+                footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tRewards)} from Ravenclaw's Petty Cash</td></tr>`;
+            }
+            footerHtml += `</table><div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;"><span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>Hogwarts School of Witchcraft and Wizardry</div></div>`; 
+
+            generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn, closePreview);
+        }
+
+        function downloadRankPDF() {
+            var btn = document.getElementById('btnDownloadRank');
+            btn.innerText = "⏳ Generating..."; btn.disabled = true;
+
+            var monthLabel = document.getElementById('monthSelector').value;
+            var filename = "Ravenclaw_" + currentRankDownloadType + "_" + monthLabel.replace(/\s+/g, '_') + ".pdf";
+            
+            var today = new Date();
+            var dateStr = String(today.getDate()).padStart(2, '0') + "/" + String(today.getMonth() + 1).padStart(2, '0') + "/" + String(today.getFullYear()).slice(-2);
+
+            var subjectStr = "";
+            if (currentRankDownloadType === 'HOF_REWARDS') subjectStr = "Hall of Fame Rewards - " + monthLabel;
+            else if (currentRankDownloadType === 'SCHOOL_REWARDS') subjectStr = "School Ranks Rewards - " + monthLabel;
+            else subjectStr = "SP Fines - " + monthLabel;
+
+            var tAmount = 0;
+
+            var tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                    <thead>
+                        <tr class="pdf-row">
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 10%;">No.</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 25%;">Vault Code</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: center; width: 20%;">Amount</th>
+                            <th style="background-color: #112250; color: white; padding: 8px; border: 1px solid #ddd; text-align: left; width: 45%;">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            var counter = 1;
+            let sortedVaults = Object.keys(rankAggregator).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true}));
+            
+            sortedVaults.forEach(v => {
+                let data = rankAggregator[v];
+                if (data.total <= 0) return;
+                tAmount += data.total;
+                
+                let colorClass = currentRankDownloadType === 'SP_FINES' ? 'color:#c62828;' : 'color:#2e7d32;';
+                let sign = currentRankDownloadType === 'SP_FINES' ? '-' : '+';
+                let bgColor = currentRankDownloadType === 'SP_FINES' ? 'background-color: #ffebee;' : '';
+
+                tableHtml += `
+                    <tr class="pdf-row" style="${bgColor}">
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${counter++}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; font-family: monospace; font-weight: bold; font-size: 13px;">${data.vault}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; ${colorClass} font-weight: bold;">${sign}ʛ${formatMoney(data.total)}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; font-size: 10px;">${data.details.join('<br>')}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+
+            var footerHtml = `<div class="pdf-row" style="width: 100%; margin: 20px auto 0;">`;
+            footerHtml += `<table style="width: 100%; border-collapse: collapse; background-color: #e8eaf6; border: 2px solid #3C507D;">`;
+            
+            if (currentRankDownloadType === 'HOF_REWARDS' || currentRankDownloadType === 'SCHOOL_REWARDS') {
+                footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #c62828;">Grand Total Disbursed</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #c62828;">-ʛ${formatMoney(tAmount)} from Ravenclaw's Petty Cash</td></tr>`;
+            } else {
+                footerHtml += `<tr><td style="padding: 15px 20px; font-weight: bold; font-size: 14px; color: #112250;">Total SP Fines Collected</td><td style="padding: 15px 20px; text-align: right; font-weight: bold; font-size: 14px; color: #112250;">+ʛ${formatMoney(tAmount)} to Ravenclaw's Petty Cash</td></tr>`;
+            }
+            
+            footerHtml += `</table>
+                <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
+                    <span style="font-weight: bold; font-size: 12px; color: #112250;">Ravenclaw House</span><br>
+                    Hogwarts School of Witchcraft and Wizardry
+                </div>
+            </div>`;
+
+            generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btn, closeRankPreview);
+        }
+
+        function generateDocument(filename, subjectStr, dateStr, tableHtml, footerHtml, btnObj, callback) {
+            var pdfContainer = document.createElement('div');
+            pdfContainer.innerHTML = `
+                <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; padding: 20px; color: #112250; width: 750px; margin: 0 auto; box-sizing: border-box;">
+                    <div class="pdf-row" style="text-align: center; margin-bottom: 5px;">
+                        <img src="https://lh3.googleusercontent.com/d/1-Qb9kP-_OigBN77u38aC6aUMPWlvQZg4" style="width: 80px; height: auto;">
+                    </div>
+                    <hr class="pdf-row" style="border: 0; border-top: 2px solid #112250; margin-bottom: 15px;">
+                    <div class="pdf-row" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px;">
+                        <div><b>Subject:</b> ${subjectStr}</div>
+                        <div>${dateStr}</div>
+                    </div>
+                    ${tableHtml}
+                    ${footerHtml}
+                </div>
+            `;
+
+            var opt = { margin: 0.3, filename: filename, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css', 'legacy'], avoid: '.pdf-row' } };
+            html2pdf().set(opt).from(pdfContainer).save().then(function() {
+                btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
+                if (callback) callback();
+            }).catch(function(err) {
+                alert("Failed to generate PDF. Please try again.");
+                btnObj.innerText = "⬇️ Download PDF"; btnObj.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
