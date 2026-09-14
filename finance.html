@@ -255,7 +255,7 @@
         };
 
         // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI (DIPERBARUI)
+        // LOGIKA SIDEBAR & NAVIGASI
         // ==========================================
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
@@ -593,7 +593,6 @@
                 let gamers = maxGames > 0 ? rankDataCache.filter(s => (Number(s.games)||0) === maxGames && !s.isInactive) : [];
                 let gamerReward = gamers.length > 0 ? Math.floor(750 / gamers.length) : 0;
 
-                // PERHITUNGAN BEST ROOM AMAN & PRESISI (DIBAGI RATA KE JUMLAH ANGGOTA)
                 let rooms = {};
                 rankDataCache.forEach(s => {
                     let r = s.room;
@@ -711,8 +710,10 @@
                     if (spReportDataCache.length === 0) {
                         lines.push("No SP Reports found for this period.");
                     } else {
+                        let counter = 1;
                         spReportDataCache.forEach(item => {
-                            lines.push(item.report);
+                            lines.push(counter + ". " + item.report);
+                            counter++;
                         });
                     }
                     
