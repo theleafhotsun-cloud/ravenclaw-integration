@@ -67,6 +67,9 @@
         .plus { color: var(--success); }
         .minus { color: var(--danger); }
         
+        .btn-action { background: none; border: 1px solid var(--shellstone); border-radius: 4px; padding: 4px 6px; cursor: pointer; font-size: 14px; margin: 0 2px; transition: 0.2s;}
+        .btn-action:hover { background-color: var(--swan-wing); border-color: var(--sapphire); }
+
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: white; padding: 25px; border-radius: 8px; width: 850px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 10px; margin-bottom: 15px;}
@@ -136,6 +139,7 @@
                     <button class="btn-export" style="background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb;" onclick="openRankPreview('SCHOOL_REWARDS')">🎓 Preview School Ranks Rewards</button>
                     <button class="btn-export btn-spfines" onclick="openRankPreview('SP_FINES')">⚠️ Preview SP Fines</button>
                     <button class="btn-export btn-sp-format" onclick="openSpReportFormatModal()">📜 Preview SP Exam Reports</button>
+                    <button class="btn-export" style="background-color: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;" onclick="openManualFinanceModal()">➕ Add Manual Record</button>
                     
                     <label class="toggle-dues">
                         <input type="checkbox" id="hideKasFilter" onchange="renderMasterTable()">
@@ -153,7 +157,8 @@
                                 <th>Petty Cash</th>
                                 <th>Fines</th>
                                 <th>Fines Details</th>
-                                <th>Monthly Summaries Reward</th>
+                                <th>Summaries Reward</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -168,21 +173,41 @@
     <div class="modal-overlay" id="previewModal">
         <div class="modal-box" style="width: 700px;">
             <h3 id="previewTitle">Preview Data</h3>
-            
             <div class="preview-table-container">
                 <table id="previewTable">
                     <thead id="previewThead"></thead>
                     <tbody id="previewTbody"></tbody>
                 </table>
             </div>
-
             <div id="previewAnnotation" class="preview-annotation">
                 * ⚠️ <b>Note:</b> Highlighted rows indicate that the total amount includes disciplinary fines for this week.
             </div>
-
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closePreview()">Cancel</button>
                 <button class="btn-download" onclick="downloadPDF()" id="btnDownload">⬇️ Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MANUAL FINANCE ADDITION & EDIT -->
+    <div class="modal-overlay" id="manualFinanceModal">
+        <div class="modal-box" style="width: 500px;">
+            <h3 id="manualModalTitle">➕ Add Manual Record</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="manVault" placeholder="Vault Code (e.g., 2032)" class="selector-box" style="width: 100%; box-sizing: border-box;">
+                <input type="text" id="manUser" placeholder="Username" class="selector-box" style="width: 100%; box-sizing: border-box;">
+                <input type="text" id="manRoom" placeholder="Room (e.g., Archived / Ravelynx)" value="Archived" class="selector-box" style="width: 100%; box-sizing: border-box;">
+                <label style="font-size:12px; color:var(--royal-blue); font-weight:bold; margin-top:5px;">Petty Cash (Dues):</label>
+                <input type="number" id="manKas" placeholder="Amount (ʛ)" value="0" class="selector-box" style="width: 100%; box-sizing: border-box;">
+                <label style="font-size:12px; color:var(--royal-blue); font-weight:bold; margin-top:5px;">Fines:</label>
+                <input type="number" id="manDenda" placeholder="Amount (ʛ)" value="0" class="selector-box" style="width: 100%; box-sizing: border-box;">
+                <input type="text" id="manDetail" placeholder="Fines Detail (if any)" class="selector-box" style="width: 100%; box-sizing: border-box;">
+                <label style="font-size:12px; color:var(--royal-blue); font-weight:bold; margin-top:5px;">Monthly Summaries Reward:</label>
+                <input type="number" id="manReward" placeholder="Amount (ʛ)" value="0" class="selector-box" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeManualFinanceModal()">Cancel</button>
+                <button class="btn-download" onclick="submitManualFinance()" style="background-color: var(--warning);">💾 Save Record</button>
             </div>
         </div>
     </div>
@@ -233,7 +258,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbz-SDJmoYbE2IWybJUyJDQQSUpUyIzF52xa6XqfJnDdHw2lYgsXnXT1WR_9iPVrCh8t/exec";
+        // GANTI JIKA ADA DEPLOYMENT BARU
+        const API_URL = "https://script.google.com/macros/s/AKfycby62W70NtqyMZbkYNDDDtmVjxo2D9syqW-VxIlf15o1XElvZXDvohKupERQm9pj2eqn/exec";
         
         let loggedInUser = localStorage.getItem('session_username') || "Guest";
         let userRole = (localStorage.getItem('session_role') || "unknown").toLowerCase();
@@ -247,6 +273,7 @@
         var currentDownloadType = "";
         var currentRankDownloadType = ""; 
         let currentFetchId = 0; 
+        let currentEditIndex = -1; // Tracking Index untuk fitur Update Manual
 
         window.onload = function() {
             document.getElementById("displayUsername").innerText = loggedInUser;
@@ -255,7 +282,79 @@
         };
 
         // ==========================================
-        // LOGIKA SIDEBAR & NAVIGASI
+        // FUNGSI INPUT & EDIT MANUAL (PRE-PDF RENDER)
+        // ==========================================
+        function openManualFinanceModal(idx = -1) {
+            currentEditIndex = idx;
+            
+            if (idx > -1) {
+                // EDIT MODE
+                let data = masterFinanceList[idx];
+                document.getElementById('manVault').value = data.vault;
+                document.getElementById('manUser').value = data.username;
+                document.getElementById('manRoom').value = data.room;
+                document.getElementById('manKas').value = data.kas;
+                document.getElementById('manDenda').value = data.denda;
+                document.getElementById('manDetail').value = data.finesDetail === '-' ? '' : data.finesDetail;
+                document.getElementById('manReward').value = data.reward;
+                document.getElementById('manualModalTitle').innerText = "✏️ Edit Record";
+            } else {
+                // ADD NEW MODE
+                document.getElementById('manVault').value = '';
+                document.getElementById('manUser').value = '';
+                document.getElementById('manRoom').value = 'Archived';
+                document.getElementById('manKas').value = '0';
+                document.getElementById('manDenda').value = '0';
+                document.getElementById('manDetail').value = '';
+                document.getElementById('manReward').value = '0';
+                document.getElementById('manualModalTitle').innerText = "➕ Add Manual Record";
+            }
+            
+            document.getElementById('manualFinanceModal').style.display = 'flex';
+        }
+
+        function closeManualFinanceModal() {
+            document.getElementById('manualFinanceModal').style.display = 'none';
+        }
+
+        function submitManualFinance() {
+            var v = document.getElementById('manVault').value.trim();
+            var u = document.getElementById('manUser').value.trim();
+            var r = document.getElementById('manRoom').value.trim() || "Archived";
+            var k = parseInt(document.getElementById('manKas').value) || 0;
+            var d = parseInt(document.getElementById('manDenda').value) || 0;
+            var fd = document.getElementById('manDetail').value.trim() || "-";
+            var rw = parseInt(document.getElementById('manReward').value) || 0;
+
+            if(!v || !u) return alert("Vault Code and Username are required!");
+
+            if (currentEditIndex > -1) {
+                // Proses Edit/Update Array
+                masterFinanceList[currentEditIndex] = {
+                    vault: v, username: u, room: r, kas: k, denda: d, finesDetail: fd, reward: rw
+                };
+            } else {
+                // Proses Tambah Baru Array
+                masterFinanceList.push({
+                    vault: v, username: u, room: r, kas: k, denda: d, finesDetail: fd, reward: rw
+                });
+            }
+
+            // Urutkan kembali berdasarkan Vault Code lalu Render ulang tabel UI
+            masterFinanceList.sort((a, b) => String(a.vault).localeCompare(String(b.vault), undefined, {numeric: true}));
+            renderMasterTable();
+            closeManualFinanceModal();
+        }
+
+        function deleteRecord(idx) {
+            if(confirm("Are you sure you want to delete this record from the PDF render?")) {
+                masterFinanceList.splice(idx, 1);
+                renderMasterTable();
+            }
+        }
+
+        // ==========================================
+        // LOGIKA SIDEBAR & NAVIGASI 
         // ==========================================
         function setupDynamicSidebar() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
@@ -290,27 +389,10 @@
 
             let allowedMenuIds = [];
 
-            if (isHH) {
-                allowedMenuIds = allMenus.map(m => m.id);
-            } 
-            else if (isPrefect) {
-                allowedMenuIds = [
-                    'menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 
-                    'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 
-                    'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster'
-                ];
-            } 
-            else if (isLeadroom) {
-                allowedMenuIds = [
-                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 
-                    'menu-classdb', 'menu-librarydb'
-                ];
-            } 
-            else if (isEditor) {
-                allowedMenuIds = [
-                    'menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank'
-                ];
-            }
+            if (isHH) { allowedMenuIds = allMenus.map(m => m.id); } 
+            else if (isPrefect) { allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskdirectory', 'menu-taskmaster', 'menu-studentdb', 'menu-activeroom', 'menu-finance', 'menu-birthdays', 'menu-classdb', 'menu-librarydb', 'menu-rank', 'menu-roster']; } 
+            else if (isLeadroom) { allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskmaster', 'menu-activeroom', 'menu-classdb', 'menu-librarydb']; } 
+            else if (isEditor) { allowedMenuIds = ['menu-home', 'menu-sop', 'menu-taskmaster', 'menu-birthdays', 'menu-rank']; }
 
             var sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.innerHTML = ''; 
@@ -319,9 +401,7 @@
                 if (allowedMenuIds.includes(menu.id)) {
                     var li = document.createElement('li');
                     li.className = menu.id;
-                    
                     var activeClass = menu.id === 'menu-finance' ? ' class="active"' : '';
-                    
                     li.innerHTML = `<a href="javascript:void(0)" onclick="${menu.action}"${activeClass}>${menu.label}</a>`;
                     sidebarMenu.appendChild(li);
                 }
@@ -331,12 +411,10 @@
         function navigateTaskMaster() {
             var userRole = (localStorage.getItem("session_role") || "unknown").toLowerCase();
             var targetPage = 'headhouse';
-
             if (userRole.includes('vp') || userRole.includes('vice')) targetPage = 'viceprefect';
             else if (userRole.includes('prefect')) targetPage = 'prefect';
             else if (userRole.includes('editor')) targetPage = 'editor';
             else if (userRole.includes('leadroom')) targetPage = 'leadroom';
-            
             window.location.href = targetPage + '-dashboard.html';
         }
 
@@ -506,9 +584,9 @@
             var hideKas = document.getElementById('hideKasFilter').checked;
 
             if (masterFinanceList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:gray; padding: 20px;">No financial records found for this period.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:gray; padding: 20px;">No financial records found for this period.</td></tr>';
             } else {
-                masterFinanceList.forEach(function(s) {
+                masterFinanceList.forEach(function(s, idx) {
                     sumKas += s.kas; sumFines += s.denda; sumRewards += s.reward;
                     
                     if (hideKas && s.denda <= 0 && s.reward <= 0) return;
@@ -524,6 +602,10 @@
                         <td class="money ${s.denda > 0 ? 'plus':''}">${s.denda > 0 ? '+ʛ'+formatMoney(s.denda) : 'ʛ0'}</td>
                         <td style="font-size: 10px; color: gray;">${fdDisplay}</td>
                         <td class="money ${s.reward > 0 ? 'plus':''}">${s.reward > 0 ? '+ʛ'+formatMoney(s.reward) : 'ʛ0'}</td>
+                        <td>
+                            <button class="btn-action" onclick="openManualFinanceModal(${idx})" title="Edit Row">✏️</button>
+                            <button class="btn-action" onclick="deleteRecord(${idx})" title="Delete Row">🗑️</button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -534,6 +616,7 @@
             document.getElementById('sumRewards').innerText = '-ʛ' + formatMoney(sumRewards); 
         }
 
+        // SISA KODE EXPORT & PDF GENERATION (TIDAK BERUBAH DAN AKAN MENGIKUTI HASIL EDIT MANUAL)
         async function openRankPreview(type) {
             var month = document.getElementById('monthSelector').value;
             if (!month) return alert("Please select a valid month first.");
@@ -691,9 +774,8 @@
             document.getElementById('spReportContent').style.display = 'none';
 
             try {
-                // SANGAT PENTING: MENGUBAH ACTION MENJADI V2
                 const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormatV2", month: month })
+                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormat", month: month })
                 });
                 const res = await response.json();
                 
@@ -711,10 +793,8 @@
                     if (spReportDataCache.length === 0) {
                         lines.push("No SP Reports found for this period.");
                     } else {
-                        let counter = 1;
                         spReportDataCache.forEach(item => {
-                            lines.push(counter + ". " + item.report);
-                            counter++;
+                            lines.push(item.report);
                         });
                     }
                     
