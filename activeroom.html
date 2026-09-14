@@ -706,11 +706,24 @@
             <div class="loa-section" id="loaSection" style="display:block;">
                 <div class="form-row">
                     <div class="form-group"><label>LoA Start Date</label><input type="date" id="adjLoaStart"></div>
-                    <div class="form-group"><label>LoA End Date</label><input type="date" id="adjLoaEnd"></div>
+                    <div class="form-group"><label>LoA End Date (Initial)</label><input type="date" id="adjLoaEnd"></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>LoA Letter Link</label><input type="text" id="adjLoaLink" placeholder="https://..."></div>
-                    <div class="form-group"><label>Extension Letter (Opt)</label><input type="text" id="adjLoaExtLink" placeholder="https://..."></div>
+                    <div class="form-group"><label>Initial LoA Letter Link</label><input type="text" id="adjLoaLink" placeholder="s.id/... or https://..."></div>
+                </div>
+                
+                <div class="section-header">Leave Extension (If Applicable)</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Extension Start Date</label><input type="date" id="adjLoaExtStart"></div>
+                    <div class="form-group"><label>Extension End Date</label><input type="date" id="adjLoaExtEnd"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Extension Letter Link</label><input type="text" id="adjLoaExtLink" placeholder="s.id/... or https://..."></div>
+                </div>
+                
+                <div class="section-header">Return Status</div>
+                <div class="form-row">
+                    <div class="form-group"><label>Return Letter Link</label><input type="text" id="adjReturnLink" placeholder="s.id/... or https://..."></div>
                 </div>
             </div>
 
@@ -1068,6 +1081,7 @@
                 replacements: act.replacements, freeClass: act.freeClass,
                 formStatus: act.formStatus, dendaOverride: act.dendaOverride,
                 loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
+                loaExtStart: act.loaExtStart, loaExtEnd: act.loaExtEnd, loaExtLink: act.loaExtLink, returnLink: act.returnLink,
                 summaries: act.summaries, sumStat: act.sumStat, notes: act.notes,
                 lockSync: false 
             };
@@ -1120,6 +1134,7 @@
                 loaStart: act.loaStart,
                 loaEnd: act.loaEnd,
                 loaLink: act.loaLink,
+                loaExtStart: act.loaExtStart, loaExtEnd: act.loaExtEnd, loaExtLink: act.loaExtLink, returnLink: act.returnLink,
                 summaries: uiSumAct,
                 sumStat: act.sumStat,
                 notes: notesContent, 
@@ -1171,6 +1186,7 @@
                 loaStart: act.loaStart,
                 loaEnd: act.loaEnd,
                 loaLink: act.loaLink,
+                loaExtStart: act.loaExtStart, loaExtEnd: act.loaExtEnd, loaExtLink: act.loaExtLink, returnLink: act.returnLink,
                 summaries: uiSum,
                 sumStat: act.sumStat, 
                 notes: act.notes,
@@ -1227,7 +1243,6 @@
                     if (fullDataStore.rotDada === roomName) extraRot += ", Defence Against The Dark Arts";
                     var scheduleBanner = '<div class="room-schedule-banner">📝 <b>Weekly Summary Schedule:</b> ' + rSched + (extraRot ? ' <b>| 🔄 Rotating Subj:</b> ' + extraRot.substring(2) : '') + '</div>';
 
-                    // --- BOX 1: ACTIVITY ---
                     var roomActHtml = '';
                     if (!isWeekActive) { 
                         roomActHtml = '<tr><td colspan="14" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>'; 
@@ -1245,25 +1260,35 @@
                             if (act.status === 'Leave of Absence') {
                                 var sDate = act.loaStart ? act.loaStart : '...'; 
                                 var eDate = act.loaEnd ? act.loaEnd : '...';
-                                
+                                var extStart = act.loaExtStart ? act.loaExtStart : '';
+                                var extDate = act.loaExtEnd ? act.loaExtEnd : '';
+
+                                var dateHtml = `<span style="font-size:9px; color:gray; font-weight:bold; text-align:center;">${sDate} to ${eDate}</span>`;
+                                if (extStart && extDate) {
+                                    dateHtml += `<span style="font-size:9px; color:#e65100; font-weight:bold; text-align:center;">Ext: ${extStart} to ${extDate}</span>`;
+                                } else if (extDate) {
+                                    dateHtml += `<span style="font-size:9px; color:#e65100; font-weight:bold; text-align:center;">Ext: until ${extDate}</span>`;
+                                }
+
                                 var linkSuratHtml = '';
                                 if (act.loaLink) {
-                                    var links = act.loaLink.split('|');
-                                    if (links[0] && links[0].trim()) {
-                                        var safeLnk1 = links[0].trim().indexOf('http') === 0 ? links[0].trim() : 'https://' + links[0].trim();
-                                        linkSuratHtml += `<a href="${safeLnk1}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 LoA Letter</a>`;
-                                    }
-                                    if (links[1] && links[1].trim()) {
-                                        var safeLnk2 = links[1].trim().indexOf('http') === 0 ? links[1].trim() : 'https://' + links[1].trim();
-                                        linkSuratHtml += `<a href="${safeLnk2}" target="_blank" style="font-size:9px; color:#e65100; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Ext. Letter</a>`;
-                                    }
+                                    var safeLnk1 = act.loaLink.indexOf('http') === 0 ? act.loaLink : 'https://' + act.loaLink;
+                                    linkSuratHtml += `<a href="${safeLnk1}" target="_blank" style="font-size:9px; color:#1565c0; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Initial LoA</a>`;
+                                }
+                                if (act.loaExtLink) {
+                                    var safeLnk2 = act.loaExtLink.indexOf('http') === 0 ? act.loaExtLink : 'https://' + act.loaExtLink;
+                                    linkSuratHtml += `<a href="${safeLnk2}" target="_blank" style="font-size:9px; color:#e65100; text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Ext. Letter</a>`;
+                                }
+                                if (act.returnLink) {
+                                    var safeLnk3 = act.returnLink.indexOf('http') === 0 ? act.returnLink : 'https://' + act.returnLink;
+                                    linkSuratHtml += `<a href="${safeLnk3}" target="_blank" style="font-size:9px; color:var(--success); text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Return Letter</a>`;
                                 }
                                 
-                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:3px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%;">✅ Mark Active</button>`;
+                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:4px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%; white-space:normal; line-height:1.2;">✅ Tick this box if the person has returned from leave</button>`;
 
                                 loaLabel = `<div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
                                                 <span class="status-loa" style="text-align:center; width:100%; box-sizing:border-box;">HIATUS / LOA</span>
-                                                <span style="font-size:9px; color:gray; font-weight:bold; text-align:center;">${sDate} to ${eDate}</span>
+                                                ${dateHtml}
                                                 ${linkSuratHtml}
                                             </div>`;
                                             
@@ -1353,7 +1378,6 @@
                     var reportBtnHtml = '<div style="display:flex; justify-content:flex-end; gap: 10px; margin-bottom: 15px;"><button id="btnReport_' + roomName + '" class="btn-manage" style="background-color: var(--success); font-size:12px; padding:10px 18px;" onclick="openReportModal(\'' + roomName + '\')">📤 Submit Room Report</button></div>';
                     var boxAct = reportBtnHtml + '<div class="box-section"><h4>1. Weekly Activity Form</h4><div class="table-container"><table><thead><tr><th>Vault</th><th>User Info</th><th>Status (LOA)</th><th>Total Class</th><th title="Required Mandatory Class">Req. Class</th><th title="Classes Attended">Attended</th><th title="Class Absences">Absences</th><th title="Excused Absences">Excused</th><th title="Free Class / Canceled Class">Free Class</th><th title="Replacement Assignments">Replacements</th><th title="Number of Summaries">Summaries</th><th title="Form Status">Form Status</th><th>Notes</th><th>Action</th></tr></thead><tbody>' + roomActHtml + '</tbody></table></div></div>';
 
-                    // --- BOX 2: ROOM SUMMARIES ---
                     var roomSumHtml = '';
                     if (!isWeekActive) { 
                         roomSumHtml = '<tr><td colspan="11" style="text-align:center; color:gray; font-size:13px; padding:20px;">🚫 Not Applicable - This month is only configured for ' + fullDataStore.monthWeeksConfig + ' weeks.</td></tr>'; 
@@ -1397,7 +1421,6 @@
 
                             let displayName = s.fullName && s.fullName !== '-' ? s.fullName : s.username;
                             
-                            // MENAMPILKAN CATATAN REJECTED DI TAB SUMMARIES
                             let rejectedNotes = '';
                             if (act.notes && act.notes.toLowerCase().indexOf('rejected') > -1) {
                                 var noteLines = act.notes.split('\n');
@@ -1474,7 +1497,6 @@
                     container.appendChild(div);
                 });
 
-                // --- BOX RAW (AUDIT TRAIL) ---
                 var actHtml = '';
                 if(!fullDataStore.rawActivity || fullDataStore.rawActivity.length === 0) { 
                     actHtml = '<tr><td colspan="11" style="text-align:center;">No form submissions found for this period.</td></tr>'; 
@@ -1642,10 +1664,12 @@
             document.getElementById('adjMandatory').innerText = student.mandatory; 
             document.getElementById('adjLoaStart').value = act.loaStart; 
             document.getElementById('adjLoaEnd').value = act.loaEnd; 
+            document.getElementById('adjLoaLink').value = act.loaLink; 
             
-            var links = (act.loaLink || '').split('|');
-            document.getElementById('adjLoaLink').value = links[0] ? links[0].trim() : ''; 
-            document.getElementById('adjLoaExtLink').value = links[1] ? links[1].trim() : ''; 
+            document.getElementById('adjLoaExtStart').value = act.loaExtStart || ''; 
+            document.getElementById('adjLoaExtEnd').value = act.loaExtEnd || ''; 
+            document.getElementById('adjLoaExtLink').value = act.loaExtLink || ''; 
+            document.getElementById('adjReturnLink').value = act.returnLink || ''; 
             
             toggleLoaFields();
         }
@@ -1660,10 +1684,6 @@
             var s = fullDataStore.rooms[currentEditRoom][currentEditIdx]; 
             var act = s.activity;
             
-            var link1 = document.getElementById('adjLoaLink').value.trim();
-            var link2 = document.getElementById('adjLoaExtLink').value.trim();
-            var combinedLink = link2 ? (link1 + ' | ' + link2) : link1;
-
             var payload = { 
                 status: document.getElementById('adjStatus').value, 
                 reqOverride: document.getElementById('adjReqOverride').value, 
@@ -1676,7 +1696,11 @@
                 dendaOverride: act.dendaOverride, 
                 loaStart: document.getElementById('adjLoaStart').value, 
                 loaEnd: document.getElementById('adjLoaEnd').value, 
-                loaLink: combinedLink, 
+                loaLink: document.getElementById('adjLoaLink').value, 
+                loaExtStart: document.getElementById('adjLoaExtStart').value, 
+                loaExtEnd: document.getElementById('adjLoaExtEnd').value, 
+                loaExtLink: document.getElementById('adjLoaExtLink').value, 
+                returnLink: document.getElementById('adjReturnLink').value, 
                 summaries: act.summaries, 
                 sumStat: act.sumStat, 
                 notes: act.notes, 
@@ -1737,7 +1761,7 @@
             var act = s.activity;
             var sStat = [document.getElementById('adjSumStat1').value, document.getElementById('adjSumStat2').value, document.getElementById('adjSumStat3').value, document.getElementById('adjSumStat4').value].join(',');
             var payload = { 
-                status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, notes: act.notes, summaries: act.summaries, 
+                status: act.status, reqOverride: act.reqOverride, attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass, formStatus: act.formStatus, dendaOverride: act.dendaOverride, loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink, loaExtStart: act.loaExtStart, loaExtEnd: act.loaExtEnd, loaExtLink: act.loaExtLink, returnLink: act.returnLink, notes: act.notes, summaries: act.summaries, 
                 sumStat: sStat, 
                 lockSync: act.lockSync 
             };
@@ -1812,19 +1836,16 @@
             var month = document.getElementById('monthSelector').value; 
             var week = document.getElementById('weekSelector').value;
             
-            var newNotes = act.notes || "";
-            if(link.trim() !== "") {
-                newNotes = (newNotes ? newNotes + "\n" : "") + "[Return Letter: " + link.trim() + "]";
-            }
-            
             var payload = {
                 status: 'Active', 
                 reqOverride: act.reqOverride,
                 attended: act.attended, absences: act.absences, excused: act.excused, replacements: act.replacements, freeClass: act.freeClass,
                 formStatus: act.formStatus, dendaOverride: act.dendaOverride,
                 loaStart: act.loaStart, loaEnd: act.loaEnd, loaLink: act.loaLink,
+                loaExtStart: act.loaExtStart, loaExtEnd: act.loaExtEnd, loaExtLink: act.loaExtLink, 
+                returnLink: link.trim(), 
                 summaries: act.summaries, sumStat: act.sumStat, 
-                notes: newNotes,
+                notes: act.notes,
                 lockSync: true 
             };
             
