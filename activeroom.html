@@ -510,13 +510,9 @@
         }
         .badge-pending { color: #f57f17; font-size: 9px; border: 1px solid #f57f17; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
         .badge-approved { color: var(--success); font-size: 9px; border: 1px solid var(--success); padding: 1px 4px; border-radius: 3px; font-weight: bold;}
-        
-        /* NEW BADGE STYLING FOR REJECTED SUMMARIES */
         .badge-rejected { color: var(--danger); font-size: 9px; border: 1px solid var(--danger); background-color: #ffebee; padding: 1px 4px; border-radius: 3px; font-weight: bold;}
-        
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px; transition: transform 0.2s; margin-top: 2px;}
         .btn-icon:hover { transform: scale(1.2); }
-
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 34, 80, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px;}
         .modal-box { background-color: var(--swan-wing); padding: 20px; border-radius: 8px; width: 550px; max-width: 95%; max-height: 85vh; overflow-y: auto; border: 2px solid var(--quicksand); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-box h3 { margin-top: 0; color: var(--royal-blue); border-bottom: 1px solid var(--shellstone); padding-bottom: 8px; margin-bottom: 12px; font-size: 16px;}
@@ -619,7 +615,6 @@
         </div>
     </div>
 
-    <!-- NOTIFIKASI SIMPAN OTOMATIS -->
     <div id="saveSnack">✅ Data Saved Successfully!</div>
 
     <div class="modal-overlay" id="rotModal">
@@ -1284,7 +1279,7 @@
                                     linkSuratHtml += `<a href="${safeLnk3}" target="_blank" style="font-size:9px; color:var(--success); text-decoration:underline; display:block; margin-top:2px; text-align:center;">📄 Return Letter</a>`;
                                 }
                                 
-                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:4px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%; white-space:normal; line-height:1.2;">✅ Tick this box if the person has returned from leave</button>`;
+                                var btnSelesai = `<button onclick="finishLoa('${roomName}', ${idx})" style="margin-top:4px; font-size:9px; background:var(--success); color:white; border:none; padding:4px 6px; border-radius:3px; cursor:pointer; font-weight:bold; width:100%; white-space:normal; line-height:1.2;">✅ Mark as Returned from Leave</button>`;
 
                                 loaLabel = `<div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
                                                 <span class="status-loa" style="text-align:center; width:100%; box-sizing:border-box;">HIATUS / LOA</span>
@@ -1444,7 +1439,6 @@
                     }
                     var boxSum = '<div class="box-section"><h4>2. Summaries Collection</h4>' + scheduleBanner + '<div class="table-container"><table><thead><tr><th>Vault</th><th>Username</th><th title="Number of Summaries done">Num. Summaries</th><th>Auror</th><th>Ministry</th><th>Extra.</th><th>Link 1</th><th>Link 2</th><th>Link 3</th><th>Link 4</th><th>Action</th></tr></thead><tbody>' + roomSumHtml + '</tbody></table></div></div>';
 
-                    // --- BOX 3: FINANCE (PETTY CASH & DIRECT EDIT) ---
                     var totalKas = 0; var totalDenda = 0; var totalReward = 0; var finHtml = '';
                     if (students.length === 0) { 
                         finHtml = '<tr><td colspan="8" style="text-align:center; color:gray;">No students found in this room.</td></tr>'; 
