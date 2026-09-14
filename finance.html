@@ -691,8 +691,9 @@
             document.getElementById('spReportContent').style.display = 'none';
 
             try {
+                // SANGAT PENTING: MENGUBAH ACTION MENJADI V2
                 const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormat", month: month })
+                    method: 'POST', body: JSON.stringify({ action: "getSpReportFormatV2", month: month })
                 });
                 const res = await response.json();
                 
