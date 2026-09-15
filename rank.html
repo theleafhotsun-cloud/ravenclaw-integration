@@ -699,7 +699,7 @@
 
             let combinedOwlRank = (elOwlR ? elOwlR.value : s.owlRank) + "|||" + (elOwlM ? elOwlM.value : s.owlMark);
             
-            let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\|/g, '') : s.hiatusDates;
+            let hiatusVal = elHiatus ? elHiatus.value.replace(/\|\|\/g, '') : s.hiatusDates;
             let combinedSpRank = (elSpR ? elSpR.value : s.spRank) + "|||" + (elMinSp ? elMinSp.value : s.minSp) + "|||" + hiatusVal;
 
             let cleanMonthStr = document.getElementById('monthSelector').value.split('(')[0].trim();
@@ -877,12 +877,14 @@
                 
                 spotlightRoomName.innerText = bestRoom.room + " (" + bestRoom.pts + " Score)";
                 let membersHtml = '';
-                // Tampilkan hanya anggota AKTIF di tabel hadiah
+                
+                // Tampilkan hanya anggota AKTIF di tabel hadiah, + BADGE LEADROOM
                 bestRoom.activeMembers.sort((a, b) => parseInt(a.vault) - parseInt(b.vault)).forEach(m => {
+                    let lrBadge = (m.isLeadroom && !isAugust) ? `<span style="background:#fff3e0; border:1px solid #ffb74d; color:#e65100; font-size:9px; padding:2px 6px; border-radius:12px; font-weight:bold; margin-left:5px; vertical-align:middle;" title="Leadroom">👑 Leadroom</span>` : '';
                     membersHtml += `<tr>
                         <td class="vault-tag">${m.vault}</td>
                         <td style="font-weight:bold; color:var(--royal-blue);">${m.username}</td>
-                        <td>${m.name}</td>
+                        <td>${m.name} ${lrBadge}</td>
                         <td>${m.faceClaim || '-'}</td>
                     </tr>`;
                 });
