@@ -393,9 +393,6 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        // ==========================================
-        // 2. LOGIKA SIDEBAR & NAVIGASI ROLE-BASED
-        // ==========================================
         function setupDynamicSidebar() {
             isRankViewer = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole.includes('editor') || userRole === 'system admin';
             isRankEditor = userRole.includes('headhouse') || userRole.includes('prefect') || userRole.includes('vp') || userRole.includes('vice') || userRole === 'system admin';
@@ -828,38 +825,60 @@
             }
             spotlightAlphaBody.innerHTML = alphaRows;
 
-            // 4. BEST ROOM 
+            // 4. BEST ROOM (LOGIKA BARU - AKTIF ONLY & LR X2)
             let rooms = {};
+            let currentMonthVal = document.getElementById('monthSelector').value.toLowerCase();
+            let isAugust = currentMonthVal.includes('august') || currentMonthVal.includes('agustus');
+
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, members: [] };
+                    if(!rooms[r]) rooms[r] = { basePts: 0, lrPts: 0, activeMembers: [], activeCount: 0 };
+                    
+                    // Semua poin anak (termasuk DO/Resign) disumbangkan ke basePts kamar
+                    rooms[r].basePts += s.totalPoints;
+                    
                     if(!s.isInactive) { 
-                        rooms[r].basePts += s.totalPoints;
-                        if(s.isLeadroom) rooms[r].lrPts += s.totalPoints;
-                        rooms[r].members.push(s); 
+                        // Cuma anak aktif yang dihitung sbg pembagi & penerima hadiah
+                        rooms[r].activeCount++;
+                        rooms[r].activeMembers.push(s); 
+                    }
+                    if(s.isLeadroom) {
+                        // Kumpulkan poin LR terpisah biar gampang di-x2
+                        rooms[r].lrPts += s.totalPoints;
                     }
                 }
             });
+
             Object.keys(rooms).forEach(k => {
                 let rm = rooms[k];
-                let count = rm.members.length; 
-                if(count > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / count) * 100) / 100;
-                else rm.finalPts = 0;
+                let divisor = rm.activeCount > 0 ? rm.activeCount : 1; // Cegah error dibagi 0
+                
+                if (isAugust) {
+                    // Agustus: Cuma akumulasi poin dibagi anak aktif (No LR x2)
+                    rm.finalPts = Math.round((rm.basePts / divisor) * 100) / 100;
+                } else {
+                    // Bulan lain: Poin semua anak + Poin LR (Biar jadi x2) dibagi anak aktif
+                    rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / divisor) * 100) / 100;
+                }
             });
-            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, members: rooms[k].members })).sort((a,b) => b.pts - a.pts);
+
+            let roomArr = Object.keys(rooms).map(k => ({ room: k, pts: rooms[k].finalPts, activeCount: rooms[k].activeCount, activeMembers: rooms[k].activeMembers })).sort((a,b) => b.pts - a.pts);
             
             let bestRoomMembersBody = document.getElementById('bestRoomMembersBody');
             let spotlightRoomName = document.getElementById('spotlightRoomName');
 
             if (roomArr.length > 0 && roomArr[0].pts > 0) {
                 let bestRoom = roomArr[0];
-                let splitReward = Math.floor(1000 / bestRoom.members.length);
-                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ${splitReward} each</span><br><span style="font-size:10px; color:gray;">Score: ${bestRoom.pts} Pts | 1000G divided by ${bestRoom.members.length} members</span>`;
+                let divisor = bestRoom.activeCount > 0 ? bestRoom.activeCount : 1;
+                let splitReward = Math.floor(1000 / divisor); // 1000G dibagi khusus anak aktif
+                
+                document.getElementById('rewRoom').innerHTML = `<b>${bestRoom.room}</b> - <span style="color:var(--success); font-weight:bold;">ʛ${splitReward} each</span><br><span style="font-size:10px; color:gray;">Score: ${bestRoom.pts} Pts | 1000G divided by ${divisor} active members</span>`;
                 
                 spotlightRoomName.innerText = bestRoom.room + " (" + bestRoom.pts + " Score)";
                 let membersHtml = '';
-                bestRoom.members.sort((a, b) => parseInt(a.vault) - parseInt(b.vault)).forEach(m => {
+                // Tampilkan hanya anggota AKTIF di tabel hadiah
+                bestRoom.activeMembers.sort((a, b) => parseInt(a.vault) - parseInt(b.vault)).forEach(m => {
                     membersHtml += `<tr>
                         <td class="vault-tag">${m.vault}</td>
                         <td style="font-weight:bold; color:var(--royal-blue);">${m.username}</td>
@@ -936,24 +955,35 @@
             });
             document.getElementById('lbAlpha').innerHTML = alphaHtml || '<tr><td colspan="6" style="text-align:center;">No data</td></tr>';
 
-            // LEADERBOARDS BEST ROOM
+            // LEADERBOARDS BEST ROOM (LOGIKA BARU)
             let roomsLb = {};
+            let currentMonthValLb = document.getElementById('monthSelector').value.toLowerCase();
+            let isAugustLb = currentMonthValLb.includes('august') || currentMonthValLb.includes('agustus');
+
             data.forEach(s => {
                 let r = s.room;
                 if(r && r !== '-' && r !== '') { 
-                    if(!roomsLb[r]) roomsLb[r] = { basePts: 0, lrPts: 0, members: [] };
+                    if(!roomsLb[r]) roomsLb[r] = { basePts: 0, lrPts: 0, activeCount: 0 };
+                    
+                    roomsLb[r].basePts += s.totalPoints;
                     if(!s.isInactive) {
-                        roomsLb[r].basePts += s.totalPoints;
-                        if(s.isLeadroom) roomsLb[r].lrPts += s.totalPoints;
-                        roomsLb[r].members.push(s);
+                        roomsLb[r].activeCount++;
+                    }
+                    if(s.isLeadroom) {
+                        roomsLb[r].lrPts += s.totalPoints;
                     }
                 }
             });
+            
             Object.keys(roomsLb).forEach(k => {
                 let rm = roomsLb[k];
-                let count = rm.members.length;
-                if(count > 0) rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / count) * 100) / 100;
-                else rm.finalPts = 0;
+                let divisor = rm.activeCount > 0 ? rm.activeCount : 1;
+                
+                if (isAugustLb) {
+                    rm.finalPts = Math.round((rm.basePts / divisor) * 100) / 100;
+                } else {
+                    rm.finalPts = Math.round(((rm.basePts + rm.lrPts) / divisor) * 100) / 100;
+                }
             });
             let roomArrLb = Object.keys(roomsLb).map(k => ({ room: k, pts: roomsLb[k].finalPts })).sort((a,b) => b.pts - a.pts).slice(0,10);
             
